@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Barcode dengan Penyimpanan Excel</title>
+    <!-- Library untuk memindai barcode -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <!-- Library untuk membuat dan membaca Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        #scanner-view {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 2px;
+            background-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            animation: scan 2s infinite linear;
+        }
+        @keyframes scan {
+            0% { top: 20%; }
+            100% { top: 80%; }
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button#stop-scan {
+            background-color: #f44336;
+        }
+        button#stop-scan:hover {
+            background-color: #d32f2f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .search-container {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 70%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scanner Barcode dengan Penyimpanan Excel</h1>
+        
+        <div class="section">
+            <h2>Pemindai Barcode</h2>
+            <div class="scanner-container">
+                <div id="scanner-view"></div>
+                <div class="scanner-overlay"></div>
+            </div>
+            <button id="start-scan">Mulai Scan</button>
+            <button id="stop-scan" disabled>Stop Scan</button>
+            <div id="scan-result" class="status"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Data Tersimpan</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Cari berdasarkan kode, nama, atau kategori...">
+                <button id="search-btn">Cari</button>
+                <button id="reset-search">Reset</button>
+            </div>
+            <div style="overflow-x: auto; max-height: 300px;">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode Barcode</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Tanggal/Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data akan ditampilkan di sini -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 15px;">
+                <button id="export-excel">Ekspor ke Excel</button>
+                <button id="import-excel">Impor dari Excel</button>
+                <input type="file" id="file-input" accept=".xlsx, .xls" style="display: none;">
+                <button id="clear-data">Hapus Semua Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elemen DOM
+            const startScanBtn = document.getElementById('start-scan');
+            const stopScanBtn = document.getElementById('stop-scan');
+            const scanResult = document.getElementById('scan-result');
+            const tableBody = document.getElementById('table-body');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const resetSearchBtn = document.getElementById('reset-search');
+            const exportExcelBtn = document.getElementById('export-excel');
+            const importExcelBtn = document.getElementById('import-excel');
+            const fileInput = document.getElementById('file-input');
+            const clearDataBtn = document.getElementById('clear-data');
+            
+            // Data storage
+            let barcodeData = JSON.parse(localStorage.getItem('barcodeData')) || [];
+            let isScanning = false;
+            
+            // Inisialisasi tabel
+            updateTable();
+            
+            // Fungsi untuk memulai scan
+            startScanBtn.addEventListener('click', function() {
+                startScanBtn.disabled = true;
+                stopScanBtn.disabled = false;
+                
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector('#scanner-view'),
+                        constraints: {
+                            width: 640,
+                            height: 480,
+                            facingMode: "environment" // Gunakan kamera belakang
+                        }
+                    },
+                    decoder: {
+                        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader"]
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.error(err);
+                        scanResult.textContent = "Error menginisialisasi scanner: " + err;
+                        scanResult.className = "status error";
+                        startScanBtn.disabled = false;
+                        stopScanBtn.disabled = true;
+                        return;
+                    }
+                    Quagga.start();
+                    isScanning = true;
+                    scanResult.textContent = "Memindai... Arahkan kamera ke barcode.";
+                    scanResult.className = "status";
+                });
+                
+                Quagga.onDetected(function(result) {
+                    const code = result.codeResult.code;
+                    scanResult.textContent = "Barcode terdeteksi: " + code;
+                    scanResult.className = "status success";
+                    
+                    // Simpan data barcode
+                    saveBarcodeData(code);
+                    
+                    // Berhenti scan sementara
+                    Quagga.stop();
+                    isScanning = false;
+                    startScanBtn.disabled = false;
+                    stopScanBtn.disabled = true;
+                });
+            });
+            
+            // Fungsi untuk menghentikan scan
+            stopScanBtn.addEventListener('click', function() {
+                Quagga.stop();
+                isScanning = false;
+                startScanBtn.disabled = false;
+                stopScanBtn.disabled = true;
+                scanResult.textContent = "Pemindaian dihentikan.";
+                scanResult.className = "status";
+            });
+            
+            // Fungsi untuk menyimpan data barcode
+            function saveBarcodeData(code) {
+                // Generate data produk dummy berdasarkan kode
+                const categories = ["Elektronik", "Makanan", "Pakaian", "Buku", "Otomotif"];
+                const products = {
+                    "12345678": "Laptop ASUS X441NA",
+                    "87654321": "Smartphone Samsung A10",
+                    "11223344": "Buku Pemrograman JavaScript",
+                    "44332211": "Kaos Oblong Cotton Combed",
+                    "55667788": "Rotri Tawar Whole Wheat",
+                    "98765432": "Oli Mobil Synthetic 5W-30"
+                };
+                
+                const productName = products[code] || "Produk " + code;
+                const category = categories[Math.floor(Math.random() * categories.length)];
+                
+                const newData = {
+                    id: Date.now(),
+                    code: code,
+                    name: productName,
+                    category: category,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                barcodeData.push(newData);
+                localStorage.setItem('barcodeData', JSON.stringify(barcodeData));
+                
+                updateTable();
+            }
+            
+            // Fungsi untuk memperbarui tabel
+            function updateTable(data = barcodeData) {
+                tableBody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="5" style="text-align: center;">Tidak ada data</td>`;
+                    tableBody.appendChild(row);
+                    return;
+                }
+                
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td>${item.timestamp}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // Fungsi pencarian
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    updateTable();
+                    return;
+                }
+                
+                const filteredData = barcodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchTerm) ||
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    item.category.toLowerCase().includes(searchTerm)
+                );
+                
+                updateTable(filteredData);
+            });
+            
+            // Reset pencarian
+            resetSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                updateTable();
+            });
+            
+            // Ekspor ke Excel
+            exportExcelBtn.addEventListener('click', function() {
+                if (barcodeData.length === 0) {
+                    alert('Tidak ada data untuk diekspor!');
+                    return;
+                }
+                
+                // Format data untuk Excel
+                const excelData = barcodeData.map(item => ({
+                    'Kode Barcode': item.code,
+                    'Nama Produk': item.name,
+                    'Kategori': item.category,
+                    'Tanggal/Waktu': item.timestamp
+                }));
+                
+                // Buat worksheet dan workbook
+                const worksheet = XLSX.utils.json_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Barcode');
+                
+                // Ekspor ke file
+                XLSX.writeFile(workbook, 'data_barcode.xlsx');
+            });
+            
+            // Impor dari Excel
+            importExcelBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    // Ambil data dari sheet pertama
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // Konversi ke format yang sesuai
+                    const importedData = jsonData.map((item, index) => ({
+                        id: Date.now() + index,
+                        code: item['Kode Barcode'] || '',
+                        name: item['Nama Produk'] || '',
+                        category: item['Kategori'] || '',
+                        timestamp: item['Tanggal/Waktu'] || new Date().toLocaleString()
+                    }));
+                    
+                    // Gabungkan dengan data yang ada
+                    barcodeData = [...barcodeData, ...importedData];
+                    localStorage.setItem('barcodeData', JSON.stringify(barcodeData));
+                    
+                    updateTable();
+                    alert(`Berhasil mengimpor ${importedData.length} data dari Excel!`);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+            
+            // Hapus semua data
+            clearDataBtn.addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin menghapus semua data?')) {
+                    barcodeData = [];
+                    localStorage.removeItem('barcodeData');
+                    updateTable();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
