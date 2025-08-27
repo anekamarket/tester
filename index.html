@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner Barcode dengan Penyimpanan Excel</title>
-    <!-- Library untuk memindai barcode -->
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <!-- Library untuk memindai barcode (dynamsoft) -->
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.1/dist/dbr.js"></script>
     <!-- Library untuk membuat dan membaca Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
@@ -120,6 +120,15 @@
             background-color: #f2dede;
             color: #a94442;
         }
+        .manual-input {
+            margin-top: 15px;
+        }
+        .manual-input input {
+            margin-right: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -135,6 +144,12 @@
             <button id="start-scan">Mulai Scan</button>
             <button id="stop-scan" disabled>Stop Scan</button>
             <div id="scan-result" class="status"></div>
+            
+            <div class="manual-input">
+                <h3>Input Manual (jika scan tidak bekerja)</h3>
+                <input type="text" id="manual-code" placeholder="Masukkan kode barcode manual">
+                <button id="add-manual">Tambah Kode</button>
+            </div>
         </div>
         
         <div class="section">
@@ -183,73 +198,80 @@
             const importExcelBtn = document.getElementById('import-excel');
             const fileInput = document.getElementById('file-input');
             const clearDataBtn = document.getElementById('clear-data');
+            const manualCodeInput = document.getElementById('manual-code');
+            const addManualBtn = document.getElementById('add-manual');
             
             // Data storage
             let barcodeData = JSON.parse(localStorage.getItem('barcodeData')) || [];
             let isScanning = false;
+            let scanner = null;
             
             // Inisialisasi tabel
             updateTable();
             
+            // Inisialisasi scanner Dynamsoft
+            Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9";
+            Dynamsoft.DBR.BarcodeScanner.loadWasm();
+            
             // Fungsi untuk memulai scan
-            startScanBtn.addEventListener('click', function() {
-                startScanBtn.disabled = true;
-                stopScanBtn.disabled = false;
-                
-                Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: document.querySelector('#scanner-view'),
-                        constraints: {
-                            width: 640,
-                            height: 480,
-                            facingMode: "environment" // Gunakan kamera belakang
+            startScanBtn.addEventListener('click', async function() {
+                try {
+                    startScanBtn.disabled = true;
+                    stopScanBtn.disabled = false;
+                    
+                    scanner = await Dynamsoft.DBR.BarcodeScanner.createInstance();
+                    await scanner.setUIElement(document.getElementById('scanner-view'));
+                    scanner.onFrameRead = results => {
+                        if (results.length > 0) {
+                            const code = results[0].barcodeText;
+                            scanResult.textContent = "Barcode terdeteksi: " + code;
+                            scanResult.className = "status success";
+                            
+                            // Simpan data barcode
+                            saveBarcodeData(code);
+                            
+                            // Berhenti scan sementara
+                            stopScanning();
                         }
-                    },
-                    decoder: {
-                        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader"]
-                    }
-                }, function(err) {
-                    if (err) {
-                        console.error(err);
-                        scanResult.textContent = "Error menginisialisasi scanner: " + err;
-                        scanResult.className = "status error";
-                        startScanBtn.disabled = false;
-                        stopScanBtn.disabled = true;
-                        return;
-                    }
-                    Quagga.start();
+                    };
+                    scanner.onUnduplicatedRead = (txt, result) => {
+                        scanResult.textContent = "Barcode terdeteksi: " + txt;
+                        scanResult.className = "status success";
+                        saveBarcodeData(txt);
+                        stopScanning();
+                    };
+                    
+                    await scanner.show();
                     isScanning = true;
                     scanResult.textContent = "Memindai... Arahkan kamera ke barcode.";
                     scanResult.className = "status";
-                });
-                
-                Quagga.onDetected(function(result) {
-                    const code = result.codeResult.code;
-                    scanResult.textContent = "Barcode terdeteksi: " + code;
-                    scanResult.className = "status success";
-                    
-                    // Simpan data barcode
-                    saveBarcodeData(code);
-                    
-                    // Berhenti scan sementara
-                    Quagga.stop();
-                    isScanning = false;
+                } catch (ex) {
+                    console.error(ex);
+                    scanResult.textContent = "Error menginisialisasi scanner: " + ex.message;
+                    scanResult.className = "status error";
                     startScanBtn.disabled = false;
                     stopScanBtn.disabled = true;
-                });
+                }
             });
             
             // Fungsi untuk menghentikan scan
             stopScanBtn.addEventListener('click', function() {
-                Quagga.stop();
+                stopScanning();
+            });
+            
+            // Fungsi untuk menghentikan pemindaian
+            function stopScanning() {
+                if (scanner) {
+                    scanner.hide();
+                    scanner.destroy();
+                    scanner = null;
+                }
                 isScanning = false;
                 startScanBtn.disabled = false;
                 stopScanBtn.disabled = true;
                 scanResult.textContent = "Pemindaian dihentikan.";
                 scanResult.className = "status";
-            });
+            }
             
             // Fungsi untuk menyimpan data barcode
             function saveBarcodeData(code) {
@@ -280,6 +302,20 @@
                 
                 updateTable();
             }
+            
+            // Fungsi untuk menambah kode manual
+            addManualBtn.addEventListener('click', function() {
+                const code = manualCodeInput.value.trim();
+                if (code) {
+                    saveBarcodeData(code);
+                    manualCodeInput.value = "";
+                    scanResult.textContent = "Kode manual ditambahkan: " + code;
+                    scanResult.className = "status success";
+                } else {
+                    scanResult.textContent = "Masukkan kode terlebih dahulu!";
+                    scanResult.className = "status error";
+                }
+            });
             
             // Fungsi untuk memperbarui tabel
             function updateTable(data = barcodeData) {
