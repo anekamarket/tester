@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -473,6 +472,7 @@
         .modal-title {
             font-size: 1.2rem;
             font-weight: 600;
+            color: var(--dark-color);
         }
 
         .modal-close {
@@ -1101,20 +1101,21 @@
             font-size: 18px;
         }
 
-        /* Premium Notification */
+        /* Premium Notification - Enhanced */
         #premium-notification {
             background: linear-gradient(135deg, #ff6b6b, #ff9e6b);
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            animation: fadeIn 0.5s ease;
+            animation: slideDown 0.5s ease;
             position: relative;
             z-index: 100;
+            border-left: 5px solid #ff9e6b;
         }
 
         #premium-notification.hidden {
@@ -1123,38 +1124,45 @@
 
         #premium-notification .premium-content {
             flex: 1;
+            padding-right: 15px;
         }
 
         #premium-notification .premium-content strong {
-            font-size: 16px;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
         #premium-notification .premium-content p {
             margin: 5px 0;
             font-size: 14px;
+            opacity: 0.9;
         }
 
         #premium-notification .premium-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
 
         #premium-notification .premium-buttons a {
             background-color: #25D366;
             color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 10px 18px;
+            border-radius: 6px;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             font-weight: 500;
             transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         #premium-notification .premium-buttons a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         #premium-notification .premium-buttons a.info-btn {
@@ -1166,20 +1174,40 @@
         }
 
         #premium-notification .close-notification {
-            background: none;
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
             font-size: 18px;
             cursor: pointer;
-            margin-left: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-left: 15px;
+            transition: all 0.3s;
+        }
+
+        #premium-notification .close-notification:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @media (max-width: 768px) {
@@ -1187,6 +1215,11 @@
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
+                padding: 20px;
+            }
+            
+            #premium-notification .premium-content {
+                padding-right: 0;
             }
             
             #premium-notification .premium-buttons {
@@ -1197,6 +1230,7 @@
             
             #premium-notification .premium-buttons a {
                 justify-content: center;
+                width: 100%;
             }
             
             #premium-notification .close-notification {
@@ -1206,14 +1240,32 @@
                 margin-left: 0;
             }
         }
+
+        /* Countdown timer */
+        .countdown-timer {
+            font-size: 12px;
+            margin-top: 8px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .countdown-timer i {
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <!-- Premium Notification -->
+    <!-- Premium Notification - Enhanced -->
     <div id="premium-notification" class="hidden">
         <div class="premium-content">
             <strong>✨ Tertarik dengan Aplikasi Kasir ini?</strong>
-            <p>Dapatkan versi full dengan fitur lebih lengkap!</p>
+            <p>Dapatkan versi full dengan fitur lebih lengkap dan premium!</p>
+            <div class="countdown-timer">
+                <i class="fas fa-clock"></i>
+                <span id="countdown">Notifikasi akan tertutup dalam 5:00</span>
+            </div>
         </div>
         <div class="premium-buttons">
             <a id="whatsapp-button" href="https://wa.me/6287865614222?text=Saya%20tertarik%20dan%20ingin%20membeli%20aplikasi%20pembayaran%20versi%20full%20fitur%20lengkap" target="_blank">
@@ -1223,7 +1275,7 @@
                 <i class="fas fa-globe"></i> Info Lengkap
             </a>
         </div>
-        <button class="close-notification">&times;</button>
+        <button class="close-notification" title="Tutup notifikasi">&times;</button>
     </div>
 
     <!-- Toast Notification -->
@@ -1270,1264 +1322,394 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="discountType">Tipe Diskon Default</label>
-                    <select id="discountType" class="form-control">
-                        <option value="percentage">Persentase (%)</option>
-                        <option value="fixed">Nominal Tetap</option>
-                    </select>
+                    <label for="discountRate">Persentase Diskon (%)</label>
+                    <input type="number" id="discountRate" class="form-control" min="0" max="100" step="0.1" placeholder="Masukkan persentase diskon">
                 </div>
                 
                 <div class="form-group">
-                    <label for="discountValue">Nilai Diskon Default</label>
-                    <div class="discount-input">
-                        <input type="number" id="discountValue" class="form-control" min="0" placeholder="Masukkan nilai diskon">
-                        <select id="discountValueType" class="form-control">
-                            <option value="percentage">%</option>
-                            <option value="fixed">Rp</option>
-                        </select>
-                    </div>
+                    <label for="currencySymbol">Simbol Mata Uang</label>
+                    <select id="currencySymbol" class="form-control">
+                        <option value="Rp">Rp (Rupiah)</option>
+                        <option value="$">$ (Dollar)</option>
+                        <option value="€">€ (Euro)</option>
+                        <option value="£">£ (Pound)</option>
+                        <option value="¥">¥ (Yen)</option>
+                        <option value="₩">₩ (Won)</option>
+                    </select>
                 </div>
                 
                 <div class="backup-section">
                     <div class="settings-title">Backup & Restore Data</div>
                     
-                    <div class="form-group">
-                        <label>Cadangkan data produk dan transaksi</label>
-                        <div class="backup-actions">
-                            <button id="backupDataBtn" class="btn btn-info">
-                                <i class="fas fa-download"></i> Backup Data
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Restore data dari backup</label>
+                    <div class="backup-actions">
+                        <button id="backupData" class="btn btn-info">
+                            <i class="fas fa-download"></i> Backup Data
+                        </button>
+                        
                         <div class="file-input-wrapper">
-                            <button class="btn btn-warning btn-block">
-                                <i class="fas fa-upload"></i> Pilih File Backup
+                            <button class="btn btn-outline" style="width: 100%;">
+                                <i class="fas fa-upload"></i> Restore Data
                             </button>
-                            <input type="file" id="restoreFile" accept=".json">
-                        </div>
-                        <small class="text-muted">Pilih file backup (.json) untuk mengembalikan data</small>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary close-settings-modal">Batal</button>
-                <button class="btn btn-success save-settings"><i class="fas fa-save"></i> Simpan Pengaturan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Additional Fee Modal -->
-    <div id="additionalFeeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Biaya Tambahan</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="additional-fee-options">
-                    <div class="additional-fee-option">
-                        <input type="radio" id="feeNone" name="additionalFee" value="none" checked>
-                        <label for="feeNone">Tidak Ada</label>
-                    </div>
-                    <div class="additional-fee-option">
-                        <input type="radio" id="feeShipping" name="additionalFee" value="shipping">
-                        <label for="feeShipping">Biaya Kirim/Antar</label>
-                    </div>
-                    <div class="additional-fee-option">
-                        <input type="radio" id="feeOther" name="additionalFee" value="other">
-                        <label for="feeOther">Biaya Lainnya</label>
-                    </div>
-                </div>
-                
-                <div id="shippingFeeDetails" class="additional-fee-details">
-                    <div class="form-group">
-                        <label for="shippingFeeAmount">Biaya Kirim/Antar</label>
-                        <input type="number" id="shippingFeeAmount" class="form-control" placeholder="Masukkan biaya kirim">
-                    </div>
-                </div>
-                
-                <div id="otherFeeDetails" class="additional-fee-details">
-                    <div class="form-group">
-                        <label for="otherFeeAmount">Jumlah Biaya</label>
-                        <input type="number" id="otherFeeAmount" class="form-control" placeholder="Masukkan jumlah biaya">
-                    </div>
-                    <div class="form-group">
-                        <label for="otherFeeDescription">Keterangan (maks. 180 karakter)</label>
-                        <textarea id="otherFeeDescription" class="form-control" rows="2" maxlength="180" placeholder="Masukkan keterangan biaya"></textarea>
-                        <div class="additional-fee-description">
-                            <span id="charCount">0</span>/180 karakter
+                            <input type="file" id="restoreData" accept=".json">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary close-additional-fee-modal">Batal</button>
-                <button class="btn btn-success save-additional-fee">Simpan Biaya</button>
+                <button id="saveSettings" class="btn btn-success">Simpan Pengaturan</button>
+                <button class="btn btn-secondary modal-close">Batal</button>
             </div>
         </div>
     </div>
 
-    <!-- Store Setup Modal -->
-    <div id="setupModal" class="modal">
-        <div class="setup-container">
-            <div class="setup-title">Setup Toko</div>
-            <form id="setupForm">
-                <div class="form-group">
-                    <label for="storeName">Nama Toko</label>
-                    <input type="text" id="storeName" class="form-control" placeholder="Masukkan nama toko" required>
-                    <div class="error-message" id="storeNameError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Anda sebagai:</label>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="ownerRole" name="userRole" value="owner" checked>
-                            <label for="ownerRole">Owner</label>
-                        </div>
-                        <div class="radio-option">
-                            <input type="radio" id="employeeRole" name="userRole" value="employee">
-                            <label for="employeeRole">Karyawan</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="userPosition">Sebagai:</label>
-                    <select id="userPosition" class="form-control" required>
-                        <option value="kasir">Kasir</option>
-                        <option value="owner">Owner</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="storeAddress">Alamat Toko</label>
-                    <input type="text" id="storeAddress" class="form-control" placeholder="Masukkan alamat toko" required>
-                    <div class="error-message" id="storeAddressError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="storePhone">Nomor HP</label>
-                    <input type="tel" id="storePhone" class="form-control" placeholder="Masukkan nomor HP" required>
-                    <div class="error-message" id="storePhoneError"></div>
-                </div>
-                
-                <button type="submit" class="btn btn-block" id="saveSetupBtn">
-                    <span id="saveSetupBtnText">Simpan</span>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container" id="mainApp" style="display: none;">
-        <!-- Header -->
+    <div class="container">
         <div class="header">
             <div>
-                <h1 id="storeNameHeader">Online Store</h1>
-                <div class="header-subtitle">WebApp Versi.01.04.99 Copyright Lentera Karya Situbondo</div>
-                <div class="header-subtitle">www.anekamarket.my.id</div>
+                <h1>Online Store Pro</h1>
+                <div class="header-subtitle">Sistem Kasir dan Manajemen Toko Online</div>
             </div>
             <div class="header-info">
                 <p id="currentDate">Senin, 1 Januari 2023</p>
-                <p>Kasir: <span id="loggedInUser">Admin</span></p>
+                <p id="currentTime">00:00:00</p>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Left Panel -->
             <div class="left-panel">
-                <h2 class="panel-title">Produk</h2>
+                <h3 class="panel-title">Tambah Produk</h3>
                 
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="productSearch" class="form-control" placeholder="Cari produk...">
-                </div>
-
-                <div id="productList" class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Nama</th>
-                                <th>Harga</th>
-                                <th>Stok</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productListBody">
-                            <!-- Products will be loaded here -->
-                        </tbody>
-                    </table>
+                <div class="form-group">
+                    <label for="productName">Nama Produk</label>
+                    <input type="text" id="productName" class="form-control" placeholder="Masukkan nama produk">
+                    <div class="error-message" id="productNameError">Nama produk harus diisi</div>
                 </div>
                 
-                <button id="addProductBtn" class="btn btn-success btn-block">
-                    <i class="fas fa-plus"></i> Tambah Produk
+                <div class="form-group">
+                    <label for="productPrice">Harga Produk</label>
+                    <input type="number" id="productPrice" class="form-control" placeholder="Masukkan harga produk">
+                    <div class="error-message" id="productPriceError">Harga produk harus diisi</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productQuantity">Jumlah</label>
+                    <input type="number" id="productQuantity" class="form-control" value="1" min="1">
+                </div>
+                
+                <button id="addProduct" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus"></i> Tambah ke Keranjang
                 </button>
+                
+                <div class="mt-4">
+                    <h3 class="panel-title">Daftar Produk</h3>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchProduct" class="form-control" placeholder="Cari produk...">
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Harga</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsList">
+                                <!-- Products will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
-            <!-- Right Panel -->
+            
             <div class="right-panel">
-                <h2 class="panel-title">Transaksi</h2>
+                <h3 class="panel-title">Keranjang Belanja</h3>
                 
                 <div id="cartItems">
-                    <!-- Cart items will be loaded here -->
+                    <!-- Cart items will be added here dynamically -->
+                    <div class="empty-state" id="emptyCart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Keranjang belanja masih kosong</p>
+                    </div>
                 </div>
                 
                 <div class="cart-summary">
                     <div class="summary-row">
-                        <span class="summary-label">Subtotal:</span>
-                        <span class="summary-value" id="cartSubtotal">Rp 0</span>
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value" id="subtotal">Rp 0</span>
                     </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Diskon:</span>
-                        <span class="summary-value" id="cartDiscount">Rp 0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Pajak (<span id="taxPercentage">10</span>%):</span>
-                        <span class="summary-value" id="cartTax">Rp 0</span>
-                    </div>
+                    
                     <div class="additional-fee-section">
-                        <div class="summary-row">
-                            <span class="summary-label">Biaya Tambahan:</span>
-                            <span class="summary-value" id="cartAdditionalFee">Rp 0</span>
+                        <div class="form-group">
+                            <label>Biaya Tambahan</label>
+                            <div class="additional-fee-options">
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeNone" name="additionalFee" value="none" checked>
+                                    <label for="feeNone">Tidak Ada</label>
+                                </div>
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeDelivery" name="additionalFee" value="delivery">
+                                    <label for="feeDelivery">Ongkir</label>
+                                </div>
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeService" name="additionalFee" value="service">
+                                    <label for="feeService">Layanan</label>
+                                </div>
+                            </div>
                         </div>
-                        <div id="additionalFeeDescription" class="summary-value" style="font-size: 0.8rem; color: #666; text-align: right;"></div>
+                        
+                        <div id="feeDetails" class="additional-fee-details">
+                            <div class="form-group">
+                                <label for="feeAmount">Jumlah Biaya</label>
+                                <input type="number" id="feeAmount" class="form-control" placeholder="Masukkan jumlah biaya" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="feeDescription">Keterangan (opsional)</label>
+                                <input type="text" id="feeDescription" class="form-control" placeholder="Keterangan biaya">
+                            </div>
+                            <div class="additional-fee-description">
+                                Biaya ini akan ditambahkan ke total pembayaran
+                            </div>
+                        </div>
                     </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">Pajak (<span id="taxPercentage">0</span>%)</span>
+                        <span class="summary-value" id="taxAmount">Rp 0</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="summary-label">Diskon (<span id="discountPercentage">0</span>%)</span>
+                        <span class="summary-value" id="discountAmount">Rp 0</span>
+                    </div>
+                    
                     <div class="summary-row total-row">
-                        <span class="summary-label">Total:</span>
-                        <span class="summary-value" id="cartTotal">Rp 0</span>
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="totalAmount">Rp 0</span>
                     </div>
                 </div>
-
+                
+                <div class="payment-methods mt-3">
+                    <h4>Metode Pembayaran</h4>
+                    
+                    <div class="payment-method">
+                        <input type="radio" id="paymentCash" name="paymentMethod" value="cash" checked>
+                        <label for="paymentCash">Tunai</label>
+                    </div>
+                    
+                    <div class="payment-method">
+                        <input type="radio" id="paymentTransfer" name="paymentMethod" value="transfer">
+                        <label for="paymentTransfer">Transfer Bank</label>
+                    </div>
+                    
+                    <div class="payment-method">
+                        <input type="radio" id="paymentQRIS" name="paymentMethod" value="qris">
+                        <label for="paymentQRIS">QRIS</label>
+                    </div>
+                    
+                    <div class="payment-method">
+                        <input type="radio" id="paymentOther" name="paymentMethod" value="other">
+                        <label for="paymentOther">Lainnya</label>
+                    </div>
+                </div>
+                
                 <div class="form-group mt-3">
-                    <button id="addAdditionalFeeBtn" class="btn btn-outline btn-block">
-                        <i class="fas fa-plus-circle"></i> Tambah Biaya
-                    </button>
+                    <label for="customerName">Nama Pelanggan (opsional)</label>
+                    <input type="text" id="customerName" class="form-control" placeholder="Masukkan nama pelanggan">
                 </div>
-
-                <div class="payment-methods">
-                    <label>Metode Pembayaran:</label>
-                    <div class="payment-method">
-                        <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
-                        <label for="cash">Tunai</label>
-                    </div>
-                    <div class="payment-method">
-                        <input type="radio" id="transfer" name="paymentMethod" value="transfer">
-                        <label for="transfer">Transfer Bank</label>
-                    </div>
-                    <div class="payment-method">
-                        <input type="radio" id="ewallet" name="paymentMethod" value="ewallet">
-                        <label for="ewallet">E-Wallet</label>
-                    </div>
-                </div>
-
+                
                 <div class="form-group">
-                    <label for="paymentAmount">Jumlah Pembayaran</label>
-                    <input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah pembayaran">
+                    <label for="customerPhone">No. Telepon (opsional)</label>
+                    <input type="text" id="customerPhone" class="form-control" placeholder="Masukkan nomor telepon">
                 </div>
-
-                <button id="completePayment" class="btn btn-success btn-block">
-                    <i class="fas fa-print"></i> Selesaikan & Cetak
+                
+                <button id="checkout" class="btn btn-success btn-block mt-3">
+                    <i class="fas fa-check"></i> Proses Pembayaran
+                </button>
+                
+                <button id="resetCart" class="btn btn-danger btn-block mt-2">
+                    <i class="fas fa-trash"></i> Reset Keranjang
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Receipt Template (Hidden) -->
-    <div id="receiptPrint" style="display: none;">
-        <div class="receipt receipt-enhanced">
-            <div class="receipt-header">
-                <div class="receipt-brand">WebApp Versi.010499 By.Cendhanu</div>
-                <div class="receipt-brand">Lentera Karya Situbondo</div>
-                <div class="receipt-title" id="receiptStoreName">ONLINE STORE</div>
-                <div class="receipt-address" id="receiptStoreAddress">Kabupaten Situbondo - Provinsi Jawa Timur</div>
-                <div class="receipt-address" id="receiptStorePhone">Telp: 081234567890</div>
-                <div class="receipt-date" id="receiptDate">01/01/2023 10:00:00</div>
-                <div id="receiptTransactionId">No. Transaksi: T20230101000000</div>
-            </div>
-            <div class="receipt-items" id="receiptItems">
-                <!-- Items will be added here -->
-            </div>
-            <div class="receipt-total">
-                <div class="receipt-item">
-                    <span>Subtotal</span>
-                    <span id="receiptSubtotal">Rp 0</span>
-                </div>
-                <div class="receipt-item">
-                    <span>Diskon</span>
-                    <span id="receiptDiscount">Rp 0</span>
-                </div>
-                <div class="receipt-item">
-                    <span>Pajak (<span id="receiptTaxPercentage">10</span>%)</span>
-                    <span id="receiptTax">Rp 0</span>
-                </div>
-                <div class="receipt-item" id="receiptAdditionalFeeItem" style="display: none;">
-                    <span id="receiptAdditionalFeeLabel">Biaya Tambahan</span>
-                    <span id="receiptAdditionalFeeValue">Rp 0</span>
-                </div>
-                <div class="receipt-item">
-                    <span>TOTAL</span>
-                    <span id="receiptTotal">Rp 0</span>
-                </div>
-                <div class="receipt-item">
-                    <span id="receiptPaymentMethod">Tunai</span>
-                    <span id="receiptPaymentAmount">Rp 0</span>
-                </div>
-                <div class="receipt-item">
-                    <span>Kembali</span>
-                    <span id="receiptChange">Rp 0</span>
-                </div>
-            </div>
-            <div class="receipt-footer">
-                <div>Terima kasih telah berbelanja</div>
-                <div class="receipt-order-info">Order Aplikasi Payment Pro</div>
-                <div class="receipt-order-info">kirim email: lenterakaryasitubondo@gmail.com</div>
-                <div>Kasir: <span id="receiptCashier">Admin</span></div>
-            </div>
-        </div>
-        <div class="print-button no-print">
-            <button id="printReceiptBtn" class="btn btn-primary">
-                <i class="fas fa-print"></i> Cetak Struk
-            </button>
-            <button id="downloadReceiptBtn" class="btn btn-success ml-2">
-                <i class="fas fa-download"></i> Download PDF
-            </button>
-            <button id="closeReceiptBtn" class="btn btn-secondary ml-2">
-                <i class="fas fa-times"></i> Tutup
-            </button>
-        </div>
-    </div>
-
-    <!-- Add/Edit Product Modal -->
-    <div id="productModal" class="modal">
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="productModalTitle">Tambah Produk</h3>
+                <h3 class="modal-title">Struk Pembayaran</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="productId">
-                <div class="form-group">
-                    <label for="productName">Nama Produk</label>
-                    <input type="text" id="productName" class="form-control" placeholder="Masukkan nama produk">
-                    <div class="error-message" id="productNameError"></div>
+                <div id="receiptPrint" class="receipt receipt-enhanced">
+                    <div class="receipt-header">
+                        <div class="receipt-title">Online Store Pro</div>
+                        <div class="receipt-address">Jl. Contoh No. 123, Kota Anda</div>
+                        <div class="receipt-address">Telp: (021) 123-4567</div>
+                        <div class="receipt-date" id="receiptDate">Tanggal: 01/01/2023 00:00:00</div>
+                        <div class="receipt-order-info">No. Transaksi: <span id="receiptTransactionId">TRX-20230101-001</span></div>
+                    </div>
+                    
+                    <div class="receipt-items" id="receiptItems">
+                        <!-- Receipt items will be added here dynamically -->
+                    </div>
+                    
+                    <div class="receipt-total">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="receiptSubtotal">Rp 0</span>
+                        </div>
+                        <div class="summary-row" id="receiptFeeRow" style="display: none;">
+                            <span id="receiptFeeLabel">Biaya Tambahan:</span>
+                            <span id="receiptFeeAmount">Rp 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Pajak (<span id="receiptTaxPercentage">0</span>%):</span>
+                            <span id="receiptTaxAmount">Rp 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Diskon (<span id="receiptDiscountPercentage">0</span>%):</span>
+                            <span id="receiptDiscountAmount">Rp 0</span>
+                        </div>
+                        <div class="summary-row" style="font-weight: bold;">
+                            <span>Total:</span>
+                            <span id="receiptTotal">Rp 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Pembayaran:</span>
+                            <span id="receiptPaymentMethod">Tunai</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-footer">
+                        <div>Terima kasih atas kunjungan Anda</div>
+                        <div class="receipt-brand">www.anekamarket.my.id</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="productCategory">Kategori</label>
-                    <input type="text" id="productCategory" class="form-control" placeholder="Masukkan kategori">
-                    <div class="error-message" id="productCategoryError"></div>
-                </div>
-                <div class="form-group">
-                    <label for="productPrice">Harga</label>
-                    <input type="number" id="productPrice" class="form-control" placeholder="Masukkan harga">
-                    <div class="error-message" id="productPriceError"></div>
-                </div>
-                <div class="form-group">
-                    <label for="productStock">Stok</label>
-                    <input type="number" id="productStock" class="form-control" placeholder="Masukkan stok awal">
-                    <div class="error-message" id="productStockError"></div>
+                
+                <div class="print-button no-print">
+                    <button id="printReceipt" class="btn btn-primary">
+                        <i class="fas fa-print"></i> Cetak Struk
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary close-product-modal">Batal</button>
-                <button class="btn btn-success save-product"><i class="fas fa-save"></i> Simpan</button>
+            <div class="modal-footer no-print">
+                <button class="btn btn-secondary modal-close">Tutup</button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/id.min.js"></script>
     <script>
-        // Local storage keys
-        const STORAGE_KEYS = {
-            PRODUCTS: 'online_store_products',
-            TRANSACTIONS: 'online_store_transactions',
-            STORE_INFO: 'online_store_info',
-            CURRENT_CART: 'online_store_current_cart',
-            SETTINGS: 'online_store_settings',
-            PREMIUM_NOTIFICATION: 'online_store_premium_notification'
-        };
-        
-        // Initialize data
-        let products = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS)) || [];
-        let transactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [];
-        let storeInfo = JSON.parse(localStorage.getItem(STORAGE_KEYS.STORE_INFO)) || null;
-        let settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {
-            taxRate: 10,
-            discountType: 'percentage',
-            discountValue: 0
-        };
-        
-        // Premium notification settings
-        let premiumNotification = JSON.parse(localStorage.getItem(STORAGE_KEYS.PREMIUM_NOTIFICATION)) || {
-            lastShown: 0,
-            interval: 2 * 60 * 60 * 1000, // 2 jam dalam milidetik
-            duration: 8000 // 8 detik dalam milidetik
-        };
-        
-        // Current transaction
-        let currentCart = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_CART)) || {
-            items: [],
-            discount: 0,
-            tax: 0,
-            additionalFee: 0,
-            additionalFeeDescription: '',
-            subtotal: 0,
-            total: 0
-        };
-        
-        // Toast notification function
-        function showToast(message, type = 'info', duration = 3000) {
-            const toast = $('#toast');
-            const toastMessage = $('#toast-message');
-            
-            toast.removeClass('success error warning info').addClass(type);
-            toastMessage.text(message);
-            toast.addClass('show');
-            
-            setTimeout(() => {
-                toast.removeClass('show');
-            }, duration);
-        }
-        
-        // Show loading overlay
-        function showLoading(message = 'Memproses...') {
-            $('#loadingText').text(message);
-            $('#loadingOverlay').fadeIn();
-        }
-        
-        // Hide loading overlay
-        function hideLoading() {
-            $('#loadingOverlay').fadeOut();
-        }
-        
-        // Confirmation dialog
-        function showConfirmation(message, callback) {
-            $('#confirmationMessage').text(message);
-            $('#confirmationDialog').show();
-            
-            $('#confirmOk').off('click').on('click', function() {
-                $('#confirmationDialog').hide();
-                if (typeof callback === 'function') {
-                    callback(true);
-                }
-            });
-            
-            $('#confirmCancel').off('click').on('click', function() {
-                $('#confirmationDialog').hide();
-                if (typeof callback === 'function') {
-                    callback(false);
-                }
-            });
-        }
-        
-        // Format currency
-        function formatCurrency(amount) {
-            return 'Rp ' + (amount || 0).toLocaleString('id-ID');
-        }
-        
-        // Generate PDF from receipt
-        function generatePDF(elementId, filename) {
-            const element = document.getElementById(elementId);
-            const opt = {
-                margin: 10,
-                filename: filename || 'receipt.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            
-            return html2pdf().set(opt).from(element).save();
-        }
-        
-        // Calculate discount
-        function calculateDiscount(subtotal) {
-            if (settings.discountType === 'percentage') {
-                return subtotal * (settings.discountValue / 100);
-            } else {
-                return Math.min(settings.discountValue, subtotal);
-            }
-        }
-        
-        // Create backup data
-        function createBackupData() {
-            return {
-                products: JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS)) || [],
-                transactions: JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [],
-                storeInfo: JSON.parse(localStorage.getItem(STORAGE_KEYS.STORE_INFO)) || null,
-                settings: JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {
-                    taxRate: 10,
-                    discountType: 'percentage',
-                    discountValue: 0
-                }
-            };
-        }
-        
-        // Download backup file
-        function downloadBackup() {
-            const backupData = createBackupData();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `backup_${moment().format('YYYYMMDD_HHmmss')}.json`);
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-        
-        // Restore from backup
-        function restoreFromBackup(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    try {
-                        const backupData = JSON.parse(e.target.result);
-                        resolve(backupData);
-                    } catch (error) {
-                        reject('Format file backup tidak valid');
-                    }
-                };
-                
-                reader.onerror = function() {
-                    reject('Gagal membaca file');
-                };
-                
-                reader.readAsText(file);
-            });
-        }
-        
-        // Show premium notification
-        function showPremiumNotification() {
-            const now = Date.now();
-            const timeSinceLastShown = now - premiumNotification.lastShown;
-            
-            // Cek apakah sudah waktunya menampilkan notifikasi lagi
-            if (timeSinceLastShown >= premiumNotification.interval) {
-                $('#premium-notification').removeClass('hidden');
-                
-                // Simpan waktu terakhir notifikasi ditampilkan
-                premiumNotification.lastShown = now;
-                localStorage.setItem(STORAGE_KEYS.PREMIUM_NOTIFICATION, JSON.stringify(premiumNotification));
-                
-                // Sembunyikan notifikasi setelah 8 detik
-                setTimeout(() => {
-                    $('#premium-notification').addClass('hidden');
-                }, premiumNotification.duration);
-            }
-        }
-        
         $(document).ready(function() {
-            // Set current date
-            updateCurrentDate();
+            // Initialize moment.js with Indonesian locale
+            moment.locale('id');
             
-            // Update date every minute
-            setInterval(updateCurrentDate, 60000);
-            
-            // Load settings
-            loadSettings();
-            
-            // Show setup modal if store info not set
-            if (!storeInfo) {
-                $('#setupModal').show();
-            } else {
-                initializeApp();
-                
-                // Tampilkan notifikasi premium jika sudah waktunya
-                setTimeout(showPremiumNotification, 2000);
-                
-                // Atur interval untuk menampilkan notifikasi setiap 2 jam
-                setInterval(showPremiumNotification, premiumNotification.interval);
+            // Update date and time
+            function updateDateTime() {
+                const now = moment();
+                $('#currentDate').text(now.format('dddd, D MMMM YYYY'));
+                $('#currentTime').text(now.format('HH:mm:ss'));
             }
             
-            // Close premium notification
-            $('.close-notification').click(function() {
-                $('#premium-notification').addClass('hidden');
+            // Update date and time every second
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+            
+            // Initialize variables
+            let cart = [];
+            let products = [];
+            let settings = {
+                taxRate: 0,
+                discountRate: 0,
+                currencySymbol: 'Rp'
+            };
+            
+            // Load data from localStorage
+            function loadData() {
+                const savedProducts = localStorage.getItem('products');
+                const savedCart = localStorage.getItem('cart');
+                const savedSettings = localStorage.getItem('settings');
                 
-                // Update waktu terakhir notifikasi ditampilkan
-                premiumNotification.lastShown = Date.now();
-                localStorage.setItem(STORAGE_KEYS.PREMIUM_NOTIFICATION, JSON.stringify(premiumNotification));
-            });
-            
-            // Settings button click
-            $('#settingsButton').click(function() {
-                $('#settingsModal').show();
-            });
-            
-            // Close settings modal
-            $('.close-settings-modal').click(function() {
-                $('#settingsModal').hide();
-            });
-            
-            // Save settings
-            $('.save-settings').click(function() {
-                const taxRate = parseFloat($('#taxRate').val()) || 0;
-                const discountType = $('#discountType').val();
-                const discountValue = parseFloat($('#discountValue').val()) || 0;
-                
-                // Validate inputs
-                if (taxRate < 0 || taxRate > 100) {
-                    showToast('Persentase pajak harus antara 0-100%', 'error');
-                    return;
+                if (savedProducts) {
+                    products = JSON.parse(savedProducts);
+                    renderProducts();
                 }
                 
-                if (discountValue < 0) {
-                    showToast('Nilai diskon tidak boleh negatif', 'error');
-                    return;
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                    renderCart();
                 }
                 
-                // Update settings
-                settings = {
-                    taxRate: taxRate,
-                    discountType: discountType,
-                    discountValue: discountValue
-                };
-                
-                // Save to local storage
-                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-                
-                // Update UI
-                $('#taxPercentage').text(taxRate);
-                
-                // Update cart calculations
-                updateCart();
-                
-                // Show success message
-                showToast('Pengaturan berhasil disimpan', 'success');
-                
-                // Close modal
-                $('#settingsModal').hide();
-            });
+                if (savedSettings) {
+                    settings = JSON.parse(savedSettings);
+                    applySettings();
+                }
+            }
             
-            // Discount type change
-            $('#discountType').change(function() {
-                if ($(this).val() === 'percentage') {
-                    $('#discountValueType').val('percentage');
+            // Save data to localStorage
+            function saveData() {
+                localStorage.setItem('products', JSON.stringify(products));
+                localStorage.setItem('cart', JSON.stringify(cart));
+                localStorage.setItem('settings', JSON.stringify(settings));
+            }
+            
+            // Apply settings to UI
+            function applySettings() {
+                $('#taxRate').val(settings.taxRate);
+                $('#discountRate').val(settings.discountRate);
+                $('#currencySymbol').val(settings.currencySymbol);
+                
+                $('#taxPercentage').text(settings.taxRate);
+                $('#discountPercentage').text(settings.discountRate);
+                
+                updateCartSummary();
+            }
+            
+            // Format currency
+            function formatCurrency(amount) {
+                if (settings.currencySymbol === 'Rp') {
+                    return `Rp ${parseInt(amount).toLocaleString('id-ID')}`;
                 } else {
-                    $('#discountValueType').val('fixed');
+                    return `${settings.currencySymbol} ${parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 }
-            });
+            }
             
-            // Backup data button
-            $('#backupDataBtn').click(function() {
-                showLoading('Menyiapkan backup data...');
-                
-                setTimeout(() => {
-                    downloadBackup();
-                    hideLoading();
-                    showToast('Backup data berhasil diunduh', 'success');
-                }, 500);
-            });
-            
-            // Restore data from file
-            $('#restoreFile').change(function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                showConfirmation('Restore data akan menggantikan semua data saat ini. Lanjutkan?', (confirmed) => {
-                    if (confirmed) {
-                        showLoading('Memproses file backup...');
-                        
-                        restoreFromBackup(file)
-                            .then(backupData => {
-                                // Validate backup data
-                                if (!backupData.products || !backupData.transactions || !backupData.settings) {
-                                    throw new Error('Format backup tidak valid');
-                                }
-                                
-                                // Save backup data to local storage
-                                localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(backupData.products));
-                                localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(backupData.transactions));
-                                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(backupData.settings));
-                                
-                                if (backupData.storeInfo) {
-                                    localStorage.setItem(STORAGE_KEYS.STORE_INFO, JSON.stringify(backupData.storeInfo));
-                                }
-                                
-                                // Reload data
-                                products = backupData.products;
-                                transactions = backupData.transactions;
-                                settings = backupData.settings;
-                                if (backupData.storeInfo) storeInfo = backupData.storeInfo;
-                                
-                                // Reset cart
-                                resetCart();
-                                
-                                // Reload UI
-                                loadProducts();
-                                loadSettings();
-                                
-                                // Show success message
-                                showToast('Data berhasil di-restore', 'success');
-                            })
-                            .catch(error => {
-                                showToast(error.message || 'Gagal memproses backup', 'error');
-                            })
-                            .finally(() => {
-                                hideLoading();
-                                $('#restoreFile').val('');
-                            });
-                    } else {
-                        $('#restoreFile').val('');
-                    }
-                });
-            });
-            
-            // Store setup form handler
-            $('#setupForm').submit(function(e) {
-                e.preventDefault();
-                const storeName = $('#storeName').val().trim();
-                const userRole = $('input[name="userRole"]:checked').val();
-                const userPosition = $('#userPosition').val();
-                const storeAddress = $('#storeAddress').val().trim();
-                const storePhone = $('#storePhone').val().trim();
-                
-                // Reset error messages
-                $('.error-message').hide().text('');
-                
-                // Validate inputs
-                let isValid = true;
-                
-                if (!storeName) {
-                    $('#storeNameError').text('Nama toko harus diisi').show();
-                    isValid = false;
-                }
-                
-                if (!storeAddress) {
-                    $('#storeAddressError').text('Alamat toko harus diisi').show();
-                    isValid = false;
-                }
-                
-                if (!storePhone) {
-                    $('#storePhoneError').text('Nomor HP harus diisi').show();
-                    isValid = false;
-                } else if (!/^[0-9]{10,13}$/.test(storePhone)) {
-                    $('#storePhoneError').text('Nomor HP harus 10-13 digit angka').show();
-                    isValid = false;
-                }
-                
-                if (!isValid) return;
-                
-                // Show loading
-                showLoading('Menyimpan setup toko...');
-                
-                // Simulate async operation
-                setTimeout(() => {
-                    // Save store info
-                    storeInfo = {
-                        storeName: storeName,
-                        userRole: userRole,
-                        userPosition: userPosition,
-                        storeAddress: storeAddress,
-                        storePhone: storePhone,
-                        setupDate: new Date()
-                    };
-                    
-                    localStorage.setItem(STORAGE_KEYS.STORE_INFO, JSON.stringify(storeInfo));
-                    
-                    // Initialize app
-                    initializeApp();
-                    
-                    // Hide setup modal
-                    $('#setupModal').hide();
-                    
-                    // Hide loading
-                    hideLoading();
-                    
-                    // Show success toast
-                    showToast('Setup toko berhasil disimpan', 'success');
-                }, 1000);
-            });
-            
-            // Role radio button change
-            $('input[name="userRole"]').change(function() {
-                if ($(this).val() === 'owner') {
-                    $('#userPosition').val('owner');
-                } else {
-                    $('#userPosition').val('kasir');
-                }
-            });
-            
-            // Add product button
-            $('#addProductBtn').click(function() {
-                $('#productModalTitle').text('Tambah Produk');
-                $('#productId').val('');
-                $('#productName').val('');
-                $('#productCategory').val('');
-                $('#productPrice').val('');
-                $('#productStock').val('');
-                $('.error-message').hide();
-                $('#productModal').show();
-            });
-            
-            // Save product
-            $('.save-product').click(function() {
-                const productId = $('#productId').val();
-                const productName = $('#productName').val().trim();
-                const productCategory = $('#productCategory').val().trim();
-                const productPrice = parseFloat($('#productPrice').val()) || 0;
-                const productStock = parseInt($('#productStock').val()) || 0;
-                
-                // Reset error messages
-                $('.error-message').hide().text('');
-                
-                // Validate inputs
-                let isValid = true;
-                
-                if (!productName) {
-                    $('#productNameError').text('Nama produk harus diisi').show();
-                    isValid = false;
-                }
-                
-                if (!productCategory) {
-                    $('#productCategoryError').text('Kategori harus diisi').show();
-                    isValid = false;
-                }
-                
-                if (productPrice <= 0) {
-                    $('#productPriceError').text('Harga harus lebih dari 0').show();
-                    isValid = false;
-                }
-                
-                if (productStock < 0) {
-                    $('#productStockError').text('Stok tidak boleh negatif').show();
-                    isValid = false;
-                }
-                
-                if (!isValid) return;
-                
-                // Show loading
-                showLoading('Menyimpan produk...');
-                
-                // Simulate async operation
-                setTimeout(() => {
-                    if (productId) {
-                        // Edit existing product
-                        const productIndex = products.findIndex(p => p.id === productId);
-                        if (productIndex !== -1) {
-                            products[productIndex] = {
-                                ...products[productIndex],
-                                name: productName,
-                                category: productCategory,
-                                price: productPrice,
-                                stock: productStock
-                            };
-                            
-                            showToast('Produk berhasil diperbarui', 'success');
-                        }
-                    } else {
-                        // Add new product
-                        const newProduct = {
-                            id: 'P' + moment().format('YYYYMMDDHHmmss'),
-                            name: productName,
-                            category: productCategory,
-                            price: productPrice,
-                            stock: productStock
-                        };
-                        
-                        products.push(newProduct);
-                        showToast('Produk berhasil ditambahkan', 'success');
-                    }
-                    
-                    // Save products
-                    saveProducts();
-                    
-                    // Refresh product list
-                    loadProducts();
-                    
-                    // Close modal
-                    $('#productModal').hide();
-                    
-                    // Hide loading
-                    hideLoading();
-                }, 800);
-            });
-            
-            // Edit product (delegated event)
-            $(document).on('click', '.edit-product', function() {
-                const productId = $(this).data('id');
-                const product = products.find(p => p.id === productId);
-                
-                if (product) {
-                    $('#productModalTitle').text('Edit Produk');
-                    $('#productId').val(product.id);
-                    $('#productName').val(product.name);
-                    $('#productCategory').val(product.category);
-                    $('#productPrice').val(product.price);
-                    $('#productStock').val(product.stock);
-                    $('.error-message').hide();
-                    $('#productModal').show();
-                }
-            });
-            
-            // Delete product (delegated event)
-            $(document).on('click', '.delete-product', function() {
-                const productId = $(this).data('id');
-                const product = products.find(p => p.id === productId);
-                
-                showConfirmation(`Apakah Anda yakin ingin menghapus produk "${product?.name || 'ini'}"?`, (confirmed) => {
-                    if (confirmed) {
-                        showLoading('Menghapus produk...');
-                        
-                        setTimeout(() => {
-                            products = products.filter(p => p.id !== productId);
-                            saveProducts();
-                            loadProducts();
-                            
-                            hideLoading();
-                            showToast('Produk berhasil dihapus', 'success');
-                        }, 800);
-                    }
-                });
-            });
-            
-            // Add product to cart (delegated event)
-            $(document).on('click', '.add-to-cart', function() {
-                const productId = $(this).data('id');
-                const product = products.find(p => p.id === productId);
-                
-                if (product) {
-                    // Check if product is out of stock
-                    if (product.stock <= 0) {
-                        showToast('Stok produk habis', 'error');
-                        return;
-                    }
-                    
-                    // Check if product already in cart
-                    const existingItem = currentCart.items.find(item => item.product.id === productId);
-                    
-                    if (existingItem) {
-                        // Check if quantity exceeds stock
-                        if (existingItem.quantity + 1 > product.stock) {
-                            showToast('Jumlah melebihi stok yang tersedia', 'error');
-                            return;
-                        }
-                        existingItem.quantity += 1;
-                    } else {
-                        currentCart.items.push({
-                            product: product,
-                            quantity: 1
-                        });
-                    }
-                    
-                    updateCart();
-                    showToast(`${product.name} ditambahkan ke keranjang`, 'success');
-                }
-            });
-            
-            // Remove item from cart (delegated event)
-            $(document).on('click', '.remove-from-cart', function() {
-                const productId = $(this).data('id');
-                const product = products.find(p => p.id === productId);
-                currentCart.items = currentCart.items.filter(item => item.product.id !== productId);
-                updateCart();
-                
-                if (product) {
-                    showToast(`${product.name} dihapus dari keranjang`, 'info');
-                }
-            });
-            
-            // Update item quantity in cart (delegated event)
-            $(document).on('change', '.cart-item-quantity', function() {
-                const productId = $(this).data('id');
-                const quantity = parseInt($(this).val()) || 1;
-                
-                const item = currentCart.items.find(item => item.product.id === productId);
-                if (item) {
-                    // Check if quantity exceeds stock
-                    const product = products.find(p => p.id === productId);
-                    if (product && quantity > product.stock) {
-                        showToast('Jumlah melebihi stok yang tersedia', 'error');
-                        $(this).val(item.quantity); // Reset to previous value
-                        return;
-                    }
-                    
-                    item.quantity = quantity;
-                    updateCart();
-                }
-            });
-            
-            // Additional fee button
-            $('#addAdditionalFeeBtn').click(function() {
-                // Reset additional fee form
-                $('#feeNone').prop('checked', true);
-                $('#shippingFeeAmount').val('');
-                $('#otherFeeAmount').val('');
-                $('#otherFeeDescription').val('');
-                $('#charCount').text('0');
-                $('#shippingFeeDetails').hide();
-                $('#otherFeeDetails').hide();
-                
-                $('#additionalFeeModal').show();
-            });
-            
-            // Additional fee option change
-            $('input[name="additionalFee"]').change(function() {
-                const selectedOption = $(this).val();
-                
-                $('#shippingFeeDetails').hide();
-                $('#otherFeeDetails').hide();
-                
-                if (selectedOption === 'shipping') {
-                    $('#shippingFeeDetails').show();
-                } else if (selectedOption === 'other') {
-                    $('#otherFeeDetails').show();
-                }
-            });
-            
-            // Character count for description
-            $('#otherFeeDescription').on('input', function() {
-                const charCount = $(this).val().length;
-                $('#charCount').text(charCount);
-            });
-            
-            // Save additional fee
-            $('.save-additional-fee').click(function() {
-                const selectedOption = $('input[name="additionalFee"]:checked').val();
-                
-                if (selectedOption === 'shipping') {
-                    const shippingFee = parseFloat($('#shippingFeeAmount').val()) || 0;
-                    if (shippingFee < 0) {
-                        showToast('Biaya kirim tidak boleh negatif', 'error');
-                        return;
-                    }
-                    
-                    currentCart.additionalFee = shippingFee;
-                    currentCart.additionalFeeDescription = 'Biaya Kirim/Antar';
-                } else if (selectedOption === 'other') {
-                    const otherFee = parseFloat($('#otherFeeAmount').val()) || 0;
-                    const description = $('#otherFeeDescription').val().trim();
-                    
-                    if (otherFee < 0) {
-                        showToast('Biaya tidak boleh negatif', 'error');
-                        return;
-                    }
-                    
-                    if (description === '') {
-                        showToast('Keterangan biaya harus diisi', 'error');
-                        return;
-                    }
-                    
-                    currentCart.additionalFee = otherFee;
-                    currentCart.additionalFeeDescription = description;
-                } else {
-                    currentCart.additionalFee = 0;
-                    currentCart.additionalFeeDescription = '';
-                }
-                
-                updateCart();
-                $('#additionalFeeModal').hide();
-                showToast('Biaya tambahan berhasil disimpan', 'success');
-            });
-            
-            // Close additional fee modal
-            $('.close-additional-fee-modal').click(function() {
-                $('#additionalFeeModal').hide();
-            });
-            
-            // Complete payment
-            $('#completePayment').click(function() {
-                const paymentAmount = parseFloat($('#paymentAmount').val()) || 0;
-                
-                if (currentCart.items.length === 0) {
-                    showToast('Keranjang belanja kosong', 'warning');
-                    return;
-                }
-                
-                if (paymentAmount < currentCart.total) {
-                    showToast('Jumlah pembayaran kurang dari total', 'error');
-                    return;
-                }
-                
-                showConfirmation('Selesaikan transaksi ini dan cetak struk?', (confirmed) => {
-                    if (confirmed) {
-                        showLoading('Menyelesaikan transaksi...');
-                        
-                        setTimeout(() => {
-                            // Create transaction
-                            const transaction = {
-                                id: 'T' + moment().format('YYYYMMDDHHmmss'),
-                                date: new Date(),
-                                items: currentCart.items,
-                                subtotal: currentCart.subtotal,
-                                discount: currentCart.discount,
-                                tax: currentCart.tax,
-                                additionalFee: currentCart.additionalFee,
-                                additionalFeeDescription: currentCart.additionalFeeDescription,
-                                total: currentCart.total,
-                                paymentMethod: $('input[name="paymentMethod"]:checked').val(),
-                                paymentAmount: paymentAmount,
-                                change: paymentAmount - currentCart.total,
-                                cashier: storeInfo.userPosition === 'owner' ? 'Owner' : 'Kasir'
-                            };
-                            
-                            // Update product stock
-                            transaction.items.forEach(item => {
-                                const productIndex = products.findIndex(p => p.id === item.product.id);
-                                if (productIndex !== -1) {
-                                    products[productIndex].stock -= item.quantity;
-                                    if (products[productIndex].stock < 0) products[productIndex].stock = 0;
-                                }
-                            });
-                            
-                            // Save products with updated stock
-                            saveProducts();
-                            
-                            // Add to transactions
-                            transactions.unshift(transaction);
-                            saveTransactions();
-                            
-                            // Generate receipt
-                            generateReceipt(transaction);
-                            
-                            // Show receipt for printing
-                            $('#receiptPrint').show();
-                            
-                            // Print receipt automatically after a short delay
-                            setTimeout(() => {
-                                window.print();
-                                $('#receiptPrint').hide();
-                            }, 500);
-                            
-                            // Reset cart
-                            resetCart();
-                            
-                            // Hide loading
-                            hideLoading();
-                            
-                            // Show success message
-                            showToast('Transaksi berhasil disimpan!', 'success');
-                        }, 1000);
-                    }
-                });
-            });
-            
-            // Print receipt button
-            $(document).on('click', '#printReceiptBtn', function() {
-                window.print();
-            });
-            
-            // Download receipt as PDF
-            $(document).on('click', '#downloadReceiptBtn', function() {
-                showLoading('Membuat PDF...');
-                const transactionId = $('#receiptTransactionId').text().replace('No. Transaksi: ', '');
-                generatePDF('receiptPrint', `Struk_${transactionId}.pdf`).then(() => {
-                    hideLoading();
-                    showToast('PDF berhasil diunduh', 'success');
-                });
-            });
-            
-            // Close receipt
-            $(document).on('click', '#closeReceiptBtn, .close-receipt', function() {
-                $('#receiptPrint').hide();
-            });
-            
-            // Close modals
-            $('.modal-close, .close-product-modal').click(function() {
-                $(this).closest('.modal').hide();
-            });
-            
-            // Search products
-            $('#productSearch').on('input', function() {
-                const searchTerm = $(this).val().toLowerCase();
-                loadProducts(searchTerm);
-            });
-        });
-        
-        // Update current date
-        function updateCurrentDate() {
-            $('#currentDate').text(moment().format('dddd, D MMMM YYYY, HH:mm'));
-        }
-        
-        // Load settings
-        function loadSettings() {
-            $('#taxRate').val(settings.taxRate);
-            $('#discountType').val(settings.discountType);
-            $('#discountValue').val(settings.discountValue);
-            $('#discountValueType').val(settings.discountType === 'percentage' ? 'percentage' : 'fixed');
-            
-            // Update UI
-            $('#taxPercentage').text(settings.taxRate);
-        }
-        
-        // Initialize app after setup
-        function initializeApp() {
-            // Update header with store info
-            $('#storeNameHeader').text(storeInfo.storeName);
-            $('#loggedInUser').text(storeInfo.userPosition === 'owner' ? 'Owner' : 'Kasir');
-            
-            // Load products
-            loadProducts();
-            
-            // Update cart
-            updateCart();
-            
-            // Show main app
-            $('#mainApp').fadeIn();
-        }
-        
-        // Save data to local storage
-        function saveProducts() {
-            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
-        }
-        
-        function saveTransactions() {
-            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
-        }
-        
-        function saveCurrentCart() {
-            localStorage.setItem(STORAGE_KEYS.CURRENT_CART, JSON.stringify(currentCart));
-        }
-        
-        // Load products to UI
-        function loadProducts(searchTerm = '') {
-            let filteredProducts = [...products];
-            
-            // Apply search filter
-            if (searchTerm) {
-                filteredProducts = filteredProducts.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm) || 
-                    p.category.toLowerCase().includes(searchTerm)
+            // Render products list
+            function renderProducts() {
+                const searchTerm = $('#searchProduct').val().toLowerCase();
+                const filteredProducts = products.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm)
                 );
-            }
-            
-            // Display products
-            $('#productListBody').empty();
-            
-            if (filteredProducts.length === 0) {
-                $('#productListBody').html(`
-                    <tr>
-                        <td colspan="4">
-                            <div class="empty-state">
+                
+                $('#productsList').empty();
+                
+                if (filteredProducts.length === 0) {
+                    $('#productsList').append(`
+                        <tr>
+                            <td colspan="3" class="empty-state">
                                 <i class="fas fa-box-open"></i>
-                                <p>Tidak ada produk ditemukan</p>
-                            </div>
-                        </td>
-                    </tr>
-                `);
-            } else {
-                filteredProducts.forEach(product => {
-                    const stockClass = product.stock > 5 ? 'text-success' : product.stock > 0 ? 'text-warning' : 'text-danger';
-                    
-                    $('#productListBody').append(`
+                                <p>Tidak ada produk</p>
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
+                
+                filteredProducts.forEach((product, index) => {
+                    $('#productsList').append(`
                         <tr>
                             <td>${product.name}</td>
                             <td>${formatCurrency(product.price)}</td>
-                            <td class="${stockClass}">${product.stock}</td>
                             <td>
-                                <button class="btn btn-success btn-sm add-to-cart" data-id="${product.id}" 
-                                    ${product.stock <= 0 ? 'disabled title="Stok habis"' : ''}>
-                                    <i class="fas fa-cart-plus"></i> Tambah
+                                <button class="btn btn-primary btn-sm add-existing-product" data-index="${index}">
+                                    <i class="fas fa-plus"></i> Tambah
                                 </button>
-                                <button class="btn btn-info btn-sm edit-product" data-id="${product.id}" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm delete-product" data-id="${product.id}" title="Hapus">
+                                <button class="btn btn-danger btn-sm delete-product" data-index="${index}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -2535,152 +1717,514 @@
                     `);
                 });
             }
-        }
-        
-        // Update cart UI
-        function updateCart() {
-            // Calculate subtotal
-            currentCart.subtotal = currentCart.items.reduce((total, item) => {
-                return total + (item.product.price * item.quantity);
-            }, 0);
             
-            // Calculate discount
-            currentCart.discount = calculateDiscount(currentCart.subtotal);
-            
-            // Calculate tax
-            const taxableAmount = currentCart.subtotal - currentCart.discount;
-            currentCart.tax = taxableAmount * (settings.taxRate / 100);
-            
-            // Calculate total
-            currentCart.total = taxableAmount + currentCart.tax + currentCart.additionalFee;
-            
-            // Save cart
-            saveCurrentCart();
-            
-            // Update cart UI
-            $('#cartItems').empty();
-            
-            if (currentCart.items.length === 0) {
-                $('#cartItems').html(`
-                    <div class="empty-state">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Keranjang belanja kosong</p>
-                    </div>
-                `);
-            } else {
-                currentCart.items.forEach(item => {
-                    const itemTotal = item.product.price * item.quantity;
+            // Render cart items
+            function renderCart() {
+                $('#cartItems').empty();
+                
+                if (cart.length === 0) {
                     $('#cartItems').append(`
-                        <div class="cart-item">
+                        <div class="empty-state" id="emptyCart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Keranjang belanja masih kosong</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                cart.forEach((item, index) => {
+                    $('#cartItems').append(`
+                        <div class="cart-item" data-index="${index}">
                             <div class="cart-item-info">
-                                <div class="cart-item-name">${item.product.name}</div>
-                                <div class="cart-item-price">${formatCurrency(item.product.price)}</div>
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">${formatCurrency(item.price)}</div>
                             </div>
                             <div class="cart-item-qty">
-                                <input type="number" value="${item.quantity}" min="1" max="${item.product.stock}" 
-                                    class="cart-item-quantity" data-id="${item.product.id}">
-                                <button class="btn btn-danger btn-sm ml-2 remove-from-cart" data-id="${item.product.id}">
+                                <button class="decrease-qty"><i class="fas fa-minus"></i></button>
+                                <input type="number" value="${item.quantity}" min="1" class="item-qty">
+                                <button class="increase-qty"><i class="fas fa-plus"></i></button>
+                                <button class="btn btn-danger btn-sm ml-2 remove-item">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
                     `);
                 });
+                
+                updateCartSummary();
             }
             
-            // Update summary
-            $('#cartSubtotal').text(formatCurrency(currentCart.subtotal));
-            $('#cartDiscount').text(formatCurrency(currentCart.discount));
-            $('#cartTax').text(formatCurrency(currentCart.tax));
-            $('#cartAdditionalFee').text(formatCurrency(currentCart.additionalFee));
-            $('#cartTotal').text(formatCurrency(currentCart.total));
-            
-            // Update additional fee description
-            if (currentCart.additionalFee > 0) {
-                $('#additionalFeeDescription').text(currentCart.additionalFeeDescription).show();
-            } else {
-                $('#additionalFeeDescription').text('').hide();
-            }
-        }
-        
-        // Reset cart
-        function resetCart() {
-            currentCart = {
-                items: [],
-                discount: 0,
-                tax: 0,
-                additionalFee: 0,
-                additionalFeeDescription: '',
-                subtotal: 0,
-                total: 0
-            };
-            
-            saveCurrentCart();
-            updateCart();
-            
-            // Reset payment form
-            $('#paymentAmount').val('');
-            $('#cash').prop('checked', true);
-        }
-        
-        // Generate receipt
-        function generateReceipt(transaction) {
-            const receiptDate = moment(transaction.date).format('DD/MM/YYYY HH:mm:ss');
-            const paymentMethod = transaction.paymentMethod === 'cash' ? 'Tunai' : 
-                                transaction.paymentMethod === 'transfer' ? 'Transfer Bank' : 'E-Wallet';
-            
-            // Update receipt header
-            $('#receiptStoreName').text(storeInfo.storeName);
-            $('#receiptStoreAddress').text(storeInfo.storeAddress);
-            $('#receiptStorePhone').text('Telp: ' + storeInfo.storePhone);
-            $('#receiptDate').text(receiptDate);
-            $('#receiptTransactionId').text('No. Transaksi: ' + transaction.id);
-            
-            // Create items HTML
-            let itemsHTML = '';
-            transaction.items.forEach(item => {
-                const itemTotal = item.product.price * item.quantity;
-                itemsHTML += `
-                    <div class="receipt-item">
-                        <div class="receipt-item-name">${item.quantity}x ${item.product.name}</div>
-                        <div class="receipt-item-price">${formatCurrency(itemTotal)}</div>
-                    </div>
-                `;
-            });
-            
-            // Update receipt items
-            $('#receiptItems').html(itemsHTML);
-            
-            // Update receipt summary
-            $('#receiptSubtotal').text(formatCurrency(transaction.subtotal));
-            $('#receiptDiscount').text(formatCurrency(transaction.discount));
-            $('#receiptTaxPercentage').text(settings.taxRate);
-            $('#receiptTax').text(formatCurrency(transaction.tax));
-            $('#receiptTotal').text(formatCurrency(transaction.total));
-            $('#receiptPaymentMethod').text(paymentMethod);
-            $('#receiptPaymentAmount').text(formatCurrency(transaction.paymentAmount));
-            $('#receiptChange').text(formatCurrency(transaction.change));
-            $('#receiptCashier').text(transaction.cashier);
-            
-            // Update additional fee if exists
-            if (transaction.additionalFee > 0) {
-                $('#receiptAdditionalFeeItem').show();
-                $('#receiptAdditionalFeeLabel').text(transaction.additionalFeeDescription);
-                $('#receiptAdditionalFeeValue').text(formatCurrency(transaction.additionalFee));
-            } else {
-                $('#receiptAdditionalFeeItem').hide();
+            // Update cart summary
+            function updateCartSummary() {
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+                
+                // Calculate tax
+                const taxAmount = subtotal * (settings.taxRate / 100);
+                
+                // Calculate discount
+                const discountAmount = subtotal * (settings.discountRate / 100);
+                
+                // Calculate additional fee
+                const additionalFee = parseFloat($('#feeAmount').val()) || 0;
+                
+                // Calculate total
+                const total = subtotal + taxAmount - discountAmount + additionalFee;
+                
+                // Update UI
+                $('#subtotal').text(formatCurrency(subtotal));
+                $('#taxAmount').text(formatCurrency(taxAmount));
+                $('#discountAmount').text(formatCurrency(discountAmount));
+                $('#totalAmount').text(formatCurrency(total));
             }
             
-            // Fixed footer text
-            const footerHTML = `
-                <div>Terima kasih telah berbelanja</div>
-                <div class="receipt-order-info">Order Aplikasi Payment Pro</div>
-                <div class="receipt-order-info">kirim email: lenterakaryasitubondo@gmail.com</div>
-                <div>Kasir: <span id="receiptCashier">${transaction.cashier}</span></div>
-            `;
+            // Show toast notification
+            function showToast(message, type = 'info') {
+                const toast = $('#toast');
+                toast.removeClass('success error warning info').addClass(type);
+                $('#toast-message').text(message);
+                toast.addClass('show');
+                
+                setTimeout(() => {
+                    toast.removeClass('show');
+                }, 3000);
+            }
             
-            $('.receipt-footer').html(footerHTML);
-        }
+            // Show confirmation dialog
+            function showConfirmation(message, callback) {
+                $('#confirmationMessage').text(message);
+                $('#confirmationDialog').show();
+                
+                $('#confirmOk').off('click').on('click', function() {
+                    $('#confirmationDialog').hide();
+                    callback(true);
+                });
+                
+                $('#confirmCancel').off('click').on('click', function() {
+                    $('#confirmationDialog').hide();
+                    callback(false);
+                });
+            }
+            
+            // Show loading overlay
+            function showLoading(message = 'Memproses...') {
+                $('#loadingText').text(message);
+                $('#loadingOverlay').show();
+            }
+            
+            // Hide loading overlay
+            function hideLoading() {
+                $('#loadingOverlay').hide();
+            }
+            
+            // Generate receipt
+            function generateReceipt() {
+                const now = moment();
+                $('#receiptDate').text(`Tanggal: ${now.format('DD/MM/YYYY HH:mm:ss')}`);
+                
+                // Generate transaction ID
+                const transactionId = `TRX-${now.format('YYYYMMDD-HHmmss')}`;
+                $('#receiptTransactionId').text(transactionId);
+                
+                // Add items to receipt
+                $('#receiptItems').empty();
+                cart.forEach(item => {
+                    $('#receiptItems').append(`
+                        <div class="receipt-item">
+                            <div class="receipt-item-name">${item.name} x${item.quantity}</div>
+                            <div class="receipt-item-price">${formatCurrency(item.price * item.quantity)}</div>
+                        </div>
+                    `);
+                });
+                
+                // Calculate amounts
+                let subtotal = 0;
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+                
+                const taxAmount = subtotal * (settings.taxRate / 100);
+                const discountAmount = subtotal * (settings.discountRate / 100);
+                const additionalFee = parseFloat($('#feeAmount').val()) || 0;
+                const total = subtotal + taxAmount - discountAmount + additionalFee;
+                
+                // Get payment method
+                const paymentMethod = $('input[name="paymentMethod"]:checked').attr('id').replace('payment', '');
+                let paymentMethodText = 'Tunai';
+                
+                switch(paymentMethod) {
+                    case 'Transfer':
+                        paymentMethodText = 'Transfer Bank';
+                        break;
+                    case 'QRIS':
+                        paymentMethodText = 'QRIS';
+                        break;
+                    case 'Other':
+                        paymentMethodText = 'Lainnya';
+                        break;
+                }
+                
+                // Update receipt amounts
+                $('#receiptSubtotal').text(formatCurrency(subtotal));
+                $('#receiptTaxPercentage').text(settings.taxRate);
+                $('#receiptTaxAmount').text(formatCurrency(taxAmount));
+                $('#receiptDiscountPercentage').text(settings.discountRate);
+                $('#receiptDiscountAmount').text(formatCurrency(discountAmount));
+                $('#receiptTotal').text(formatCurrency(total));
+                $('#receiptPaymentMethod').text(paymentMethodText);
+                
+                // Show additional fee if exists
+                if (additionalFee > 0) {
+                    const feeType = $('input[name="additionalFee"]:checked').val();
+                    let feeLabel = 'Biaya Tambahan';
+                    
+                    if (feeType === 'delivery') feeLabel = 'Ongkos Kirim';
+                    else if (feeType === 'service') feeLabel = 'Biaya Layanan';
+                    
+                    const feeDescription = $('#feeDescription').val();
+                    if (feeDescription) {
+                        feeLabel += ` (${feeDescription})`;
+                    }
+                    
+                    $('#receiptFeeLabel').text(feeLabel);
+                    $('#receiptFeeAmount').text(formatCurrency(additionalFee));
+                    $('#receiptFeeRow').show();
+                } else {
+                    $('#receiptFeeRow').hide();
+                }
+                
+                // Show customer info if exists
+                const customerName = $('#customerName').val();
+                const customerPhone = $('#customerPhone').val();
+                
+                if (customerName || customerPhone) {
+                    $('#receiptItems').append(`
+                        <div style="margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
+                            <div><strong>Pelanggan:</strong> ${customerName || '-'}</div>
+                            <div><strong>Telepon:</strong> ${customerPhone || '-'}</div>
+                        </div>
+                    `);
+                }
+            }
+            
+            // Initialize event listeners
+            function initEventListeners() {
+                // Add product to cart
+                $('#addProduct').on('click', function() {
+                    const name = $('#productName').val().trim();
+                    const price = parseFloat($('#productPrice').val());
+                    const quantity = parseInt($('#productQuantity').val());
+                    
+                    // Validate inputs
+                    if (!name) {
+                        $('#productNameError').show();
+                        return;
+                    } else {
+                        $('#productNameError').hide();
+                    }
+                    
+                    if (!price || price <= 0) {
+                        $('#productPriceError').show();
+                        return;
+                    } else {
+                        $('#productPriceError').hide();
+                    }
+                    
+                    // Add to cart
+                    cart.push({
+                        name: name,
+                        price: price,
+                        quantity: quantity
+                    });
+                    
+                    // Add to products list if not exists
+                    const productExists = products.some(product => product.name === name);
+                    if (!productExists) {
+                        products.push({
+                            name: name,
+                            price: price
+                        });
+                    }
+                    
+                    // Save data and update UI
+                    saveData();
+                    renderCart();
+                    renderProducts();
+                    
+                    // Reset form
+                    $('#productName').val('');
+                    $('#productPrice').val('');
+                    $('#productQuantity').val(1);
+                    
+                    showToast('Produk berhasil ditambahkan ke keranjang', 'success');
+                });
+                
+                // Search products
+                $('#searchProduct').on('input', function() {
+                    renderProducts();
+                });
+                
+                // Add existing product to cart
+                $(document).on('click', '.add-existing-product', function() {
+                    const index = $(this).data('index');
+                    const product = products[index];
+                    
+                    cart.push({
+                        name: product.name,
+                        price: product.price,
+                        quantity: 1
+                    });
+                    
+                    saveData();
+                    renderCart();
+                    showToast('Produk berhasil ditambahkan ke keranjang', 'success');
+                });
+                
+                // Delete product from list
+                $(document).on('click', '.delete-product', function() {
+                    const index = $(this).data('index');
+                    
+                    showConfirmation('Apakah Anda yakin ingin menghapus produk ini?', function(confirmed) {
+                        if (confirmed) {
+                            products.splice(index, 1);
+                            saveData();
+                            renderProducts();
+                            showToast('Produk berhasil dihapus', 'success');
+                        }
+                    });
+                });
+                
+                // Update item quantity
+                $(document).on('click', '.increase-qty', function() {
+                    const index = $(this).closest('.cart-item').data('index');
+                    cart[index].quantity += 1;
+                    saveData();
+                    renderCart();
+                });
+                
+                $(document).on('click', '.decrease-qty', function() {
+                    const index = $(this).closest('.cart-item').data('index');
+                    if (cart[index].quantity > 1) {
+                        cart[index].quantity -= 1;
+                        saveData();
+                        renderCart();
+                    }
+                });
+                
+                $(document).on('input', '.item-qty', function() {
+                    const index = $(this).closest('.cart-item').data('index');
+                    const newQty = parseInt($(this).val());
+                    
+                    if (newQty > 0) {
+                        cart[index].quantity = newQty;
+                        saveData();
+                        updateCartSummary();
+                    }
+                });
+                
+                // Remove item from cart
+                $(document).on('click', '.remove-item', function() {
+                    const index = $(this).closest('.cart-item').data('index');
+                    
+                    showConfirmation('Apakah Anda yakin ingin menghapus item ini?', function(confirmed) {
+                        if (confirmed) {
+                            cart.splice(index, 1);
+                            saveData();
+                            renderCart();
+                            showToast('Item berhasil dihapus dari keranjang', 'success');
+                        }
+                    });
+                });
+                
+                // Additional fee options
+                $('input[name="additionalFee"]').on('change', function() {
+                    if ($(this).val() === 'none') {
+                        $('#feeDetails').hide();
+                        $('#feeAmount').val(0);
+                    } else {
+                        $('#feeDetails').show();
+                    }
+                    updateCartSummary();
+                });
+                
+                $('#feeAmount').on('input', function() {
+                    updateCartSummary();
+                });
+                
+                // Checkout
+                $('#checkout').on('click', function() {
+                    if (cart.length === 0) {
+                        showToast('Keranjang belanja masih kosong', 'warning');
+                        return;
+                    }
+                    
+                    generateReceipt();
+                    $('#receiptModal').show();
+                });
+                
+                // Reset cart
+                $('#resetCart').on('click', function() {
+                    if (cart.length === 0) {
+                        showToast('Keranjang belanja sudah kosong', 'info');
+                        return;
+                    }
+                    
+                    showConfirmation('Apakah Anda yakin ingin mengosongkan keranjang?', function(confirmed) {
+                        if (confirmed) {
+                            cart = [];
+                            saveData();
+                            renderCart();
+                            showToast('Keranjang berhasil dikosongkan', 'success');
+                        }
+                    });
+                });
+                
+                // Print receipt
+                $('#printReceipt').on('click', function() {
+                    window.print();
+                });
+                
+                // Settings button
+                $('#settingsButton').on('click', function() {
+                    $('#settingsModal').show();
+                });
+                
+                // Save settings
+                $('#saveSettings').on('click', function() {
+                    settings.taxRate = parseFloat($('#taxRate').val()) || 0;
+                    settings.discountRate = parseFloat($('#discountRate').val()) || 0;
+                    settings.currencySymbol = $('#currencySymbol').val();
+                    
+                    saveData();
+                    applySettings();
+                    
+                    $('#settingsModal').hide();
+                    showToast('Pengaturan berhasil disimpan', 'success');
+                });
+                
+                // Backup data
+                $('#backupData').on('click', function() {
+                    const data = {
+                        products: products,
+                        settings: settings
+                    };
+                    
+                    const dataStr = JSON.stringify(data);
+                    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                    
+                    const exportFileDefaultName = `online-store-backup-${moment().format('YYYY-MM-DD')}.json`;
+                    
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                    
+                    showToast('Data berhasil dibackup', 'success');
+                });
+                
+                // Restore data
+                $('#restoreData').on('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            
+                            if (data.products) products = data.products;
+                            if (data.settings) {
+                                settings = data.settings;
+                                applySettings();
+                            }
+                            
+                            saveData();
+                            renderProducts();
+                            
+                            showToast('Data berhasil dipulihkan', 'success');
+                        } catch (error) {
+                            showToast('Gagal memulihkan data. File mungkin rusak.', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                    
+                    // Reset file input
+                    $(this).val('');
+                });
+                
+                // Close modals
+                $('.modal-close').on('click', function() {
+                    $(this).closest('.modal').hide();
+                });
+                
+                // Close modal when clicking outside
+                $(window).on('click', function(e) {
+                    if ($(e.target).hasClass('modal')) {
+                        $(e.target).hide();
+                    }
+                });
+            }
+            
+            // Initialize premium notification
+            function initPremiumNotification() {
+                const notification = $('#premium-notification');
+                const closeButton = $('.close-notification');
+                let countdown = 300; // 5 minutes in seconds
+                
+                // Check if notification was previously closed
+                const notificationClosed = localStorage.getItem('premiumNotificationClosed');
+                const lastNotificationTime = localStorage.getItem('lastNotificationTime');
+                const currentTime = new Date().getTime();
+                
+                // Show notification if:
+                // 1. It hasn't been closed before, OR
+                // 2. It's been more than 2 hours since last shown
+                if (!notificationClosed || (currentTime - lastNotificationTime) > 2 * 60 * 60 * 1000) {
+                    notification.removeClass('hidden');
+                    
+                    // Start countdown timer
+                    const countdownInterval = setInterval(function() {
+                        countdown--;
+                        
+                        const minutes = Math.floor(countdown / 60);
+                        const seconds = countdown % 60;
+                        
+                        $('#countdown').text(`Notifikasi akan tertutup dalam ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            notification.addClass('hidden');
+                            localStorage.setItem('premiumNotificationClosed', 'true');
+                            localStorage.setItem('lastNotificationTime', currentTime);
+                        }
+                    }, 1000);
+                    
+                    // Close button handler
+                    closeButton.on('click', function() {
+                        clearInterval(countdownInterval);
+                        notification.addClass('hidden');
+                        localStorage.setItem('premiumNotificationClosed', 'true');
+                        localStorage.setItem('lastNotificationTime', currentTime);
+                    });
+                    
+                    // Update last notification time
+                    localStorage.setItem('lastNotificationTime', currentTime);
+                }
+            }
+            
+            // Initialize the application
+            function init() {
+                loadData();
+                initEventListeners();
+                initPremiumNotification();
+            }
+            
+            // Start the application
+            init();
+        });
     </script>
 </body>
 </html>
