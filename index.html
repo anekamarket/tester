@@ -385,6 +385,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            align-items: center;
         }
 
         .summary-label {
@@ -1100,195 +1101,234 @@
             font-size: 18px;
         }
 
-        /* Premium Notification - Enhanced */
+        /* Premium Notification - UPDATED STYLES */
         #premium-notification {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            padding: 16px 24px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 380px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #fff;
+            padding: 20px;
             border-radius: 12px;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideDown 0.5s ease;
-            position: relative;
-            z-index: 100;
-            border: 1px solid rgba(255,255,255,0.2);
+            flex-direction: column;
+            animation: slideInRight 0.5s ease forwards;
+            border-left: 4px solid #ff6b6b;
+            transform: translateX(400px);
+        }
+
+        #premium-notification.show {
+            transform: translateX(0);
         }
 
         #premium-notification.hidden {
-            display: none;
+            animation: slideOutRight 0.5s ease forwards;
         }
 
-        #premium-notification .premium-content {
-            flex: 1;
-            padding-right: 15px;
-        }
-
-        #premium-notification .premium-content strong {
-            font-size: 18px;
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        #premium-notification .premium-content p {
-            margin: 5px 0;
-            font-size: 14px;
-            opacity: 0.9;
-            line-height: 1.5;
-        }
-
-        #premium-notification .premium-buttons {
+        .premium-header {
             display: flex;
-            gap: 12px;
-            align-items: center;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
 
-        #premium-notification .premium-buttons a {
-            background: linear-gradient(to right, #25D366, #128C7E);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
+        .premium-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .premium-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .premium-content {
+            margin-bottom: 15px;
+        }
+
+        .premium-content p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .premium-features {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .premium-features li {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.85);
+            position: relative;
+        }
+
+        .premium-features li:before {
+            content: "✓";
+            position: absolute;
+            left: -18px;
+            color: #4cd964;
+            font-weight: bold;
+        }
+
+        .premium-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .premium-btn {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
         }
 
-        #premium-notification .premium-buttons a.info-btn {
-            background: linear-gradient(to right, #4a6bff, #3a56d4);
-            box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
-        }
-
-        #premium-notification .premium-buttons a:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-        }
-
-        #premium-notification .premium-buttons a i {
-            font-size: 16px;
-        }
-
-        #premium-notification .close-notification {
-            background: rgba(255,255,255,0.15);
-            border: none;
+        .premium-btn.whatsapp {
+            background: #25D366;
             color: white;
-            font-size: 20px;
-            width: 32px;
-            height: 32px;
+        }
+
+        .premium-btn.info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .premium-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
+            color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-            margin-left: 15px;
+            font-size: 16px;
+            transition: all 0.2s ease;
         }
 
-        #premium-notification .close-notification:hover {
-            background: rgba(255,255,255,0.25);
+        .premium-close:hover {
+            background: rgba(255, 255, 255, 0.3);
             transform: rotate(90deg);
         }
 
-        .notification-countdown {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+        .notification-timer {
             height: 4px;
-            background: rgba(255,255,255,0.3);
-            width: 100%;
-            border-radius: 0 0 12px 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin-top: 15px;
             overflow: hidden;
         }
 
-        .notification-countdown-bar {
+        .timer-progress {
             height: 100%;
-            background: white;
             width: 100%;
-            animation: countdown 180s linear forwards;
+            background: white;
+            border-radius: 2px;
+            animation: timerCountdown 180s linear forwards;
         }
 
-        @keyframes countdown {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-
-        @keyframes slideDown {
-            from { 
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
                 opacity: 0;
-                transform: translateY(-20px);
             }
-            to { 
+            to {
+                transform: translateX(0);
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        @media (max-width: 768px) {
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes timerCountdown {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        @media (max-width: 480px) {
             #premium-notification {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+            
+            .premium-actions {
                 flex-direction: column;
-                text-align: center;
-                gap: 16px;
-                padding: 20px;
             }
-            
-            #premium-notification .premium-content {
-                padding-right: 0;
-                text-align: center;
-            }
-            
-            #premium-notification .premium-buttons {
-                flex-direction: column;
-                width: 100%;
-                gap: 10px;
-            }
-            
-            #premium-notification .premium-buttons a {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            #premium-notification .close-notification {
-                position: absolute;
-                top: 12px;
-                right: 12px;
-                margin-left: 0;
-                width: 28px;
-                height: 28px;
-                font-size: 18px;
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Premium Notification - Enhanced -->
+    <!-- Premium Notification - UPDATED -->
     <div id="premium-notification" class="hidden">
-        <div class="premium-content">
-            <strong>✨ Tertarik dengan Aplikasi Kasir ini?</strong>
-            <p>Dapatkan versi premium dengan fitur lebih lengkap dan dukungan penuh!</p>
+        <button class="premium-close">&times;</button>
+        <div class="premium-header">
+            <h3 class="premium-title">✨ Upgrade ke Versi Premium</h3>
+            <span class="premium-badge">HOT OFFER</span>
         </div>
-        <div class="premium-buttons">
-            <a id="whatsapp-button" href="https://wa.me/6287865614222?text=Saya%20tertarik%20dan%20ingin%20membeli%20aplikasi%20pembayaran%20versi%20full%20fitur%20lengkap" target="_blank">
+        <div class="premium-content">
+            <p>Dapatkan fitur lengkap dan pengalaman terbaik dengan versi premium!</p>
+            <ul class="premium-features">
+                <li>Laporan penjualan lengkap</li>
+                <li>Backup data otomatis</li>
+                <li>Multi-user support</li>
+                <li>Priority support</li>
+            </ul>
+        </div>
+        <div class="premium-actions">
+            <a id="whatsapp-button" href="https://wa.me/6287865614222?text=Saya%20tertarik%20dan%20ingin%20membeli%20aplikasi%20pembayaran%20versi%20full%20fitur%20lengkap" target="_blank" class="premium-btn whatsapp">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
-            <a href="https://www.anekamarket.my.id" target="_blank" class="info-btn">
-                <i class="fas fa-globe"></i> Info Lengkap
+            <a href="https://www.anekamarket.my.id" target="_blank" class="premium-btn info">
+                <i class="fas fa-info-circle"></i> Info Detail
             </a>
         </div>
-        <button class="close-notification">&times;</button>
-        <div class="notification-countdown">
-            <div class="notification-countdown-bar"></div>
+        <div class="notification-timer">
+            <div class="timer-progress"></div>
         </div>
     </div>
 
@@ -1301,10 +1341,11 @@
     <!-- Confirmation Dialog -->
     <div id="confirmationDialog" class="confirmation-dialog" style="display: none;">
         <div class="confirmation-content">
-            <h4 id="confirmationMessage">Apakah Anda yakin?</h4>
+            <h3 id="confirmation-title">Konfirmasi</h3>
+            <p id="confirmation-message">Apakah Anda yakin ingin melakukan tindakan ini?</p>
             <div class="confirmation-buttons">
-                <button id="confirmCancel" class="btn btn-secondary">Batal</button>
-                <button id="confirmOk" class="btn btn-danger">Ya, Hapus</button>
+                <button id="confirmation-cancel" class="btn btn-secondary">Batal</button>
+                <button id="confirmation-ok" class="btn btn-danger">Ya</button>
             </div>
         </div>
     </div>
@@ -1312,7 +1353,7 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
-        <p id="loadingText">Memproses...</p>
+        <p id="loading-message">Memproses...</p>
     </div>
 
     <!-- Settings Button -->
@@ -1324,41 +1365,75 @@
     <div id="settingsModal" class="settings-modal">
         <div class="settings-content">
             <div class="modal-header">
-                <h3 class="modal-title">Pengaturan</h3>
+                <h2 class="modal-title">Pengaturan Aplikasi</h2>
                 <button class="modal-close" id="closeSettings">&times;</button>
             </div>
             <div class="modal-body">
-                <h4 class="settings-title">Pengaturan Notifikasi</h4>
                 <div class="form-group">
-                    <label for="notificationInterval">Interval Notifikasi (menit)</label>
-                    <input type="number" id="notificationInterval" class="form-control" value="120" min="1">
-                    <small class="text-muted">Setiap berapa menit notifikasi akan muncul</small>
+                    <label for="storeName">Nama Toko</label>
+                    <input type="text" id="storeName" class="form-control" placeholder="Masukkan nama toko">
                 </div>
-                
                 <div class="form-group">
-                    <label for="notificationDuration">Durasi Tampil (detik)</label>
-                    <input type="number" id="notificationDuration" class="form-control" value="180" min="1">
-                    <small class="text-muted">Berapa detik notifikasi akan ditampilkan</small>
+                    <label for="storeAddress">Alamat Toko</label>
+                    <textarea id="storeAddress" class="form-control" rows="2" placeholder="Masukkan alamat toko"></textarea>
                 </div>
-                
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="enableNotification" checked> 
-                        Aktifkan Notifikasi Promosi
-                    </label>
+                    <label for="storePhone">Telepon</label>
+                    <input type="text" id="storePhone" class="form-control" placeholder="Masukkan nomor telepon">
                 </div>
-                
+                <div class="form-group">
+                    <label for="receiptFooter">Footer Struk</label>
+                    <textarea id="receiptFooter" class="form-control" rows="2" placeholder="Masukkan footer struk"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taxRate">Pajak (%)</label>
+                    <input type="number" id="taxRate" class="form-control" min="0" max="100" step="0.1" placeholder="Masukkan persentase pajak">
+                </div>
+                <div class="form-group">
+                    <label for="serviceCharge">Service Charge (%)</label>
+                    <input type="number" id="serviceCharge" class="form-control" min="0" max="100" step="0.1" placeholder="Masukkan persentase service charge">
+                </div>
+                <div class="form-group">
+                    <label for="printerType">Tipe Printer</label>
+                    <select id="printerType" class="form-control">
+                        <option value="thermal">Thermal Printer (58mm)</option>
+                        <option value="a4">Printer A4/Letter</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="currencySymbol">Simbol Mata Uang</label>
+                    <select id="currencySymbol" class="form-control">
+                        <option value="Rp">Rp (Rupiah)</option>
+                        <option value="$">$ (Dollar)</option>
+                        <option value="€">€ (Euro)</option>
+                        <option value="¥">¥ (Yen)</option>
+                        <option value="₹">₹ (Rupee)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateFormat">Format Tanggal</label>
+                    <select id="dateFormat" class="form-control">
+                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeFormat">Format Waktu</label>
+                    <select id="timeFormat" class="form-control">
+                        <option value="12">12 Jam (AM/PM)</option>
+                        <option value="24">24 Jam</option>
+                    </select>
+                </div>
                 <div class="backup-section">
-                    <h4 class="settings-title">Backup & Restore</h4>
-                    <p>Backup data transaksi Anda untuk mencegah kehilangan data</p>
-                    
+                    <h3 class="settings-title">Backup & Restore</h3>
+                    <p>Cadangkan data toko Anda atau pulihkan dari cadangan sebelumnya.</p>
                     <div class="backup-actions">
-                        <button id="backupBtn" class="btn btn-primary">
+                        <button id="backupData" class="btn btn-info">
                             <i class="fas fa-download"></i> Backup Data
                         </button>
-                        
                         <div class="file-input-wrapper">
-                            <button class="btn btn-secondary">
+                            <button id="restoreData" class="btn btn-warning">
                                 <i class="fas fa-upload"></i> Restore Data
                             </button>
                             <input type="file" id="restoreFile" accept=".json">
@@ -1367,33 +1442,68 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="saveSettings" class="btn btn-primary">Simpan Pengaturan</button>
                 <button id="cancelSettings" class="btn btn-secondary">Batal</button>
+                <button id="saveSettings" class="btn btn-success">Simpan</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <!-- Setup Container (shown only on first run) -->
+    <div id="setupContainer" class="setup-container">
+        <h2 class="setup-title">Setup Aplikasi Kasir</h2>
+        <div class="form-group">
+            <label for="setupStoreName">Nama Toko</label>
+            <input type="text" id="setupStoreName" class="form-control" placeholder="Masukkan nama toko">
+            <div class="error-message" id="setupStoreNameError">Nama toko harus diisi</div>
+        </div>
+        <div class="form-group">
+            <label for="setupStoreAddress">Alamat Toko</label>
+            <textarea id="setupStoreAddress" class="form-control" rows="2" placeholder="Masukkan alamat toko"></textarea>
+            <div class="error-message" id="setupStoreAddressError">Alamat toko harus diisi</div>
+        </div>
+        <div class="form-group">
+            <label for="setupStorePhone">Telepon</label>
+            <input type="text" id="setupStorePhone" class="form-control" placeholder="Masukkan nomor telepon">
+        </div>
+        <div class="form-group">
+            <label for="setupReceiptFooter">Footer Struk</label>
+            <textarea id="setupReceiptFooter" class="form-control" rows="2" placeholder="Masukkan footer struk"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="setupTaxRate">Pajak (%)</label>
+            <input type="number" id="setupTaxRate" class="form-control" min="0" max="100" step="0.1" value="0" placeholder="Masukkan persentase pajak">
+        </div>
+        <div class="form-group">
+            <label for="setupServiceCharge">Service Charge (%)</label>
+            <input type="number" id="setupServiceCharge" class="form-control" min="0" max="100" step="0.1" value="0" placeholder="Masukkan persentase service charge">
+        </div>
+        <div class="form-group">
+            <button id="saveSetup" class="btn btn-success btn-block">Simpan & Mulai Aplikasi</button>
+        </div>
+    </div>
+
+    <!-- Main Container (hidden until setup is complete) -->
+    <div id="mainContainer" class="container" style="display: none;">
         <div class="header">
             <div>
-                <h1>Online Store Pro</h1>
-                <div class="header-subtitle">Sistem Kasir dan Manajemen Toko Online</div>
+                <h1 id="headerStoreName">Nama Toko</h1>
+                <div class="header-subtitle" id="headerStoreAddress">Alamat toko</div>
             </div>
             <div class="header-info">
-                <p><i class="fas fa-calendar-alt"></i> <span id="currentDate">Senin, 1 Januari 2023</span></p>
-                <p><i class="fas fa-clock"></i> <span id="currentTime">00:00:00</span></p>
+                <p id="currentDate">Senin, 1 Januari 2024</p>
+                <p id="currentTime">00:00:00</p>
             </div>
         </div>
 
         <div class="main-content">
             <div class="left-panel">
-                <h3 class="panel-title">Produk</h3>
+                <h2 class="panel-title">Produk</h2>
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchProduct" class="form-control" placeholder="Cari produk...">
+                    <input type="text" id="productSearch" class="form-control" placeholder="Cari produk...">
                 </div>
                 <div class="table-responsive">
-                    <table class="table" id="productTable">
+                    <table class="table" id="productsTable">
                         <thead>
                             <tr>
                                 <th>Nama</th>
@@ -1402,108 +1512,127 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Kopi Premium 250g</td>
-                                <td>Rp 75.000</td>
-                                <td><span class="badge badge-success">Tersedia</span></td>
-                                <td><button class="btn btn-sm btn-primary btn-add-to-cart" data-id="1" data-name="Kopi Premium 250g" data-price="75000"><i class="fas fa-cart-plus"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>Teh Hijau 100g</td>
-                                <td>Rp 45.000</td>
-                                <td><span class="badge badge-success">Tersedia</span></td>
-                                <td><button class="btn btn-sm btn-primary btn-add-to-cart" data-id="2" data-name="Teh Hijau 100g" data-price="45000"><i class="fas fa-cart-plus"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>Gula Aren Organik 500g</td>
-                                <td>Rp 35.000</td>
-                                <td><span class="badge badge-warning">Hampir Habis</span></td>
-                                <td><button class="btn btn-sm btn-primary btn-add-to-cart" data-id="3" data-name="Gula Aren Organik 500g" data-price="35000"><i class="fas fa-cart-plus"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>Susu Almond 1L</td>
-                                <td>Rp 65.000</td>
-                                <td><span class="badge badge-danger">Habis</span></td>
-                                <td><button class="btn btn-sm btn-secondary" disabled><i class="fas fa-cart-plus"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>Biji Chia 200g</td>
-                                <td>Rp 55.000</td>
-                                <td><span class="badge badge-success">Tersedia</span></td>
-                                <td><button class="btn btn-sm btn-primary btn-add-to-cart" data-id="5" data-name="Biji Chia 200g" data-price="55000"><i class="fas fa-cart-plus"></i></button></td>
-                            </tr>
+                        <tbody id="productsList">
+                            <!-- Products will be loaded here -->
                         </tbody>
                     </table>
+                </div>
+                <div class="empty-state" id="emptyProducts" style="display: none;">
+                    <i class="fas fa-box-open"></i>
+                    <p>Tidak ada produk ditemukan</p>
                 </div>
             </div>
 
             <div class="right-panel">
-                <h3 class="panel-title">Keranjang Belanja</h3>
+                <h2 class="panel-title">Keranjang Belanja</h2>
                 <div id="cartItems">
-                    <div class="empty-state">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Keranjang belanja kosong</p>
-                    </div>
+                    <!-- Cart items will be loaded here -->
+                </div>
+                <div class="empty-state" id="emptyCart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <p>Keranjang belanja kosong</p>
                 </div>
 
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span class="summary-label">Subtotal</span>
-                        <span class="summary-value" id="subtotal">Rp 0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Diskon</span>
-                        <span class="summary-value" id="discount">Rp 0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Pajak (10%)</span>
-                        <span class="summary-value" id="tax">Rp 0</span>
-                    </div>
-                    <div class="summary-row total-row">
-                        <span class="summary-label">Total</span>
-                        <span class="summary-value" id="total">Rp 0</span>
-                    </div>
-                </div>
-
-                <div class="payment-methods">
-                    <h4 class="panel-title">Metode Pembayaran</h4>
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" id="cash" name="payment" value="cash" checked>
-                            <label for="cash">Tunai</label>
+                <div id="cartSummary" style="display: none;">
+                    <div class="cart-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">Subtotal</span>
+                            <span class="summary-value" id="cartSubtotal">Rp 0</span>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="transfer" name="payment" value="transfer">
-                            <label for="transfer">Transfer</label>
+                        <div class="additional-fee-section">
+                            <div class="additional-fee-options">
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeNone" name="additionalFee" value="none" checked>
+                                    <label for="feeNone">Tidak Ada</label>
+                                </div>
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeTax" name="additionalFee" value="tax">
+                                    <label for="feeTax">Pajak</label>
+                                </div>
+                                <div class="additional-fee-option">
+                                    <input type="radio" id="feeService" name="additionalFee" value="service">
+                                    <label for="feeService">Service</label>
+                                </div>
+                            </div>
+                            <div id="taxDetails" class="additional-fee-details">
+                                <div class="form-group">
+                                    <label for="taxPercentage">Persentase Pajak (%)</label>
+                                    <input type="number" id="taxPercentage" class="form-control" value="10" min="0" max="100" step="0.1">
+                                </div>
+                                <div class="additional-fee-description">
+                                    Pajak akan ditambahkan ke total pembayaran.
+                                </div>
+                            </div>
+                            <div id="serviceDetails" class="additional-fee-details">
+                                <div class="form-group">
+                                    <label for="servicePercentage">Persentase Service (%)</label>
+                                    <input type="number" id="servicePercentage" class="form-control" value="5" min="0" max="100" step="0.1">
+                                </div>
+                                <div class="additional-fee-description">
+                                    Service charge akan ditambahkan ke total pembayaran.
+                                </div>
+                            </div>
                         </div>
-                        <div class="radio-option">
-                            <input type="radio" id="card" name="payment" value="card">
-                            <label for="card">Kartu</label>
+                        <div class="summary-row" id="taxRow" style="display: none;">
+                            <span class="summary-label">Pajak</span>
+                            <span class="summary-value" id="cartTax">Rp 0</span>
+                        </div>
+                        <div class="summary-row" id="serviceRow" style="display: none;">
+                            <span class="summary-label">Service Charge</span>
+                            <span class="summary-value" id="cartService">Rp 0</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span class="summary-label">Total</span>
+                            <span class="summary-value" id="cartTotal">Rp 0</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group mt-3">
-                    <label for="customerMoney">Uang Customer</label>
-                    <input type="number" id="customerMoney" class="form-control" placeholder="Masukkan jumlah uang">
-                </div>
+                    <div class="discount-input mt-3">
+                        <input type="number" id="discountAmount" class="form-control" placeholder="Diskon" min="0" step="1000">
+                        <select id="discountType" class="form-control">
+                            <option value="amount">Rp</option>
+                            <option value="percent">%</option>
+                        </select>
+                        <button id="applyDiscount" class="btn btn-outline">Terapkan</button>
+                    </div>
 
-                <div class="form-group">
-                    <label for="change">Kembalian</label>
-                    <input type="text" id="change" class="form-control" readonly value="Rp 0">
-                </div>
+                    <div class="payment-methods mt-3">
+                        <h3>Metode Pembayaran</h3>
+                        <div class="payment-method">
+                            <input type="radio" id="paymentCash" name="paymentMethod" value="cash" checked>
+                            <label for="paymentCash">Tunai</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="paymentTransfer" name="paymentMethod" value="transfer">
+                            <label for="paymentTransfer">Transfer</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="paymentQris" name="paymentMethod" value="qris">
+                            <label for="paymentQris">QRIS</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="paymentDebit" name="paymentMethod" value="debit">
+                            <label for="paymentDebit">Kartu Debit</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="paymentCredit" name="paymentMethod" value="credit">
+                            <label for="paymentCredit">Kartu Kredit</label>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <button id="processPayment" class="btn btn-success btn-block">
-                        <i class="fas fa-check-circle"></i> Proses Pembayaran
-                    </button>
-                </div>
+                    <div class="form-group mt-3">
+                        <label for="customerCash">Jumlah Uang Diberikan</label>
+                        <input type="number" id="customerCash" class="form-control" placeholder="Masukkan jumlah uang" min="0" step="1000">
+                    </div>
 
-                <div class="form-group">
-                    <button id="resetCart" class="btn btn-danger btn-block">
-                        <i class="fas fa-trash"></i> Reset Transaksi
-                    </button>
+                    <div class="summary-row" id="changeRow" style="display: none;">
+                        <span class="summary-label">Kembalian</span>
+                        <span class="summary-value" id="customerChange">Rp 0</span>
+                    </div>
+
+                    <div class="mt-3">
+                        <button id="processPayment" class="btn btn-success btn-block">Proses Pembayaran</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1513,55 +1642,66 @@
     <div id="receiptModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Struk Pembayaran</h3>
+                <h2 class="modal-title">Struk Pembayaran</h2>
                 <button class="modal-close" id="closeReceipt">&times;</button>
             </div>
             <div class="modal-body">
                 <div id="receiptPrint" class="receipt receipt-enhanced">
                     <div class="receipt-header">
-                        <div class="receipt-title">Online Store Pro</div>
-                        <div class="receipt-address">Jl. Contoh No. 123, Jakarta</div>
-                        <div class="receipt-address">Telp: (021) 123-4567</div>
-                        <div class="receipt-date" id="receiptDate">Senin, 1 Jan 2023 12:00:00</div>
-                        <div class="receipt-order-info">No. Transaksi: <span id="receiptTransactionId">TRX-20230101-001</span></div>
+                        <div class="receipt-title" id="receiptStoreName">Nama Toko</div>
+                        <div class="receipt-address" id="receiptStoreAddress">Alamat toko</div>
+                        <div class="receipt-phone" id="receiptStorePhone">Telepon: -</div>
+                        <div class="receipt-date" id="receiptDate">Tanggal: 01/01/2024 00:00:00</div>
+                        <div class="receipt-order-info" id="receiptOrderId">Order: #00001</div>
                     </div>
                     <div class="receipt-items" id="receiptItems">
-                        <!-- Items will be populated here -->
+                        <!-- Receipt items will be loaded here -->
                     </div>
                     <div class="receipt-total">
-                        <div class="summary-row">
+                        <div class="receipt-item">
                             <span>Subtotal:</span>
                             <span id="receiptSubtotal">Rp 0</span>
                         </div>
-                        <div class="summary-row">
+                        <div class="receipt-item" id="receiptTaxRow" style="display: none;">
+                            <span>Pajak:</span>
+                            <span id="receiptTax">Rp 0</span>
+                        </div>
+                        <div class="receipt-item" id="receiptServiceRow" style="display: none;">
+                            <span>Service:</span>
+                            <span id="receiptService">Rp 0</span>
+                        </div>
+                        <div class="receipt-item" id="receiptDiscountRow" style="display: none;">
                             <span>Diskon:</span>
                             <span id="receiptDiscount">Rp 0</span>
                         </div>
-                        <div class="summary-row">
-                            <span>Pajak (10%):</span>
-                            <span id="receiptTax">Rp 0</span>
+                        <div class="receipt-item">
+                            <span><strong>Total:</strong></span>
+                            <span><strong id="receiptTotal">Rp 0</strong></span>
                         </div>
-                        <div class="summary-row">
-                            <strong>Total:</strong>
-                            <strong id="receiptTotal">Rp 0</strong>
+                        <div class="receipt-item">
+                            <span>Tunai:</span>
+                            <span id="receiptCash">Rp 0</span>
                         </div>
-                        <div class="summary-row">
-                            <span>Bayar:</span>
-                            <span id="receiptPayment">Rp 0</span>
-                        </div>
-                        <div class="summary-row">
+                        <div class="receipt-item">
                             <span>Kembali:</span>
                             <span id="receiptChange">Rp 0</span>
                         </div>
+                        <div class="receipt-item">
+                            <span>Metode:</span>
+                            <span id="receiptPaymentMethod">Tunai</span>
+                        </div>
                     </div>
                     <div class="receipt-footer">
-                        <div>Terima kasih atas kunjungan Anda</div>
-                        <div class="receipt-brand">www.anekamarket.my.id</div>
+                        <div id="receiptFooterText">Terima kasih atas kunjungan Anda</div>
+                        <div class="receipt-brand">Powered by AnekaMarket</div>
                     </div>
                 </div>
                 <div class="print-button no-print">
                     <button id="printReceipt" class="btn btn-primary">
                         <i class="fas fa-print"></i> Cetak Struk
+                    </button>
+                    <button id="newTransaction" class="btn btn-success ml-2">
+                        <i class="fas fa-receipt"></i> Transaksi Baru
                     </button>
                 </div>
             </div>
@@ -1570,137 +1710,168 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/id.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/id.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Initialize variables
-            let cart = [];
-            let notificationInterval = 120; // 2 hours in minutes
-            let notificationDuration = 180; // 3 minutes in seconds
-            let notificationEnabled = true;
-            let notificationTimer;
+            // Initialize moment with Indonesian locale
+            moment.locale('id');
             
             // Update date and time
             function updateDateTime() {
-                moment.locale('id');
-                $('#currentDate').text(moment().format('dddd, D MMMM YYYY'));
-                $('#currentTime').text(moment().format('HH:mm:ss'));
+                const now = moment();
+                $('#currentDate').text(now.format('dddd, D MMMM YYYY'));
+                $('#currentTime').text(now.format('HH:mm:ss'));
             }
             
-            // Update every second
+            // Update date and time every second
             setInterval(updateDateTime, 1000);
             updateDateTime();
             
-            // Initialize notification
-            function initNotification() {
-                // Load settings from localStorage
-                const savedInterval = localStorage.getItem('notificationInterval');
-                const savedDuration = localStorage.getItem('notificationDuration');
-                const savedEnabled = localStorage.getItem('notificationEnabled');
+            // Check if setup is completed
+            const isSetupCompleted = localStorage.getItem('setupCompleted') === 'true';
+            
+            if (isSetupCompleted) {
+                $('#setupContainer').hide();
+                $('#mainContainer').show();
+                loadStoreSettings();
+                loadProducts();
+            } else {
+                $('#setupContainer').show();
+                $('#mainContainer').hide();
+            }
+            
+            // Setup form submission
+            $('#saveSetup').click(function() {
+                const storeName = $('#setupStoreName').val().trim();
+                const storeAddress = $('#setupStoreAddress').val().trim();
                 
-                if (savedInterval) notificationInterval = parseInt(savedInterval);
-                if (savedDuration) notificationDuration = parseInt(savedDuration);
-                if (savedEnabled !== null) notificationEnabled = savedEnabled === 'true';
+                let valid = true;
                 
-                // Update settings form
-                $('#notificationInterval').val(notificationInterval);
-                $('#notificationDuration').val(notificationDuration);
-                $('#enableNotification').prop('checked', notificationEnabled);
-                
-                // Start notification timer if enabled
-                if (notificationEnabled) {
-                    startNotificationTimer();
+                if (storeName === '') {
+                    $('#setupStoreNameError').show();
+                    valid = false;
+                } else {
+                    $('#setupStoreNameError').hide();
                 }
-            }
-            
-            // Start notification timer
-            function startNotificationTimer() {
-                clearTimeout(notificationTimer);
                 
-                // Show notification after the interval
-                notificationTimer = setTimeout(function() {
-                    showNotification();
-                }, notificationInterval * 60 * 1000); // Convert minutes to milliseconds
-            }
-            
-            // Show notification
-            function showNotification() {
-                if (!notificationEnabled) return;
+                if (storeAddress === '') {
+                    $('#setupStoreAddressError').show();
+                    valid = false;
+                } else {
+                    $('#setupStoreAddressError').hide();
+                }
                 
-                $('#premium-notification').removeClass('hidden');
-                
-                // Hide notification after duration
-                setTimeout(function() {
-                    if (!$('#premium-notification').hasClass('hidden')) {
-                        $('#premium-notification').addClass('hidden');
+                if (valid) {
+                    // Save settings
+                    const settings = {
+                        storeName: storeName,
+                        storeAddress: storeAddress,
+                        storePhone: $('#setupStorePhone').val().trim(),
+                        receiptFooter: $('#setupReceiptFooter').val().trim() || 'Terima kasih atas kunjungan Anda',
+                        taxRate: parseFloat($('#setupTaxRate').val()) || 0,
+                        serviceCharge: parseFloat($('#setupServiceCharge').val()) || 0
+                    };
+                    
+                    localStorage.setItem('storeSettings', JSON.stringify(settings));
+                    localStorage.setItem('setupCompleted', 'true');
+                    
+                    // Initialize products if not exists
+                    if (!localStorage.getItem('products')) {
+                        const defaultProducts = [
+                            { id: 1, name: 'Produk Contoh 1', price: 10000, stock: 10 },
+                            { id: 2, name: 'Produk Contoh 2', price: 15000, stock: 5 },
+                            { id: 3, name: 'Produk Contoh 3', price: 20000, stock: 8 }
+                        ];
+                        localStorage.setItem('products', JSON.stringify(defaultProducts));
                     }
                     
-                    // Restart the timer
-                    startNotificationTimer();
-                }, notificationDuration * 1000); // Convert seconds to milliseconds
+                    // Initialize transactions if not exists
+                    if (!localStorage.getItem('transactions')) {
+                        localStorage.setItem('transactions', JSON.stringify([]));
+                    }
+                    
+                    // Hide setup and show main app
+                    $('#setupContainer').hide();
+                    $('#mainContainer').show();
+                    loadStoreSettings();
+                    loadProducts();
+                    
+                    showToast('Setup berhasil disimpan!', 'success');
+                }
+            });
+            
+            // Load store settings
+            function loadStoreSettings() {
+                const settings = JSON.parse(localStorage.getItem('storeSettings') || '{}');
+                
+                $('#headerStoreName').text(settings.storeName || 'Nama Toko');
+                $('#headerStoreAddress').text(settings.storeAddress || 'Alamat toko');
+                
+                $('#receiptStoreName').text(settings.storeName || 'Nama Toko');
+                $('#receiptStoreAddress').text(settings.storeAddress || 'Alamat toko');
+                $('#receiptStorePhone').text(settings.storePhone ? `Telepon: ${settings.storePhone}` : '');
+                $('#receiptFooterText').text(settings.receiptFooter || 'Terima kasih atas kunjungan Anda');
             }
             
-            // Close notification button
-            $('.close-notification').click(function() {
-                $('#premium-notification').addClass('hidden');
-            });
-            
-            // Settings button click
-            $('#settingsButton').click(function() {
-                $('#settingsModal').css('display', 'flex');
-            });
-            
-            // Close settings modal
-            $('#closeSettings, #cancelSettings').click(function() {
-                $('#settingsModal').hide();
-            });
-            
-            // Save settings
-            $('#saveSettings').click(function() {
-                notificationInterval = parseInt($('#notificationInterval').val());
-                notificationDuration = parseInt($('#notificationDuration').val());
-                notificationEnabled = $('#enableNotification').is(':checked');
+            // Load products
+            function loadProducts() {
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                const productsList = $('#productsList');
+                productsList.empty();
                 
-                // Save to localStorage
-                localStorage.setItem('notificationInterval', notificationInterval);
-                localStorage.setItem('notificationDuration', notificationDuration);
-                localStorage.setItem('notificationEnabled', notificationEnabled);
-                
-                // Restart notification timer if enabled
-                if (notificationEnabled) {
-                    startNotificationTimer();
+                if (products.length === 0) {
+                    $('#emptyProducts').show();
                 } else {
-                    clearTimeout(notificationTimer);
-                    $('#premium-notification').addClass('hidden');
+                    $('#emptyProducts').hide();
+                    
+                    products.forEach(product => {
+                        const row = `
+                            <tr>
+                                <td>${product.name}</td>
+                                <td>Rp ${formatNumber(product.price)}</td>
+                                <td>${product.stock}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary add-to-cart" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}">
+                                        <i class="fas fa-cart-plus"></i> Tambah
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        productsList.append(row);
+                    });
                 }
                 
-                // Show success message
-                showToast('Pengaturan berhasil disimpan', 'success');
-                
-                // Close modal
-                $('#settingsModal').hide();
-            });
-            
-            // Show toast notification
-            function showToast(message, type = 'info') {
-                const toast = $('#toast');
-                toast.removeClass('success error warning info');
-                toast.addClass(type);
-                $('#toast-message').text(message);
-                toast.addClass('show');
-                
-                setTimeout(function() {
-                    toast.removeClass('show');
-                }, 3000);
+                // Add to cart event
+                $('.add-to-cart').click(function() {
+                    const id = $(this).data('id');
+                    const name = $(this).data('name');
+                    const price = $(this).data('price');
+                    
+                    addToCart(id, name, price);
+                });
             }
             
-            // Add to cart functionality
-            $('.btn-add-to-cart').click(function() {
-                const id = $(this).data('id');
-                const name = $(this).data('name');
-                const price = $(this).data('price');
+            // Product search
+            $('#productSearch').on('input', function() {
+                const searchText = $(this).val().toLowerCase();
+                const rows = $('#productsList tr');
                 
-                // Check if product already in cart
+                rows.each(function() {
+                    const productName = $(this).find('td:first').text().toLowerCase();
+                    if (productName.includes(searchText)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+            
+            // Shopping cart
+            let cart = [];
+            
+            // Add to cart
+            function addToCart(id, name, price) {
                 const existingItem = cart.find(item => item.id === id);
                 
                 if (existingItem) {
@@ -1716,139 +1887,181 @@
                 
                 updateCart();
                 showToast(`${name} ditambahkan ke keranjang`, 'success');
-            });
+            }
             
             // Update cart display
             function updateCart() {
                 const cartItems = $('#cartItems');
+                cartItems.empty();
                 
                 if (cart.length === 0) {
-                    cartItems.html(`
-                        <div class="empty-state">
-                            <i class="fas fa-shopping-cart"></i>
-                            <p>Keranjang belanja kosong</p>
-                        </div>
-                    `);
+                    $('#emptyCart').show();
+                    $('#cartSummary').hide();
                 } else {
-                    let html = '';
-                    let subtotal = 0;
+                    $('#emptyCart').hide();
+                    $('#cartSummary').show();
                     
                     cart.forEach(item => {
-                        const itemTotal = item.price * item.quantity;
-                        subtotal += itemTotal;
-                        
-                        html += `
+                        const cartItem = `
                             <div class="cart-item" data-id="${item.id}">
                                 <div class="cart-item-info">
                                     <div class="cart-item-name">${item.name}</div>
-                                    <div class="cart-item-price">Rp ${formatNumber(item.price)} x ${item.quantity}</div>
+                                    <div class="cart-item-price">Rp ${formatNumber(item.price)}</div>
                                 </div>
                                 <div class="cart-item-qty">
-                                    <button class="btn-qty-decrease"><i class="fas fa-minus"></i></button>
-                                    <input type="number" value="${item.quantity}" min="1" class="qty-input">
-                                    <button class="btn-qty-increase"><i class="fas fa-plus"></i></button>
-                                    <button class="btn-remove-item ml-2"><i class="fas fa-trash"></i></button>
+                                    <button class="decrease-qty" data-id="${item.id}">-</button>
+                                    <input type="number" value="${item.quantity}" min="1" class="item-qty" data-id="${item.id}">
+                                    <button class="increase-qty" data-id="${item.id}">+</button>
+                                    <button class="remove-item" data-id="${item.id}"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
                         `;
+                        cartItems.append(cartItem);
                     });
                     
-                    cartItems.html(html);
+                    // Attach events
+                    $('.decrease-qty').click(function() {
+                        const id = $(this).data('id');
+                        const item = cart.find(item => item.id === id);
+                        
+                        if (item.quantity > 1) {
+                            item.quantity -= 1;
+                        } else {
+                            cart = cart.filter(item => item.id !== id);
+                        }
+                        
+                        updateCart();
+                    });
                     
-                    // Calculate totals
-                    const discount = 0;
-                    const tax = subtotal * 0.1;
-                    const total = subtotal - discount + tax;
+                    $('.increase-qty').click(function() {
+                        const id = $(this).data('id');
+                        const item = cart.find(item => item.id === id);
+                        item.quantity += 1;
+                        updateCart();
+                    });
                     
-                    // Update summary
-                    $('#subtotal').text(`Rp ${formatNumber(subtotal)}`);
-                    $('#discount').text(`Rp ${formatNumber(discount)}`);
-                    $('#tax').text(`Rp ${formatNumber(tax)}`);
-                    $('#total').text(`Rp ${formatNumber(total)}`);
+                    $('.item-qty').change(function() {
+                        const id = $(this).data('id');
+                        const quantity = parseInt($(this).val());
+                        
+                        if (quantity < 1) {
+                            cart = cart.filter(item => item.id !== id);
+                        } else {
+                            const item = cart.find(item => item.id === id);
+                            item.quantity = quantity;
+                        }
+                        
+                        updateCart();
+                    });
                     
-                    // Update customer money change
-                    updateChange();
-                    
-                    // Attach event listeners to cart items
-                    attachCartEventListeners();
+                    $('.remove-item').click(function() {
+                        const id = $(this).data('id');
+                        const item = cart.find(item => item.id === id);
+                        
+                        if (confirm(`Hapus ${item.name} dari keranjang?`)) {
+                            cart = cart.filter(item => item.id !== id);
+                            updateCart();
+                            showToast(`${item.name} dihapus dari keranjang`, 'warning');
+                        }
+                    });
                 }
+                
+                updateCartSummary();
             }
             
-            // Attach event listeners to cart items
-            function attachCartEventListeners() {
-                // Decrease quantity
-                $('.btn-qty-decrease').click(function() {
-                    const cartItem = $(this).closest('.cart-item');
-                    const id = cartItem.data('id');
-                    const item = cart.find(item => item.id === id);
-                    
-                    if (item.quantity > 1) {
-                        item.quantity -= 1;
-                        updateCart();
-                    }
+            // Update cart summary
+            function updateCartSummary() {
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
                 });
                 
-                // Increase quantity
-                $('.btn-qty-increase').click(function() {
-                    const cartItem = $(this).closest('.cart-item');
-                    const id = cartItem.data('id');
-                    const item = cart.find(item => item.id === id);
-                    
-                    item.quantity += 1;
-                    updateCart();
-                });
+                $('#cartSubtotal').text(`Rp ${formatNumber(subtotal)}`);
                 
-                // Remove item
-                $('.btn-remove-item').click(function() {
-                    const cartItem = $(this).closest('.cart-item');
-                    const id = cartItem.data('id');
-                    const itemIndex = cart.findIndex(item => item.id === id);
-                    
-                    if (itemIndex !== -1) {
-                        const itemName = cart[itemIndex].name;
-                        cart.splice(itemIndex, 1);
-                        updateCart();
-                        showToast(`${itemName} dihapus dari keranjang`, 'warning');
-                    }
-                });
+                // Check additional fees
+                const feeType = $('input[name="additionalFee"]:checked').val();
                 
-                // Direct quantity input
-                $('.qty-input').change(function() {
-                    const newQty = parseInt($(this).val());
-                    if (isNaN(newQty) || newQty < 1) {
-                        $(this).val(1);
-                        return;
-                    }
+                if (feeType === 'tax') {
+                    const taxRate = parseFloat($('#taxPercentage').val()) || 0;
+                    const taxAmount = subtotal * (taxRate / 100);
                     
-                    const cartItem = $(this).closest('.cart-item');
-                    const id = cartItem.data('id');
-                    const item = cart.find(item => item.id === id);
+                    $('#taxRow').show();
+                    $('#cartTax').text(`Rp ${formatNumber(taxAmount)}`);
                     
-                    item.quantity = newQty;
-                    updateCart();
-                });
+                    $('#serviceRow').hide();
+                    $('#cartService').text('Rp 0');
+                    
+                    $('#cartTotal').text(`Rp ${formatNumber(subtotal + taxAmount)}`);
+                } else if (feeType === 'service') {
+                    const serviceRate = parseFloat($('#servicePercentage').val()) || 0;
+                    const serviceAmount = subtotal * (serviceRate / 100);
+                    
+                    $('#serviceRow').show();
+                    $('#cartService').text(`Rp ${formatNumber(serviceAmount)}`);
+                    
+                    $('#taxRow').hide();
+                    $('#cartTax').text('Rp 0');
+                    
+                    $('#cartTotal').text(`Rp ${formatNumber(subtotal + serviceAmount)}`);
+                } else {
+                    $('#taxRow').hide();
+                    $('#serviceRow').hide();
+                    $('#cartTax').text('Rp 0');
+                    $('#cartService').text('Rp 0');
+                    $('#cartTotal').text(`Rp ${formatNumber(subtotal)}`);
+                }
+                
+                // Update change if customer cash is entered
+                updateChange();
             }
+            
+            // Additional fee selection
+            $('input[name="additionalFee"]').change(function() {
+                const value = $(this).val();
+                
+                $('#taxDetails, #serviceDetails').hide();
+                
+                if (value === 'tax') {
+                    $('#taxDetails').show();
+                } else if (value === 'service') {
+                    $('#serviceDetails').show();
+                }
+                
+                updateCartSummary();
+            });
+            
+            // Tax and service percentage changes
+            $('#taxPercentage, #servicePercentage').change(function() {
+                updateCartSummary();
+            });
+            
+            // Customer cash input
+            $('#customerCash').on('input', function() {
+                updateChange();
+            });
             
             // Update change calculation
             function updateChange() {
-                const customerMoney = parseFloat($('#customerMoney').val()) || 0;
-                const total = parseFloat($('#total').text().replace('Rp ', '').replace(/\./g, '')) || 0;
+                const totalText = $('#cartTotal').text();
+                const total = parseFloat(totalText.replace('Rp ', '').replace(/\./g, ''));
+                const cash = parseFloat($('#customerCash').val()) || 0;
                 
-                if (customerMoney >= total) {
-                    const change = customerMoney - total;
-                    $('#change').val(`Rp ${formatNumber(change)}`);
+                if (cash > 0 && cash >= total) {
+                    const change = cash - total;
+                    $('#changeRow').show();
+                    $('#customerChange').text(`Rp ${formatNumber(change)}`);
                 } else {
-                    $('#change').val('Rp 0');
+                    $('#changeRow').hide();
+                    $('#customerChange').text('Rp 0');
                 }
             }
             
-            // Customer money input change
-            $('#customerMoney').on('input', updateChange);
-            
-            // Format number with thousand separators
-            function formatNumber(num) {
-                return new Intl.NumberFormat('id-ID').format(num);
-            }
+            // Apply discount
+            $('#applyDiscount').click(function() {
+                // This would be implemented to apply discounts
+                showToast('Fitur diskon akan segera hadir!', 'info');
+            });
             
             // Process payment
             $('#processPayment').click(function() {
@@ -1857,62 +2070,145 @@
                     return;
                 }
                 
-                const customerMoney = parseFloat($('#customerMoney').val()) || 0;
-                const total = parseFloat($('#total').text().replace('Rp ', '').replace(/\./g, '')) || 0;
+                const totalText = $('#cartTotal').text();
+                const total = parseFloat(totalText.replace('Rp ', '').replace(/\./g, ''));
+                const cash = parseFloat($('#customerCash').val()) || 0;
                 
-                if (customerMoney < total) {
-                    showToast('Uang customer tidak cukup', 'error');
+                if (cash < total) {
+                    showToast('Jumlah uang kurang', 'error');
                     return;
                 }
                 
+                // Get payment method
+                const paymentMethod = $('input[name="paymentMethod"]:checked').val();
+                const paymentMethodText = $(`label[for="payment${paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}"]`).text();
+                
+                // Get additional fees
+                const feeType = $('input[name="additionalFee"]:checked').val();
+                let tax = 0;
+                let service = 0;
+                
+                if (feeType === 'tax') {
+                    const taxRate = parseFloat($('#taxPercentage').val()) || 0;
+                    const subtotalText = $('#cartSubtotal').text();
+                    const subtotal = parseFloat(subtotalText.replace('Rp ', '').replace(/\./g, ''));
+                    tax = subtotal * (taxRate / 100);
+                } else if (feeType === 'service') {
+                    const serviceRate = parseFloat($('#servicePercentage').val()) || 0;
+                    const subtotalText = $('#cartSubtotal').text();
+                    const subtotal = parseFloat(subtotalText.replace('Rp ', '').replace(/\./g, ''));
+                    service = subtotal * (serviceRate / 100);
+                }
+                
+                // Calculate change
+                const change = cash - total;
+                
                 // Generate receipt
-                generateReceipt();
+                generateReceipt(paymentMethodText, tax, service, change, cash);
+                
+                // Save transaction
+                saveTransaction(paymentMethod, tax, service, change, cash);
                 
                 // Show receipt modal
-                $('#receiptModal').css('display', 'flex');
+                $('#receiptModal').show();
             });
             
             // Generate receipt
-            function generateReceipt() {
-                moment.locale('id');
+            function generateReceipt(paymentMethod, tax, service, change, cash) {
                 const now = moment();
+                const settings = JSON.parse(localStorage.getItem('storeSettings') || '{}');
                 
-                // Update receipt header
-                $('#receiptDate').text(now.format('dddd, D MMM YYYY HH:mm:ss'));
-                $('#receiptTransactionId').text(`TRX-${now.format('YYYYMMDD-HHmmss')}`);
+                // Generate order ID
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const orderId = `#${String(transactions.length + 1).padStart(5, '0')}`;
                 
-                // Update receipt items
+                $('#receiptDate').text(`Tanggal: ${now.format('DD/MM/YYYY HH:mm:ss')}`);
+                $('#receiptOrderId').text(`Order: ${orderId}`);
+                
+                // Add items to receipt
                 const receiptItems = $('#receiptItems');
                 receiptItems.empty();
                 
-                let subtotal = 0;
-                
                 cart.forEach(item => {
-                    const itemTotal = item.price * item.quantity;
-                    subtotal += itemTotal;
-                    
-                    receiptItems.append(`
+                    const totalPrice = item.price * item.quantity;
+                    const itemRow = `
                         <div class="receipt-item">
-                            <div class="receipt-item-name">${item.name} x${item.quantity}</div>
-                            <div class="receipt-item-price">Rp ${formatNumber(itemTotal)}</div>
+                            <span class="receipt-item-name">${item.name} x${item.quantity}</span>
+                            <span class="receipt-item-price">Rp ${formatNumber(totalPrice)}</span>
                         </div>
-                    `);
+                    `;
+                    receiptItems.append(itemRow);
                 });
                 
-                // Calculate totals
-                const discount = 0;
-                const tax = subtotal * 0.1;
-                const total = subtotal - discount + tax;
-                const customerMoney = parseFloat($('#customerMoney').val()) || 0;
-                const change = customerMoney - total;
+                // Update totals
+                const subtotalText = $('#cartSubtotal').text();
+                const totalText = $('#cartTotal').text();
                 
-                // Update receipt totals
-                $('#receiptSubtotal').text(`Rp ${formatNumber(subtotal)}`);
-                $('#receiptDiscount').text(`Rp ${formatNumber(discount)}`);
-                $('#receiptTax').text(`Rp ${formatNumber(tax)}`);
-                $('#receiptTotal').text(`Rp ${formatNumber(total)}`);
-                $('#receiptPayment').text(`Rp ${formatNumber(customerMoney)}`);
+                $('#receiptSubtotal').text(subtotalText);
+                $('#receiptTotal').text(totalText);
+                $('#receiptCash').text(`Rp ${formatNumber(cash)}`);
                 $('#receiptChange').text(`Rp ${formatNumber(change)}`);
+                $('#receiptPaymentMethod').text(paymentMethod);
+                
+                // Show/hide tax and service rows
+                if (tax > 0) {
+                    $('#receiptTaxRow').show();
+                    $('#receiptTax').text(`Rp ${formatNumber(tax)}`);
+                } else {
+                    $('#receiptTaxRow').hide();
+                }
+                
+                if (service > 0) {
+                    $('#receiptServiceRow').show();
+                    $('#receiptService').text(`Rp ${formatNumber(service)}`);
+                } else {
+                    $('#receiptServiceRow').hide();
+                }
+            }
+            
+            // Save transaction
+            function saveTransaction(paymentMethod, tax, service, change, cash) {
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const now = moment();
+                
+                const subtotalText = $('#cartSubtotal').text();
+                const subtotal = parseFloat(subtotalText.replace('Rp ', '').replace(/\./g, ''));
+                const totalText = $('#cartTotal').text();
+                const total = parseFloat(totalText.replace('Rp ', '').replace(/\./g, ''));
+                
+                const transaction = {
+                    id: transactions.length + 1,
+                    date: now.format('YYYY-MM-DD HH:mm:ss'),
+                    items: [...cart],
+                    subtotal: subtotal,
+                    tax: tax,
+                    service: service,
+                    total: total,
+                    paymentMethod: paymentMethod,
+                    cash: cash,
+                    change: change
+                };
+                
+                transactions.push(transaction);
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                // Update product stocks
+                updateProductStocks();
+            }
+            
+            // Update product stocks after sale
+            function updateProductStocks() {
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                
+                cart.forEach(cartItem => {
+                    const product = products.find(p => p.id === cartItem.id);
+                    if (product) {
+                        product.stock -= cartItem.quantity;
+                        if (product.stock < 0) product.stock = 0;
+                    }
+                });
+                
+                localStorage.setItem('products', JSON.stringify(products));
             }
             
             // Print receipt
@@ -1920,73 +2216,92 @@
                 window.print();
             });
             
-            // Close receipt modal
+            // New transaction
+            $('#newTransaction').click(function() {
+                cart = [];
+                updateCart();
+                $('#customerCash').val('');
+                $('#receiptModal').hide();
+                showToast('Transaksi baru dimulai', 'success');
+            });
+            
+            // Close receipt
             $('#closeReceipt').click(function() {
                 $('#receiptModal').hide();
-                resetTransaction();
             });
             
-            // Reset transaction
-            $('#resetCart').click(function() {
-                if (cart.length === 0) {
-                    showToast('Tidak ada transaksi untuk direset', 'info');
-                    return;
-                }
-                
-                showConfirmation(
-                    'Reset Transaksi',
-                    'Apakah Anda yakin ingin mereset transaksi? Semua item di keranjang akan dihapus.',
-                    function() {
-                        resetTransaction();
-                        showToast('Transaksi telah direset', 'success');
-                    }
-                );
+            // Settings button
+            $('#settingsButton').click(function() {
+                loadSettingsForm();
+                $('#settingsModal').show();
             });
             
-            // Reset transaction function
-            function resetTransaction() {
-                cart = [];
-                $('#customerMoney').val('');
-                updateCart();
+            // Close settings
+            $('#closeSettings, #cancelSettings').click(function() {
+                $('#settingsModal').hide();
+            });
+            
+            // Save settings
+            $('#saveSettings').click(function() {
+                saveSettings();
+                $('#settingsModal').hide();
+                showToast('Pengaturan berhasil disimpan', 'success');
+            });
+            
+            // Load settings form
+            function loadSettingsForm() {
+                const settings = JSON.parse(localStorage.getItem('storeSettings') || '{}');
+                
+                $('#storeName').val(settings.storeName || '');
+                $('#storeAddress').val(settings.storeAddress || '');
+                $('#storePhone').val(settings.storePhone || '');
+                $('#receiptFooter').val(settings.receiptFooter || '');
+                $('#taxRate').val(settings.taxRate || 0);
+                $('#serviceCharge').val(settings.serviceCharge || 0);
+                $('#printerType').val(settings.printerType || 'thermal');
+                $('#currencySymbol').val(settings.currencySymbol || 'Rp');
+                $('#dateFormat').val(settings.dateFormat || 'DD/MM/YYYY');
+                $('#timeFormat').val(settings.timeFormat || '24');
             }
             
-            // Show confirmation dialog
-            function showConfirmation(title, message, confirmCallback) {
-                $('#confirmationMessage').text(message);
-                $('#confirmationDialog').css('display', 'flex');
+            // Save settings
+            function saveSettings() {
+                const settings = {
+                    storeName: $('#storeName').val().trim(),
+                    storeAddress: $('#storeAddress').val().trim(),
+                    storePhone: $('#storePhone').val().trim(),
+                    receiptFooter: $('#receiptFooter').val().trim(),
+                    taxRate: parseFloat($('#taxRate').val()) || 0,
+                    serviceCharge: parseFloat($('#serviceCharge').val()) || 0,
+                    printerType: $('#printerType').val(),
+                    currencySymbol: $('#currencySymbol').val(),
+                    dateFormat: $('#dateFormat').val(),
+                    timeFormat: $('#timeFormat').val()
+                };
                 
-                $('#confirmOk').off('click').click(function() {
-                    $('#confirmationDialog').hide();
-                    confirmCallback();
-                });
-                
-                $('#confirmCancel').off('click').click(function() {
-                    $('#confirmationDialog').hide();
-                });
+                localStorage.setItem('storeSettings', JSON.stringify(settings));
+                loadStoreSettings();
             }
-            
-            // Initialize the app
-            initNotification();
-            updateCart();
             
             // Backup data
-            $('#backupBtn').click(function() {
+            $('#backupData').click(function() {
                 const data = {
-                    cart: cart,
-                    timestamp: new Date().toISOString()
+                    products: JSON.parse(localStorage.getItem('products') || '[]'),
+                    transactions: JSON.parse(localStorage.getItem('transactions') || '[]'),
+                    settings: JSON.parse(localStorage.getItem('storeSettings') || '{}')
                 };
                 
                 const dataStr = JSON.stringify(data);
                 const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
                 
-                const exportFileDefaultName = `backup-transaksi-${moment().format('YYYYMMDD-HHmmss')}.json`;
+                const exportFileDefaultName = `backup-${moment().format('YYYY-MM-DD')}.json`;
                 
                 const linkElement = document.createElement('a');
                 linkElement.setAttribute('href', dataUri);
                 linkElement.setAttribute('download', exportFileDefaultName);
                 linkElement.click();
                 
-                showToast('Data berhasil dibackup', 'success');
+                showToast('Backup data berhasil', 'success');
             });
             
             // Restore data
@@ -1999,27 +2314,105 @@
                     try {
                         const data = JSON.parse(e.target.result);
                         
-                        if (data.cart) {
-                            showConfirmation(
-                                'Restore Data',
-                                'Apakah Anda yakin ingin memulihkan data? Data transaksi saat ini akan diganti.',
-                                function() {
-                                    cart = data.cart;
-                                    updateCart();
-                                    showToast('Data berhasil dipulihkan', 'success');
-                                    $('#restoreFile').val('');
-                                }
-                            );
-                        } else {
-                            showToast('File backup tidak valid', 'error');
-                        }
+                        if (data.products) localStorage.setItem('products', JSON.stringify(data.products));
+                        if (data.transactions) localStorage.setItem('transactions', JSON.stringify(data.transactions));
+                        if (data.settings) localStorage.setItem('storeSettings', JSON.stringify(data.settings));
+                        
+                        loadProducts();
+                        loadStoreSettings();
+                        
+                        showToast('Data berhasil dipulihkan', 'success');
                     } catch (error) {
-                        showToast('Gagal memproses file backup', 'error');
+                        showToast('Gagal memulihkan data', 'error');
                         console.error(error);
                     }
                 };
                 reader.readAsText(file);
+                
+                // Reset file input
+                $(this).val('');
             });
+            
+            // Show toast notification
+            function showToast(message, type = 'info') {
+                const toast = $('#toast');
+                toast.removeClass('success error warning info');
+                toast.addClass(type);
+                
+                $('#toast-message').text(message);
+                toast.addClass('show');
+                
+                setTimeout(function() {
+                    toast.removeClass('show');
+                }, 3000);
+            }
+            
+            // Format number with thousands separator
+            function formatNumber(number) {
+                return new Intl.NumberFormat('id-ID').format(number);
+            }
+            
+            // Initialize additional fee details
+            $('input[name="additionalFee"]').change();
+            
+            // Close modal when clicking outside
+            $(window).click(function(event) {
+                if ($(event.target).hasClass('modal')) {
+                    $(event.target).hide();
+                }
+            });
+
+            // PREMIUM NOTIFICATION FUNCTIONALITY
+            let notificationTimeout;
+            let notificationInterval;
+
+            function showPremiumNotification() {
+                const notification = $('#premium-notification');
+                notification.removeClass('hidden').addClass('show');
+                
+                // Reset and start the timer progress bar
+                $('.timer-progress').css('width', '100%');
+                $('.timer-progress').css('animation', 'none');
+                setTimeout(function() {
+                    $('.timer-progress').css('animation', 'timerCountdown 180s linear forwards');
+                }, 10);
+                
+                // Set timeout to hide notification after 3 minutes (180000 ms)
+                notificationTimeout = setTimeout(function() {
+                    hidePremiumNotification();
+                }, 180000);
+            }
+
+            function hidePremiumNotification() {
+                const notification = $('#premium-notification');
+                notification.removeClass('show').addClass('hidden');
+                
+                // Clear the timeout if manually closed
+                if (notificationTimeout) {
+                    clearTimeout(notificationTimeout);
+                }
+            }
+
+            // Close notification when close button is clicked
+            $('.premium-close').click(function() {
+                hidePremiumNotification();
+            });
+
+            // Show notification every 2 hours (7200000 ms)
+            function startNotificationInterval() {
+                // Show immediately on page load (after a short delay)
+                setTimeout(function() {
+                    showPremiumNotification();
+                }, 3000);
+                
+                // Then set interval for every 2 hours
+                notificationInterval = setInterval(function() {
+                    showPremiumNotification();
+                }, 7200000);
+            }
+
+            // Start the notification interval
+            startNotificationInterval();
         });
     </script>
 </body>
