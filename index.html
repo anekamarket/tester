@@ -1695,65 +1695,68 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
     <script>
-        // Data aplikasi
-        let products = [];
-        let cart = [];
-        let transactionCounter = 1;
-        let additionalFee = {
-            type: 'none',
-            amount: 0,
-            calculationType: 'percent'
-        };
+       // Data aplikasi
+    let products = [];
+    let cart = [];
+    let transactionCounter = 1;
+    let additionalFee = {
+        type: 'none',
+        amount: 0,
+        calculationType: 'percent'
+    };
 
-        // Inisialisasi aplikasi
-        $(document).ready(function() {
-            // Load data dari localStorage jika tersedia
-            loadData();
-            
-            // Update tanggal dan waktu
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            // Tampilkan notifikasi premium setelah 3 detik
-            setTimeout(showPremiumNotification, 3000);
-            
-            // Event handlers
-            $('#addProductBtn').click(showProductForm);
-            $('#cancelProductBtn').click(hideProductForm);
-            $('#saveProductBtn').click(saveProduct);
-            $('#productSearch').on('keyup', filterProducts);
-            $('#newTransactionBtn').click(newTransaction);
-            $('#processPaymentBtn').click(processPayment);
-            $('input[name="additionalFee"]').change(toggleAdditionalFee);
-            $('#feeAmount, #feeType').on('input change', calculateTotal);
-            $('#customerPayment').on('input', calculateChange);
-            $('#printReceiptBtn').click(printReceipt);
-            $('#closeReceiptBtn, #closeReceiptModal').click(closeReceiptModal);
-            $('#settingsButton').click(showSettingsModal);
-            $('#closeSettingsModal, #cancelSettingsBtn').click(hideSettingsModal);
-            $('#saveSettingsBtn').click(saveSettings);
-            $('#backupDataBtn').click(backupData);
-            $('#restoreDataInput').change(restoreData);
-            $('#resetDataBtn').click(resetData);
-            $('#closePremiumNotification').click(hidePremiumNotification);
-            
-            // Render data
-            renderProducts();
-            renderCart();
-            updateCartSummary();
-            
-            // Sembunyikan form produk secara default
-            hideProductForm();
-        });
+    // Inisialisasi aplikasi
+    $(document).ready(function() {
+        // Load data dari localStorage jika tersedia
+        loadData();
+        
+        // Update tanggal dan waktu
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        
+        // Tampilkan notifikasi premium setelah 3 detik
+        setTimeout(showPremiumNotification, 3000);
+        
+        // Event handlers
+        $('#addProductBtn').click(showProductForm);
+        $('#cancelProductBtn').click(hideProductForm);
+        $('#saveProductBtn').click(saveProduct);
+        $('#productSearch').on('keyup', filterProducts);
+        $('#newTransactionBtn').click(newTransaction);
+        $('#processPaymentBtn').click(processPayment);
+        $('input[name="additionalFee"]').change(toggleAdditionalFee);
+        $('#feeAmount, #feeType').on('input change', calculateTotal);
+        $('#customerPayment').on('input', calculateChange);
+        $('#printReceiptBtn').click(printReceipt);
+        $('#closeReceiptBtn, #closeReceiptModal').click(closeReceiptModal);
+        $('#settingsButton').click(showSettingsModal);
+        $('#closeSettingsModal, #cancelSettingsBtn').click(hideSettingsModal);
+        $('#saveSettingsBtn').click(saveSettings);
+        $('#backupDataBtn').click(backupData);
+        $('#restoreDataInput').change(restoreData);
+        $('#resetDataBtn').click(resetData);
+        
+        // TAMBAHKAN BARIS INI untuk menghubungkan tombol close notifikasi premium
+        $('#closePremiumNotification').click(hidePremiumNotification);
+        
+        // Render data
+        renderProducts();
+        renderCart();
+        updateCartSummary();
+        
+        // Sembunyikan form produk secara default
+        hideProductForm();
+    });
 
-        // Fungsi untuk menampilkan notifikasi premium
-        function showPremiumNotification() {
-            $('#premiumNotification').addClass('show');
-        }
+    // Fungsi untuk menampilkan notifikasi premium
+    function showPremiumNotification() {
+        $('#premiumNotification').addClass('show');
+    }
 
-        function hidePremiumNotification() {
-            $('#premiumNotification').removeClass('show');
-        }
+    // Fungsi untuk menyembunyikan notifikasi premium
+    function hidePremiumNotification() {
+        $('#premiumNotification').removeClass('show');
+    }
 
         // Fungsi untuk menampilkan form produk
         function showProductForm() {
