@@ -369,10 +369,13 @@
         .search-box {
             position: relative;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
 
         .search-box input {
             padding-left: 40px;
+            flex: 1;
         }
 
         .search-box i {
@@ -918,6 +921,18 @@
             .copyright-watermark {
                 display: none !important;
             }
+            
+            /* Fix untuk cetak struk */
+            .receipt {
+                max-width: 100% !important;
+                width: 80mm !important;
+                padding: 10px !important;
+                box-shadow: none !important;
+            }
+            
+            .receipt-header, .receipt-items, .receipt-total, .receipt-footer {
+                width: 100% !important;
+            }
         }
 
         /* Responsive styles */
@@ -1266,6 +1281,7 @@
             text-align: left;
             margin: 20px 0;
             padding: 0 20px;
+            list-style-type: none;
         }
 
         .premium-feature {
@@ -1394,6 +1410,29 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
+        }
+        
+        /* Print optimization */
+        @media print {
+            .receipt {
+                width: 80mm !important;
+                max-width: 80mm !important;
+                font-size: 12px !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
+            
+            .receipt-header, .receipt-items, .receipt-total, .receipt-footer {
+                width: 100% !important;
+            }
+            
+            .receipt-item {
+                font-size: 11px !important;
+            }
+            
+            .receipt-title {
+                font-size: 16px !important;
+            }
         }
     </style>
 </head>
@@ -1714,6 +1753,45 @@
         </div>
     </div>
 
+    <!-- Edit Product Modal (BARU) -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Produk</h3>
+                <button class="modal-close" id="closeEditProductModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label for="editProductName">Nama Produk</label>
+                    <input type="text" id="editProductName" class="form-control" placeholder="Nama produk">
+                </div>
+                <div class="form-group">
+                    <label for="editProductPrice">Harga</label>
+                    <input type="number" id="editProductPrice" class="form-control" placeholder="Harga">
+                </div>
+                <div class="form-group">
+                    <label for="editProductCategory">Kategori</label>
+                    <select id="editProductCategory" class="form-control">
+                        <option value="Makanan">Makanan</option>
+                        <option value="Minuman">Minuman</option>
+                        <option value="Elektronik">Elektronik</option>
+                        <option value="Pakaian">Pakaian</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editProductStock">Stok</label>
+                    <input type="number" id="editProductStock" class="form-control" placeholder="Stok">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditProduct">Batal</button>
+                <button class="btn btn-primary" id="saveEditProduct">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Premium Notification -->
     <div class="premium-notification" id="premiumNotification">
         <button class="premium-close" id="closePremiumNotification">&times;</button>
@@ -1782,6 +1860,13 @@
         // Keranjang belanja
         let cart = [];
         let transactionCount = 1;
+        
+        // Informasi toko
+        let storeInfo = {
+            name: "Online Store Pro",
+            address: "Jl. Contoh Alamat No. 123, Kota Contoh",
+            phone: "(021) 123-4567"
+        };
 
         // Inisialisasi aplikasi
         $(document).ready(function() {
@@ -1797,6 +1882,9 @@
 
             // Tampilkan keranjang
             renderCart();
+            
+            // Update informasi toko di header struk
+            updateReceiptStoreInfo();
 
             // Event listeners
             $("#searchProduct").on("keyup", function() {
@@ -1857,7 +1945,7 @@
             });
 
             $("#printReceipt").click(function() {
-                window.print();
+                printReceipt();
             });
 
             $("#downloadReceipt").click(function() {
@@ -1906,6 +1994,15 @@
                 showToast("Mode premium diaktifkan untuk 7 hari ke depan!", "success");
                 $("#premiumNotification").removeClass("show");
             });
+            
+            // Event listeners untuk modal edit produk (BARU)
+            $("#closeEditProductModal, #cancelEditProduct").click(function() {
+                $("#editProductModal").hide();
+            });
+            
+            $("#saveEditProduct").click(function() {
+                saveEditedProduct();
+            });
 
             // Event delegation untuk tombol aksi produk
             $(document).on("click", ".add-to-cart", function() {
@@ -1915,7 +2012,7 @@
 
             $(document).on("click", ".edit-product", function() {
                 const productId = $(this).data("id");
-                editProduct(productId);
+                showEditProductModal(productId);
             });
 
             $(document).on("click", ".delete-product", function() {
@@ -1967,6 +2064,13 @@
             const dateString = now.toLocaleDateString('id-ID', options);
             const timeString = now.toLocaleTimeString('id-ID');
             $("#currentDateTime").text(`${dateString} ${timeString}`);
+        }
+        
+        // Fungsi untuk memperbarui informasi toko di struk (BARU)
+        function updateReceiptStoreInfo() {
+            $(".receipt-title").text(storeInfo.name);
+            $(".receipt-address").first().text(storeInfo.address);
+            $(".receipt-address").last().text(`Telp: ${storeInfo.phone}`);
         }
 
         // Fungsi untuk menampilkan produk
@@ -2059,6 +2163,53 @@
             $("#productName").val("");
             $("#productPrice").val("");
             $("#productStock").val("1");
+        }
+        
+        // Fungsi untuk menampilkan modal edit produk (BARU)
+        function showEditProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            
+            if (product) {
+                $("#editProductId").val(product.id);
+                $("#editProductName").val(product.name);
+                $("#editProductPrice").val(product.price);
+                $("#editProductCategory").val(product.category);
+                $("#editProductStock").val(product.stock);
+                
+                $("#editProductModal").show();
+            }
+        }
+        
+        // Fungsi untuk menyimpan perubahan produk (BARU)
+        function saveEditedProduct() {
+            const id = parseInt($("#editProductId").val());
+            const name = $("#editProductName").val().trim();
+            const price = parseInt($("#editProductPrice").val());
+            const category = $("#editProductCategory").val();
+            const stock = parseInt($("#editProductStock").val()) || 0;
+            
+            if (!name || !price) {
+                showToast("Nama dan harga produk harus diisi", "error");
+                return;
+            }
+            
+            const productIndex = products.findIndex(p => p.id === id);
+            
+            if (productIndex !== -1) {
+                products[productIndex] = {
+                    id: id,
+                    name: name,
+                    price: price,
+                    category: category,
+                    stock: stock
+                };
+                
+                saveToLocalStorage();
+                renderProducts();
+                $("#editProductModal").hide();
+                
+                showToast("Produk berhasil diperbarui", "success");
+            }
         }
 
         // Fungsi untuk menambahkan produk ke keranjang
@@ -2292,7 +2443,8 @@
                 total: total,
                 paymentMethod: paymentMethod,
                 cashAmount: paymentMethod === "cash" ? parseInt($("#cashAmount").val()) || 0 : 0,
-                change: paymentMethod === "cash" ? (parseInt($("#cashAmount").val()) || 0) - total : 0
+                change: paymentMethod === "cash" ? (parseInt($("#cashAmount").val()) || 0) - total : 0,
+                feeDescription: $("#feeDescription").val() || "Biaya Tambahan"
             };
             
             // Simpan ke localStorage
@@ -2348,7 +2500,7 @@
             
             if (transaction.additionalFee > 0) {
                 $("#receiptFeeRow").show();
-                $("#receiptFeeLabel").text($("#feeDescription").val() || "Biaya Tambahan");
+                $("#receiptFeeLabel").text(transaction.feeDescription);
                 $("#receiptFeeAmount").text(`Rp ${transaction.additionalFee.toLocaleString('id-ID')}`);
             } else {
                 $("#receiptFeeRow").hide();
@@ -2385,34 +2537,55 @@
             
             $("#receiptModal").show();
         }
+        
+        // Fungsi untuk mencetak struk (DIPERBAIKI)
+        function printReceipt() {
+            const printContent = document.getElementById('receiptPrint').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            
+            // Render ulang produk dan keranjang setelah print
+            renderProducts();
+            renderCart();
+            
+            showToast("Struk berhasil dicetak", "success");
+        }
 
-        // Fungsi untuk mendownload struk sebagai PDF
+        // Fungsi untuk mendownload struk sebagai PDF (DIPERBAIKI)
         function downloadReceiptPDF() {
             const receiptElement = document.getElementById('receiptPrint');
             const transactionId = $("#receiptOrderId").text();
             
+            // Simpan elemen asli untuk dikembalikan nanti
+            const originalStyles = receiptElement.getAttribute('style') || '';
+            
+            // Terapkan style khusus untuk PDF
+            receiptElement.setAttribute('style', 'max-width: 80mm; font-size: 12px; padding: 10px;');
+            
             const options = {
-                margin: 10,
+                margin: 5,
                 filename: `Struk-${transactionId}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a7', orientation: 'portrait' }
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: [80, 200], // Ukuran struk yang lebih sesuai
+                    orientation: 'portrait' 
+                }
             };
             
-            html2pdf().set(options).from(receiptElement).save();
-            
-            showToast("Struk berhasil didownload", "success");
-        }
-
-        // Fungsi untuk mengedit produk
-        function editProduct(productId) {
-            const product = products.find(p => p.id === productId);
-            
-            if (product) {
-                // Tampilkan modal edit produk
-                showToast(`Fitur edit produk untuk ${product.name}`, "info");
-                // Di sini bisa ditambahkan modal untuk mengedit produk
-            }
+            html2pdf().set(options).from(receiptElement).save().then(() => {
+                // Kembalikan style asli
+                receiptElement.setAttribute('style', originalStyles);
+                showToast("Struk berhasil didownload", "success");
+            });
         }
 
         // Fungsi untuk menghapus produk
@@ -2452,19 +2625,25 @@
             $("#confirmationDialog").show();
         }
 
-        // Fungsi untuk menyimpan pengaturan
+        // Fungsi untuk menyimpan pengaturan (DIPERBAIKI)
         function saveSettings() {
             const storeName = $("#storeName").val();
             const storeAddress = $("#storeAddress").val();
             const storePhone = $("#storePhone").val();
             const cashierName = $("#cashierNameInput").val();
             
-            localStorage.setItem("storeName", storeName);
-            localStorage.setItem("storeAddress", storeAddress);
-            localStorage.setItem("storePhone", storePhone);
+            // Simpan informasi toko
+            storeInfo.name = storeName;
+            storeInfo.address = storeAddress;
+            storeInfo.phone = storePhone;
+            
+            localStorage.setItem("storeInfo", JSON.stringify(storeInfo));
             localStorage.setItem("cashierName", cashierName);
             
             $("#cashierName").text(cashierName);
+            
+            // Perbarui informasi toko di struk
+            updateReceiptStoreInfo();
             
             $("#settingsModal").hide();
             
@@ -2477,9 +2656,9 @@
                 products: products,
                 transactions: JSON.parse(localStorage.getItem("transactions") || "[]"),
                 settings: {
-                    storeName: localStorage.getItem("storeName") || "Online Store Pro",
-                    storeAddress: localStorage.getItem("storeAddress") || "Jl. Contoh Alamat No. 123, Kota Contoh",
-                    storePhone: localStorage.getItem("storePhone") || "(021) 123-4567",
+                    storeName: storeInfo.name,
+                    storeAddress: storeInfo.address,
+                    storePhone: storeInfo.phone,
                     cashierName: localStorage.getItem("cashierName") || "Admin"
                 }
             };
@@ -2522,16 +2701,26 @@
                         }
                         
                         if (data.settings) {
-                            localStorage.setItem("storeName", data.settings.storeName);
-                            localStorage.setItem("storeAddress", data.settings.storeAddress);
-                            localStorage.setItem("storePhone", data.settings.storePhone);
                             localStorage.setItem("cashierName", data.settings.cashierName);
-                            
-                            $("#storeName").val(data.settings.storeName);
-                            $("#storeAddress").val(data.settings.storeAddress);
-                            $("#storePhone").val(data.settings.storePhone);
                             $("#cashierNameInput").val(data.settings.cashierName);
                             $("#cashierName").text(data.settings.cashierName);
+                            
+                            // Perbarui informasi toko
+                            if (data.settings.storeName) {
+                                storeInfo.name = data.settings.storeName;
+                                $("#storeName").val(data.settings.storeName);
+                            }
+                            if (data.settings.storeAddress) {
+                                storeInfo.address = data.settings.storeAddress;
+                                $("#storeAddress").val(data.settings.storeAddress);
+                            }
+                            if (data.settings.storePhone) {
+                                storeInfo.phone = data.settings.storePhone;
+                                $("#storePhone").val(data.settings.storePhone);
+                            }
+                            
+                            localStorage.setItem("storeInfo", JSON.stringify(storeInfo));
+                            updateReceiptStoreInfo();
                         }
                         
                         renderProducts();
@@ -2554,6 +2743,7 @@
             localStorage.setItem("products", JSON.stringify(products));
             localStorage.setItem("cart", JSON.stringify(cart));
             localStorage.setItem("transactionCount", transactionCount.toString());
+            localStorage.setItem("storeInfo", JSON.stringify(storeInfo));
         }
 
         // Fungsi untuk memuat data dari localStorage
@@ -2561,6 +2751,8 @@
             const savedProducts = localStorage.getItem("products");
             const savedCart = localStorage.getItem("cart");
             const savedTransactionCount = localStorage.getItem("transactionCount");
+            const savedStoreInfo = localStorage.getItem("storeInfo");
+            const savedCashierName = localStorage.getItem("cashierName");
             
             if (savedProducts) {
                 products = JSON.parse(savedProducts);
@@ -2574,18 +2766,19 @@
                 transactionCount = parseInt(savedTransactionCount);
             }
             
-            // Load settings
-            const storeName = localStorage.getItem("storeName");
-            const storeAddress = localStorage.getItem("storeAddress");
-            const storePhone = localStorage.getItem("storePhone");
-            const cashierName = localStorage.getItem("cashierName");
+            if (savedStoreInfo) {
+                const parsedStoreInfo = JSON.parse(savedStoreInfo);
+                storeInfo = { ...storeInfo, ...parsedStoreInfo };
+                
+                // Update form settings
+                $("#storeName").val(storeInfo.name);
+                $("#storeAddress").val(storeInfo.address);
+                $("#storePhone").val(storeInfo.phone);
+            }
             
-            if (storeName) $("#storeName").val(storeName);
-            if (storeAddress) $("#storeAddress").val(storeAddress);
-            if (storePhone) $("#storePhone").val(storePhone);
-            if (cashierName) {
-                $("#cashierNameInput").val(cashierName);
-                $("#cashierName").text(cashierName);
+            if (savedCashierName) {
+                $("#cashierNameInput").val(savedCashierName);
+                $("#cashierName").text(savedCashierName);
             }
         }
     </script>
