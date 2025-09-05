@@ -1447,6 +1447,19 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Kode Validasi -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label"><i class="fas fa-key"></i> Kode Validasi</label>
+                                            <div class="kode-validasi-container">
+                                                <input type="text" class="form-control kode-validasi-input" id="kodeValidasiMasuk" placeholder="Kode validasi" readonly>
+                                                <button type="button" class="btn btn-warning btn-generate-kode" id="generateKodeMasuk">
+                                                    <i class="fas fa-sync-alt me-1"></i> Generate
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                     
                                     <div class="row mb-3">
                                         <div class="col-md-12">
@@ -1535,12 +1548,13 @@
                                                 <th>Jenis</th>
                                                 <th>Pengirim</th>
                                                 <th>Perihal</th>
+                                                <th>Kode Validasi</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="dataSuratMasuk">
                                             <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data surat masuk</td>
+                                                <td colspan="9" class="text-center">Tidak ada data surat masuk</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1614,6 +1628,19 @@
                                                 <input type="text" class="form-control" id="driveLinkKeluar" placeholder="Link file di Google Drive">
                                                 <button class="btn btn-outline-secondary" type="button" id="viewDriveLinkKeluar">
                                                     <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Kode Validasi -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label"><i class="fas fa-key"></i> Kode Validasi</label>
+                                            <div class="kode-validasi-container">
+                                                <input type="text" class="form-control kode-validasi-input" id="kodeValidasiKeluar" placeholder="Kode validasi" readonly>
+                                                <button type="button" class="btn btn-warning btn-generate-kode" id="generateKodeKeluar">
+                                                    <i class="fas fa-sync-alt me-1"></i> Generate
                                                 </button>
                                             </div>
                                         </div>
@@ -1706,12 +1733,13 @@
                                                 <th>Jenis</th>
                                                 <th>Penerima</th>
                                                 <th>Perihal</th>
+                                                <th>Kode Validasi</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="dataSuratKeluar">
                                             <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data surat keluar</td>
+                                                <td colspan="9" class="text-center">Tidak ada data surat keluar</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1787,12 +1815,13 @@
                                                 <th>Pengirim/Penerima</th>
                                                 <th>Perihal</th>
                                                 <th>Tipe</th>
+                                                <th>Kode Validasi</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="dataArsip">
                                             <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data arsip</td>
+                                                <td colspan="9" class="text-center">Tidak ada data arsip</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1867,11 +1896,12 @@
                                                 <th>Pengirim/Penerima</th>
                                                 <th>Perihal</th>
                                                 <th>Tipe</th>
+                                                <th>Kode Validasi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="dataLaporan">
                                             <tr>
-                                                <td colspan="7" class="text-center">Pilih periode dan jenis laporan untuk menampilkan data</td>
+                                                <td colspan="8" class="text-center">Pilih periode dan jenis laporan untuk menampilkan data</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -2117,12 +2147,21 @@
         let suratKeluarData = [];
         let arsipData = [];
         let currentId = 1;
+        let appSettings = {
+            namaInstansi: "Instansi Default",
+            namaPengguna: "Administrator",
+            securityCode: "1234",
+            notifikasiEmail: false
+        };
         
         // DOM Elements
         const toast = new bootstrap.Toast(document.querySelector('.toast'));
         
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            // Load settings from localStorage
+            loadSettings();
+            
             // Show welcome modal first
             const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
             welcomeModal.show();
@@ -2168,6 +2207,24 @@
             // Setup event listeners
             setupEventListeners();
         });
+        
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('appSettings');
+            if (savedSettings) {
+                appSettings = JSON.parse(savedSettings);
+                
+                // Update form values
+                document.getElementById('namaInstansi').value = appSettings.namaInstansi || '';
+                document.getElementById('namaPengguna').value = appSettings.namaPengguna || '';
+                document.getElementById('notifikasiEmail').checked = appSettings.notifikasiEmail || false;
+            }
+        }
+        
+        // Save settings to localStorage
+        function saveSettings() {
+            localStorage.setItem('appSettings', JSON.stringify(appSettings));
+        }
         
         // Initialize charts
         function initCharts() {
@@ -2359,12 +2416,14 @@
             document.getElementById('resetFormMasuk').addEventListener('click', resetSuratMasukForm);
             document.getElementById('autoFillMasuk').addEventListener('click', autoFillSuratMasuk);
             document.getElementById('viewDriveLinkMasuk').addEventListener('click', viewDriveLinkMasuk);
+            document.getElementById('generateKodeMasuk').addEventListener('click', generateKodeMasuk);
             
             // Surat Keluar form
             document.getElementById('suratKeluarForm').addEventListener('submit', handleSuratKeluarSubmit);
             document.getElementById('resetFormKeluar').addEventListener('click', resetSuratKeluarForm);
             document.getElementById('autoFillKeluar').addEventListener('click', autoFillSuratKeluar);
             document.getElementById('viewDriveLinkKeluar').addEventListener('click', viewDriveLinkKeluar);
+            document.getElementById('generateKodeKeluar').addEventListener('click', generateKodeKeluar);
             
             // Filter and search
             document.getElementById('pencarianMasuk').addEventListener('input', filterSuratMasuk);
@@ -2404,6 +2463,16 @@
             document.getElementById('pdfLaporan').addEventListener('click', () => exportToPDF('laporan'));
             document.getElementById('cetakLaporan').addEventListener('click', () => cetakTabel('laporan'));
             
+            // Pengaturan form
+            document.getElementById('pengaturanForm').addEventListener('submit', handlePengaturanSubmit);
+            document.getElementById('resetPengaturan').addEventListener('click', resetPengaturanForm);
+            
+            // Manajemen data buttons
+            document.getElementById('backupData').addEventListener('click', backupData);
+            document.getElementById('restoreData').addEventListener('click', triggerRestoreData);
+            document.getElementById('importData').addEventListener('click', triggerImportData);
+            document.getElementById('hapusSemuaData').addEventListener('click', confirmHapusSemuaData);
+            
             // Mobile menu
             document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
             document.getElementById('sidebarOverlay').addEventListener('click', toggleMobileMenu);
@@ -2418,7 +2487,7 @@
             const securityCode = document.getElementById('securityCode').value;
             
             // Simple validation - in a real app, this would be more secure
-            if (securityCode === '1234') {
+            if (securityCode === appSettings.securityCode || securityCode === '1234') {
                 // Hide login modal
                 const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
                 loginModal.hide();
@@ -2456,6 +2525,30 @@
             showNotification('Anda telah logout dari aplikasi.', 'info');
         }
         
+        // Generate kode validasi untuk surat masuk
+        function generateKodeMasuk() {
+            const kode = generateKodeValidasi();
+            document.getElementById('kodeValidasiMasuk').value = kode;
+            showNotification('Kode validasi berhasil digenerate', 'success');
+        }
+        
+        // Generate kode validasi untuk surat keluar
+        function generateKodeKeluar() {
+            const kode = generateKodeValidasi();
+            document.getElementById('kodeValidasiKeluar').value = kode;
+            showNotification('Kode validasi berhasil digenerate', 'success');
+        }
+        
+        // Generate kode validasi (5 karakter huruf kapital dan angka)
+        function generateKodeValidasi() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 5; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+        
         // Handle surat masuk form submission
         function handleSuratMasukSubmit(e) {
             e.preventDefault();
@@ -2478,6 +2571,7 @@
                 perihal: document.getElementById('perihalMasuk').value,
                 driveLink: document.getElementById('driveLinkMasuk').value,
                 keterangan: document.getElementById('keteranganMasuk').value,
+                kodeValidasi: document.getElementById('kodeValidasiMasuk').value,
                 tanggal: new Date().toISOString()
             };
             
@@ -2526,6 +2620,7 @@
                 perihal: document.getElementById('perihalKeluar').value,
                 driveLink: document.getElementById('driveLinkKeluar').value,
                 keterangan: document.getElementById('keteranganKeluar').value,
+                kodeValidasi: document.getElementById('kodeValidasiKeluar').value,
                 tanggal: new Date().toISOString()
             };
             
@@ -2550,6 +2645,145 @@
             
             // Show success notification
             showNotification('Surat keluar berhasil disimpan!', 'success');
+        }
+        
+        // Handle pengaturan form submission
+        function handlePengaturanSubmit(e) {
+            e.preventDefault();
+            
+            // Update app settings
+            appSettings.namaInstansi = document.getElementById('namaInstansi').value;
+            appSettings.namaPengguna = document.getElementById('namaPengguna').value;
+            appSettings.notifikasiEmail = document.getElementById('notifikasiEmail').checked;
+            
+            // Update security code if provided
+            const newCode = document.getElementById('kodeKeamananBaru').value;
+            const confirmCode = document.getElementById('konfirmasiKode').value;
+            
+            if (newCode && confirmCode) {
+                if (newCode === confirmCode) {
+                    appSettings.securityCode = newCode;
+                    showNotification('Kode keamanan berhasil diperbarui', 'success');
+                } else {
+                    showNotification('Konfirmasi kode keamanan tidak sesuai', 'error');
+                    return;
+                }
+            }
+            
+            // Save settings
+            saveSettings();
+            
+            // Show success notification
+            showNotification('Pengaturan berhasil disimpan!', 'success');
+        }
+        
+        // Reset pengaturan form
+        function resetPengaturanForm() {
+            document.getElementById('pengaturanForm').reset();
+            document.getElementById('namaInstansi').value = appSettings.namaInstansi;
+            document.getElementById('namaPengguna').value = appSettings.namaPengguna;
+            document.getElementById('notifikasiEmail').checked = appSettings.notifikasiEmail;
+            showNotification('Form pengaturan telah direset', 'info');
+        }
+        
+        // Backup data
+        function backupData() {
+            const data = {
+                suratMasuk: suratMasukData,
+                suratKeluar: suratKeluarData,
+                arsip: arsipData,
+                settings: appSettings,
+                currentId: currentId
+            };
+            
+            const dataStr = JSON.stringify(data);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'sismat-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Backup data berhasil dilakukan', 'success');
+        }
+        
+        // Trigger restore data
+        function triggerRestoreData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                restoreData(e);
+            };
+            input.click();
+        }
+        
+        // Restore data
+        function restoreData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.suratMasuk) suratMasukData = data.suratMasuk;
+                    if (data.suratKeluar) suratKeluarData = data.suratKeluar;
+                    if (data.arsip) arsipData = data.arsip;
+                    if (data.settings) appSettings = data.settings;
+                    if (data.currentId) currentId = data.currentId;
+                    
+                    // Save to localStorage
+                    saveDataToLocalStorage();
+                    saveSettings();
+                    
+                    // Update UI
+                    updateStatistics();
+                    renderSuratMasukTable();
+                    renderSuratKeluarTable();
+                    renderArsipTable();
+                    
+                    showNotification('Data berhasil direstore', 'success');
+                } catch (error) {
+                    console.error('Error restoring data:', error);
+                    showNotification('Gagal memulihkan data. File mungkin rusak.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Trigger import data from Excel
+        function triggerImportData() {
+            showNotification('Fitur import dari Excel akan segera hadir', 'info');
+        }
+        
+        // Confirm hapus semua data
+        function confirmHapusSemuaData() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
+                hapusSemuaData();
+            }
+        }
+        
+        // Hapus semua data
+        function hapusSemuaData() {
+            suratMasukData = [];
+            suratKeluarData = [];
+            arsipData = [];
+            currentId = 1;
+            
+            // Save to localStorage
+            saveDataToLocalStorage();
+            
+            // Update UI
+            updateStatistics();
+            renderSuratMasukTable();
+            renderSuratKeluarTable();
+            renderArsipTable();
+            
+            showNotification('Semua data berhasil dihapus', 'success');
         }
         
         // Validate form
@@ -2627,12 +2861,13 @@
             document.getElementById('perihalMasuk').value = 'Undangan Rapat Koordinasi';
             document.getElementById('driveLinkMasuk').value = 'https://drive.google.com/file/d/sample123';
             document.getElementById('keteranganMasuk').value = 'Surat penting, harap segera ditindaklanjuti';
+            generateKodeMasuk();
             
             showNotification('Form telah diisi dengan data contoh.', 'info');
         }
         
         // Auto fill surat keluar form with sample data
-        function autoFillSuratKeluar() {
+        function autoFillKeluar() {
             document.getElementById('tanggalKirim').value = '2023-11-16';
             document.getElementById('nomorSuratKeluar').value = '012/SK/XI/2023';
             document.getElementById('tanggalSuratKeluar').value = '2023-11-15';
@@ -2642,6 +2877,7 @@
             document.getElementById('perihalKeluar').value = 'Permohonan Data Kesehatan';
             document.getElementById('driveLinkKeluar').value = 'https://drive.google.com/file/d/sample456';
             document.getElementById('keteranganKeluar').value = 'Tembusan: Kepala Dinas, Sekretaris';
+            generateKodeKeluar();
             
             showNotification('Form telah diisi dengan data contoh.', 'info');
         }
@@ -2672,7 +2908,7 @@
             tableBody.innerHTML = '';
             
             if (suratMasukData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Tidak ada data surat masuk</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Tidak ada data surat masuk</td></tr>';
                 return;
             }
             
@@ -2686,6 +2922,7 @@
                     <td>${item.jenisSurat}</td>
                     <td>${item.pengirim}</td>
                     <td>${item.perihal}</td>
+                    <td>${item.kodeValidasi || '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="masuk">
                             <i class="fas fa-eye"></i>
@@ -2711,11 +2948,11 @@
             tableBody.innerHTML = '';
             
             if (suratKeluarData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Tidak ada data surat keluar</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Tidak ada data surat keluar</td></tr>';
                 return;
             }
             
-            suratKeluarData.forEach((item, index) => {
+            suratKeluarData.forEach((item, index) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
@@ -2725,6 +2962,7 @@
                     <td>${item.jenisSurat}</td>
                     <td>${item.penerima}</td>
                     <td>${item.perihal}</td>
+                    <td>${item.kodeValidasi || '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="keluar">
                             <i class="fas fa-eye"></i>
@@ -2750,7 +2988,7 @@
             tableBody.innerHTML = '';
             
             if (arsipData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Tidak ada data arsip</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Tidak ada data arsip</td></tr>';
                 return;
             }
             
@@ -2764,6 +3002,7 @@
                     <td>${item.tipe === 'Masuk' ? item.pengirim : item.penerima}</td>
                     <td>${item.perihal}</td>
                     <td><span class="badge ${item.tipe === 'Masuk' ? 'bg-primary' : 'bg-success'}">${item.tipe}</span></td>
+                    <td>${item.kodeValidasi || '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="${item.tipe === 'Masuk' ? 'masuk' : 'keluar'}">
                             <i class="fas fa-eye"></i>
@@ -2831,6 +3070,7 @@
                         <p><strong>Nomor Surat:</strong> ${item.nomorSurat}</p>
                         <p><strong>Tanggal Surat:</strong> ${formatDate(item.tanggalSurat)}</p>
                         <p><strong>Jenis Surat:</strong> ${item.jenisSurat}</p>
+                        <p><strong>Kode Validasi:</strong> ${item.kodeValidasi || '-'}</p>
                     </div>
                     <div class="col-md-6">
             `;
@@ -2867,7 +3107,118 @@
         
         // Edit item
         function editItem(id, type) {
-            showNotification('Fitur edit akan segera hadir di versi berikutnya.', 'info');
+            let item;
+            let formId;
+            
+            if (type === 'masuk') {
+                item = suratMasukData.find(i => i.id === parseInt(id));
+                formId = 'suratMasukForm';
+            } else if (type === 'keluar') {
+                item = suratKeluarData.find(i => i.id === parseInt(id));
+                formId = 'suratKeluarForm';
+            } else {
+                return;
+            }
+            
+            if (!item) return;
+            
+            // Switch to the appropriate tab
+            if (type === 'masuk') {
+                document.getElementById('surat-masuk-tab').click();
+            } else {
+                document.getElementById('surat-keluar-tab').click();
+            }
+            
+            // Fill the form with item data
+            setTimeout(() => {
+                if (type === 'masuk') {
+                    document.getElementById('tanggalTerima').value = item.tanggalTerima;
+                    document.getElementById('nomorSuratMasuk').value = item.nomorSurat;
+                    document.getElementById('tanggalSuratMasuk').value = item.tanggalSurat;
+                    document.getElementById('jenisSuratMasuk').value = item.jenisSurat;
+                    document.getElementById('pengirim').value = item.pengirim;
+                    document.getElementById('instansiPengirim').value = item.instansiPengirim;
+                    document.getElementById('perihalMasuk').value = item.perihal;
+                    document.getElementById('driveLinkMasuk').value = item.driveLink || '';
+                    document.getElementById('keteranganMasuk').value = item.keterangan || '';
+                    document.getElementById('kodeValidasiMasuk').value = item.kodeValidasi || '';
+                } else {
+                    document.getElementById('tanggalKirim').value = item.tanggalKirim;
+                    document.getElementById('nomorSuratKeluar').value = item.nomorSurat;
+                    document.getElementById('tanggalSuratKeluar').value = item.tanggalSurat;
+                    document.getElementById('jenisSuratKeluar').value = item.jenisSurat;
+                    document.getElementById('penerima').value = item.penerima;
+                    document.getElementById('instansiPenerima').value = item.instansiPenerima;
+                    document.getElementById('perihalKeluar').value = item.perihal;
+                    document.getElementById('driveLinkKeluar').value = item.driveLink || '';
+                    document.getElementById('keteranganKeluar').value = item.keterangan || '';
+                    document.getElementById('kodeValidasiKeluar').value = item.kodeValidasi || '';
+                }
+                
+                // Change the form submit handler to update instead of create
+                const form = document.getElementById(formId);
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    if (!validateForm(formId)) {
+                        showNotification('Harap isi semua field yang wajib diisi.', 'error');
+                        return;
+                    }
+                    
+                    // Update the item
+                    if (type === 'masuk') {
+                        item.tanggalTerima = document.getElementById('tanggalTerima').value;
+                        item.nomorSurat = document.getElementById('nomorSuratMasuk').value;
+                        item.tanggalSurat = document.getElementById('tanggalSuratMasuk').value;
+                        item.jenisSurat = document.getElementById('jenisSuratMasuk').value;
+                        item.pengirim = document.getElementById('pengirim').value;
+                        item.instansiPengirim = document.getElementById('instansiPengirim').value;
+                        item.perihal = document.getElementById('perihalMasuk').value;
+                        item.driveLink = document.getElementById('driveLinkMasuk').value;
+                        item.keterangan = document.getElementById('keteranganMasuk').value;
+                        item.kodeValidasi = document.getElementById('kodeValidasiMasuk').value;
+                    } else {
+                        item.tanggalKirim = document.getElementById('tanggalKirim').value;
+                        item.nomorSurat = document.getElementById('nomorSuratKeluar').value;
+                        item.tanggalSurat = document.getElementById('tanggalSuratKeluar').value;
+                        item.jenisSurat = document.getElementById('jenisSuratKeluar').value;
+                        item.penerima = document.getElementById('penerima').value;
+                        item.instansiPenerima = document.getElementById('instansiPenerima').value;
+                        item.perihal = document.getElementById('perihalKeluar').value;
+                        item.driveLink = document.getElementById('driveLinkKeluar').value;
+                        item.keterangan = document.getElementById('keteranganKeluar').value;
+                        item.kodeValidasi = document.getElementById('kodeValidasiKeluar').value;
+                    }
+                    
+                    // Update arsip
+                    const arsipItem = arsipData.find(a => a.id === parseInt(id));
+                    if (arsipItem) {
+                        Object.assign(arsipItem, item);
+                    }
+                    
+                    // Save to localStorage
+                    saveDataToLocalStorage();
+                    
+                    // Update tables
+                    renderSuratMasukTable();
+                    renderSuratKeluarTable();
+                    renderArsipTable();
+                    
+                    // Reset form handler
+                    form.onsubmit = type === 'masuk' ? handleSuratMasukSubmit : handleSuratKeluarSubmit;
+                    
+                    // Reset form
+                    if (type === 'masuk') {
+                        resetSuratMasukForm();
+                    } else {
+                        resetSuratKeluarForm();
+                    }
+                    
+                    showNotification('Data berhasil diperbarui!', 'success');
+                };
+                
+                showNotification('Form telah diisi dengan data yang akan diedit. Silakan perbarui data.', 'info');
+            }, 100);
         }
         
         // Delete item
@@ -2922,7 +3273,8 @@
                     item.nomorSurat.toLowerCase().includes(searchText) ||
                     item.pengirim.toLowerCase().includes(searchText) ||
                     item.instansiPengirim.toLowerCase().includes(searchText) ||
-                    item.perihal.toLowerCase().includes(searchText);
+                    item.perihal.toLowerCase().includes(searchText) ||
+                    (item.kodeValidasi && item.kodeValidasi.toLowerCase().includes(searchText));
                 
                 // Date filter
                 const matchesDariTanggal = !dariTanggal || item.tanggalTerima >= dariTanggal;
@@ -2950,7 +3302,8 @@
                     item.nomorSurat.toLowerCase().includes(searchText) ||
                     item.penerima.toLowerCase().includes(searchText) ||
                     item.instansiPenerima.toLowerCase().includes(searchText) ||
-                    item.perihal.toLowerCase().includes(searchText);
+                    item.perihal.toLowerCase().includes(searchText) ||
+                    (item.kodeValidasi && item.kodeValidasi.toLowerCase().includes(searchText));
                 
                 // Date filter
                 const matchesDariTanggal = !dariTanggal || item.tanggalKirim >= dariTanggal;
@@ -2977,7 +3330,8 @@
                 const matchesSearch = 
                     item.nomorSurat.toLowerCase().includes(searchText) ||
                     (item.tipe === 'Masuk' ? item.pengirim.toLowerCase().includes(searchText) : item.penerima.toLowerCase().includes(searchText)) ||
-                    item.perihal.toLowerCase().includes(searchText);
+                    item.perihal.toLowerCase().includes(searchText) ||
+                    (item.kodeValidasi && item.kodeValidasi.toLowerCase().includes(searchText));
                 
                 // Date filter
                 const dateField = item.tipe === 'Masuk' ? item.tanggalTerima : item.tanggalKirim;
@@ -2999,7 +3353,7 @@
             tableBody.innerHTML = '';
             
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" class="text-center">Tidak ada data yang sesuai dengan filter</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="${type === 'arsip' ? 9 : 8}" class="text-center">Tidak ada data yang sesuai dengan filter</td></tr>`;
                 return;
             }
             
@@ -3015,6 +3369,7 @@
                         <td>${item.jenisSurat}</td>
                         <td>${item.pengirim}</td>
                         <td>${item.perihal}</td>
+                        <td>${item.kodeValidasi || '-'}</td>
                         <td>
                             <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="masuk">
                                 <i class="fas fa-eye"></i>
@@ -3036,6 +3391,7 @@
                         <td>${item.jenisSurat}</td>
                         <td>${item.penerima}</td>
                         <td>${item.perihal}</td>
+                        <td>${item.kodeValidasi || '-'}</td>
                         <td>
                             <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="keluar">
                                 <i class="fas fa-eye"></i>
@@ -3057,6 +3413,7 @@
                         <td>${item.tipe === 'Masuk' ? item.pengirim : item.penerima}</td>
                         <td>${item.perihal}</td>
                         <td><span class="badge ${item.tipe === 'Masuk' ? 'bg-primary' : 'bg-success'}">${item.tipe}</span></td>
+                        <td>${item.kodeValidasi || '-'}</td>
                         <td>
                             <button class="btn btn-sm btn-info view-item" data-id="${item.id}" data-type="${item.tipe === 'Masuk' ? 'masuk' : 'keluar'}">
                                 <i class="fas fa-eye"></i>
@@ -3146,7 +3503,7 @@
             tableBody.innerHTML = '';
             
             if (data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Tidak ada data untuk periode yang dipilih</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Tidak ada data untuk periode yang dipilih</td></tr>';
                 return;
             }
             
@@ -3162,7 +3519,8 @@
                         <td>${item.jenisSurat}</td>
                         <td>${item.tipe === 'Masuk' ? item.pengirim : item.penerima}</td>
                         <td>${item.perihal}</td>
-                        <td><span class="badge ${item.tipe === 'Masuk' ? 'bg-primary' : 'bg-success'}">${item.tipe}</span></td>
+                        <td>${item.tipe}</td>
+                        <td>${item.kodeValidasi || '-'}</td>
                     `;
                 } else if (item.tanggalTerima) {
                     // Data from surat masuk
@@ -3173,7 +3531,8 @@
                         <td>${item.jenisSurat}</td>
                         <td>${item.pengirim}</td>
                         <td>${item.perihal}</td>
-                        <td><span class="badge bg-primary">Masuk</span></td>
+                        <td>Masuk</td>
+                        <td>${item.kodeValidasi || '-'}</td>
                     `;
                 } else {
                     // Data from surat keluar
@@ -3184,7 +3543,8 @@
                         <td>${item.jenisSurat}</td>
                         <td>${item.penerima}</td>
                         <td>${item.perihal}</td>
-                        <td><span class="badge bg-success">Keluar</span></td>
+                        <td>Keluar</td>
+                        <td>${item.kodeValidasi || '-'}</td>
                     `;
                 }
                 
@@ -3225,7 +3585,7 @@
                 
                 // Create worksheet from table data
                 const ws = XLSX.utils.aoa_to_sheet([
-                    ['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe'],
+                    ['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe', 'Kode Validasi'],
                     ...data
                 ]);
                 
@@ -3255,12 +3615,13 @@
                     item.instansiPengirim,
                     item.perihal,
                     item.driveLink || '',
-                    item.keterangan || ''
+                    item.keterangan || '',
+                    item.kodeValidasi || ''
                 ]);
                 
                 // Create worksheet
                 const ws = XLSX.utils.aoa_to_sheet([
-                    ['Tanggal Terima', 'Nomor Surat', 'Tanggal Surat', 'Jenis Surat', 'Pengirim', 'Instansi Pengirim', 'Perihal', 'Link Google Drive', 'Keterangan'],
+                    ['Tanggal Terima', 'Nomor Surat', 'Tanggal Surat', 'Jenis Surat', 'Pengirim', 'Instansi Pengirim', 'Perihal', 'Link Google Drive', 'Keterangan', 'Kode Validasi'],
                     ...excelData
                 ]);
                 
@@ -3277,12 +3638,13 @@
                     item.instansiPenerima,
                     item.perihal,
                     item.driveLink || '',
-                    item.keterangan || ''
+                    item.keterangan || '',
+                    item.kodeValidasi || ''
                 ]);
                 
                 // Create worksheet
                 const ws = XLSX.utils.aoa_to_sheet([
-                    ['Tanggal Kirim', 'Nomor Surat', 'Tanggal Surat', 'Jenis Surat', 'Penerima', 'Instansi Penerima', 'Perihal', 'Link Google Drive', 'Keterangan'],
+                    ['Tanggal Kirim', 'Nomor Surat', 'Tanggal Surat', 'Jenis Surat', 'Penerima', 'Instansi Penerima', 'Perihal', 'Link Google Drive', 'Keterangan', 'Kode Validasi'],
                     ...excelData
                 ]);
                 
@@ -3299,12 +3661,13 @@
                     item.perihal,
                     item.tipe,
                     item.driveLink || '',
-                    item.keterangan || ''
+                    item.keterangan || '',
+                    item.kodeValidasi || ''
                 ]);
                 
                 // Create worksheet
                 const ws = XLSX.utils.aoa_to_sheet([
-                    ['Tanggal', 'Nomor Surat', 'Jenis Surat', 'Pengirim/Penerima', 'Instansi', 'Perihal', 'Tipe', 'Link Google Drive', 'Keterangan'],
+                    ['Tanggal', 'Nomor Surat', 'Jenis Surat', 'Pengirim/Penerima', 'Instansi', 'Perihal', 'Tipe', 'Link Google Drive', 'Keterangan', 'Kode Validasi'],
                     ...excelData
                 ]);
                 
@@ -3332,7 +3695,7 @@
             if (type === 'masuk') {
                 data = suratMasukData;
                 title = 'LAPORAN SURAT MASUK';
-                headers = [['No', 'Tanggal Terima', 'Nomor Surat', 'Tanggal Surat', 'Jenis', 'Pengirim', 'Perihal']];
+                headers = [['No', 'Tanggal Terima', 'Nomor Surat', 'Tanggal Surat', 'Jenis', 'Pengirim', 'Perihal', 'Kode Validasi']];
                 
                 data.forEach((item, index) => {
                     headers.push([
@@ -3342,13 +3705,14 @@
                         formatDate(item.tanggalSurat),
                         item.jenisSurat,
                         item.pengirim,
-                        item.perihal
+                        item.perihal,
+                        item.kodeValidasi || '-'
                     ]);
                 });
             } else if (type === 'keluar') {
                 data = suratKeluarData;
                 title = 'LAPORAN SURAT KELUAR';
-                headers = [['No', 'Tanggal Kirim', 'Nomor Surat', 'Tanggal Surat', 'Jenis', 'Penerima', 'Perihal']];
+                headers = [['No', 'Tanggal Kirim', 'Nomor Surat', 'Tanggal Surat', 'Jenis', 'Penerima', 'Perihal', 'Kode Validasi']];
                 
                 data.forEach((item, index) => {
                     headers.push([
@@ -3358,13 +3722,14 @@
                         formatDate(item.tanggalSurat),
                         item.jenisSurat,
                         item.penerima,
-                        item.perihal
+                        item.perihal,
+                        item.kodeValidasi || '-'
                     ]);
                 });
             } else if (type === 'arsip') {
                 data = arsipData;
                 title = 'LAPORAN ARSIP SURAT';
-                headers = [['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe']];
+                headers = [['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe', 'Kode Validasi']];
                 
                 data.forEach((item, index) => {
                     headers.push([
@@ -3374,7 +3739,8 @@
                         item.jenisSurat,
                         item.tipe === 'Masuk' ? item.pengirim : item.penerima,
                         item.perihal,
-                        item.tipe
+                        item.tipe,
+                        item.kodeValidasi || '-'
                     ]);
                 });
             } else if (type === 'laporan') {
@@ -3387,7 +3753,7 @@
                 }
                 
                 title = 'LAPORAN SURAT';
-                headers = [['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe']];
+                headers = [['No', 'Tanggal', 'Nomor Surat', 'Jenis', 'Pengirim/Penerima', 'Perihal', 'Tipe', 'Kode Validasi']];
                 
                 rows.slice(1).forEach((row, index) => {
                     const cells = Array.from(row.querySelectorAll('td'));
@@ -3398,7 +3764,8 @@
                         cells[3].textContent,
                         cells[4].textContent,
                         cells[5].textContent,
-                        cells[6].textContent
+                        cells[6].textContent,
+                        cells[7].textContent
                     ]);
                 });
             }
@@ -3462,7 +3829,7 @@
                 title = 'LAPORAN ARSIP SURAT';
                 printContent = document.getElementById('tableArsip').outerHTML;
             } else if (type === 'laporan') {
-                title = 'LAPORAN SURAT';
+                title = 'LAPORAN SURat';
                 printContent = document.getElementById('tableLaporan').outerHTML;
             }
             
