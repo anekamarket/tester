@@ -1195,11 +1195,14 @@
                     <p>Sistem Manajemen Surat Terpadu</p>
                 </div>
                 <div class="welcome-body">
-                    <p>Anda telah berhasil login ke sistem. Silakan gunakan aplikasi ini untuk mengelola surat masuk dan keluar dengan mudah.</p>
-                    <p>Aplikasi akan otomatis tertutup dalam <span id="welcomeCountdown">5</span> detik.</p>
+                    <p>Selamat datang di aplikasi SISMAT. Kelola surat masuk dan keluar dengan mudah dan efisien.</p>
+                    <p>Silakan gunakan menu navigasi di sebelah kiri untuk mengakses fitur-fitur aplikasi.</p>
+                    <div class="countdown-timer">
+                        Modal ini akan tertutup otomatis dalam <span id="welcomeCountdown">5</span> detik
+                    </div>
                 </div>
                 <div class="welcome-footer">
-                    <button type="button" class="btn btn-primary" id="closeWelcomeBtn">Lanjutkan Sekarang</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mulai Sekarang</button>
                 </div>
             </div>
         </div>
@@ -1214,861 +1217,530 @@
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
-            Operation completed successfully.
+            Operasi berhasil dilakukan.
         </div>
     </div>
     
     <!-- Main App Container -->
     <div class="app-container app-content-unauthenticated">
-        <!-- Header -->
-        <div class="app-header">
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="app-logo">
-                <i class="fas fa-envelope-open-text"></i>
-            </div>
-            <h1 class="app-title">SISMAT</h1>
-            <p class="app-subtitle">Sistem Manajemen Surat</p>
-            <div class="watermark">
-                v2.1.0 | Lentera Karya Situbondo
-            </div>
-        </div>
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
         
         <div class="row g-0">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 p-4 bg-light">
-                <ul class="nav nav-pills flex-column" id="mainMenu">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#dashboard" data-bs-toggle="pill">
-                            <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#suratMasuk" data-bs-toggle="pill">
-                            <i class="fas fa-envelope feature-icon"></i> Surat Masuk
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#suratKeluar" data-bs-toggle="pill">
-                            <i class="fas fa-paper-plane feature-icon"></i> Surat Keluar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#laporanSuratMasuk" data-bs-toggle="pill">
-                            <i class="fas fa-file-alt feature-icon"></i> Laporan Surat Masuk
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#laporanSuratKeluar" data-bs-toggle="pill">
-                            <i class="fas fa-file-export feature-icon"></i> Laporan Surat Keluar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pengaturan" data-bs-toggle="pill">
-                            <i class="fas fa-cog feature-icon"></i> Pengaturan
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="#" id="logoutBtn">
-                            <i class="fas fa-sign-out-alt feature-icon"></i> Keluar
-                        </a>
-                    </li>
-                </ul>
-                
-                <!-- Developer Info Section -->
-                <div class="developer-info">
-                    <h6>Developer Information</h6>
-                    <div class="developer-contact">
-                        <p><i class="fas fa-user me-2"></i> Lentera Karya Situbondo</p>
-                        <p><i class="fas fa-envelope me-2"></i> <a href="mailto:admin@anekamarket.my.id">admin@anekamarket.my.id</a></p>
-                        <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/6287865614222" target="_blank">087865614222</a></p>
-                        <p><i class="fas fa-globe me-2"></i> <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a></p>
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3 col-lg-2 p-4 bg-light" id="sidebar">
+                <div class="position-sticky top-0">
+                    <div class="text-center mb-4">
+                        <div class="app-logo">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <h6 class="app-title">SISMAT</h6>
+                        <p class="app-subtitle">Sistem Manajemen Surat</p>
+                    </div>
+                    
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-bs-target="dashboard">
+                                <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-target="suratMasuk">
+                                <i class="fas fa-envelope feature-icon"></i> Surat Masuk
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-target="suratKeluar">
+                                <i class="fas fa-paper-plane feature-icon"></i> Surat Keluar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-target="arsipSurat">
+                                <i class="fas fa-archive feature-icon"></i> Arsip Surat
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-target="laporan">
+                                <i class="fas fa-chart-bar feature-icon"></i> Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-target="pengaturan">
+                                <i class="fas fa-cog feature-icon"></i> Pengaturan
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <div class="developer-info">
+                        <h6>Developer Information</h6>
+                        <div class="developer-contact">
+                            <p><i class="fas fa-user me-2"></i> Lentera Karya Situbondo</p>
+                            <p><i class="fas fa-envelope me-2"></i> <a href="mailto:admin@anekamarket.my.id">admin@anekamarket.my.id</a></p>
+                            <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/6287865614222" target="_blank">087865614222</a></p>
+                            <p><i class="fas fa-globe me-2"></i> <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 p-5">
-                <div class="tab-content">
-                    <!-- Dashboard Tab -->
-                    <div class="tab-pane fade show active" id="dashboard">
-                        <h4 class="section-title">Dashboard</h4>
-                        
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-envelope fa-2x text-primary"></i>
-                                    <div class="stats-number" id="totalSuratMasuk">0</div>
-                                    <div class="stats-label">Surat Masuk</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-paper-plane fa-2x text-success"></i>
-                                    <div class="stats-number" id="totalSuratKeluar">0</div>
-                                    <div class="stats-label">Surat Keluar</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-clock fa-2x text-warning"></i>
-                                    <div class="stats-number" id="totalPending">0</div>
-                                    <div class="stats-label">Menunggu Tindakan</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-check-circle fa-2x text-info"></i>
-                                    <div class="stats-number" id="totalSelesai">0</div>
-                                    <div class="stats-label">Telah Diproses</div>
-                                </div>
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="content-section">
+                    <h4 class="section-title">Dashboard</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-envelope fa-2x text-primary"></i>
+                                <div class="stats-number" id="totalSuratMasuk">0</div>
+                                <div class="stats-label">Surat Masuk</div>
                             </div>
                         </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-2"></i> Statistik Surat Bulan Ini
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="suratChart" height="250"></canvas>
-                                    </div>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-paper-plane fa-2x text-success"></i>
+                                <div class="stats-number" id="totalSuratKeluar">0</div>
+                                <div class="stats-label">Surat Keluar</div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i> Surat Terbaru
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No.</th>
-                                                        <th>Jenis</th>
-                                                        <th>Tanggal</th>
-                                                        <th>Pengirim/Penerima</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="recentSuratTable">
-                                                    <tr>
-                                                        <td colspan="5" class="text-center">Tidak ada data surat</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-archive fa-2x text-warning"></i>
+                                <div class="stats-number" id="totalArsip">0</div>
+                                <div class="stats-label">Arsip Surat</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-chart-line fa-2x text-info"></i>
+                                <div class="stats-number" id="totalAktivitas">0</div>
+                                <div class="stats-label">Total Aktivitas</div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Surat Masuk Tab -->
-                    <div class="tab-pane fade" id="suratMasuk">
-                        <h4 class="section-title">Surat Masuk</h4>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-plus-circle me-2"></i> Tambah Surat Masuk Baru
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-bar me-2"></i> Statistik Surat Bulanan
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="suratChart" height="250"></canvas>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form id="suratMasukForm">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="noAgendaMasuk"><i class="fas fa-list-ol"></i> No. Agenda</label>
-                                            <input type="text" class="form-control" id="noAgendaMasuk" required>
-                                            <div class="error-message" id="noAgendaMasukError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="noSuratMasuk"><i class="fas fa-hashtag"></i> No. Surat</label>
-                                            <input type="text" class="form-control" id="noSuratMasuk" required>
-                                            <div class="error-message" id="noSuratMasukError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="tanggalSuratMasuk"><i class="fas fa-calendar"></i> Tanggal Surat</label>
-                                            <input type="date" class="form-control" id="tanggalSuratMasuk" required>
-                                            <div class="error-message" id="tanggalSuratMasukError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="tanggalDiterimaMasuk"><i class="fas fa-calendar-check"></i> Tanggal Diterima</label>
-                                            <input type="date" class="form-control" id="tanggalDiterimaMasuk" required>
-                                            <div class="error-message" id="tanggalDiterimaMasukError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="pengirim"><i class="fas fa-user"></i> Pengirim</label>
-                                            <input type="text" class="form-control" id="pengirim" required>
-                                            <div class="error-message" id="pengirimError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="penerima"><i class="fas fa-user-check"></i> Penerima</label>
-                                            <input type="text" class="form-control" id="penerima" required>
-                                            <div class="error-message" id="penerimaError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="perihalMasuk"><i class="fas fa-file-alt"></i> Perihal</label>
-                                            <textarea class="form-control" id="perihalMasuk" rows="2" required></textarea>
-                                            <div class="error-message" id="perihalMasukError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="jenisSuratMasuk"><i class="fas fa-tag"></i> Jenis Surat</label>
-                                            <div class="jenis-surat-container">
-                                                <select class="form-select" id="jenisSuratMasuk">
-                                                    <option value="Biasa">Biasa</option>
-                                                    <option value="Penting">Penting</option>
-                                                    <option value="Rahasia">Rahasia</option>
-                                                </select>
-                                                <input type="text" class="form-control" id="customJenisSuratMasuk" placeholder="Lainnya" style="display: none;">
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-list me-2"></i> Aktivitas Terbaru
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush" id="recentActivity">
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Belum ada aktivitas</span>
+                                                <small class="text-muted">-</small>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="kategoriMasuk"><i class="fas fa-folder"></i> Kategori</label>
-                                            <select class="form-select" id="kategoriMasuk">
-                                                <option value="Pemerintah">Pemerintah</option>
-                                                <option value="Perusahaan">Perusahaan</option>
-                                                <option value="Lembaga">Lembaga</option>
-                                                <option value="OPD">OPD</option>
-                                                <option value="UPT">UPT</option>
-                                                <option value="Perorangan">Perorangan</option>
-                                                <option value="Lainnya">Lainnya</option>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Surat Masuk Section -->
+                <div id="suratMasuk" class="content-section d-none">
+                    <h4 class="section-title">Surat Masuk</h4>
+                    
+                    <div class="control-panel">
+                        <div class="control-title">
+                            <i class="fas fa-cogs me-2"></i> Kontrol Data
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahSuratMasukModal">
+                                <i class="fas fa-plus me-1"></i> Tambah Surat Masuk
+                            </button>
+                            <button class="btn btn-success" id="exportSuratMasuk">
+                                <i class="fas fa-file-excel me-1"></i> Export ke Excel
+                            </button>
+                            <button class="btn btn-danger" id="printSuratMasuk">
+                                <i class="fas fa-print me-1"></i> Cetak Laporan
+                            </button>
+                            <button class="btn btn-warning" id="resetFilterSuratMasuk">
+                                <i class="fas fa-filter me-1"></i> Reset Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Tanggal</label>
+                                <input type="text" class="form-control datepicker" id="filterTanggalMasuk" placeholder="Pilih tanggal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Pengirim</label>
+                                <input type="text" class="form-control" id="filterPengirim" placeholder="Cari pengirim">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Perihal</label>
+                                <input type="text" class="form-control" id="filterPerihalMasuk" placeholder="Cari perihal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Kategori</label>
+                                <select class="form-select" id="filterKategoriMasuk">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Pemerintah">Pemerintah</option>
+                                    <option value="Perusahaan">Perusahaan</option>
+                                    <option value="Lembaga">Lembaga</option>
+                                    <option value="OPD">OPD</option>
+                                    <option value="UPT">UPT</option>
+                                    <option value="Perorangan">Perorangan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table" id="tabelSuratMasuk">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>No. Surat</th>
+                                    <th>Pengirim</th>
+                                    <th>Perihal</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Surat Keluar Section -->
+                <div id="suratKeluar" class="content-section d-none">
+                    <h4 class="section-title">Surat Keluar</h4>
+                    
+                    <div class="control-panel">
+                        <div class="control-title">
+                            <i class="fas fa-cogs me-2"></i> Kontrol Data
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahSuratKeluarModal">
+                                <i class="fas fa-plus me-1"></i> Tambah Surat Keluar
+                            </button>
+                            <button class="btn btn-success" id="exportSuratKeluar">
+                                <i class="fas fa-file-excel me-1"></i> Export ke Excel
+                            </button>
+                            <button class="btn btn-danger" id="printSuratKeluar">
+                                <i class="fas fa-print me-1"></i> Cetak Laporan
+                            </button>
+                            <button class="btn btn-warning" id="resetFilterSuratKeluar">
+                                <i class="fas fa-filter me-1"></i> Reset Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Tanggal</label>
+                                <input type="text" class="form-control datepicker" id="filterTanggalKeluar" placeholder="Pilih tanggal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Tujuan</label>
+                                <input type="text" class="form-control" id="filterTujuan" placeholder="Cari tujuan">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Perihal</label>
+                                <input type="text" class="form-control" id="filterPerihalKeluar" placeholder="Cari perihal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Kategori</label>
+                                <select class="form-select" id="filterKategoriKeluar">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Pemerintah">Pemerintah</option>
+                                    <option value="Perusahaan">Perusahaan</option>
+                                    <option value="Lembaga">Lembaga</option>
+                                    <option value="OPD">OPD</option>
+                                    <option value="UPT">UPT</option>
+                                    <option value="Perorangan">Perorangan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table" id="tabelSuratKeluar">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>No. Surat</th>
+                                    <th>Tujuan</th>
+                                    <th>Perihal</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Arsip Surat Section -->
+                <div id="arsipSurat" class="content-section d-none">
+                    <h4 class="section-title">Arsip Surat</h4>
+                    
+                    <div class="control-panel">
+                        <div class="control-title">
+                            <i class="fas fa-cogs me-2"></i> Kontrol Data
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-success" id="exportArsip">
+                                <i class="fas fa-file-excel me-1"></i> Export ke Excel
+                            </button>
+                            <button class="btn btn-danger" id="printArsip">
+                                <i class="fas fa-print me-1"></i> Cetak Laporan
+                            </button>
+                            <button class="btn btn-warning" id="resetFilterArsip">
+                                <i class="fas fa-filter me-1"></i> Reset Filter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-section">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Tanggal</label>
+                                <input type="text" class="form-control datepicker" id="filterTanggalArsip" placeholder="Pilih tanggal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Jenis Surat</label>
+                                <select class="form-select" id="filterJenisArsip">
+                                    <option value="">Semua Jenis</option>
+                                    <option value="masuk">Surat Masuk</option>
+                                    <option value="keluar">Surat Keluar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Perihal</label>
+                                <input type="text" class="form-control" id="filterPerihalArsip" placeholder="Cari perihal">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Filter Kategori</label>
+                                <select class="form-select" id="filterKategoriArsip">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Pemerintah">Pemerintah</option>
+                                    <option value="Perusahaan">Perusahaan</option>
+                                    <option value="Lembaga">Lembaga</option>
+                                    <option value="OPD">OPD</option>
+                                    <option value="UPT">UPT</option>
+                                    <option value="Perorangan">Perorangan</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table" id="tabelArsip">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal</th>
+                                    <th>Jenis</th>
+                                    <th>No. Surat</th>
+                                    <th>Pengirim/Tujuan</th>
+                                    <th>Perihal</th>
+                                    <th>Kategori</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Laporan Section -->
+                <div id="laporan" class="content-section d-none">
+                    <h4 class="section-title">Laporan</h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie me-2"></i> Statistik Surat
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="pieChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-filter me-2"></i> Filter Laporan
+                                </div>
+                                <div class="card-body">
+                                    <form id="filterLaporanForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Jenis Laporan</label>
+                                            <select class="form-select" id="jenisLaporan">
+                                                <option value="masuk">Surat Masuk</option>
+                                                <option value="keluar">Surat Keluar</option>
+                                                <option value="semua">Semua Surat</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="disposisi"><i class="fas fa-share"></i> Disposisi</label>
-                                            <input type="text" class="form-control" id="disposisi">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="lampiranMasuk"><i class="fas fa-paperclip"></i> Lampiran</label>
-                                            <input type="text" class="form-control" id="lampiranMasuk">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="driveLinkMasuk"><i class="fab fa-google-drive"></i> Link Google Drive</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="driveLinkMasuk" placeholder="Link file di Google Drive">
-                                                <button class="btn btn-outline-secondary" type="button" id="viewDriveLinkMasuk">Lihat</button>
+                                        <div class="mb-3">
+                                            <label class="form-label">Periode</label>
+                                            <div class="row g-2">
+                                                <div class="col">
+                                                    <input type="date" class="form-control" id="tanggalAwal" required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="date" class="form-control" id="tanggalAkhir" required>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="keteranganMasuk"><i class="fas fa-sticky-note"></i> Keterangan</label>
-                                            <textarea class="form-control" id="keteranganMasuk" rows="2"></textarea>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-end">
-                                        <button type="reset" class="btn btn-secondary me-2"><i class="fas fa-undo me-1"></i> Reset</button>
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-list me-2"></i> Daftar Surat Masuk
-                                </div>
-                                <div class="d-flex">
-                                    <input type="text" class="form-control form-control-sm me-2" placeholder="Cari surat masuk..." id="searchSuratMasuk">
-                                    <button class="btn btn-sm btn-outline-secondary" id="clearSearchSuratMasuk">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover data-table">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>No. Agenda</th>
-                                                <th>No. Surat</th>
-                                                <th>Tanggal</th>
-                                                <th>Pengirim</th>
-                                                <th>Perihal</th>
-                                                <th>Jenis</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="suratMasukTable">
-                                            <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data surat masuk</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="form-text">Menampilkan <span id="suratMasukCount">0</span> data surat masuk</div>
-                                    <nav>
-                                        <ul class="pagination pagination-sm" id="suratMasukPagination">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Surat Keluar Tab -->
-                    <div class="tab-pane fade" id="suratKeluar">
-                        <h4 class="section-title">Surat Keluar</h4>
-                        
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-plus-circle me-2"></i> Tambah Surat Keluar Baru
-                            </div>
-                            <div class="card-body">
-                                <form id="suratKeluarForm">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="noAgendaKeluar"><i class="fas fa-list-ol"></i> No. Agenda</label>
-                                            <input type="text" class="form-control" id="noAgendaKeluar" required>
-                                            <div class="error-message" id="noAgendaKeluarError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="noSuratKeluar"><i class="fas fa-hashtag"></i> No. Surat</label>
-                                            <input type="text" class="form-control" id="noSuratKeluar" required>
-                                            <div class="error-message" id="noSuratKeluarError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="tanggalSuratKeluar"><i class="fas fa-calendar"></i> Tanggal Surat</label>
-                                            <input type="date" class="form-control" id="tanggalSuratKeluar" required>
-                                            <div class="error-message" id="tanggalSuratKeluarError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="tanggalDikirimKeluar"><i class="fas fa-paper-plane"></i> Tanggal Dikirim</label>
-                                            <input type="date" class="form-control" id="tanggalDikirimKeluar" required>
-                                            <div class="error-message" id="tanggalDikirimKeluarError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="dari"><i class="fas fa-user"></i> Dari</label>
-                                            <input type="text" class="form-control" id="dari" required>
-                                            <div class="error-message" id="dariError"></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="kepada"><i class="fas fa-user-check"></i> Kepada</label>
-                                            <input type="text" class="form-control" id="kepada" required>
-                                            <div class="error-message" id="kepadaError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="perihalKeluar"><i class="fas fa-file-alt"></i> Perihal</label>
-                                            <textarea class="form-control" id="perihalKeluar" rows="2" required></textarea>
-                                            <div class="error-message" id="perihalKeluarError"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="jenisSuratKeluar"><i class="fas fa-tag"></i> Jenis Surat</label>
-                                            <div class="jenis-surat-container">
-                                                <select class="form-select" id="jenisSuratKeluar">
-                                                    <option value="Biasa">Biasa</option>
-                                                    <option value="Penting">Penting</option>
-                                                    <option value="Rahasia">Rahasia</option>
-                                                </select>
-                                                <input type="text" class="form-control" id="customJenisSuratKeluar" placeholder="Lainnya" style="display: none;">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="kategoriKeluar"><i class="fas fa-folder"></i> Kategori</label>
-                                            <select class="form-select" id="kategoriKeluar">
-                                                <option value="Pemerintah">Pemerintah</option>
-                                                <option value="Perusahaan">Perusahaan</option>
-                                                <option value="Lembaga">Lembaga</option>
-                                                <option value="OPD">OPD</option>
-                                                <option value="UPT">UPT</option>
-                                                <option value="Perorangan">Perorangan</option>
-                                                <option value="Lainnya">Lainnya</option>
+                                        <div class="mb-3">
+                                            <label class="form-label">Format Laporan</label>
+                                            <select class="form-select" id="formatLaporan">
+                                                <option value="pdf">PDF</option>
+                                                <option value="excel">Excel</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="sifat"><i class="fas fa-bolt"></i> Sifat Surat</label>
-                                            <input type="text" class="form-control" id="sifat">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label" for="lampiranKeluar"><i class="fas fa-paperclip"></i> Lampiran</label>
-                                            <input type="text" class="form-control" id="lampiranKeluar">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="driveLinkKeluar"><i class="fab fa-google-drive"></i> Link Google Drive</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="driveLinkKeluar" placeholder="Link file di Google Drive">
-                                                <button class="btn btn-outline-secondary" type="button" id="viewDriveLinkKeluar">Lihat</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <label class="form-label" for="keteranganKeluar"><i class="fas fa-sticky-note"></i> Keterangan</label>
-                                            <textarea class="form-control" id="keteranganKeluar" rows="2"></textarea>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-end">
-                                        <button type="reset" class="btn btn-secondary me-2"><i class="fas fa-undo me-1"></i> Reset</button>
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-list me-2"></i> Daftar Surat Keluar
-                                </div>
-                                <div class="d-flex">
-                                    <input type="text" class="form-control form-control-sm me-2" placeholder="Cari surat keluar..." id="searchSuratKeluar">
-                                    <button class="btn btn-sm btn-outline-secondary" id="clearSearchSuratKeluar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover data-table">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>No. Agenda</th>
-                                                <th>No. Surat</th>
-                                                <th>Tanggal</th>
-                                                <th>Kepada</th>
-                                                <th>Perihal</th>
-                                                <th>Jenis</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="suratKeluarTable">
-                                            <tr>
-                                                <td colspan="8" class="text-center">Tidak ada data surat keluar</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="form-text">Menampilkan <span id="suratKeluarCount">0</span> data surat keluar</div>
-                                    <nav>
-                                        <ul class="pagination pagination-sm" id="suratKeluarPagination">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-download me-1"></i> Unduh Laporan
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Laporan Surat Masuk Tab -->
-                    <div class="tab-pane fade" id="laporanSuratMasuk">
-                        <h4 class="section-title">Laporan Surat Masuk</h4>
-                        
-                        <div class="filter-section">
-                            <h6><i class="fas fa-filter me-2"></i> Filter Laporan</h6>
-                            <form id="filterLaporanMasukForm">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterBulanMasuk"><i class="fas fa-calendar me-1"></i> Bulan</label>
-                                        <select class="form-select" id="filterBulanMasuk">
-                                            <option value="">Semua Bulan</option>
-                                            <option value="01">Januari</option>
-                                            <option value="02">Februari</option>
-                                            <option value="03">Maret</option>
-                                            <option value="04">April</option>
-                                            <option value="05">Mei</option>
-                                            <option value="06">Juni</option>
-                                            <option value="07">Juli</option>
-                                            <option value="08">Agustus</option>
-                                            <option value="09">September</option>
-                                            <option value="10">Oktober</option>
-                                            <option value="11">November</option>
-                                            <option value="12">Desember</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterTahunMasuk"><i class="fas fa-calendar-alt me-1"></i> Tahun</label>
-                                        <select class="form-select" id="filterTahunMasuk">
-                                            <option value="">Semua Tahun</option>
-                                            <option value="2023">2023</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2025">2025</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterJenisMasuk"><i class="fas fa-tag me-1"></i> Jenis Surat</label>
-                                        <select class="form-select" id="filterJenisMasuk">
-                                            <option value="">Semua Jenis</option>
-                                            <option value="Biasa">Biasa</option>
-                                            <option value="Penting">Penting</option>
-                                            <option value="Rahasia">Rahasia</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterKategoriMasuk"><i class="fas fa-folder me-1"></i> Kategori</label>
-                                        <select class="form-select" id="filterKategoriMasuk">
-                                            <option value="">Semua Kategori</option>
-                                            <option value="Pemerintah">Pemerintah</option>
-                                            <option value="Perusahaan">Perusahaan</option>
-                                            <option value="Lembaga">Lembaga</option>
-                                            <option value="OPD">OPD</option>
-                                            <option value="UPT">UPT</option>
-                                            <option value="Perorangan">Perorangan</option>
-                                            <option value="Lainnya">Lainnya</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-12 text-end">
-                                        <button type="button" class="btn btn-secondary" id="resetFilterMasuk">
-                                            <i class="fas fa-sync-alt me-1"></i> Reset Filter
-                                        </button>
-                                        <button type="button" class="btn btn-primary" id="applyFilterMasuk">
-                                            <i class="fas fa-filter me-1"></i> Terapkan Filter
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-2"></i> Data Laporan
                         </div>
-                        
-                        <div class="control-panel">
-                            <div class="control-title">Ekspor Laporan</div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-danger" id="generatePdfMasuk">
-                                    <i class="fas fa-file-pdf me-1"></i> Generate PDF
-                                </button>
-                                <button class="btn btn-success" id="exportExcelMasuk">
-                                    <i class="fas fa-file-excel me-1"></i> Export Excel
-                                </button>
-                                <button class="btn btn-info" id="printLaporanMasuk">
-                                    <i class="fas fa-print me-1"></i> Cetak Laporan
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-list me-2"></i> Data Laporan Surat Masuk
-                                </div>
-                                <div class="form-text">
-                                    Total: <span id="totalLaporanMasuk">0</span> data
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover data-table" id="laporanMasukTable">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>No. Agenda</th>
-                                                <th>No. Surat</th>
-                                                <th>Tanggal Surat</th>
-                                                <th>Tanggal Diterima</th>
-                                                <th>Pengirim</th>
-                                                <th>Perihal</th>
-                                                <th>Jenis</th>
-                                                <th>Kategori</th>
-                                                <th>Disposisi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td colspan="10" class="text-center">Tidak ada data laporan</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="form-text">Menampilkan <span id="laporanMasukCount">0</span> data laporan</div>
-                                    <nav>
-                                        <ul class="pagination pagination-sm" id="laporanMasukPagination">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover data-table" id="tabelLaporan">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Jenis</th>
+                                            <th>No. Surat</th>
+                                            <th>Pengirim/Tujuan</th>
+                                            <th>Perihal</th>
+                                            <th>Kategori</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Pengaturan Section -->
+                <div id="pengaturan" class="content-section d-none">
+                    <h4 class="section-title">Pengaturan Aplikasi</h4>
                     
-                    <!-- Laporan Surat Keluar Tab -->
-                    <div class="tab-pane fade" id="laporanSuratKeluar">
-                        <h4 class="section-title">Laporan Surat Keluar</h4>
-                        
-                        <div class="filter-section">
-                            <h6><i class="fas fa-filter me-2"></i> Filter Laporan</h6>
-                            <form id="filterLaporanKeluarForm">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterBulanKeluar"><i class="fas fa-calendar me-1"></i> Bulan</label>
-                                        <select class="form-select" id="filterBulanKeluar">
-                                            <option value="">Semua Bulan</option>
-                                            <option value="01">Januari</option>
-                                            <option value="02">Februari</option>
-                                            <option value="03">Maret</option>
-                                            <option value="04">April</option>
-                                            <option value="05">Mei</option>
-                                            <option value="06">Juni</option>
-                                            <option value="07">Juli</option>
-                                            <option value="08">Agustus</option>
-                                            <option value="09">September</option>
-                                            <option value="10">Oktober</option>
-                                            <option value="11">November</option>
-                                            <option value="12">Desember</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterTahunKeluar"><i class="fas fa-calendar-alt me-1"></i> Tahun</label>
-                                        <select class="form-select" id="filterTahunKeluar">
-                                            <option value="">Semua Tahun</option>
-                                            <option value="2023">2023</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2025">2025</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterJenisKeluar"><i class="fas fa-tag me-1"></i> Jenis Surat</label>
-                                        <select class="form-select" id="filterJenisKeluar">
-                                            <option value="">Semua Jenis</option>
-                                            <option value="Biasa">Biasa</option>
-                                            <option value="Penting">Penting</option>
-                                            <option value="Rahasia">Rahasia</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="filterKategoriKeluar"><i class="fas fa-folder me-1"></i> Kategori</label>
-                                        <select class="form-select" id="filterKategoriKeluar">
-                                            <option value="">Semua Kategori</option>
-                                            <option value="Pemerintah">Pemerintah</option>
-                                            <option value="Perusahaan">Perusahaan</option>
-                                            <option value="Lembaga">Lembaga</option>
-                                            <option value="OPD">OPD</option>
-                                            <option value="UPT">UPT</option>
-                                            <option value="Perorangan">Perorangan</option>
-                                            <option value="Lainnya">Lainnya</option>
-                                        </select>
-                                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-key me-2"></i> Pengaturan Keamanan
                                 </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-12 text-end">
-                                        <button type="button" class="btn btn-secondary" id="resetFilterKeluar">
-                                            <i class="fas fa-sync-alt me-1"></i> Reset Filter
+                                <div class="card-body">
+                                    <form id="pengaturanKeamananForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Kode Keamanan Saat Ini</label>
+                                            <input type="password" class="form-control" id="kodeKeamananSaatIni" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Kode Keamanan Baru</label>
+                                            <input type="password" class="form-control" id="kodeKeamananBaru" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Konfirmasi Kode Keamanan Baru</label>
+                                            <input type="password" class="form-control" id="konfirmasiKodeKeamanan" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i> Simpan Perubahan
                                         </button>
-                                        <button type="button" class="btn btn-primary" id="applyFilterKeluar">
-                                            <i class="fas fa-filter me-1"></i> Terapkan Filter
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-database me-2"></i> Manajemen Data
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-success" id="backupData">
+                                            <i class="fas fa-download me-1"></i> Backup Data
                                         </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        <div class="control-panel">
-                            <div class="control-title">Ekspor Laporan</div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-danger" id="generatePdfKeluar">
-                                    <i class="fas fa-file-pdf me-1"></i> Generate PDF
-                                </button>
-                                <button class="btn btn-success" id="exportExcelKeluar">
-                                    <i class="fas fa-file-excel me-1"></i> Export Excel
-                                </button>
-                                <button class="btn btn-info" id="printLaporanKeluar">
-                                    <i class="fas fa-print me-1"></i> Cetak Laporan
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-list me-2"></i> Data Laporan Surat Keluar
-                                </div>
-                                <div class="form-text">
-                                    Total: <span id="totalLaporanKeluar">0</span> data
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover data-table" id="laporanKeluarTable">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>No. Agenda</th>
-                                                <th>No. Surat</th>
-                                                <th>Tanggal Surat</th>
-                                                <th>Tanggal Dikirim</th>
-                                                <th>Kepada</th>
-                                                <th>Perihal</th>
-                                                <th>Jenis</th>
-                                                <th>Kategori</th>
-                                                <th>Sifat</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td colspan="10" class="text-center">Tidak ada data laporan</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="form-text">Menampilkan <span id="laporanKeluarCount">0</span> data laporan</div>
-                                    <nav>
-                                        <ul class="pagination pagination-sm" id="laporanKeluarPagination">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Previous</a>
-                                            </li>
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">1</a>
-                                            </li>
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#">Next</a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Pengaturan Tab -->
-                    <div class="tab-pane fade" id="pengaturan">
-                        <h4 class="section-title">Pengaturan Aplikasi</h4>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-key me-2"></i> Pengaturan Keamanan
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="securitySettingsForm">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="currentSecurityCode"><i class="fas fa-lock me-1"></i> Kode Keamanan Saat Ini</label>
-                                                <input type="password" class="form-control" id="currentSecurityCode" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="newSecurityCode"><i class="fas fa-key me-1"></i> Kode Keamanan Baru</label>
-                                                <input type="password" class="form-control" id="newSecurityCode" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label" for="confirmSecurityCode"><i class="fas fa-check-circle me-1"></i> Konfirmasi Kode Baru</label>
-                                                <input type="password" class="form-control" id="confirmSecurityCode" required>
-                                            </div>
-                                            <div class="alert alert-info">
-                                                <i class="fas fa-info-circle me-1"></i> Kode keamanan digunakan untuk mengakses aplikasi.
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save me-1"></i> Simpan Perubahan
-                                            </button>
-                                        </form>
+                                        <button class="btn btn-warning" id="restoreData" data-bs-toggle="modal" data-bs-target="#restoreModal">
+                                            <i class="fas fa-upload me-1"></i> Restore Data
+                                        </button>
+                                        <button class="btn btn-danger" id="resetData" data-bs-toggle="modal" data-bs-target="#resetModal">
+                                            <i class="fas fa-trash me-1"></i> Reset Data
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-database me-2"></i> Manajemen Data
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-outline-primary" id="backupDataBtn">
-                                                <i class="fas fa-download me-1"></i> Backup Data
-                                            </button>
-                                            <button class="btn btn-outline-info" id="restoreDataBtn">
-                                                <i class="fas fa-upload me-1"></i> Restore Data
-                                            </button>
-                                            <button class="btn btn-outline-danger" id="resetDataBtn">
-                                                <i class="fas fa-trash-alt me-1"></i> Reset Data
-                                            </button>
-                                        </div>
-                                        <div class="alert alert-warning mt-3">
-                                            <i class="fas fa-exclamation-triangle me-1"></i> Hati-hati saat menggunakan fitur reset data, karena akan menghapus semua data yang tersimpan.
-                                        </div>
-                                    </div>
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <i class="fas fa-info-circle me-2"></i> Informasi Aplikasi
                                 </div>
-                                
-                                <div class="card mt-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-info-circle me-2"></i> Informasi Aplikasi
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-2"><strong>Nama Aplikasi:</strong> SISMAT</div>
-                                        <div class="mb-2"><strong>Versi:</strong> 2.1.0</div>
-                                        <div class="mb-2"><strong>Developer:</strong> Lentera Karya Situbondo</div>
-                                        <div class="mb-2"><strong>Website:</strong> <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a></div>
-                                        <div class="mb-2"><strong>Email:</strong> <a href="mailto:admin@anekamarket.my.id">admin@anekamarket.my.id</a></div>
-                                        <div class="mb-2"><strong>WhatsApp:</strong> <a href="https://wa.me/6287865614222" target="_blank">087865614222</a></div>
-                                        <hr>
-                                        <div class="text-center">
-                                            <p>&copy; 2023 SISMAT - Sistem Manajemen Surat</p>
-                                        </div>
-                                    </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Versi Aplikasi
+                                            <span class="badge bg-primary rounded-pill">v2.0.1</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total Surat Masuk
+                                            <span class="badge bg-success rounded-pill" id="infoSuratMasuk">0</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total Surat Keluar
+                                            <span class="badge bg-info rounded-pill" id="infoSuratKeluar">0</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Total Arsip
+                                            <span class="badge bg-warning rounded-pill" id="infoArsip">0</span>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -2078,19 +1750,317 @@
         </div>
         
         <div class="copyright">
-            &copy; 2023 SISMAT - Sistem Manajemen Surat | Developed by <strong>Lentera Karya Situbondo</strong> | 
-            <a href="https://www.anekamarket.my.id" target="_blank" class="text-decoration-none">www.anekamarket.my.id</a> | 
-            <a href="mailto:admin@anekamarket.my.id" class="text-decoration-none">admin@anekamarket.my.id</a> | 
-            <a href="https://wa.me/6287865614222" target="_blank" class="text-decoration-none">087865614222</a>
+            &copy; 2023 SISMAT - Sistem Manajemen Surat | Developed by Lentera Karya Situbondo
+            <span class="watermark">v2.0.1</span>
         </div>
     </div>
     
-    <!-- Sidebar Overlay for Mobile -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
     <!-- Floating Action Button -->
-    <div class="floating-action-btn" id="fabButton">
+    <div class="floating-action-btn" id="fab">
         <i class="fas fa-plus"></i>
+    </div>
+    
+    <!-- Modal untuk Tambah Surat Masuk -->
+    <div class="modal fade" id="tambahSuratMasukModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-envelope me-2"></i> Tambah Surat Masuk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTambahSuratMasuk">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar me-1"></i> Tanggal Surat</label>
+                                    <input type="date" class="form-control" id="tanggalSuratMasuk" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-hashtag me-1"></i> Nomor Surat</label>
+                                    <input type="text" class="form-control" id="nomorSuratMasuk" placeholder="Masukkan nomor surat" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-user me-1"></i> Pengirim</label>
+                            <input type="text" class="form-control" id="pengirimSurat" placeholder="Masukkan pengirim surat" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-tag me-1"></i> Perihal</label>
+                            <input type="text" class="form-control" id="perihalSuratMasuk" placeholder="Masukkan perihal surat" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-folder me-1"></i> Kategori</label>
+                                    <select class="form-select" id="kategoriSuratMasuk" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="Pemerintah">Pemerintah</option>
+                                        <option value="Perusahaan">Perusahaan</option>
+                                        <option value="Lembaga">Lembaga</option>
+                                        <option value="OPD">OPD</option>
+                                        <option value="UPT">UPT</option>
+                                        <option value="Perorangan">Perorangan</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-check-circle me-1"></i> Status</label>
+                                    <select class="form-select" id="statusSuratMasuk" required>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Diterima">Diterima</option>
+                                        <option value="Ditolak">Ditolak</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-file-alt me-1"></i> Keterangan (Opsional)</label>
+                            <textarea class="form-control" id="keteranganSuratMasuk" rows="3" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="simpanSuratMasuk">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Tambah Surat Keluar -->
+    <div class="modal fade" id="tambahSuratKeluarModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-paper-plane me-2"></i> Tambah Surat Keluar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTambahSuratKeluar">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar me-1"></i> Tanggal Surat</label>
+                                    <input type="date" class="form-control" id="tanggalSuratKeluar" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-hashtag me-1"></i> Nomor Surat</label>
+                                    <input type="text" class="form-control" id="nomorSuratKeluar" placeholder="Masukkan nomor surat" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-user me-1"></i> Tujuan</label>
+                            <input type="text" class="form-control" id="tujuanSurat" placeholder="Masukkan tujuan surat" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-tag me-1"></i> Perihal</label>
+                            <input type="text" class="form-control" id="perihalSuratKeluar" placeholder="Masukkan perihal surat" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-folder me-1"></i> Kategori</label>
+                                    <select class="form-select" id="kategoriSuratKeluar" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="Pemerintah">Pemerintah</option>
+                                        <option value="Perusahaan">Perusahaan</option>
+                                        <option value="Lembaga">Lembaga</option>
+                                        <option value="OPD">OPD</option>
+                                        <option value="UPT">UPT</option>
+                                        <option value="Perorangan">Perorangan</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-check-circle me-1"></i> Status</label>
+                                    <select class="form-select" id="statusSuratKeluar" required>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Terkirim">Terkirim</option>
+                                        <option value="Dibatalkan">Dibatalkan</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-file-alt me-1"></i> Keterangan (Opsional)</label>
+                            <textarea class="form-control" id="keteranganSuratKeluar" rows="3" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="simpanSuratKeluar">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Edit Surat -->
+    <div class="modal fade" id="editSuratModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Edit Surat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditSurat">
+                        <input type="hidden" id="editId">
+                        <input type="hidden" id="editJenis">
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar me-1"></i> Tanggal Surat</label>
+                                    <input type="date" class="form-control" id="editTanggal" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-hashtag me-1"></i> Nomor Surat</label>
+                                    <input type="text" class="form-control" id="editNomor" placeholder="Masukkan nomor surat" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" id="editLabelPengirimTujuan"><i class="fas fa-user me-1"></i> Pengirim/Tujuan</label>
+                            <input type="text" class="form-control" id="editPengirimTujuan" placeholder="Masukkan pengirim/tujuan surat" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-tag me-1"></i> Perihal</label>
+                            <input type="text" class="form-control" id="editPerihal" placeholder="Masukkan perihal surat" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-folder me-1"></i> Kategori</label>
+                                    <select class="form-select" id="editKategori" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="Pemerintah">Pemerintah</option>
+                                        <option value="Perusahaan">Perusahaan</option>
+                                        <option value="Lembaga">Lembaga</option>
+                                        <option value="OPD">OPD</option>
+                                        <option value="UPT">UPT</option>
+                                        <option value="Perorangan">Perorangan</option>
+                                        <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-check-circle me-1"></i> Status</label>
+                                    <select class="form-select" id="editStatus" required>
+                                        <!-- Options akan diisi berdasarkan jenis surat -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-file-alt me-1"></i> Keterangan (Opsional)</label>
+                            <textarea class="form-control" id="editKeterangan" rows="3" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="updateSurat">Perbarui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Konfirmasi Hapus -->
+    <div class="modal fade" id="hapusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-trash-alt me-2"></i> Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus data surat ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <input type="hidden" id="hapusId">
+                    <input type="hidden" id="hapusJenis">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="konfirmasiHapus">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Restore Data -->
+    <div class="modal fade" id="restoreModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-upload me-2"></i> Restore Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Pilih File Backup</label>
+                        <input type="file" class="form-control" id="restoreFile" accept=".json">
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Proses restore akan menggantikan semua data yang ada. Pastikan Anda telah membackup data terbaru.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="prosesRestore">Restore</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Reset Data -->
+    <div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-trash me-2"></i> Reset Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin mereset semua data? Tindakan ini akan menghapus semua data surat dan tidak dapat dibatalkan.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Masukkan Kode Keamanan</label>
+                        <input type="password" class="form-control" id="resetKodeKeamanan" placeholder="Masukkan kode keamanan">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="konfirmasiReset">Reset Data</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Scripts -->
@@ -2102,209 +2072,1388 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
-        // Inisialisasi
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tampilkan modal login saat halaman dimuat
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
+        // Inisialisasi variabel global
+        window.jsPDF = window.jspdf.jsPDF;
+        const toastEl = document.querySelector('.notification-toast');
+        const toast = new bootstrap.Toast(toastEl);
+        let suratMasukData = [];
+        let suratKeluarData = [];
+        let arsipData = [];
+        let loginAttempts = 0;
+        let isBlocked = false;
+        let blockTimeout;
+        
+        // Fungsi untuk menampilkan notifikasi
+        function showToast(message, type = 'info') {
+            const toastBody = document.querySelector('.toast-body');
+            const toastHeader = document.querySelector('.toast .me-auto');
             
-            // Inisialisasi tooltip
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
+            toastBody.textContent = message;
+            
+            if (type === 'success') {
+                toastHeader.innerHTML = '<i class="fas fa-check-circle me-2 text-success"></i> Success';
+            } else if (type === 'error') {
+                toastHeader.innerHTML = '<i class="fas fa-exclamation-circle me-2 text-danger"></i> Error';
+            } else {
+                toastHeader.innerHTML = '<i class="fas fa-info-circle me-2 text-primary"></i> Info';
+            }
+            
+            toast.show();
+        }
+        
+        // Fungsi untuk memuat data dari localStorage
+        function loadData() {
+            const suratMasuk = localStorage.getItem('suratMasukData');
+            const suratKeluar = localStorage.getItem('suratKeluarData');
+            const arsip = localStorage.getItem('arsipData');
+            
+            suratMasukData = suratMasuk ? JSON.parse(suratMasuk) : [];
+            suratKeluarData = suratKeluar ? JSON.parse(suratKeluar) : [];
+            arsipData = arsip ? JSON.parse(arsip) : [];
+            
+            updateDashboard();
+            renderSuratMasukTable();
+            renderSuratKeluarTable();
+            renderArsipTable();
+        }
+        
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveData() {
+            localStorage.setItem('suratMasukData', JSON.stringify(suratMasukData));
+            localStorage.setItem('suratKeluarData', JSON.stringify(suratKeluarData));
+            localStorage.setItem('arsipData', JSON.stringify(arsipData));
+            
+            updateDashboard();
+        }
+        
+        // Fungsi untuk mengupdate dashboard
+        function updateDashboard() {
+            document.getElementById('totalSuratMasuk').textContent = suratMasukData.length;
+            document.getElementById('totalSuratKeluar').textContent = suratKeluarData.length;
+            document.getElementById('totalArsip').textContent = arsipData.length;
+            document.getElementById('totalAktivitas').textContent = suratMasukData.length + suratKeluarData.length;
+            
+            document.getElementById('infoSuratMasuk').textContent = suratMasukData.length;
+            document.getElementById('infoSuratKeluar').textContent = suratKeluarData.length;
+            document.getElementById('infoArsip').textContent = arsipData.length;
+            
+            updateRecentActivity();
+            updateCharts();
+        }
+        
+        // Fungsi untuk mengupdate aktivitas terbaru
+        function updateRecentActivity() {
+            const recentActivity = document.getElementById('recentActivity');
+            recentActivity.innerHTML = '';
+            
+            // Gabungkan dan urutkan data berdasarkan tanggal
+            const allData = [...suratMasukData, ...suratKeluarData]
+                .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+                .slice(0, 5);
+            
+            if (allData.length === 0) {
+                recentActivity.innerHTML = `
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span>Belum ada aktivitas</span>
+                            <small class="text-muted">-</small>
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
+            allData.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                
+                const jenis = item.jenis || (item.pengirim ? 'Masuk' : 'Keluar');
+                const detail = item.pengirim ? `dari ${item.pengirim}` : `ke ${item.tujuan}`;
+                
+                li.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <span>Surat ${jenis} ${detail}</span>
+                        <small class="text-muted">${formatDate(item.tanggal)}</small>
+                    </div>
+                    <div class="text-truncate text-muted small mt-1">${item.perihal}</div>
+                `;
+                
+                recentActivity.appendChild(li);
             });
+        }
+        
+        // Fungsi untuk mengupdate chart
+        function updateCharts() {
+            // Data untuk chart surat bulanan
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const currentYear = new Date().getFullYear();
             
-            // Inisialisasi toast
-            const toastEl = document.querySelector('.toast');
-            const toast = new bootstrap.Toast(toastEl);
+            const suratMasukByMonth = new Array(12).fill(0);
+            const suratKeluarByMonth = new Array(12).fill(0);
             
-            // Fungsi untuk menampilkan notifikasi
-            window.showNotification = function(message, type = 'info') {
-                const toastBody = document.querySelector('.toast-body');
-                const toastHeader = document.querySelector('.toast .me-auto');
-                
-                toastBody.textContent = message;
-                
-                // Set icon berdasarkan type
-                let icon = 'fas fa-bell';
-                if (type === 'success') icon = 'fas fa-check-circle text-success';
-                if (type === 'error') icon = 'fas fa-exclamation-circle text-danger';
-                if (type === 'warning') icon = 'fas fa-exclamation-triangle text-warning';
-                
-                toastHeader.innerHTML = `<i class="${icon} me-2"></i> SISMAT Notification`;
-                
-                toast.show();
-            };
-            
-            // Contoh data untuk dashboard
-            document.getElementById('totalSuratMasuk').textContent = '24';
-            document.getElementById('totalSuratKeluar').textContent = '18';
-            document.getElementById('totalPending').textContent = '5';
-            document.getElementById('totalSelesai').textContent = '37';
-            
-            // Contoh data untuk tabel surat terbaru
-            const recentSuratTable = document.getElementById('recentSuratTable');
-            recentSuratTable.innerHTML = `
-                <tr>
-                    <td>1</td>
-                    <td>Masuk</td>
-                    <td>12/10/2023</td>
-                    <td>Dinas Pendidikan</td>
-                    <td><span class="badge bg-success">Selesai</span></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Keluar</td>
-                    <td>11/10/2023</td>
-                    <td>PT. Jaya Abadi</td>
-                    <td><span class="badge bg-warning">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Masuk</td>
-                    <td>10/10/2023</td>
-                    <td>Pemkot Situbondo</td>
-                    <td><span class="badge bg-success">Selesai</span></td>
-                </tr>
-            `;
-            
-            // Contoh data untuk tabel surat masuk
-            const suratMasukTable = document.getElementById('suratMasukTable');
-            suratMasukTable.innerHTML = `
-                <tr>
-                    <td>1</td>
-                    <td>AGD-2023-001</td>
-                    <td>001/DP/IX/2023</td>
-                    <td>12/10/2023</td>
-                    <td>Dinas Pendidikan</td>
-                    <td>Undangan Rapat Koordinasi</td>
-                    <td><span class="badge bg-info">Biasa</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>AGD-2023-002</td>
-                    <td>005/DINKES/X/2023</td>
-                    <td>15/10/2023</td>
-                    <td>Dinas Kesehatan</td>
-                    <td>Surat Edaran Vaksinasi</td>
-                    <td><span class="badge bg-warning">Penting</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
-            document.getElementById('suratMasukCount').textContent = '2';
-            
-            // Contoh data untuk tabel surat keluar
-            const suratKeluarTable = document.getElementById('suratKeluarTable');
-            suratKeluarTable.innerHTML = `
-                <tr>
-                    <td>1</td>
-                    <td>AGD-K-2023-001</td>
-                    <td>001/SM/IX/2023</td>
-                    <td>05/10/2023</td>
-                    <td>PT. Jaya Abadi</td>
-                    <td>Penawaran Kerjasama</td>
-                    <td><span class="badge bg-info">Biasa</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>AGD-K-2023-002</td>
-                    <td>002/SM/X/2023</td>
-                    <td>18/10/2023</td>
-                    <td>Dinas Perhubungan</td>
-                    <td>Permohonan Izin</td>
-                    <td><span class="badge bg-warning">Penting</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
-            document.getElementById('suratKeluarCount').textContent = '2';
-            
-            // Inisialisasi chart
-            const ctx = document.getElementById('suratChart').getContext('2d');
-            const suratChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
-                    datasets: [
-                        {
-                            label: 'Surat Masuk',
-                            data: [12, 19, 7, 17, 12, 9, 15, 13, 18, 14, 0, 0],
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Surat Keluar',
-                            data: [8, 12, 6, 14, 10, 11, 9, 7, 13, 10, 0, 0],
-                            backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    responsive: true,
-                    maintainAspectRatio: false
+            suratMasukData.forEach(item => {
+                const date = new Date(item.tanggal);
+                if (date.getFullYear() === currentYear) {
+                    suratMasukByMonth[date.getMonth()]++;
                 }
             });
             
-            // Fungsi untuk login
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const securityCode = document.getElementById('securityCode').value;
+            suratKeluarData.forEach(item => {
+                const date = new Date(item.tanggal);
+                if (date.getFullYear() === currentYear) {
+                    suratKeluarByMonth[date.getMonth()]++;
+                }
+            });
+            
+            // Bar chart
+            const suratChartCanvas = document.getElementById('suratChart');
+            if (suratChartCanvas) {
+                const suratChart = new Chart(suratChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: 'Surat Masuk',
+                                data: suratMasukByMonth,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Surat Keluar',
+                                data: suratKeluarByMonth,
+                                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Pie chart
+            const pieChartCanvas = document.getElementById('pieChart');
+            if (pieChartCanvas) {
+                const totalMasuk = suratMasukData.length;
+                const totalKeluar = suratKeluarData.length;
                 
-                // Kode keamanan default: 1234
-                if (securityCode === '1234') {
-                    // Tampilkan spinner
-                    document.getElementById('loginSpinner').classList.remove('d-none');
-                    document.querySelector('.login-button-text').textContent = 'Memproses...';
-                    
-                    // Simulasi proses login
-                    setTimeout(function() {
-                        // Sembunyikan modal login
-                        loginModal.hide();
-                        
-                        // Tampilkan konten aplikasi
-                        document.querySelector('.app-content-unauthenticated').style.display = 'block';
-                        
-                        // Tampilkan modal welcome
-                        const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
-                        welcomeModal.show();
-                        
-                        // Reset form login
-                        document.getElementById('loginForm').reset();
-                        document.getElementById('loginSpinner').classList.add('d-none');
-                        document.querySelector('.login-button-text').textContent = 'Masuk ke Aplikasi';
-                    }, 1500);
+                const pieChart = new Chart(pieChartCanvas, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Surat Masuk', 'Surat Keluar'],
+                        datasets: [{
+                            data: [totalMasuk, totalKeluar],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(75, 192, 192, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Fungsi untuk merender tabel surat masuk
+        function renderSuratMasukTable() {
+            const tableBody = document.querySelector('#tabelSuratMasuk tbody');
+            tableBody.innerHTML = '';
+            
+            if (suratMasukData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">Tidak ada data surat masuk</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Filter data
+            const filterTanggal = document.getElementById('filterTanggalMasuk').value;
+            const filterPengirim = document.getElementById('filterPengirim').value.toLowerCase();
+            const filterPerihal = document.getElementById('filterPerihalMasuk').value.toLowerCase();
+            const filterKategori = document.getElementById('filterKategoriMasuk').value;
+            
+            const filteredData = suratMasukData.filter(item => {
+                const itemDate = new Date(item.tanggal).toLocaleDateString('id-ID');
+                const filterDate = filterTanggal ? new Date(filterTanggal).toLocaleDateString('id-ID') : null;
+                
+                return (!filterDate || itemDate === filterDate) &&
+                       (!filterPengirim || item.pengirim.toLowerCase().includes(filterPengirim)) &&
+                       (!filterPerihal || item.perihal.toLowerCase().includes(filterPerihal)) &&
+                       (!filterKategori || item.kategori === filterKategori);
+            });
+            
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // Tentukan class untuk status badge
+                let statusClass = '';
+                switch(item.status) {
+                    case 'Pending':
+                        statusClass = 'status-pending';
+                        break;
+                    case 'Diterima':
+                        statusClass = 'status-masuk';
+                        break;
+                    case 'Ditolak':
+                        statusClass = 'status-keluar';
+                        break;
+                    case 'Selesai':
+                        statusClass = 'status-selesai';
+                        break;
+                }
+                
+                // Tentukan class untuk kategori badge
+                let kategoriClass = '';
+                switch(item.kategori) {
+                    case 'Pemerintah':
+                        kategoriClass = 'kategori-pemerintah';
+                        break;
+                    case 'Perusahaan':
+                        kategoriClass = 'kategori-perusahaan';
+                        break;
+                    case 'Lembaga':
+                        kategoriClass = 'kategori-lembaga';
+                        break;
+                    case 'OPD':
+                        kategoriClass = 'kategori-opd';
+                        break;
+                    case 'UPT':
+                        kategoriClass = 'kategori-upt';
+                        break;
+                    case 'Perorangan':
+                        kategoriClass = 'kategori-perorangan';
+                        break;
+                    case 'Lainnya':
+                        kategoriClass = 'kategori-lainnya';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td>${formatDate(item.tanggal)}</td>
+                    <td>${item.nomor}</td>
+                    <td>${item.pengirim}</td>
+                    <td>${item.perihal}</td>
+                    <td><span class="badge badge-kategori ${kategoriClass}">${item.kategori}</span></td>
+                    <td><span class="badge status-badge ${statusClass}">${item.status}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary btn-edit" data-id="${item.id}" data-jenis="masuk">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-hapus" data-id="${item.id}" data-jenis="masuk">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Tambahkan event listener untuk tombol edit dan hapus
+            attachEditDeleteListeners();
+        }
+        
+        // Fungsi untuk merender tabel surat keluar
+        function renderSuratKeluarTable() {
+            const tableBody = document.querySelector('#tabelSuratKeluar tbody');
+            tableBody.innerHTML = '';
+            
+            if (suratKeluarData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">Tidak ada data surat keluar</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Filter data
+            const filterTanggal = document.getElementById('filterTanggalKeluar').value;
+            const filterTujuan = document.getElementById('filterTujuan').value.toLowerCase();
+            const filterPerihal = document.getElementById('filterPerihalKeluar').value.toLowerCase();
+            const filterKategori = document.getElementById('filterKategoriKeluar').value;
+            
+            const filteredData = suratKeluarData.filter(item => {
+                const itemDate = new Date(item.tanggal).toLocaleDateString('id-ID');
+                const filterDate = filterTanggal ? new Date(filterTanggal).toLocaleDateString('id-ID') : null;
+                
+                return (!filterDate || itemDate === filterDate) &&
+                       (!filterTujuan || item.tujuan.toLowerCase().includes(filterTujuan)) &&
+                       (!filterPerihal || item.perihal.toLowerCase().includes(filterPerihal)) &&
+                       (!filterKategori || item.kategori === filterKategori);
+            });
+            
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // Tentukan class untuk status badge
+                let statusClass = '';
+                switch(item.status) {
+                    case 'Pending':
+                        statusClass = 'status-pending';
+                        break;
+                    case 'Terkirim':
+                        statusClass = 'status-masuk';
+                        break;
+                    case 'Dibatalkan':
+                        statusClass = 'status-keluar';
+                        break;
+                    case 'Selesai':
+                        statusClass = 'status-selesai';
+                        break;
+                }
+                
+                // Tentukan class untuk kategori badge
+                let kategoriClass = '';
+                switch(item.kategori) {
+                    case 'Pemerintah':
+                        kategoriClass = 'kategori-pemerintah';
+                        break;
+                    case 'Perusahaan':
+                        kategoriClass = 'kategori-perusahaan';
+                        break;
+                    case 'Lembaga':
+                        kategoriClass = 'kategori-lembaga';
+                        break;
+                    case 'OPD':
+                        kategoriClass = 'kategori-opd';
+                        break;
+                    case 'UPT':
+                        kategoriClass = 'kategori-upt';
+                        break;
+                    case 'Perorangan':
+                        kategoriClass = 'kategori-perorangan';
+                        break;
+                    case 'Lainnya':
+                        kategoriClass = 'kategori-lainnya';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td>${formatDate(item.tanggal)}</td>
+                    <td>${item.nomor}</td>
+                    <td>${item.tujuan}</td>
+                    <td>${item.perihal}</td>
+                    <td><span class="badge badge-kategori ${kategoriClass}">${item.kategori}</span></td>
+                    <td><span class="badge status-badge ${statusClass}">${item.status}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary btn-edit" data-id="${item.id}" data-jenis="keluar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-hapus" data-id="${item.id}" data-jenis="keluar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Tambahkan event listener untuk tombol edit dan hapus
+            attachEditDeleteListeners();
+        }
+        
+        // Fungsi untuk merender tabel arsip
+        function renderArsipTable() {
+            const tableBody = document.querySelector('#tabelArsip tbody');
+            tableBody.innerHTML = '';
+            
+            if (arsipData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">Tidak ada data arsip</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Filter data
+            const filterTanggal = document.getElementById('filterTanggalArsip').value;
+            const filterJenis = document.getElementById('filterJenisArsip').value;
+            const filterPerihal = document.getElementById('filterPerihalArsip').value.toLowerCase();
+            const filterKategori = document.getElementById('filterKategoriArsip').value;
+            
+            const filteredData = arsipData.filter(item => {
+                const itemDate = new Date(item.tanggal).toLocaleDateString('id-ID');
+                const filterDate = filterTanggal ? new Date(filterTanggal).toLocaleDateString('id-ID') : null;
+                
+                return (!filterDate || itemDate === filterDate) &&
+                       (!filterJenis || item.jenis === filterJenis) &&
+                       (!filterPerihal || item.perihal.toLowerCase().includes(filterPerihal)) &&
+                       (!filterKategori || item.kategori === filterKategori);
+            });
+            
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // Tentukan class untuk kategori badge
+                let kategoriClass = '';
+                switch(item.kategori) {
+                    case 'Pemerintah':
+                        kategoriClass = 'kategori-pemerintah';
+                        break;
+                    case 'Perusahaan':
+                        kategoriClass = 'kategori-perusahaan';
+                        break;
+                    case 'Lembaga':
+                        kategoriClass = 'kategori-lembaga';
+                        break;
+                    case 'OPD':
+                        kategoriClass = 'kategori-opd';
+                        break;
+                    case 'UPT':
+                        kategoriClass = 'kategori-upt';
+                        break;
+                    case 'Perorangan':
+                        kategoriClass = 'kategori-perorangan';
+                        break;
+                    case 'Lainnya':
+                        kategoriClass = 'kategori-lainnya';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td>${formatDate(item.tanggal)}</td>
+                    <td><span class="badge ${item.jenis === 'masuk' ? 'bg-primary' : 'bg-success'}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
+                    <td>${item.nomor}</td>
+                    <td>${item.jenis === 'masuk' ? item.pengirim : item.tujuan}</td>
+                    <td>${item.perihal}</td>
+                    <td><span class="badge badge-kategori ${kategoriClass}">${item.kategori}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-info btn-view" data-id="${item.id}" data-jenis="${item.jenis}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-hapus-arsip" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Tambahkan event listener untuk tombol
+            document.querySelectorAll('.btn-view').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const jenis = this.getAttribute('data-jenis');
+                    viewArsip(id, jenis);
+                });
+            });
+            
+            document.querySelectorAll('.btn-hapus-arsip').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    hapusArsip(id);
+                });
+            });
+        }
+        
+        // Fungsi untuk melampirkan event listener pada tombol edit dan hapus
+        function attachEditDeleteListeners() {
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const jenis = this.getAttribute('data-jenis');
+                    editSurat(id, jenis);
+                });
+            });
+            
+            document.querySelectorAll('.btn-hapus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const jenis = this.getAttribute('data-jenis');
+                    konfirmasiHapus(id, jenis);
+                });
+            });
+        }
+        
+        // Fungsi untuk memformat tanggal
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+        
+        // Fungsi untuk menghasilkan ID unik
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        // Fungsi untuk menambah surat masuk
+        function tambahSuratMasuk() {
+            const tanggal = document.getElementById('tanggalSuratMasuk').value;
+            const nomor = document.getElementById('nomorSuratMasuk').value;
+            const pengirim = document.getElementById('pengirimSurat').value;
+            const perihal = document.getElementById('perihalSuratMasuk').value;
+            const kategori = document.getElementById('kategoriSuratMasuk').value;
+            const status = document.getElementById('statusSuratMasuk').value;
+            const keterangan = document.getElementById('keteranganSuratMasuk').value;
+            
+            if (!tanggal || !nomor || !pengirim || !perihal || !kategori || !status) {
+                showToast('Harap isi semua field yang wajib diisi', 'error');
+                return;
+            }
+            
+            const newSurat = {
+                id: generateId(),
+                tanggal,
+                nomor,
+                pengirim,
+                perihal,
+                kategori,
+                status,
+                keterangan,
+                createdAt: new Date().toISOString()
+            };
+            
+            suratMasukData.push(newSurat);
+            
+            // Tambahkan ke arsip
+            const arsipItem = {
+                id: newSurat.id,
+                jenis: 'masuk',
+                tanggal,
+                nomor,
+                pengirim,
+                perihal,
+                kategori,
+                status,
+                keterangan,
+                createdAt: new Date().toISOString()
+            };
+            
+            arsipData.push(arsipItem);
+            
+            saveData();
+            showToast('Surat masuk berhasil ditambahkan', 'success');
+            
+            // Reset form
+            document.getElementById('formTambahSuratMasuk').reset();
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahSuratMasukModal'));
+            modal.hide();
+        }
+        
+        // Fungsi untuk menambah surat keluar
+        function tambahSuratKeluar() {
+            const tanggal = document.getElementById('tanggalSuratKeluar').value;
+            const nomor = document.getElementById('nomorSuratKeluar').value;
+            const tujuan = document.getElementById('tujuanSurat').value;
+            const perihal = document.getElementById('perihalSuratKeluar').value;
+            const kategori = document.getElementById('kategoriSuratKeluar').value;
+            const status = document.getElementById('statusSuratKeluar').value;
+            const keterangan = document.getElementById('keteranganSuratKeluar').value;
+            
+            if (!tanggal || !nomor || !tujuan || !perihal || !kategori || !status) {
+                showToast('Harap isi semua field yang wajib diisi', 'error');
+                return;
+            }
+            
+            const newSurat = {
+                id: generateId(),
+                tanggal,
+                nomor,
+                tujuan,
+                perihal,
+                kategori,
+                status,
+                keterangan,
+                createdAt: new Date().toISOString()
+            };
+            
+            suratKeluarData.push(newSurat);
+            
+            // Tambahkan ke arsip
+            const arsipItem = {
+                id: newSurat.id,
+                jenis: 'keluar',
+                tanggal,
+                nomor,
+                tujuan,
+                perihal,
+                kategori,
+                status,
+                keterangan,
+                createdAt: new Date().toISOString()
+            };
+            
+            arsipData.push(arsipItem);
+            
+            saveData();
+            showToast('Surat keluar berhasil ditambahkan', 'success');
+            
+            // Reset form
+            document.getElementById('formTambahSuratKeluar').reset();
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahSuratKeluarModal'));
+            modal.hide();
+        }
+        
+        // Fungsi untuk mengedit surat
+        function editSurat(id, jenis) {
+            let surat;
+            
+            if (jenis === 'masuk') {
+                surat = suratMasukData.find(item => item.id === id);
+            } else {
+                surat = suratKeluarData.find(item => item.id === id);
+            }
+            
+            if (!surat) {
+                showToast('Data surat tidak ditemukan', 'error');
+                return;
+            }
+            
+            // Isi form edit
+            document.getElementById('editId').value = id;
+            document.getElementById('editJenis').value = jenis;
+            document.getElementById('editTanggal').value = surat.tanggal;
+            document.getElementById('editNomor').value = surat.nomor;
+            document.getElementById('editPerihal').value = surat.perihal;
+            document.getElementById('editKategori').value = surat.kategori;
+            document.getElementById('editKeterangan').value = surat.keterangan || '';
+            
+            // Sesuaikan label dan field berdasarkan jenis surat
+            const label = document.getElementById('editLabelPengirimTujuan');
+            const field = document.getElementById('editPengirimTujuan');
+            
+            if (jenis === 'masuk') {
+                label.innerHTML = '<i class="fas fa-user me-1"></i> Pengirim';
+                field.value = surat.pengirim;
+            } else {
+                label.innerHTML = '<i class="fas fa-user me-1"></i> Tujuan';
+                field.value = surat.tujuan;
+            }
+            
+            // Isi opsi status berdasarkan jenis surat
+            const statusSelect = document.getElementById('editStatus');
+            statusSelect.innerHTML = '';
+            
+            if (jenis === 'masuk') {
+                const options = [
+                    { value: 'Pending', text: 'Pending' },
+                    { value: 'Diterima', text: 'Diterima' },
+                    { value: 'Ditolak', text: 'Ditolak' },
+                    { value: 'Selesai', text: 'Selesai' }
+                ];
+                
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    option.selected = opt.value === surat.status;
+                    statusSelect.appendChild(option);
+                });
+            } else {
+                const options = [
+                    { value: 'Pending', text: 'Pending' },
+                    { value: 'Terkirim', text: 'Terkirim' },
+                    { value: 'Dibatalkan', text: 'Dibatalkan' },
+                    { value: 'Selesai', text: 'Selesai' }
+                ];
+                
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    option.selected = opt.value === surat.status;
+                    statusSelect.appendChild(option);
+                });
+            }
+            
+            // Tampilkan modal edit
+            const modal = new bootstrap.Modal(document.getElementById('editSuratModal'));
+            modal.show();
+        }
+        
+        // Fungsi untuk mengupdate surat
+        function updateSurat() {
+            const id = document.getElementById('editId').value;
+            const jenis = document.getElementById('editJenis').value;
+            const tanggal = document.getElementById('editTanggal').value;
+            const nomor = document.getElementById('editNomor').value;
+            const pengirimTujuan = document.getElementById('editPengirimTujuan').value;
+            const perihal = document.getElementById('editPerihal').value;
+            const kategori = document.getElementById('editKategori').value;
+            const status = document.getElementById('editStatus').value;
+            const keterangan = document.getElementById('editKeterangan').value;
+            
+            if (!tanggal || !nomor || !pengirimTujuan || !perihal || !kategori || !status) {
+                showToast('Harap isi semua field yang wajib diisi', 'error');
+                return;
+            }
+            
+            if (jenis === 'masuk') {
+                const index = suratMasukData.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    suratMasukData[index] = {
+                        ...suratMasukData[index],
+                        tanggal,
+                        nomor,
+                        pengirim: pengirimTujuan,
+                        perihal,
+                        kategori,
+                        status,
+                        keterangan,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            } else {
+                const index = suratKeluarData.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    suratKeluarData[index] = {
+                        ...suratKeluarData[index],
+                        tanggal,
+                        nomor,
+                        tujuan: pengirimTujuan,
+                        perihal,
+                        kategori,
+                        status,
+                        keterangan,
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+            }
+            
+            // Update arsip
+            const arsipIndex = arsipData.findIndex(item => item.id === id);
+            if (arsipIndex !== -1) {
+                arsipData[arsipIndex] = {
+                    ...arsipData[arsipIndex],
+                    tanggal,
+                    nomor,
+                    perihal,
+                    kategori,
+                    status,
+                    keterangan,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (jenis === 'masuk') {
+                    arsipData[arsipIndex].pengirim = pengirimTujuan;
                 } else {
-                    // Tampilkan pesan error
-                    showNotification('Kode keamanan salah. Silakan coba lagi.', 'error');
+                    arsipData[arsipIndex].tujuan = pengirimTujuan;
+                }
+            }
+            
+            saveData();
+            showToast('Surat berhasil diperbarui', 'success');
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editSuratModal'));
+            modal.hide();
+        }
+        
+        // Fungsi untuk konfirmasi hapus
+        function konfirmasiHapus(id, jenis) {
+            document.getElementById('hapusId').value = id;
+            document.getElementById('hapusJenis').value = jenis;
+            
+            const modal = new bootstrap.Modal(document.getElementById('hapusModal'));
+            modal.show();
+        }
+        
+        // Fungsi untuk menghapus surat
+        function hapusSurat() {
+            const id = document.getElementById('hapusId').value;
+            const jenis = document.getElementById('hapusJenis').value;
+            
+            if (jenis === 'masuk') {
+                suratMasukData = suratMasukData.filter(item => item.id !== id);
+            } else {
+                suratKeluarData = suratKeluarData.filter(item => item.id !== id);
+            }
+            
+            // Hapus dari arsip
+            arsipData = arsipData.filter(item => item.id !== id);
+            
+            saveData();
+            showToast('Surat berhasil dihapus', 'success');
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('hapusModal'));
+            modal.hide();
+        }
+        
+        // Fungsi untuk melihat arsip
+        function viewArsip(id, jenis) {
+            let surat;
+            
+            if (jenis === 'masuk') {
+                surat = suratMasukData.find(item => item.id === id);
+            } else {
+                surat = suratKeluarData.find(item => item.id === id);
+            }
+            
+            if (!surat) {
+                showToast('Data surat tidak ditemukan', 'error');
+                return;
+            }
+            
+            // Tampilkan detail surat dalam modal
+            const modalTitle = document.createElement('h5');
+            modalTitle.className = 'modal-title';
+            modalTitle.innerHTML = `<i class="fas fa-eye me-2"></i> Detail Surat ${jenis === 'masuk' ? 'Masuk' : 'Keluar'}`;
+            
+            const modalBody = document.createElement('div');
+            modalBody.innerHTML = `
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Tanggal:</strong> ${formatDate(surat.tanggal)}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Nomor Surat:</strong> ${surat.nomor}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>${jenis === 'masuk' ? 'Pengirim' : 'Tujuan'}:</strong> ${jenis === 'masuk' ? surat.pengirim : surat.tujuan}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Perihal:</strong> ${surat.perihal}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Kategori:</strong> <span class="badge bg-secondary">${surat.kategori}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Status:</strong> <span class="badge bg-info">${surat.status}</span>
+                    </div>
+                </div>
+                ${surat.keterangan ? `
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <strong>Keterangan:</strong> ${surat.keterangan}
+                    </div>
+                </div>
+                ` : ''}
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Dibuat:</strong> ${formatDateTime(surat.createdAt)}
+                    </div>
+                    ${surat.updatedAt ? `
+                    <div class="col-md-6">
+                        <strong>Diperbarui:</strong> ${formatDateTime(surat.updatedAt)}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Buat modal dinamis
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'modal fade';
+            modalDiv.id = 'viewArsipModal';
+            modalDiv.tabIndex = -1;
+            modalDiv.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modalDiv);
+            
+            // Isi konten modal
+            const modal = new bootstrap.Modal(modalDiv);
+            modalDiv.querySelector('.modal-title').innerHTML = modalTitle.innerHTML;
+            modalDiv.querySelector('.modal-body').innerHTML = modalBody.innerHTML;
+            
+            modal.show();
+            
+            // Hapus modal dari DOM setelah ditutup
+            modalDiv.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modalDiv);
+            });
+        }
+        
+        // Fungsi untuk menghapus arsip
+        function hapusArsip(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus arsip ini?')) {
+                return;
+            }
+            
+            // Hapus dari arsip
+            arsipData = arsipData.filter(item => item.id !== id);
+            
+            saveData();
+            showToast('Arsip berhasil dihapus', 'success');
+        }
+        
+        // Fungsi untuk memformat tanggal dan waktu
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Fungsi untuk export data ke Excel
+        function exportToExcel(data, filename) {
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+            XLSX.writeFile(workbook, `${filename}.xlsx`);
+        }
+        
+        // Fungsi untuk mencetak laporan
+        function printReport(jenis) {
+            let data, title;
+            
+            if (jenis === 'masuk') {
+                data = suratMasukData;
+                title = 'Laporan Surat Masuk';
+            } else if (jenis === 'keluar') {
+                data = suratKeluarData;
+                title = 'Laporan Surat Keluar';
+            } else {
+                data = arsipData;
+                title = 'Laporan Arsip Surat';
+            }
+            
+            // Buat elemen untuk print
+            const printContent = document.createElement('div');
+            printContent.innerHTML = `
+                <div class="print-header">
+                    <h3 class="print-title">${title}</h3>
+                    <p class="print-subtitle">SISMAT - Sistem Manajemen Surat</p>
+                    <p class="print-date">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+                </div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            ${jenis !== 'keluar' ? '<th>Pengirim</th>' : ''}
+                            ${jenis !== 'masuk' ? '<th>Tujuan</th>' : ''}
+                            <th>Nomor Surat</th>
+                            <th>Perihal</th>
+                            <th>Kategori</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map((item, index) => `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${formatDate(item.tanggal)}</td>
+                                ${jenis !== 'keluar' ? `<td>${item.pengirim || '-'}</td>` : ''}
+                                ${jenis !== 'masuk' ? `<td>${item.tujuan || '-'}</td>` : ''}
+                                <td>${item.nomor}</td>
+                                <td>${item.perihal}</td>
+                                <td>${item.kategori}</td>
+                                <td>${item.status}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            // Simpan HTML asli
+            const originalContents = document.body.innerHTML;
+            
+            // Ganti isi body dengan konten cetak
+            document.body.innerHTML = printContent.innerHTML;
+            
+            // Cetak
+            window.print();
+            
+            // Kembalikan isi body asli
+            document.body.innerHTML = originalContents;
+            
+            // Render ulang tabel
+            if (jenis === 'masuk') {
+                renderSuratMasukTable();
+            } else if (jenis === 'keluar') {
+                renderSuratKeluarTable();
+            } else {
+                renderArsipTable();
+            }
+        }
+        
+        // Fungsi untuk backup data
+        function backupData() {
+            const data = {
+                suratMasuk: suratMasukData,
+                suratKeluar: suratKeluarData,
+                arsip: arsipData,
+                backupDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `sismat-backup-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('Backup data berhasil', 'success');
+        }
+        
+        // Fungsi untuk restore data
+        function restoreData() {
+            const fileInput = document.getElementById('restoreFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Pilih file backup terlebih dahulu', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.suratMasuk && data.suratKeluar && data.arsip) {
+                        suratMasukData = data.suratMasuk;
+                        suratKeluarData = data.suratKeluar;
+                        arsipData = data.arsip;
+                        
+                        saveData();
+                        showToast('Restore data berhasil', 'success');
+                        
+                        // Tutup modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('restoreModal'));
+                        modal.hide();
+                    } else {
+                        showToast('Format file backup tidak valid', 'error');
+                    }
+                } catch (error) {
+                    showToast('Gagal memproses file backup', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Fungsi untuk reset data
+        function resetData() {
+            const kode = document.getElementById('resetKodeKeamanan').value;
+            const securityCode = localStorage.getItem('securityCode') || '1234';
+            
+            if (kode !== securityCode) {
+                showToast('Kode keamanan tidak valid', 'error');
+                return;
+            }
+            
+            if (!confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan.')) {
+                return;
+            }
+            
+            suratMasukData = [];
+            suratKeluarData = [];
+            arsipData = [];
+            
+            saveData();
+            showToast('Semua data berhasil direset', 'success');
+            
+            // Tutup modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('resetModal'));
+            modal.hide();
+        }
+        
+        // Fungsi untuk mengatur kode keamanan
+        function setSecurityCode() {
+            const currentCode = document.getElementById('kodeKeamananSaatIni').value;
+            const newCode = document.getElementById('kodeKeamananBaru').value;
+            const confirmCode = document.getElementById('konfirmasiKodeKeamanan').value;
+            
+            const storedCode = localStorage.getItem('securityCode') || '1234';
+            
+            if (currentCode !== storedCode) {
+                showToast('Kode keamanan saat ini tidak valid', 'error');
+                return;
+            }
+            
+            if (newCode !== confirmCode) {
+                showToast('Konfirmasi kode keamanan tidak sesuai', 'error');
+                return;
+            }
+            
+            localStorage.setItem('securityCode', newCode);
+            showToast('Kode keamanan berhasil diperbarui', 'success');
+            
+            // Reset form
+            document.getElementById('pengaturanKeamananForm').reset();
+        }
+        
+        // Fungsi untuk menangani login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            if (isBlocked) {
+                showToast('Anda telah diblokir sementara. Silakan coba lagi nanti.', 'error');
+                return;
+            }
+            
+            const securityCode = document.getElementById('securityCode').value;
+            const storedCode = localStorage.getItem('securityCode') || '1234';
+            
+            if (securityCode === storedCode) {
+                // Login berhasil
+                loginAttempts = 0;
+                document.getElementById('attemptsCount').textContent = '';
+                document.getElementById('blockedMessage').classList.add('d-none');
+                
+                // Tampilkan aplikasi
+                document.querySelector('.app-content-unauthenticated').style.display = 'block';
+                
+                // Sembunyikan modal login
+                const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                modal.hide();
+                
+                // Tampilkan modal welcome
+                const welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                welcomeModal.show();
+                
+                // Mulai hitung mundur untuk welcome modal
+                let countdown = 5;
+                const countdownElement = document.getElementById('welcomeCountdown');
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        welcomeModal.hide();
+                    }
+                }, 1000);
+                
+            } else {
+                // Login gagal
+                loginAttempts++;
+                
+                if (loginAttempts >= 3) {
+                    // Blokir akses sementara
+                    isBlocked = true;
+                    document.getElementById('blockedMessage').classList.remove('d-none');
+                    
+                    let countdown = 30;
+                    document.getElementById('countdown').textContent = countdown;
+                    
+                    blockTimeout = setTimeout(() => {
+                        isBlocked = false;
+                        loginAttempts = 0;
+                        document.getElementById('blockedMessage').classList.add('d-none');
+                        document.getElementById('attemptsCount').textContent = '';
+                    }, 30000);
+                    
+                    // Hitung mundur untuk blokir
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        document.getElementById('countdown').textContent = countdown;
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('attemptsCount').textContent = `Percobaan login gagal: ${loginAttempts} dari 3`;
+                    showToast('Kode keamanan salah', 'error');
+                    
+                    // Animasi shake
                     document.getElementById('loginForm').classList.add('login-shake');
                     setTimeout(() => {
                         document.getElementById('loginForm').classList.remove('login-shake');
                     }, 600);
                 }
+            }
+        }
+        
+        // Fungsi untuk inisialisasi aplikasi
+        function initApp() {
+            // Load data dari localStorage
+            loadData();
+            
+            // Inisialisasi datepicker
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true,
+                language: 'id'
             });
             
-            // Toggle password visibility
+            // Event listener untuk navigasi
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    const target = this.getAttribute('data-bs-target');
+                    
+                    // Sembunyikan semua section
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.add('d-none');
+                    });
+                    
+                    // Tampilkan section yang dipilih
+                    document.getElementById(target).classList.remove('d-none');
+                    
+                    // Update class aktif pada navigasi
+                    document.querySelectorAll('.nav-link').forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Pada perangkat mobile, tutup sidebar setelah memilih menu
+                    if (window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('mobile-show');
+                        document.getElementById('sidebarOverlay').classList.remove('mobile-show');
+                    }
+                });
+            });
+            
+            // Event listener untuk tombol simpan surat masuk
+            document.getElementById('simpanSuratMasuk').addEventListener('click', tambahSuratMasuk);
+            
+            // Event listener untuk tombol simpan surat keluar
+            document.getElementById('simpanSuratKeluar').addEventListener('click', tambahSuratKeluar);
+            
+            // Event listener untuk tombol update surat
+            document.getElementById('updateSurat').addEventListener('click', updateSurat);
+            
+            // Event listener untuk tombol konfirmasi hapus
+            document.getElementById('konfirmasiHapus').addEventListener('click', hapusSurat);
+            
+            // Event listener untuk tombol export surat masuk
+            document.getElementById('exportSuratMasuk').addEventListener('click', function() {
+                exportToExcel(suratMasukData, 'surat-masuk');
+            });
+            
+            // Event listener untuk tombol export surat keluar
+            document.getElementById('exportSuratKeluar').addEventListener('click', function() {
+                exportToExcel(suratKeluarData, 'surat-keluar');
+            });
+            
+            // Event listener untuk tombol export arsip
+            document.getElementById('exportArsip').addEventListener('click', function() {
+                exportToExcel(arsipData, 'arsip-surat');
+            });
+            
+            // Event listener untuk tombol print surat masuk
+            document.getElementById('printSuratMasuk').addEventListener('click', function() {
+                printReport('masuk');
+            });
+            
+            // Event listener untuk tombol print surat keluar
+            document.getElementById('printSuratKeluar').addEventListener('click', function() {
+                printReport('keluar');
+            });
+            
+            // Event listener untuk tombol print arsip
+            document.getElementById('printArsip').addEventListener('click', function() {
+                printReport('arsip');
+            });
+            
+            // Event listener untuk tombol reset filter
+            document.getElementById('resetFilterSuratMasuk').addEventListener('click', function() {
+                document.getElementById('filterTanggalMasuk').value = '';
+                document.getElementById('filterPengirim').value = '';
+                document.getElementById('filterPerihalMasuk').value = '';
+                document.getElementById('filterKategoriMasuk').value = '';
+                renderSuratMasukTable();
+            });
+            
+            document.getElementById('resetFilterSuratKeluar').addEventListener('click', function() {
+                document.getElementById('filterTanggalKeluar').value = '';
+                document.getElementById('filterTujuan').value = '';
+                document.getElementById('filterPerihalKeluar').value = '';
+                document.getElementById('filterKategoriKeluar').value = '';
+                renderSuratKeluarTable();
+            });
+            
+            document.getElementById('resetFilterArsip').addEventListener('click', function() {
+                document.getElementById('filterTanggalArsip').value = '';
+                document.getElementById('filterJenisArsip').value = '';
+                document.getElementById('filterPerihalArsip').value = '';
+                document.getElementById('filterKategoriArsip').value = '';
+                renderArsipTable();
+            });
+            
+            // Event listener untuk filter surat masuk
+            document.getElementById('filterTanggalMasuk').addEventListener('change', renderSuratMasukTable);
+            document.getElementById('filterPengirim').addEventListener('input', renderSuratMasukTable);
+            document.getElementById('filterPerihalMasuk').addEventListener('input', renderSuratMasukTable);
+            document.getElementById('filterKategoriMasuk').addEventListener('change', renderSuratMasukTable);
+            
+            // Event listener untuk filter surat keluar
+            document.getElementById('filterTanggalKeluar').addEventListener('change', renderSuratKeluarTable);
+            document.getElementById('filterTujuan').addEventListener('input', renderSuratKeluarTable);
+            document.getElementById('filterPerihalKeluar').addEventListener('input', renderSuratKeluarTable);
+            document.getElementById('filterKategoriKeluar').addEventListener('change', renderSuratKeluarTable);
+            
+            // Event listener untuk filter arsip
+            document.getElementById('filterTanggalArsip').addEventListener('change', renderArsipTable);
+            document.getElementById('filterJenisArsip').addEventListener('change', renderArsipTable);
+            document.getElementById('filterPerihalArsip').addEventListener('input', renderArsipTable);
+            document.getElementById('filterKategoriArsip').addEventListener('change', renderArsipTable);
+            
+            // Event listener untuk backup data
+            document.getElementById('backupData').addEventListener('click', backupData);
+            
+            // Event listener untuk restore data
+            document.getElementById('prosesRestore').addEventListener('click', restoreData);
+            
+            // Event listener untuk reset data
+            document.getElementById('konfirmasiReset').addEventListener('click', resetData);
+            
+            // Event listener untuk pengaturan keamanan
+            document.getElementById('pengaturanKeamananForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                setSecurityCode();
+            });
+            
+            // Event listener untuk login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Event listener untuk toggle password visibility
             document.querySelector('.toggle-password').addEventListener('click', function() {
                 const passwordInput = document.getElementById('securityCode');
                 const icon = this.querySelector('i');
@@ -2320,323 +3469,41 @@
                 }
             });
             
-            // Close welcome modal
-            document.getElementById('closeWelcomeBtn').addEventListener('click', function() {
-                const welcomeModal = bootstrap.Modal.getInstance(document.getElementById('welcomeModal'));
-                welcomeModal.hide();
-            });
-            
-            // Logout function
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                document.querySelector('.app-content-unauthenticated').style.display = 'none';
-                loginModal.show();
-            });
-            
-            // Mobile menu toggle
+            // Event listener untuk mobile menu
             document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-                document.querySelector('.col-md-3.col-lg-2').classList.add('mobile-show');
-                document.getElementById('sidebarOverlay').classList.add('mobile-show');
+                document.getElementById('sidebar').classList.toggle('mobile-show');
+                document.getElementById('sidebarOverlay').classList.toggle('mobile-show');
             });
             
             document.getElementById('sidebarOverlay').addEventListener('click', function() {
-                document.querySelector('.col-md-3.col-lg-2').classList.remove('mobile-show');
+                document.getElementById('sidebar').classList.remove('mobile-show');
                 this.classList.remove('mobile-show');
             });
             
-            // Floating action button
-            document.getElementById('fabButton').addEventListener('click', function() {
-                const activeTab = document.querySelector('.tab-pane.fade.show.active');
+            // Event listener untuk floating action button
+            document.getElementById('fab').addEventListener('click', function() {
+                const activeSection = document.querySelector('.content-section:not(.d-none)').id;
                 
-                if (activeTab.id === 'suratMasuk') {
-                    // Scroll to form surat masuk
-                    document.querySelector('#suratMasukForm').scrollIntoView({ behavior: 'smooth' });
-                } else if (activeTab.id === 'suratKeluar') {
-                    // Scroll to form surat keluar
-                    document.querySelector('#suratKeluarForm').scrollIntoView({ behavior: 'smooth' });
+                if (activeSection === 'suratMasuk') {
+                    const modal = new bootstrap.Modal(document.getElementById('tambahSuratMasukModal'));
+                    modal.show();
+                } else if (activeSection === 'suratKeluar') {
+                    const modal = new bootstrap.Modal(document.getElementById('tambahSuratKeluarModal'));
+                    modal.show();
                 } else {
-                    // Default action - show notification
-                    showNotification('Gunakan tombol ini untuk menambah data dengan cepat', 'info');
+                    // Default ke tambah surat masuk
+                    const modal = new bootstrap.Modal(document.getElementById('tambahSuratMasukModal'));
+                    modal.show();
                 }
             });
             
-            // View drive link
-            document.getElementById('viewDriveLinkMasuk').addEventListener('click', function() {
-                const driveLink = document.getElementById('driveLinkMasuk').value;
-                if (driveLink) {
-                    window.open(driveLink, '_blank');
-                } else {
-                    showNotification('Masukkan link Google Drive terlebih dahulu', 'warning');
-                }
-            });
-            
-            document.getElementById('viewDriveLinkKeluar').addEventListener('click', function() {
-                const driveLink = document.getElementById('driveLinkKeluar').value;
-                if (driveLink) {
-                    window.open(driveLink, '_blank');
-                } else {
-                    showNotification('Masukkan link Google Drive terlebih dahulu', 'warning');
-                }
-            });
-            
-            // Form submission
-            document.getElementById('suratMasukForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                showNotification('Surat masuk berhasil disimpan', 'success');
-                this.reset();
-            });
-            
-            document.getElementById('suratKeluarForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                showNotification('Surat keluar berhasil disimpan', 'success');
-                this.reset();
-            });
-            
-            // Search functionality
-            document.getElementById('searchSuratMasuk').addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#suratMasukTable tr');
-                
-                let visibleCount = 0;
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                document.getElementById('suratMasukCount').textContent = visibleCount;
-            });
-            
-            document.getElementById('clearSearchSuratMasuk').addEventListener('click', function() {
-                document.getElementById('searchSuratMasuk').value = '';
-                const rows = document.querySelectorAll('#suratMasukTable tr');
-                rows.forEach(row => row.style.display = '');
-                document.getElementById('suratMasukCount').textContent = rows.length;
-            });
-            
-            document.getElementById('searchSuratKeluar').addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#suratKeluarTable tr');
-                
-                let visibleCount = 0;
-                rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                document.getElementById('suratKeluarCount').textContent = visibleCount;
-            });
-            
-            document.getElementById('clearSearchSuratKeluar').addEventListener('click', function() {
-                document.getElementById('searchSuratKeluar').value = '';
-                const rows = document.querySelectorAll('#suratKeluarTable tr');
-                rows.forEach(row => row.style.display = '');
-                document.getElementById('suratKeluarCount').textContent = rows.length;
-            });
-            
-            // Filter laporan
-            document.getElementById('applyFilterMasuk').addEventListener('click', function() {
-                showNotification('Filter laporan surat masuk diterapkan', 'success');
-            });
-            
-            document.getElementById('resetFilterMasuk').addEventListener('click', function() {
-                document.getElementById('filterLaporanMasukForm').reset();
-                showNotification('Filter laporan surat masuk direset', 'info');
-            });
-            
-            document.getElementById('applyFilterKeluar').addEventListener('click', function() {
-                showNotification('Filter laporan surat keluar diterapkan', 'success');
-            });
-            
-            document.getElementById('resetFilterKeluar').addEventListener('click', function() {
-                document.getElementById('filterLaporanKeluarForm').reset();
-                showNotification('Filter laporan surat keluar direset', 'info');
-            });
-            
-            // Generate PDF untuk Laporan Surat Masuk
-            document.getElementById('generatePdfMasuk').addEventListener('click', function() {
-                // Menggunakan jsPDF dengan orientasi landscape
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                // Judul laporan
-                doc.setFontSize(16);
-                doc.text('LAPORAN SURAT MASUK', 140, 15, { align: 'center' });
-                
-                // Tanggal cetak
-                doc.setFontSize(10);
-                doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 140, 22, { align: 'center' });
-                
-                // Data tabel
-                const headers = [['No', 'No. Agenda', 'No. Surat', 'Tanggal Surat', 'Tanggal Diterima', 'Pengirim', 'Perihal', 'Jenis', 'Kategori', 'Disposisi']];
-                
-                // Data contoh (dalam aplikasi nyata, data akan diambil dari tabel)
-                const data = [
-                    ['1', 'AGD-2023-001', '001/DP/IX/2023', '12/10/2023', '12/10/2023', 'Dinas Pendidikan', 'Undangan Rapat Koordinasi', 'Biasa', 'Pemerintah', 'Kepala Bagian'],
-                    ['2', 'AGD-2023-002', '005/DINKES/X/2023', '15/10/2023', '15/10/2023', 'Dinas Kesehatan', 'Surat Edaran Vaksinasi', 'Penting', 'Pemerintah', 'Kepala Sub Bagian']
-                ];
-                
-                // Generate tabel
-                doc.autoTable({
-                    head: headers,
-                    body: data,
-                    startY: 30,
-                    theme: 'grid',
-                    styles: { fontSize: 8 },
-                    headStyles: { fillColor: [13, 71, 161] }
-                });
-                
-                // Simpan PDF
-                doc.save('Laporan_Surat_Masuk.pdf');
-                
-                showNotification('PDF laporan surat masuk berhasil digenerate', 'success');
-            });
-            
-            // Export Excel untuk Laporan Surat Masuk
-            document.getElementById('exportExcelMasuk').addEventListener('click', function() {
-                // Data contoh (dalam aplikasi nyata, data akan diambil dari tabel)
-                const data = [
-                    ['No', 'No. Agenda', 'No. Surat', 'Tanggal Surat', 'Tanggal Diterima', 'Pengirim', 'Perihal', 'Jenis', 'Kategori', 'Disposisi'],
-                    ['1', 'AGD-2023-001', '001/DP/IX/2023', '12/10/2023', '12/10/2023', 'Dinas Pendidikan', 'Undangan Rapat Koordinasi', 'Biasa', 'Pemerintah', 'Kepala Bagian'],
-                    ['2', 'AGD-2023-002', '005/DINKES/X/2023', '15/10/2023', '15/10/2023', 'Dinas Kesehatan', 'Surat Edaran Vaksinasi', 'Penting', 'Pemerintah', 'Kepala Sub Bagian']
-                ];
-                
-                // Buat workbook
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(data);
-                
-                // Atur properti workbook
-                XLSX.utils.book_append_sheet(wb, ws, 'Laporan Surat Masuk');
-                
-                // Simpan file
-                XLSX.writeFile(wb, 'Laporan_Surat_Masuk.xlsx');
-                
-                showNotification('Excel laporan surat masuk berhasil diexport', 'success');
-            });
-            
-            // Generate PDF untuk Laporan Surat Keluar
-            document.getElementById('generatePdfKeluar').addEventListener('click', function() {
-                // Menggunakan jsPDF dengan orientasi landscape
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF({
-                    orientation: 'landscape',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                // Judul laporan
-                doc.setFontSize(16);
-                doc.text('LAPORAN SURAT KELUAR', 140, 15, { align: 'center' });
-                
-                // Tanggal cetak
-                doc.setFontSize(10);
-                doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')}`, 140, 22, { align: 'center' });
-                
-                // Data tabel
-                const headers = [['No', 'No. Agenda', 'No. Surat', 'Tanggal Surat', 'Tanggal Dikirim', 'Kepada', 'Perihal', 'Jenis', 'Kategori', 'Sifat']];
-                
-                // Data contoh (dalam aplikasi nyata, data akan diambil dari tabel)
-                const data = [
-                    ['1', 'AGD-K-2023-001', '001/SM/IX/2023', '05/10/2023', '05/10/2023', 'PT. Jaya Abadi', 'Penawaran Kerjasama', 'Biasa', 'Perusahaan', 'Biasa'],
-                    ['2', 'AGD-K-2023-002', '002/SM/X/2023', '18/10/2023', '18/10/2023', 'Dinas Perhubungan', 'Permohonan Izin', 'Penting', 'Pemerintah', 'Penting']
-                ];
-                
-                // Generate tabel
-                doc.autoTable({
-                    head: headers,
-                    body: data,
-                    startY: 30,
-                    theme: 'grid',
-                    styles: { fontSize: 8 },
-                    headStyles: { fillColor: [13, 71, 161] }
-                });
-                
-                // Simpan PDF
-                doc.save('Laporan_Surat_Keluar.pdf');
-                
-                showNotification('PDF laporan surat keluar berhasil digenerate', 'success');
-            });
-            
-            // Export Excel untuk Laporan Surat Keluar
-            document.getElementById('exportExcelKeluar').addEventListener('click', function() {
-                // Data contoh (dalam aplikasi nyata, data akan diambil dari tabel)
-                const data = [
-                    ['No', 'No. Agenda', 'No. Surat', 'Tanggal Surat', 'Tanggal Dikirim', 'Kepada', 'Perihal', 'Jenis', 'Kategori', 'Sifat'],
-                    ['1', 'AGD-K-2023-001', '001/SM/IX/2023', '05/10/2023', '05/10/2023', 'PT. Jaya Abadi', 'Penawaran Kerjasama', 'Biasa', 'Perusahaan', 'Biasa'],
-                    ['2', 'AGD-K-2023-002', '002/SM/X/2023', '18/10/2023', '18/10/2023', 'Dinas Perhubungan', 'Permohonan Izin', 'Penting', 'Pemerintah', 'Penting']
-                ];
-                
-                // Buat workbook
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(data);
-                
-                // Atur properti workbook
-                XLSX.utils.book_append_sheet(wb, ws, 'Laporan Surat Keluar');
-                
-                // Simpan file
-                XLSX.writeFile(wb, 'Laporan_Surat_Keluar.xlsx');
-                
-                showNotification('Excel laporan surat keluar berhasil diexport', 'success');
-            });
-            
-            // Print laporan
-            document.getElementById('printLaporanMasuk').addEventListener('click', function() {
-                window.print();
-            });
-            
-            document.getElementById('printLaporanKeluar').addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Security settings form
-            document.getElementById('securitySettingsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                showNotification('Pengaturan keamanan berhasil diperbarui', 'success');
-            });
-            
-            // Data management buttons
-            document.getElementById('backupDataBtn').addEventListener('click', function() {
-                showNotification('Backup data berhasil dilakukan', 'success');
-            });
-            
-            document.getElementById('restoreDataBtn').addEventListener('click', function() {
-                showNotification('Restore data berhasil dilakukan', 'success');
-            });
-            
-            document.getElementById('resetDataBtn').addEventListener('click', function() {
-                if (confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan.')) {
-                    showNotification('Semua data berhasil direset', 'success');
-                }
-            });
-            
-            // Countdown for welcome modal
-            let countdown = 5;
-            const countdownElement = document.getElementById('welcomeCountdown');
-            const countdownInterval = setInterval(function() {
-                countdown--;
-                countdownElement.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    const welcomeModal = bootstrap.Modal.getInstance(document.getElementById('welcomeModal'));
-                    if (welcomeModal) {
-                        welcomeModal.hide();
-                    }
-                }
-            }, 1000);
-        });
+            // Tampilkan modal login saat aplikasi dimulai
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+        
+        // Jalankan inisialisasi saat dokumen siap
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
