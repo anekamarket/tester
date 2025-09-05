@@ -2055,6 +2055,8 @@
         let currentPageMasuk = 1;
         let currentPageKeluar = 1;
         const itemsPerPage = 5;
+        let loginAttempts = 0;
+        const MAX_LOGIN_ATTEMPTS = 3;
         
         // Data contoh untuk surat masuk
         const contohSuratMasuk = [
@@ -2154,7 +2156,7 @@
             const totalPages = Math.ceil(suratMasukData.length / itemsPerPage);
             
             // Render data
-            paginatedData.forEach((surat, index) => {
+            paginatedData.forEach((surat, index) {
                 const row = document.createElement('tr');
                 const actualIndex = startIndex + index + 1;
                 
@@ -2214,14 +2216,14 @@
             const totalPages = Math.ceil(suratKeluarData.length / itemsPerPage);
             
             // Render data
-            paginatedData.forEach((surat, index) => {
+            paginatedData.forEach((surat, index) {
                 const row = document.createElement('tr');
                 const actualIndex = startIndex + index + 1;
                 
                 row.innerHTML = `
                     <td class="text-center">${actualIndex}</td>
                     <td>${surat.tanggal}</td>
-                    <td>${surat.noSurat}</td>
+                    <td>${surat.noSurat</td>
                     <td>${surat.tujuan}</td>
                     <td>${surat.perihal}</td>
                     <td class="text-center"><span class="badge bg-info">${surat.kodeValidasi}</span></td>
@@ -2896,11 +2898,39 @@
                 }
             } else {
                 // Login gagal
+                loginAttempts++;
+                
+                if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+                    // Terlalu banyak percobaan gagal
+                    document.getElementById('blockedMessage').classList.remove('d-none');
+                    document.getElementById('attemptsCount').textContent = '';
+                    
+                    // Hitung mundur 30 detik
+                    let countdown = 30;
+                    const countdownElement = document.getElementById('countdown');
+                    countdownElement.textContent = countdown;
+                    
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        countdownElement.textContent = countdown;
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            document.getElementById('blockedMessage').classList.add('d-none');
+                            loginAttempts = 0;
+                        }
+                    }, 1000);
+                    
+                } else {
+                    // Tampilkan jumlah percobaan yang tersisa
+                    document.getElementById('attemptsCount').textContent = `Percobaan login gagal: ${loginAttempts} dari ${MAX_LOGIN_ATTEMPTS}`;
+                    document.getElementById('loginForm').classList.add('login-shake');
+                    setTimeout(() => {
+                        document.getElementById('loginForm').classList.remove('login-shake');
+                    }, 600);
+                }
+                
                 showToast('Kode keamanan salah', 'error');
-                document.getElementById('loginForm').classList.add('login-shake');
-                setTimeout(() => {
-                    document.getElementById('loginForm').classList.remove('login-shake');
-                }, 600);
             }
         }
         
