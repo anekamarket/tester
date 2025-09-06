@@ -1170,63 +1170,75 @@
                         <div class="login-developer-contact">
                             <p><i class="fas fa-user me-2"></i> Lentera Karya Situbondo</p>
                             <p><i class="fas fa-envelope me-2"></i> <a href="mailto:admin@anekamarket.my.id">admin@anekamarket.my.id</a></p>
-                            <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/6285156332074" class="whatsapp-link">+62 851-5633-2074</a></p>
+                            <p><i class="fab fa-whatsapp me-2"></i> <a href="https://wa.me/6287865614222" target="_blank">087865614222</a></p>
+                            <p><i class="fas fa-globe me-2"></i> <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a></p>
                         </div>
                     </div>
                     
                     <div class="login-copyright">
-                        <p>&copy; 2023 SISMAT - All Rights Reserved</p>
+                        <p>&copy; 2023 SISMAT - Sistem Manajemen Surat</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Login particle background -->
+    <div id="login-particles"></div>
+
     <!-- Main App Container -->
     <div class="app-container app-content-unauthenticated">
         <!-- Header -->
         <div class="app-header">
             <div class="app-logo">
-                <i class="fas fa-mail-bulk"></i>
+                <i class="fas fa-file-contract"></i>
             </div>
             <h1 class="app-title">SISMAT</h1>
             <p class="app-subtitle">Sistem Manajemen Surat</p>
             <div class="watermark">v2.1.0</div>
         </div>
         
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
         <div class="row g-0">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 p-4 bg-light">
-                <ul class="nav nav-pills flex-column" id="menuList">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" data-bs-target="dashboard">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3 col-lg-2 p-4 bg-light" id="sidebarMenu">
+                <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
                             <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
-                        </a>
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-target="inputSurat">
-                            <i class="fas fa-pen feature-icon"></i> Input Surat
-                        </a>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="input-tab" data-bs-toggle="tab" data-bs-target="#input" type="button" role="tab">
+                            <i class="fas fa-plus-circle feature-icon"></i> Input Surat
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-target="arsipSurat">
-                            <i class="fas fa-archive feature-icon"></i> Arsip Surat
-                        </a>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data" type="button" role="tab">
+                            <i class="fas fa-database feature-icon"></i> Data Surat
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-target="laporan">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab">
                             <i class="fas fa-chart-bar feature-icon"></i> Laporan
-                        </a>
+                        </button>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-target="pengaturan">
-                            <i class="fas fa-cog feature-icon"></i> Pengaturan
-                        </a>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                            <i class="fas fa-cogs feature-icon"></i> Pengaturan
+                        </button>
                     </li>
-                    <li class="nav-item mt-4">
-                        <a class="nav-link text-danger" href="#" id="logoutButton">
+                    <li class="nav-item mt-4" role="presentation">
+                        <button class="nav-link" id="logoutButton">
                             <i class="fas fa-sign-out-alt feature-icon"></i> Keluar
-                        </a>
+                        </button>
                     </li>
                 </ul>
                 
@@ -1235,211 +1247,247 @@
             
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 p-5">
-                <!-- Dashboard Section -->
-                <div class="content-section" id="dashboard">
-                    <h3 class="section-title">Dashboard</h3>
-                    
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="stats-box">
-                                <i class="fas fa-envelope-open text-primary fs-1"></i>
-                                <div class="stats-number" id="totalSurat">0</div>
-                                <div class="stats-label">Total Surat</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-box">
-                                <i class="fas fa-sign-in-alt text-success fs-1"></i>
-                                <div class="stats-number" id="suratMasuk">0</div>
-                                <div class="stats-label">Surat Masuk</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-box">
-                                <i class="fas fa-sign-out-alt text-warning fs-1"></i>
-                                <div class="stats-number" id="suratKeluar">0</div>
-                                <div class="stats-label">Surat Keluar</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-box">
-                                <i class="fas fa-clock text-info fs-1"></i>
-                                <div class="stats-number" id="suratPending">0</div>
-                                <div class="stats-label">Pending</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-line me-2"></i> Statistik Surat Bulanan
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="suratChart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-pie me-2"></i> Distribusi Jenis Surat
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="jenisSuratChart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-history me-2"></i> Aktivitas Terbaru
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover data-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>No.</th>
-                                                    <th>Jenis</th>
-                                                    <th>No. Surat</th>
-                                                    <th>Tanggal</th>
-                                                    <th>Pengirim/Penerima</th>
-                                                    <th>Perihal</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="recentActivity">
-                                                <!-- Data akan diisi oleh JavaScript -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Input Surat Section -->
-                <div class="content-section d-none" id="inputSurat">
-                    <h3 class="section-title">Input Surat</h3>
-                    
-                    <form id="suratForm">
+                <div class="tab-content" id="myTabContent">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                        <h3 class="section-title">Dashboard</h3>
+                        
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label" for="jenisSurat"><i class="fas fa-envelope"></i> Jenis Surat</label>
-                                    <select class="form-select" id="jenisSurat" required>
-                                        <option value="">Pilih Jenis Surat</option>
-                                        <option value="masuk">Surat Masuk</option>
-                                        <option value="keluar">Surat Keluar</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="noSurat"><i class="fas fa-hashtag"></i> Nomor Surat</label>
-                                    <input type="text" class="form-control" id="noSurat" placeholder="Masukkan nomor surat" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="tanggalSurat"><i class="fas fa-calendar"></i> Tanggal Surat</label>
-                                    <input type="date" class="form-control" id="tanggalSurat" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="pengirim"><i class="fas fa-user"></i> Pengirim</label>
-                                    <input type="text" class="form-control" id="pengirim" placeholder="Nama pengirim surat" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="penerima"><i class="fas fa-user"></i> Penerima</label>
-                                    <input type="text" class="form-control" id="penerima" placeholder="Nama penerima surat" required>
+                            <div class="col-md-3">
+                                <div class="stats-box">
+                                    <i class="fas fa-file-alt fa-2x text-primary"></i>
+                                    <div class="stats-number" id="totalSurat">0</div>
+                                    <div class="stats-label">Total Surat</div>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label" for="perihal"><i class="fas fa-file-alt"></i> Perihal</label>
-                                    <textarea class="form-control" id="perihal" rows="3" placeholder="Perihal surat" required></textarea>
+                            <div class="col-md-3">
+                                <div class="stats-box">
+                                    <i class="fas fa-file-import fa-2x text-success"></i>
+                                    <div class="stats-number" id="suratMasuk">0</div>
+                                    <div class="stats-label">Surat Masuk</div>
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="kategori"><i class="fas fa-tag"></i> Kategori</label>
-                                    <select class="form-select" id="kategori" required>
-                                        <option value="">Pilih Kategori</option>
-                                        <option value="pemerintah">Pemerintah</option>
-                                        <option value="perusahaan">Perusahaan</option>
-                                        <option value="lembaga">Lembaga</option>
-                                        <option value="opd">OPD</option>
-                                        <option value="upt">UPT</option>
-                                        <option value="perorangan">Perorangan</option>
-                                        <option value="lainnya">Lainnya</option>
-                                    </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-box">
+                                    <i class="fas fa-file-export fa-2x text-warning"></i>
+                                    <div class="stats-number" id="suratKeluar">0</div>
+                                    <div class="stats-label">Surat Keluar</div>
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="prioritas"><i class="fas fa-exclamation-circle"></i> Prioritas</label>
-                                    <select class="form-select" id="prioritas" required>
-                                        <option value="">Pilih Prioritas</option>
-                                        <option value="tinggi">Tinggi</option>
-                                        <option value="sedang">Sedang</option>
-                                        <option value="rendah">Rendah</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="kodeValidasi"><i class="fas fa-key"></i> Kode Validasi</label>
-                                    <div class="kode-validasi-container">
-                                        <input type="text" class="form-control kode-validasi-input" id="kodeValidasi" placeholder="Kode validasi surat" maxlength="5" required>
-                                        <button type="button" class="btn btn-primary btn-generate-kode" id="generateKodeBtn">
-                                            <i class="fas fa-sync-alt"></i> Generate
-                                        </button>
-                                    </div>
-                                    <small class="text-muted">Kode unik untuk validasi surat (5 karakter)</small>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label" for="fileSurat"><i class="fas fa-paperclip"></i> File Surat (Opsional)</label>
-                                    <input type="file" class="form-control" id="fileSurat">
-                                    <small class="text-muted">Unggah file surat (PDF, DOC, DOCX)</small>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-box">
+                                    <i class="fas fa-chart-line fa-2x text-info"></i>
+                                    <div class="stats-number" id="rataRata">0</div>
+                                    <div class="stats-label">Rata-rata per Hari</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="d-flex justify-content-between mt-4">
-                            <button type="reset" class="btn btn-secondary">
-                                <i class="fas fa-undo me-1"></i> Reset
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-1"></i> Simpan Surat
-                            </button>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie me-2"></i> Statistik Surat
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="suratChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <i class="fas fa-history me-2"></i> Aktivitas Terbaru
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>No.</th>
+                                                        <th>Jenis</th>
+                                                        <th>Tanggal</th>
+                                                        <th>Pengirim/Penerima</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="recentActivity">
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">Tidak ada data</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </div>
-                
-                <!-- Arsip Surat Section -->
-                <div class="content-section d-none" id="arsipSurat">
-                    <h3 class="section-title">Arsip Surat</h3>
+                    </div>
                     
-                    <div class="filter-section">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-filter"></i> Jenis Surat</label>
+                    <!-- Input Surat Tab -->
+                    <div class="tab-pane fade" id="input" role="tabpanel" aria-labelledby="input-tab">
+                        <h3 class="section-title">Input Data Surat</h3>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-plus-circle me-2"></i> Form Input Surat
+                            </div>
+                            <div class="card-body">
+                                <form id="inputForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="jenisSurat">
+                                                <i class="fas fa-envelope"></i> Jenis Surat
+                                            </label>
+                                            <select class="form-select" id="jenisSurat" required>
+                                                <option value="">Pilih Jenis Surat</option>
+                                                <option value="masuk">Surat Masuk</option>
+                                                <option value="keluar">Surat Keluar</option>
+                                            </select>
+                                            <div class="error-message" id="jenisSuratError"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="nomorSurat">
+                                                <i class="fas fa-hashtag"></i> Nomor Surat
+                                            </label>
+                                            <input type="text" class="form-control" id="nomorSurat" placeholder="Masukkan nomor surat" required>
+                                            <div class="error-message" id="nomorSuratError"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="tanggalSurat">
+                                                <i class="fas fa-calendar"></i> Tanggal Surat
+                                            </label>
+                                            <input type="date" class="form-control" id="tanggalSurat" required>
+                                            <div class="error-message" id="tanggalSuratError"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="tanggalDiterima">
+                                                <i class="fas fa-calendar-check"></i> Tanggal Diterima/Dikirim
+                                            </label>
+                                            <input type="date" class="form-control" id="tanggalDiterima" required>
+                                            <div class="error-message" id="tanggalDiterimaError"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="pengirim">
+                                                <i class="fas fa-user"></i> Pengirim
+                                            </label>
+                                            <input type="text" class="form-control" id="pengirim" placeholder="Nama pengirim" required>
+                                            <div class="error-message" id="pengirimError"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="penerima">
+                                                <i class="fas fa-user-check"></i> Penerima
+                                            </label>
+                                            <input type="text" class="form-control" id="penerima" placeholder="Nama penerima" required>
+                                            <div class="error-message" id="penerimaError"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="perihal">
+                                            <i class="fas fa-sticky-note"></i> Perihal
+                                        </label>
+                                        <textarea class="form-control" id="perihal" rows="2" placeholder="Perihal surat" required></textarea>
+                                        <div class="error-message" id="perihalError"></div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="kategori">
+                                                <i class="fas fa-tag"></i> Kategori
+                                            </label>
+                                            <select class="form-select" id="kategori" required>
+                                                <option value="">Pilih Kategori</option>
+                                                <option value="pemerintah">Pemerintah</option>
+                                                <option value="perusahaan">Perusahaan</option>
+                                                <option value="lembaga">Lembaga</option>
+                                                <option value="opd">OPD</option>
+                                                <option value="upt">UPT</option>
+                                                <option value="perorangan">Perorangan</option>
+                                                <option value="lainnya">Lainnya</option>
+                                            </select>
+                                            <div class="error-message" id="kategoriError"></div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="prioritas">
+                                                <i class="fas fa-exclamation-circle"></i> Prioritas
+                                            </label>
+                                            <select class="form-select" id="prioritas" required>
+                                                <option value="">Pilih Prioritas</option>
+                                                <option value="tinggi">Tinggi</option>
+                                                <option value="sedang">Sedang</option>
+                                                <option value="rendah">Rendah</option>
+                                            </select>
+                                            <div class="error-message" id="prioritasError"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="kodeValidasi">
+                                            <i class="fas fa-key"></i> Kode Validasi
+                                        </label>
+                                        <div class="kode-validasi-container">
+                                            <input type="text" class="form-control kode-validasi-input" id="kodeValidasi" placeholder="Kode validasi" maxlength="5" required>
+                                            <button type="button" class="btn btn-primary btn-generate-kode" id="generateKodeBtn">
+                                                <i class="fas fa-sync-alt"></i> Generate
+                                            </button>
+                                        </div>
+                                        <div class="error-message" id="kodeValidasiError"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="driveLink">
+                                            <i class="fab fa-google-drive"></i> Link Google Drive
+                                        </label>
+                                        <input type="url" class="form-control" id="driveLink" placeholder="https://drive.google.com/...">
+                                        <div class="error-message" id="driveLinkError"></div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="keterangan">
+                                            <i class="fas fa-info-circle"></i> Keterangan (Opsional)
+                                        </label>
+                                        <textarea class="form-control" id="keterangan" rows="2" placeholder="Keterangan tambahan"></textarea>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between">
+                                        <button type="reset" class="btn btn-secondary">
+                                            <i class="fas fa-undo me-1"></i> Reset
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-1"></i> Simpan Data
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Surat Tab -->
+                    <div class="tab-pane fade" id="data" role="tabpanel" aria-labelledby="data-tab">
+                        <h3 class="section-title">Data Surat</h3>
+                        
+                        <div class="filter-section">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="filterJenis">
+                                        <i class="fas fa-filter"></i> Filter Jenis
+                                    </label>
                                     <select class="form-select" id="filterJenis">
                                         <option value="">Semua Jenis</option>
                                         <option value="masuk">Surat Masuk</option>
                                         <option value="keluar">Surat Keluar</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-filter"></i> Kategori</label>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="filterKategori">
+                                        <i class="fas fa-filter"></i> Filter Kategori
+                                    </label>
                                     <select class="form-select" id="filterKategori">
                                         <option value="">Semua Kategori</option>
                                         <option value="pemerintah">Pemerintah</option>
@@ -1451,10 +1499,10 @@
                                         <option value="lainnya">Lainnya</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-filter"></i> Prioritas</label>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="filterPrioritas">
+                                        <i class="fas fa-filter"></i> Filter Prioritas
+                                    </label>
                                     <select class="form-select" id="filterPrioritas">
                                         <option value="">Semua Prioritas</option>
                                         <option value="tinggi">Tinggi</option>
@@ -1462,201 +1510,234 @@
                                         <option value="rendah">Rendah</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-filter"></i> Tanggal</label>
-                                    <input type="month" class="form-control" id="filterTanggal">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="searchInput">
+                                        <i class="fas fa-search"></i> Pencarian
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="searchInput" placeholder="Cari data surat...">
+                                        <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="d-flex justify-content-between">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered data-table" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Jenis</th>
+                                        <th>Nomor Surat</th>
+                                        <th>Tanggal</th>
+                                        <th>Pengirim</th>
+                                        <th>Penerima</th>
+                                        <th>Perihal</th>
+                                        <th>Kategori</th>
+                                        <th>Prioritas</th>
+                                        <th>Kode Validasi</th>
+                                        <th>Drive Link</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <tr>
+                                        <td colspan="12" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="fw-bold" id="tableInfo">Menampilkan 0 dari 0 data</div>
                             <div>
-                                <button class="btn btn-primary" id="applyFilter">
-                                    <i class="fas fa-check me-1"></i> Terapkan Filter
+                                <button class="btn btn-sm btn-outline-secondary" id="prevPage">
+                                    <i class="fas fa-chevron-left"></i> Sebelumnya
                                 </button>
-                                <button class="btn btn-secondary ms-2" id="resetFilter">
-                                    <i class="fas fa-undo me-1"></i> Reset
-                                </button>
-                            </div>
-                            <div>
-                                <button class="btn btn-success" id="exportExcelBtn">
-                                    <i class="fas fa-file-excel me-1"></i> Export Excel
-                                </button>
-                                <button class="btn btn-danger ms-2" id="exportPdfBtn">
-                                    <i class="fas fa-file-pdf me-1"></i> Export PDF
+                                <span class="mx-2" id="pageInfo">Halaman 1</span>
+                                <button class="btn btn-sm btn-outline-secondary" id="nextPage">
+                                    Selanjutnya <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="table-responsive">
-                        <table class="table table-hover data-table">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Jenis</th>
-                                    <th>No. Surat</th>
-                                    <th>Tanggal</th>
-                                    <th>Pengirim/Penerima</th>
-                                    <th>Perihal</th>
-                                    <th>Kategori</th>
-                                    <th>Prioritas</th>
-                                    <th>Kode Validasi</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="arsipSuratTable">
-                                <!-- Data akan diisi oleh JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div class="fw-bold">Total Data: <span id="totalData">0</span></div>
-                        <nav>
-                            <ul class="pagination justify-content-end" id="pagination">
-                                <!-- Pagination akan diisi oleh JavaScript -->
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                
-                <!-- Laporan Section -->
-                <div class="content-section d-none" id="laporan">
-                    <h3 class="section-title">Laporan</h3>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar me-2"></i> Laporan Bulanan
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label"><i class="fas fa-calendar me-1"></i> Pilih Bulan dan Tahun</label>
-                                        <input type="month" class="form-control" id="laporanBulan">
+                    <!-- Laporan Tab -->
+                    <div class="tab-pane fade" id="report" role="tabpanel" aria-labelledby="report-tab">
+                        <h3 class="section-title">Laporan Surat</h3>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar me-2"></i> Generate Laporan
+                            </div>
+                            <div class="card-body">
+                                <form id="reportForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="reportType">
+                                                <i class="fas fa-chart-pie"></i> Jenis Laporan
+                                            </label>
+                                            <select class="form-select" id="reportType" required>
+                                                <option value="">Pilih Jenis Laporan</option>
+                                                <option value="semua">Semua Data</option>
+                                                <option value="masuk">Surat Masuk</option>
+                                                <option value="keluar">Surat Keluar</option>
+                                                <option value="kategori">Berdasarkan Kategori</option>
+                                                <option value="prioritas">Berdasarkan Prioritas</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="startDate">
+                                                <i class="fas fa-calendar"></i> Tanggal Mulai
+                                            </label>
+                                            <input type="date" class="form-control" id="startDate" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="endDate">
+                                                <i class="fas fa-calendar"></i> Tanggal Akhir
+                                            </label>
+                                            <input type="date" class="form-control" id="endDate" required>
+                                        </div>
                                     </div>
-                                    <button class="btn btn-primary w-100" id="generateLaporan">
-                                        <i class="fas fa-file-alt me-1"></i> Generate Laporan
-                                    </button>
-                                </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label" for="formatType">
+                                                <i class="fas fa-file"></i> Format Laporan
+                                            </label>
+                                            <select class="form-select" id="formatType" required>
+                                                <option value="">Pilih Format</option>
+                                                <option value="pdf">PDF</option>
+                                                <option value="excel">Excel</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-label" for="reportTitle">
+                                                <i class="fas fa-heading"></i> Judul Laporan (Opsional)
+                                            </label>
+                                            <input type="text" class="form-control" id="reportTitle" placeholder="Masukkan judul laporan">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-success me-2" id="generateReport">
+                                            <i class="fas fa-file-export me-1"></i> Generate Laporan
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="previewReport">
+                                            <i class="fas fa-eye me-1"></i> Preview
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-print me-2"></i> Cetak Laporan
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label"><i class="fas fa-calendar me-1"></i> Periode Awal</label>
-                                        <input type="date" class="form-control" id="periodeAwal">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label"><i class="fas fa-calendar me-1"></i> Periode Akhir</label>
-                                        <input type="date" class="form-control" id="periodeAkhir">
-                                    </div>
-                                    <button class="btn btn-success w-100" id="cetakLaporan">
-                                        <i class="fas fa-print me-1"></i> Cetak Laporan
-                                    </button>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <i class="fas fa-history me-2"></i> Riwayat Laporan
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal Dibuat</th>
+                                                <th>Jenis Laporan</th>
+                                                <th>Periode</th>
+                                                <th>Format</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reportHistory">
+                                            <tr>
+                                                <td colspan="5" class="text-center">Belum ada riwayat laporan</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-2"></i> Hasil Laporan
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Jenis</th>
-                                            <th>No. Surat</th>
-                                            <th>Tanggal</th>
-                                            <th>Pengirim/Penerima</th>
-                                            <th>Perihal</th>
-                                            <th>Kategori</th>
-                                            <th>Prioritas</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="laporanTable">
-                                        <!-- Data akan diisi oleh JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Pengaturan Section -->
-                <div class="content-section d-none" id="pengaturan">
-                    <h3 class="section-title">Pengaturan</h3>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-key me-2"></i> Ubah Kode Keamanan
-                                </div>
-                                <div class="card-body">
-                                    <form id="ubahKodeForm">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="kodeLama"><i class="fas fa-lock me-1"></i> Kode Lama</label>
-                                            <input type="password" class="form-control" id="kodeLama" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label" for="kodeBaru"><i class="fas fa-lock me-1"></i> Kode Baru</label>
-                                            <input type="password" class="form-control" id="kodeBaru" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label" for="konfirmasiKode"><i class="fas fa-lock me-1"></i> Konfirmasi Kode Baru</label>
-                                            <input type="password" class="form-control" id="konfirmasiKode" required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save me-1"></i> Simpan Perubahan
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Pengaturan Tab -->
+                    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                        <h3 class="section-title">Pengaturan Aplikasi</h3>
                         
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-database me-2"></i> Manajemen Data
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success mb-2" id="backupDataBtn">
-                                            <i class="fas fa-download me-1"></i> Backup Data
-                                        </button>
-                                        <button class="btn btn-warning mb-2" id="restoreDataBtn">
-                                            <i class="fas fa-upload me-1"></i> Restore Data
-                                        </button>
-                                        <input type="file" class="d-none" id="restoreFileInput" accept=".json">
-                                        <button class="btn btn-danger mb-2" id="resetDataBtn">
-                                            <i class="fas fa-trash me-1"></i> Reset Data
-                                        </button>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <i class="fas fa-key me-2"></i> Pengaturan Keamanan
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="securityForm">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="currentPassword">
+                                                    <i class="fas fa-lock"></i> Kode Keamanan Saat Ini
+                                                </label>
+                                                <input type="password" class="form-control" id="currentPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label" for="newPassword">
+                                                    <i class="fas fa-key"></i> Kode Keamanan Baru
+                                                </label>
+                                                <input type="password" class="form-control" id="newPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label" for="confirmPassword">
+                                                    <i class="fas fa-check-circle"></i> Konfirmasi Kode Baru
+                                                </label>
+                                                <input type="password" class="form-control" id="confirmPassword" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-1"></i> Simpan Perubahan
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="card mt-4">
-                                <div class="card-header">
-                                    <i class="fas fa-info-circle me-2"></i> Informasi Aplikasi
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <i class="fas fa-database me-2"></i> Manajemen Data
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-success mb-2" id="exportData">
+                                                <i class="fas fa-file-export me-1"></i> Ekspor Data
+                                            </button>
+                                            <button class="btn btn-warning mb-2" id="importData">
+                                                <i class="fas fa-file-import me-1"></i> Impor Data
+                                            </button>
+                                            <button class="btn btn-danger mb-2" id="resetData">
+                                                <i class="fas fa-trash-alt me-1"></i> Reset Data
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="mb-2"><strong>Versi:</strong> 2.1.0</div>
-                                    <div class="mb-2"><strong>Tanggal Rilis:</strong> 15 November 2023</div>
-                                    <div class="mb-2"><strong>Developer:</strong> Lentera Karya Situbondo</div>
-                                    <div class="mb-2"><strong>Kontak:</strong> <a href="https://wa.me/6285156332074" class="whatsapp-link">+62 851-5633-2074</a></div>
+                                
+                                <div class="card mt-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-info-circle me-2"></i> Informasi Aplikasi
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Versi Aplikasi
+                                                <span class="badge bg-primary">v2.1.0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Jumlah Data Surat
+                                                <span class="badge bg-primary" id="dataCountSetting">0</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                Terakhir Diupdate
+                                                <span class="badge bg-primary">15 Nov 2023</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1665,8 +1746,9 @@
             </div>
         </div>
         
+        <!-- Copyright -->
         <div class="copyright">
-            &copy; 2023 SISMAT - Sistem Manajemen Surat. All Rights Reserved.
+            &copy; 2023 SISMAT - Sistem Manajemen Surat. Hak Cipta Dilindungi.
         </div>
     </div>
     
@@ -1675,24 +1757,16 @@
         <i class="fas fa-plus"></i>
     </div>
     
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
     <!-- Toast Notification -->
-    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" id="notificationToast">
         <div class="toast-header">
             <i class="fas fa-bell text-primary me-2"></i>
             <strong class="me-auto">SISMAT</strong>
             <small>Baru saja</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body">
-            <!-- Pesan notifikasi akan diisi oleh JavaScript -->
+        <div class="toast-body" id="toastMessage">
+            Operasi berhasil dilakukan.
         </div>
     </div>
     
@@ -1700,154 +1774,150 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.id.min.js"></script>
-    
     <script>
         // Deklarasi variabel global
         let suratData = [];
         let currentPage = 1;
         const itemsPerPage = 10;
+        let filteredData = [];
         let loginAttempts = 0;
         let isBlocked = false;
         let securityCode = "1234"; // Kode default
-        let editMode = false;
+        let isEditMode = false;
         let currentEditId = null;
         
-        // DOM Elements
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        const toastEl = document.querySelector('.toast');
-        const toast = new bootstrap.Toast(toastEl);
-        
-        // Initialize application
+        // Inisialisasi aplikasi saat dokumen siap
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is authenticated
-            checkAuth();
+            // Tampilkan modal login saat pertama kali load
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
             
-            // Initialize datepicker
-            $('.datepicker').datepicker({
-                format: 'dd-mm-yyyy',
-                language: 'id',
-                autoclose: true
+            // Inisialisasi tooltip Bootstrap
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
             
-            // Event listeners
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('logoutButton').addEventListener('click', handleLogout);
-            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
-            document.getElementById('sidebarOverlay').addEventListener('click', toggleMobileMenu);
-            document.getElementById('suratForm').addEventListener('submit', handleSuratSubmit);
-            document.getElementById('applyFilter').addEventListener('click', applyFilters);
-            document.getElementById('resetFilter').addEventListener('click', resetFilters);
-            document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
-            document.getElementById('exportPdfBtn').addEventListener('click', exportToPDF);
-            document.getElementById('generateLaporan').addEventListener('click', generateLaporan);
-            document.getElementById('cetakLaporan').addEventListener('click', cetakLaporan);
-            document.getElementById('ubahKodeForm').addEventListener('submit', handleUbahKode);
-            document.getElementById('backupDataBtn').addEventListener('click', backupData);
-            document.getElementById('restoreDataBtn').addEventListener('click', triggerRestore);
-            document.getElementById('restoreFileInput').addEventListener('change', restoreData);
-            document.getElementById('resetDataBtn').addEventListener('click', resetData);
-            document.getElementById('fabButton').addEventListener('click', handleFabClick);
-            document.getElementById('generateKodeBtn').addEventListener('click', generateKodeValidasi);
+            // Inisialisasi toast
+            const toastEl = document.getElementById('notificationToast');
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
             
-            // Toggle password visibility
-            document.querySelector('.toggle-password').addEventListener('click', function() {
-                const passwordInput = document.getElementById('securityCode');
-                const icon = this.querySelector('i');
-                
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    passwordInput.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            });
+            // Load data dari localStorage jika tersedia
+            loadFromLocalStorage();
             
-            // Menu navigation
-            document.querySelectorAll('#menuList .nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = this.getAttribute('data-bs-target');
-                    
-                    // Hide all sections
-                    document.querySelectorAll('.content-section').forEach(section => {
-                        section.classList.add('d-none');
-                    });
-                    
-                    // Show target section
-                    document.getElementById(target).classList.remove('d-none');
-                    
-                    // Update active menu item
-                    document.querySelectorAll('#menuList .nav-link').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Close mobile menu if open
-                    if (window.innerWidth < 992) {
-                        toggleMobileMenu();
-                    }
-                    
-                    // Load data if needed
-                    if (target === 'arsipSurat') {
-                        loadArsipSurat();
-                    } else if (target === 'dashboard') {
-                        updateDashboard();
-                    }
-                });
-            });
+            // Setup event listeners
+            setupEventListeners();
             
-            // Load initial data
-            loadSuratData();
+            // Update dashboard
+            updateDashboard();
+            
+            // Render tabel data
+            renderTable();
         });
         
-        // Authentication functions
-        function checkAuth() {
-            const isAuthenticated = localStorage.getItem('sismatAuthenticated') === 'true';
+        // Fungsi untuk menyimpan data ke localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('suratData', JSON.stringify(suratData));
+            localStorage.setItem('securityCode', securityCode);
+        }
+        
+        // Fungsi untuk memuat data dari localStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('suratData');
+            const savedCode = localStorage.getItem('securityCode');
             
-            if (isAuthenticated) {
-                document.querySelector('.app-content-unauthenticated').style.display = 'block';
-                updateDashboard();
-            } else {
-                document.querySelector('.app-content-unauthenticated').style.display = 'none';
-                loginModal.show();
+            if (savedData) {
+                suratData = JSON.parse(savedData);
+            }
+            
+            if (savedCode) {
+                securityCode = savedCode;
             }
         }
         
+        // Fungsi untuk mengatur event listeners
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.querySelector('.toggle-password').addEventListener('click', togglePasswordVisibility);
+            
+            // Input form
+            document.getElementById('inputForm').addEventListener('submit', handleInputForm);
+            
+            // Filter dan pencarian
+            document.getElementById('filterJenis').addEventListener('change', applyFilters);
+            document.getElementById('filterKategori').addEventListener('change', applyFilters);
+            document.getElementById('filterPrioritas').addEventListener('change', applyFilters);
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('clearSearch').addEventListener('click', clearSearch);
+            
+            // Pagination
+            document.getElementById('prevPage').addEventListener('click', goToPrevPage);
+            document.getElementById('nextPage').addEventListener('click', goToNextPage);
+            
+            // Laporan
+            document.getElementById('generateReport').addEventListener('click', generateReport);
+            document.getElementById('previewReport').addEventListener('click', previewReport);
+            
+            // Pengaturan
+            document.getElementById('securityForm').addEventListener('submit', updateSecurityCode);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('importData').addEventListener('click', importData);
+            document.getElementById('resetData').addEventListener('click', resetData);
+            
+            // Mobile menu
+            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+            document.getElementById('sidebarOverlay').addEventListener('click', toggleMobileMenu);
+            
+            // Floating action button
+            document.getElementById('fabButton').addEventListener('click', scrollToTop);
+            
+            // Logout
+            document.getElementById('logoutButton').addEventListener('click', logout);
+            
+            // Generate kode validasi
+            document.getElementById('generateKodeBtn').addEventListener('click', generateKodeValidasi);
+            
+            // Auto set tanggal untuk form input
+            setDefaultDates();
+        }
+        
+        // Fungsi untuk menangani login
         function handleLogin(e) {
             e.preventDefault();
             
             if (isBlocked) {
-                showNotification('Anda telah melebihi batas percobaan login. Silakan coba lagi nanti.', 'error');
+                showNotification('Anda telah diblokir sementara. Silakan coba lagi nanti.', 'error');
                 return;
             }
             
-            const code = document.getElementById('securityCode').value;
+            const inputCode = document.getElementById('securityCode').value;
             const loginButton = document.getElementById('loginButton');
             const loginSpinner = document.getElementById('loginSpinner');
             const loginButtonText = document.querySelector('.login-button-text');
             
-            // Show loading state
+            // Tampilkan spinner
             loginButton.disabled = true;
+            loginButtonText.textContent = 'Memproses...';
             loginSpinner.classList.remove('d-none');
-            loginButtonText.textContent = 'Memverifikasi...';
             
-            // Simulate API call
+            // Simulasi proses login
             setTimeout(() => {
-                if (code === securityCode) {
-                    localStorage.setItem('sismatAuthenticated', 'true');
-                    loginModal.hide();
-                    document.querySelector('.app-content-unauthenticated').style.display = 'block';
-                    showNotification('Login berhasil! Selamat datang di SISMAT.', 'success');
-                    updateDashboard();
-                    
-                    // Reset login attempts
+                if (inputCode === securityCode) {
+                    // Login berhasil
                     loginAttempts = 0;
                     document.getElementById('attemptsCount').textContent = '';
+                    
+                    // Sembunyikan modal login
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    loginModal.hide();
+                    
+                    // Tampilkan konten aplikasi
+                    document.querySelector('.app-content-unauthenticated').style.display = 'block';
+                    
+                    showNotification('Login berhasil. Selamat menggunakan SISMAT!', 'success');
                 } else {
+                    // Login gagal
                     loginAttempts++;
                     
                     if (loginAttempts >= 3) {
@@ -1856,31 +1926,47 @@
                         startCountdown(30);
                     }
                     
-                    document.getElementById('attemptsCount').textContent = `Percobaan login: ${loginAttempts}/3`;
+                    document.getElementById('attemptsCount').textContent = `Percobaan login gagal: ${loginAttempts}`;
+                    
+                    // Animasi shake
+                    document.getElementById('loginForm').classList.add('login-shake');
+                    setTimeout(() => {
+                        document.getElementById('loginForm').classList.remove('login-shake');
+                    }, 600);
+                    
                     showNotification('Kode keamanan salah. Silakan coba lagi.', 'error');
                 }
                 
-                // Reset login button
+                // Reset form dan UI
                 loginButton.disabled = false;
-                loginSpinner.classList.add('d-none');
                 loginButtonText.textContent = 'Masuk ke Aplikasi';
+                loginSpinner.classList.add('d-none');
+                document.getElementById('securityCode').value = '';
             }, 1000);
         }
         
-        function handleLogout() {
-            localStorage.removeItem('sismatAuthenticated');
-            document.querySelector('.app-content-unauthenticated').style.display = 'none';
-            loginModal.show();
-            showNotification('Anda telah logout dari sistem.', 'info');
+        // Fungsi untuk toggle visibilitas password
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('securityCode');
+            const eyeIcon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
         }
         
+        // Fungsi untuk memulai countdown saat diblokir
         function startCountdown(seconds) {
-            const countdownEl = document.getElementById('countdown');
-            countdownEl.textContent = seconds;
+            const countdownElement = document.getElementById('countdown');
+            countdownElement.textContent = seconds;
             
             const countdownInterval = setInterval(() => {
                 seconds--;
-                countdownEl.textContent = seconds;
+                countdownElement.textContent = seconds;
                 
                 if (seconds <= 0) {
                     clearInterval(countdownInterval);
@@ -1892,133 +1978,448 @@
             }, 1000);
         }
         
-        // Mobile menu functions
-        function toggleMobileMenu() {
-            const sidebar = document.querySelector('.col-md-3.col-lg-2');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            sidebar.classList.toggle('mobile-show');
-            overlay.classList.toggle('mobile-show');
-        }
-        
-        // Data functions
-        function loadSuratData() {
-            const storedData = localStorage.getItem('suratData');
-            
-            if (storedData) {
-                suratData = JSON.parse(storedData);
-            } else {
-                // Sample data for demonstration
-                suratData = [
-                    {
-                        id: 1,
-                        jenis: 'masuk',
-                        noSurat: '001/SM/XI/2023',
-                        tanggalSurat: '2023-11-01',
-                        pengirim: 'Dinas Pendidikan Kota Surabaya',
-                        penerima: 'Kepala Sekolah SMA Negeri 1',
-                        perihal: 'Undangan Workshop Pendidikan',
-                        kategori: 'pemerintah',
-                        prioritas: 'tinggi',
-                        kodeValidasi: 'A1B2C',
-                        status: 'selesai'
-                    },
-                    {
-                        id: 2,
-                        jenis: 'keluar',
-                        noSurat: '002/SK/XI/2023',
-                        tanggalSurat: '2023-11-05',
-                        pengirim: 'SMA Negeri 1 Surabaya',
-                        penerima: 'Dinas Kesehatan Kota Surabaya',
-                        perihal: 'Permohonan Kerjasama UKS',
-                        kategori: 'opd',
-                        prioritas: 'sedang',
-                        kodeValidasi: 'D3E4F',
-                        status: 'pending'
-                    }
-                ];
-                localStorage.setItem('suratData', JSON.stringify(suratData));
-            }
-        }
-        
-        function saveSuratData() {
-            localStorage.setItem('suratData', JSON.stringify(suratData));
-        }
-        
-        // Form handling functions
-        function handleSuratSubmit(e) {
+        // Fungsi untuk menangani form input
+        function handleInputForm(e) {
             e.preventDefault();
             
-            if (editMode) {
-                // Update existing data
+            // Validasi form
+            if (!validateInputForm()) {
+                return;
+            }
+            
+            if (isEditMode) {
+                // Update data yang sudah ada
                 const index = suratData.findIndex(item => item.id === currentEditId);
                 
                 if (index !== -1) {
                     suratData[index] = {
                         id: currentEditId,
                         jenis: document.getElementById('jenisSurat').value,
-                        noSurat: document.getElementById('noSurat').value,
-                        tanggalSurat: document.getElementById('tanggalSurat').value,
+                        nomor: document.getElementById('nomorSurat').value,
+                        tanggal: document.getElementById('tanggalSurat').value,
+                        tanggalDiterima: document.getElementById('tanggalDiterima').value,
                         pengirim: document.getElementById('pengirim').value,
                         penerima: document.getElementById('penerima').value,
                         perihal: document.getElementById('perihal').value,
                         kategori: document.getElementById('kategori').value,
                         prioritas: document.getElementById('prioritas').value,
                         kodeValidasi: document.getElementById('kodeValidasi').value,
-                        status: suratData[index].status // Maintain existing status
+                        driveLink: document.getElementById('driveLink').value,
+                        keterangan: document.getElementById('keterangan').value,
+                        createdAt: suratData[index].createdAt,
+                        updatedAt: new Date().toISOString()
                     };
                     
-                    saveSuratData();
-                    showNotification('Data surat berhasil diperbarui!', 'success');
+                    // Simpan ke localStorage
+                    saveToLocalStorage();
                     
-                    // Reset form and exit edit mode
-                    resetForm();
+                    // Reset form
+                    document.getElementById('inputForm').reset();
+                    setDefaultDates();
+                    
+                    // Keluar dari mode edit
+                    isEditMode = false;
+                    currentEditId = null;
+                    
+                    // Ubah teks tombol kembali ke "Simpan Data"
+                    const submitButton = document.querySelector('#inputForm button[type="submit"]');
+                    submitButton.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Data';
+                    
+                    // Update UI
+                    updateDashboard();
+                    renderTable();
+                    
+                    // Tampilkan notifikasi
+                    showNotification('Data surat berhasil diperbarui!', 'success');
                 }
             } else {
-                // Add new data
-                const newSurat = {
-                    id: Date.now(), // Generate unique ID
+                // Ambil nilai dari form
+                const newData = {
+                    id: Date.now(), // ID unik berdasarkan timestamp
                     jenis: document.getElementById('jenisSurat').value,
-                    noSurat: document.getElementById('noSurat').value,
-                    tanggalSurat: document.getElementById('tanggalSurat').value,
+                    nomor: document.getElementById('nomorSurat').value,
+                    tanggal: document.getElementById('tanggalSurat').value,
+                    tanggalDiterima: document.getElementById('tanggalDiterima').value,
                     pengirim: document.getElementById('pengirim').value,
                     penerima: document.getElementById('penerima').value,
                     perihal: document.getElementById('perihal').value,
                     kategori: document.getElementById('kategori').value,
                     prioritas: document.getElementById('prioritas').value,
                     kodeValidasi: document.getElementById('kodeValidasi').value,
-                    status: 'pending'
+                    driveLink: document.getElementById('driveLink').value,
+                    keterangan: document.getElementById('keterangan').value,
+                    createdAt: new Date().toISOString()
                 };
                 
-                suratData.unshift(newSurat);
-                saveSuratData();
-                showNotification('Surat berhasil ditambahkan!', 'success');
+                // Tambahkan data baru
+                suratData.unshift(newData);
+                
+                // Simpan ke localStorage
+                saveToLocalStorage();
                 
                 // Reset form
-                resetForm();
+                document.getElementById('inputForm').reset();
+                setDefaultDates();
+                
+                // Update UI
+                updateDashboard();
+                renderTable();
+                
+                // Tampilkan notifikasi
+                showNotification('Data surat berhasil disimpan!', 'success');
             }
             
-            // Update dashboard and arsip
-            updateDashboard();
+            // Scroll ke tab data
+            document.getElementById('data-tab').click();
+        }
+        
+        // Fungsi untuk validasi form input
+        function validateInputForm() {
+            let isValid = true;
             
-            // If we're on the arsip page, refresh it
-            if (!document.getElementById('arsipSurat').classList.contains('d-none')) {
-                loadArsipSurat();
+            // Reset error messages
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            
+            const inputs = document.querySelectorAll('#inputForm input, #inputForm select, #inputForm textarea');
+            inputs.forEach(input => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    isValid = false;
+                    const errorId = `${input.id}Error`;
+                    const errorElement = document.getElementById(errorId);
+                    
+                    if (errorElement) {
+                        errorElement.textContent = `${input.previousElementSibling.textContent} harus diisi.`;
+                        errorElement.style.display = 'block';
+                        input.classList.add('input-error');
+                    }
+                }
+            });
+            
+            return isValid;
+        }
+        
+        // Fungsi untuk mengatur tanggal default
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tanggalSurat').value = today;
+            document.getElementById('tanggalDiterima').value = today;
+        }
+        
+        // Fungsi untuk menerapkan filter dan pencarian
+        function applyFilters() {
+            currentPage = 1; // Reset ke halaman pertama
+            renderTable();
+        }
+        
+        // Fungsi untuk membersihkan pencarian
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+        
+        // Fungsi untuk merender tabel data
+        function renderTable() {
+            const tableBody = document.getElementById('tableBody');
+            const filterJenis = document.getElementById('filterJenis').value;
+            const filterKategori = document.getElementById('filterKategori').value;
+            const filterPrioritas = document.getElementById('filterPrioritas').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Filter data
+            filteredData = suratData.filter(item => {
+                let matchesJenis = true;
+                let matchesKategori = true;
+                let matchesPrioritas = true;
+                let matchesSearch = true;
+                
+                if (filterJenis) {
+                    matchesJenis = item.jenis === filterJenis;
+                }
+                
+                if (filterKategori) {
+                    matchesKategori = item.kategori === filterKategori;
+                }
+                
+                if (filterPrioritas) {
+                    matchesPrioritas = item.prioritas === filterPrioritas;
+                }
+                
+                if (searchTerm) {
+                    matchesSearch = 
+                        item.nomor.toLowerCase().includes(searchTerm) ||
+                        item.pengirim.toLowerCase().includes(searchTerm) ||
+                        item.penerima.toLowerCase().includes(searchTerm) ||
+                        item.perihal.toLowerCase().includes(searchTerm) ||
+                        item.kodeValidasi.toLowerCase().includes(searchTerm);
+                }
+                
+                return matchesJenis && matchesKategori && matchesPrioritas && matchesSearch;
+            });
+            
+            // Hitung total halaman
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            
+            // Validasi currentPage
+            if (currentPage > totalPages) {
+                currentPage = Math.max(1, totalPages);
+            }
+            
+            // Hitung data yang akan ditampilkan
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+            const currentData = filteredData.slice(startIndex, endIndex);
+            
+            // Kosongkan tabel
+            tableBody.innerHTML = '';
+            
+            // Isi tabel dengan data
+            if (currentData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="12" class="text-center">Tidak ada data</td></tr>';
+            } else {
+                currentData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    const actualIndex = startIndex + index + 1;
+                    
+                    // Format tanggal
+                    const formattedDate = new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                    
+                    // Tentukan badge kelas berdasarkan jenis
+                    let jenisBadgeClass = 'primary';
+                    if (item.jenis === 'masuk') {
+                        jenisBadgeClass = 'success';
+                    } else if (item.jenis === 'keluar') {
+                        jenisBadgeClass = 'warning';
+                    }
+                    
+                    // Tentukan badge kelas berdasarkan prioritas
+                    let prioritasBadgeClass = 'secondary';
+                    let prioritasIcon = '';
+                    if (item.prioritas === 'tinggi') {
+                        prioritasBadgeClass = 'danger';
+                        prioritasIcon = '<i class="fas fa-exclamation-circle me-1"></i>';
+                    } else if (item.prioritas === 'sedang') {
+                        prioritasBadgeClass = 'warning';
+                    } else if (item.prioritas === 'rendah') {
+                        prioritasBadgeClass = 'success';
+                    }
+                    
+                    // Tentukan badge kelas berdasarkan kategori
+                    let kategoriBadgeClass = 'kategori-' + item.kategori;
+                    
+                    row.innerHTML = `
+                        <td class="text-center">${actualIndex}</td>
+                        <td class="text-center"><span class="badge bg-${jenisBadgeClass}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
+                        <td>${item.nomor}</td>
+                        <td>${formattedDate}</td>
+                        <td>${item.pengirim}</td>
+                        <td>${item.penerima}</td>
+                        <td>${item.perihal}</td>
+                        <td><span class="badge badge-kategori ${kategoriBadgeClass}">${item.kategori}</span></td>
+                        <td class="text-center"><span class="badge bg-${prioritasBadgeClass}">${prioritasIcon}${item.prioritas}</span></td>
+                        <td class="text-center">${item.kodeValidasi}</td>
+                        <td>
+                            ${item.driveLink ? 
+                                `<a href="${item.driveLink}" target="_blank" class="drive-link">
+                                    <i class="fab fa-google-drive me-1"></i> Lihat
+                                </a>` : 
+                                '<span class="text-muted">Tidak ada</span>'
+                            }
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-primary me-1 view-btn" data-id="${item.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${item.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${item.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // Tambahkan event listener untuk tombol aksi
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        viewData(id);
+                    });
+                });
+                
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        editData(id);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteData(id);
+                    });
+                });
+            }
+            
+            // Update info tabel dan pagination
+            document.getElementById('tableInfo').textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${filteredData.length} data`;
+            document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
+            
+            // Nonaktifkan tombol pagination jika diperlukan
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
+        }
+        
+        // Fungsi untuk pergi ke halaman sebelumnya
+        function goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
             }
         }
         
-        function resetForm() {
-            document.getElementById('suratForm').reset();
-            editMode = false;
-            currentEditId = null;
+        // Fungsi untuk pergi ke halaman berikutnya
+        function goToNextPage() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
             
-            // Change button text back to "Simpan Surat"
-            const submitButton = document.querySelector('#suratForm button[type="submit"]');
-            submitButton.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Surat';
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+        
+        // Fungsi untuk melihat data
+        function viewData(id) {
+            const data = suratData.find(item => item.id === id);
             
-            // Change button color back to primary
-            submitButton.classList.remove('btn-success');
-            submitButton.classList.add('btn-primary');
+            if (data) {
+                // Format tanggal untuk tampilan
+                const formattedTanggal = new Date(data.tanggal).toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                const formattedTanggalDiterima = new Date(data.tanggalDiterima).toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Tampilkan modal dengan data
+                const modalContent = `
+                    <div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Detail Surat</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Jenis Surat:</strong>
+                                            <span class="badge bg-${data.jenis === 'masuk' ? 'success' : 'warning'} ms-2">
+                                                ${data.jenis === 'masuk' ? 'Surat Masuk' : 'Surat Keluar'}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Nomor Surat:</strong> ${data.nomor}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Tanggal Surat:</strong> ${formattedTanggal}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Tanggal ${data.jenis === 'masuk' ? 'Diterima' : 'Dikirim'}:</strong> ${formattedTanggalDiterima}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Pengirim:</strong> ${data.pengirim}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Penerima:</strong> ${data.penerima}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Perihal:</strong>
+                                        <p class="mt-1">${data.perihal}</p>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Kategori:</strong>
+                                            <span class="badge bg-primary ms-2">${data.kategori}</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Prioritas:</strong>
+                                            <span class="badge bg-${data.prioritas === 'tinggi' ? 'danger' : data.prioritas === 'sedang' ? 'warning' : 'success'} ms-2">
+                                                ${data.prioritas}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Kode Validasi:</strong>
+                                        <p class="mt-1">${data.kodeValidasi}</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <strong>Link Google Drive:</strong>
+                                        <p class="mt-1">
+                                            ${data.driveLink ? 
+                                                `<a href="${data.driveLink}" target="_blank">${data.driveLink}</a>` : 
+                                                '<span class="text-muted">Tidak ada</span>'
+                                            }
+                                        </p>
+                                    </div>
+                                    
+                                    ${data.keterangan ? `
+                                        <div class="mb-3">
+                                            <strong>Keterangan:</strong>
+                                            <p class="mt-1">${data.keterangan}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                    <button type="button" class="btn btn-primary" onclick="printData(${id})">
+                                        <i class="fas fa-print me-1"></i> Cetak
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Tambahkan modal ke body dan tampilkan
+                document.body.insertAdjacentHTML('beforeend', modalContent);
+                const viewModal = new bootstrap.Modal(document.getElementById('viewModal'));
+                viewModal.show();
+                
+                // Hapus modal dari DOM setelah ditutup
+                document.getElementById('viewModal').addEventListener('hidden.bs.modal', function() {
+                    this.remove();
+                });
+            }
         }
         
         // PERBAIKAN: Fungsi untuk mengedit data
@@ -2026,179 +2427,224 @@
             const data = suratData.find(item => item.id === id);
             
             if (data) {
-                // Isi form dengan data yang dipilih
+                // Isi form dengan data yang ada
                 document.getElementById('jenisSurat').value = data.jenis;
-                document.getElementById('noSurat').value = data.noSurat;
-                document.getElementById('tanggalSurat').value = data.tanggalSurat;
+                document.getElementById('nomorSurat').value = data.nomor;
+                document.getElementById('tanggalSurat').value = data.tanggal;
+                document.getElementById('tanggalDiterima').value = data.tanggalDiterima;
                 document.getElementById('pengirim').value = data.pengirim;
                 document.getElementById('penerima').value = data.penerima;
                 document.getElementById('perihal').value = data.perihal;
                 document.getElementById('kategori').value = data.kategori;
                 document.getElementById('prioritas').value = data.prioritas;
                 document.getElementById('kodeValidasi').value = data.kodeValidasi;
+                document.getElementById('driveLink').value = data.driveLink;
+                document.getElementById('keterangan').value = data.keterangan;
                 
-                // Set edit mode
-                editMode = true;
+                // Set mode edit
+                isEditMode = true;
                 currentEditId = id;
                 
-                // Ubah teks tombol menjadi "Perbarui Data"
-                const submitButton = document.querySelector('#suratForm button[type="submit"]');
-                submitButton.innerHTML = '<i class="fas fa-edit me-1"></i> Perbarui Data';
+                // Ubah teks tombol submit
+                const submitButton = document.querySelector('#inputForm button[type="submit"]');
+                submitButton.innerHTML = '<i class="fas fa-save me-1"></i> Perbarui Data';
                 
-                // Ubah warna tombol menjadi hijau
-                submitButton.classList.remove('btn-primary');
-                submitButton.classList.add('btn-success');
-                
-                // Scroll ke form input surat
-                document.getElementById('inputSurat').scrollIntoView({ behavior: 'smooth' });
-                
-                // Buka tab input surat jika belum aktif
-                if (document.getElementById('inputSurat').classList.contains('d-none')) {
-                    // Hide all sections
-                    document.querySelectorAll('.content-section').forEach(section => {
-                        section.classList.add('d-none');
-                    });
-                    
-                    // Show input surat section
-                    document.getElementById('inputSurat').classList.remove('d-none');
-                    
-                    // Update active menu item
-                    document.querySelectorAll('#menuList .nav-link').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    document.querySelector('[data-bs-target="inputSurat"]').classList.add('active');
-                }
+                // Scroll ke form input
+                document.getElementById('input-tab').click();
             }
         }
         
+        // Fungsi untuk menghapus data
         function deleteData(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                // Hapus data dari array
                 suratData = suratData.filter(item => item.id !== id);
-                saveSuratData();
-                showNotification('Data surat berhasil dihapus!', 'success');
+                
+                // Simpan ke localStorage
+                saveToLocalStorage();
                 
                 // Update UI
                 updateDashboard();
-                loadArsipSurat();
+                renderTable();
+                
+                // Tampilkan notifikasi
+                showNotification('Data surat berhasil dihapus!', 'success');
             }
         }
         
-        // Dashboard functions
-        function updateDashboard() {
-            // Update statistics
-            document.getElementById('totalSurat').textContent = suratData.length;
-            document.getElementById('suratMasuk').textContent = suratData.filter(item => item.jenis === 'masuk').length;
-            document.getElementById('suratKeluar').textContent = suratData.filter(item => item.jenis === 'keluar').length;
-            document.getElementById('suratPending').textContent = suratData.filter(item => item.status === 'pending').length;
+        // Fungsi untuk mencetak data individual
+        function printData(id) {
+            const data = suratData.find(item => item.id === id);
             
-            // Update recent activity
-            updateRecentActivity();
-            
-            // Update charts
-            updateCharts();
-        }
-        
-        function updateRecentActivity() {
-            const recentActivity = document.getElementById('recentActivity');
-            recentActivity.innerHTML = '';
-            
-            // Get 5 most recent items
-            const recentData = [...suratData]
-                .sort((a, b) => new Date(b.tanggalSurat) - new Date(a.tanggalSurat))
-                .slice(0, 5);
-            
-            recentData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td class="text-center">${index + 1}</td>
-                    <td class="text-center"><span class="badge ${item.jenis === 'masuk' ? 'bg-success' : 'bg-warning'}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
-                    <td>${item.noSurat}</td>
-                    <td>${formatDate(item.tanggalSurat)}</td>
-                    <td>${item.jenis === 'masuk' ? item.pengirim : item.penerima}</td>
-                    <td>${item.perihal}</td>
-                    <td class="text-center"><span class="badge ${item.status === 'selesai' ? 'bg-success' : 'bg-secondary'}">${item.status === 'selesai' ? 'Selesai' : 'Pending'}</span></td>
+            if (data) {
+                // Buat konten untuk dicetak
+                const printContent = `
+                    <div class="print-header">
+                        <h2 class="print-title">SISMAT - Detail Surat</h2>
+                        <p class="print-subtitle">Laporan Detail Surat</p>
+                        <p class="print-date">Dicetak pada: ${new Date().toLocaleDateString('id-ID', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</p>
+                    </div>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="30%">Jenis Surat</th>
+                            <td>${data.jenis === 'masuk' ? 'Surat Masuk' : 'Surat Keluar'}</td>
+                        </tr>
+                        <tr>
+                            <th>Nomor Surat</th>
+                            <td>${data.nomor}</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal Surat</th>
+                            <td>${new Date(data.tanggal).toLocaleDateString('id-ID', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</td>
+                        </tr>
+                        <tr>
+                            <th>Tanggal ${data.jenis === 'masuk' ? 'Diterima' : 'Dikirim'}</th>
+                            <td>${new Date(data.tanggalDiterima).toLocaleDateString('id-ID', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</td>
+                        </tr>
+                        <tr>
+                            <th>Pengirim</th>
+                            <td>${data.pengirim}</td>
+                        </tr>
+                        <tr>
+                            <th>Penerima</th>
+                            <td>${data.penerima}</td>
+                        </tr>
+                        <tr>
+                            <th>Perihal</th>
+                            <td>${data.perihal}</td>
+                        </tr>
+                        <tr>
+                            <th>Kategori</th>
+                            <td>${data.kategori}</td>
+                        </tr>
+                        <tr>
+                            <th>Prioritas</th>
+                            <td>${data.prioritas}</td>
+                        </tr>
+                        <tr>
+                            <th>Kode Validasi</th>
+                            <td>${data.kodeValidasi}</td>
+                        </tr>
+                        ${data.driveLink ? `
+                        <tr>
+                            <th>Link Google Drive</th>
+                            <td>${data.driveLink}</td>
+                        </tr>
+                        ` : ''}
+                        ${data.keterangan ? `
+                        <tr>
+                            <th>Keterangan</th>
+                            <td>${data.keterangan}</td>
+                        </tr>
+                        ` : ''}
+                    </table>
                 `;
                 
-                recentActivity.appendChild(row);
-            });
+                // Buka jendela cetak
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Cetak Detail Surat - SISMAT</title>
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                        <style>
+                            body { padding: 20px; font-family: Arial, sans-serif; }
+                            .print-header { text-align: center; margin-bottom: 20px; }
+                            .print-title { font-size: 24px; font-weight: bold; }
+                            .print-subtitle { font-size: 16px; }
+                            .print-date { font-size: 14px; text-align: right; margin-bottom: 20px; }
+                            table { width: 100%; margin-top: 10px; }
+                            th { background-color: #f8f9fa; }
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            }
         }
         
-        function updateCharts() {
-            // Monthly statistics chart
-            const monthlyData = getMonthlyData();
-            const ctx1 = document.getElementById('suratChart').getContext('2d');
+        // Fungsi untuk mengupdate dashboard
+        function updateDashboard() {
+            // Hitung statistik
+            const totalSurat = suratData.length;
+            const suratMasuk = suratData.filter(item => item.jenis === 'masuk').length;
+            const suratKeluar = suratData.filter(item => item.jenis === 'keluar').length;
             
+            // Hitung rata-rata per hari
+            let rataPerHari = 0;
+            if (suratData.length > 0) {
+                const dates = suratData.map(item => new Date(item.tanggal));
+                const minDate = new Date(Math.min(...dates));
+                const maxDate = new Date(Math.max(...dates));
+                const diffTime = Math.abs(maxDate - minDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 untuk termasuk hari pertama
+                
+                if (diffDays > 0) {
+                    rataPerHari = (totalSurat / diffDays).toFixed(1);
+                }
+            }
+            
+            // Update elemen dashboard
+            document.getElementById('totalSurat').textContent = totalSurat;
+            document.getElementById('suratMasuk').textContent = suratMasuk;
+            document.getElementById('suratKeluar').textContent = suratKeluar;
+            document.getElementById('rataRata').textContent = rataPerHari;
+            document.getElementById('dataCountSetting').textContent = totalSurat;
+            
+            // Update chart
+            updateChart(suratMasuk, suratKeluar);
+            
+            // Update aktivitas terbaru
+            updateRecentActivity();
+        }
+        
+        // Fungsi untuk mengupdate chart
+        function updateChart(masuk, keluar) {
+            const ctx = document.getElementById('suratChart').getContext('2d');
+            
+            // Hapus chart lama jika ada
             if (window.suratChartInstance) {
                 window.suratChartInstance.destroy();
             }
             
-            window.suratChartInstance = new Chart(ctx1, {
-                type: 'bar',
+            // Buat chart baru
+            window.suratChartInstance = new Chart(ctx, {
+                type: 'pie',
                 data: {
-                    labels: monthlyData.labels,
-                    datasets: [
-                        {
-                            label: 'Surat Masuk',
-                            data: monthlyData.masuk,
-                            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                            borderColor: 'rgba(40, 167, 69, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Surat Keluar',
-                            data: monthlyData.keluar,
-                            backgroundColor: 'rgba(255, 193, 7, 0.7)',
-                            borderColor: 'rgba(255, 193, 7, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Jenis surat chart
-            const jenisData = getJenisData();
-            const ctx2 = document.getElementById('jenisSuratChart').getContext('2d');
-            
-            if (window.jenisSuratChartInstance) {
-                window.jenisSuratChartInstance.destroy();
-            }
-            
-            window.jenisSuratChartInstance = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pemerintah', 'Perusahaan', 'Lembaga', 'OPD', 'UPT', 'Perorangan', 'Lainnya'],
+                    labels: ['Surat Masuk', 'Surat Keluar'],
                     datasets: [{
-                        data: jenisData,
-                        backgroundColor: [
-                            'rgba(13, 71, 161, 0.7)',
-                            'rgba(46, 125, 50, 0.7)',
-                            'rgba(216, 67, 21, 0.7)',
-                            'rgba(239, 108, 0, 0.7)',
-                            'rgba(40, 53, 147, 0.7)',
-                            'rgba(123, 31, 162, 0.7)',
-                            'rgba(66, 66, 66, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(13, 71, 161, 1)',
-                            'rgba(46, 125, 50, 1)',
-                            'rgba(216, 67, 21, 1)',
-                            'rgba(239, 108, 0, 1)',
-                            'rgba(40, 53, 147, 1)',
-                            'rgba(123, 31, 162, 1)',
-                            'rgba(66, 66, 66, 1)'
-                        ],
+                        data: [masuk, keluar],
+                        backgroundColor: ['#28a745', '#ffc107'],
+                        hoverBackgroundColor: ['#218838', '#e0a800'],
                         borderWidth: 1
                     }]
                 },
@@ -2207,560 +2653,842 @@
                     plugins: {
                         legend: {
                             position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
                         }
                     }
                 }
             });
         }
         
-        function getMonthlyData() {
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
-            const result = {
-                labels: [],
-                masuk: [],
-                keluar: []
-            };
+        // Fungsi untuk mengupdate aktivitas terbaru
+        function updateRecentActivity() {
+            const recentActivity = document.getElementById('recentActivity');
             
-            // Get data for the last 6 months
-            for (let i = 5; i >= 0; i--) {
-                const month = currentDate.getMonth() - i;
-                const year = currentYear;
-                
-                let adjustedMonth = month;
-                let adjustedYear = year;
-                
-                if (month < 0) {
-                    adjustedMonth = 12 + month;
-                    adjustedYear = year - 1;
-                }
-                
-                const monthName = new Date(adjustedYear, adjustedMonth, 1).toLocaleString('id-ID', { month: 'short' });
-                result.labels.push(`${monthName} ${adjustedYear}`);
-                
-                // Count surat masuk and keluar for this month
-                const masukCount = suratData.filter(item => {
-                    const itemDate = new Date(item.tanggalSurat);
-                    return item.jenis === 'masuk' && 
-                           itemDate.getMonth() === adjustedMonth && 
-                           itemDate.getFullYear() === adjustedYear;
-                }).length;
-                
-                const keluarCount = suratData.filter(item => {
-                    const itemDate = new Date(item.tanggalSurat);
-                    return item.jenis === 'keluar' && 
-                           itemDate.getMonth() === adjustedMonth && 
-                           itemDate.getFullYear() === adjustedYear;
-                }).length;
-                
-                result.masuk.push(masukCount);
-                result.keluar.push(keluarCount);
-            }
+            // Kosongkan konten
+            recentActivity.innerHTML = '';
             
-            return result;
-        }
-        
-        function getJenisData() {
-            const categories = ['pemerintah', 'perusahaan', 'lembaga', 'opd', 'upt', 'perorangan', 'lainnya'];
-            return categories.map(cat => suratData.filter(item => item.kategori === cat).length);
-        }
-        
-        // Arsip surat functions
-        function loadArsipSurat(page = 1) {
-            currentPage = page;
-            const tableBody = document.getElementById('arsipSuratTable');
-            tableBody.innerHTML = '';
+            // Ambil 5 data terbaru
+            const recentData = [...suratData]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5);
             
-            // Apply filters
-            let filteredData = [...suratData];
-            const jenisFilter = document.getElementById('filterJenis').value;
-            const kategoriFilter = document.getElementById('filterKategori').value;
-            const prioritasFilter = document.getElementById('filterPrioritas').value;
-            const tanggalFilter = document.getElementById('filterTanggal').value;
-            
-            if (jenisFilter) {
-                filteredData = filteredData.filter(item => item.jenis === jenisFilter);
-            }
-            
-            if (kategoriFilter) {
-                filteredData = filteredData.filter(item => item.kategori === kategoriFilter);
-            }
-            
-            if (prioritasFilter) {
-                filteredData = filteredData.filter(item => item.prioritas === prioritasFilter);
-            }
-            
-            if (tanggalFilter) {
-                const [year, month] = tanggalFilter.split('-');
-                filteredData = filteredData.filter(item => {
-                    const itemDate = new Date(item.tanggalSurat);
-                    return itemDate.getFullYear() === parseInt(year) && 
-                           (itemDate.getMonth() + 1) === parseInt(month);
+            // Isi dengan data terbaru
+            if (recentData.length === 0) {
+                recentActivity.innerHTML = '<tr><td colspan="4" class="text-center">Tidak ada data</td></tr>';
+            } else {
+                recentData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Format tanggal
+                    const formattedDate = new Date(item.tanggal).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</td>
+                        <td>${formattedDate}</td>
+                        <td>${item.jenis === 'masuk' ? item.pengirim : item.penerima}</td>
+                    `;
+                    
+                    recentActivity.appendChild(row);
                 });
             }
-            
-            // Update total data count
-            document.getElementById('totalData').textContent = filteredData.length;
-            
-            // Calculate pagination
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            const startIndex = (page - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
-            const pageData = filteredData.slice(startIndex, endIndex);
-            
-            // Populate table
-            pageData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td class="text-center">${startIndex + index + 1}</td>
-                    <td class="text-center"><span class="badge ${item.jenis === 'masuk' ? 'bg-success' : 'bg-warning'}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
-                    <td>${item.noSurat}</td>
-                    <td>${formatDate(item.tanggalSurat)}</td>
-                    <td>${item.jenis === 'masuk' ? item.pengirim : item.penerima}</td>
-                    <td>${item.perihal}</td>
-                    <td><span class="badge badge-kategori kategori-${item.kategori}">${formatKategori(item.kategori)}</span></td>
-                    <td><span class="prioritas-indicator prioritas-${item.prioritas}"></span> ${formatPrioritas(item.prioritas)}</td>
-                    <td>${item.kodeValidasi}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-primary me-1" onclick="editData(${item.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteData(${item.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-            
-            // Generate pagination
-            generatePagination(totalPages, page);
         }
         
-        function generatePagination(totalPages, currentPage) {
-            const paginationEl = document.getElementById('pagination');
-            paginationEl.innerHTML = '';
+        // Fungsi untuk generate laporan
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const formatType = document.getElementById('formatType').value;
+            const reportTitle = document.getElementById('reportTitle').value || 'Laporan Surat';
             
-            if (totalPages <= 1) return;
-            
-            // Previous button
-            const prevLi = document.createElement('li');
-            prevLi.classList.add('page-item', currentPage === 1 ? 'disabled' : '');
-            prevLi.innerHTML = `<a class="page-link" href="#" ${currentPage === 1 ? 'tabindex="-1" aria-disabled="true"' : ''}>Sebelumnya</a>`;
-            prevLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentPage > 1) loadArsipSurat(currentPage - 1);
-            });
-            paginationEl.appendChild(prevLi);
-            
-            // Page numbers
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(totalPages, startPage + 4);
-            
-            for (let i = startPage; i <= endPage; i++) {
-                const pageLi = document.createElement('li');
-                pageLi.classList.add('page-item', i === currentPage ? 'active' : '');
-                pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                pageLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    loadArsipSurat(i);
-                });
-                paginationEl.appendChild(pageLi);
-            }
-            
-            // Next button
-            const nextLi = document.createElement('li');
-            nextLi.classList.add('page-item', currentPage === totalPages ? 'disabled' : '');
-            nextLi.innerHTML = `<a class="page-link" href="#" ${currentPage === totalPages ? 'tabindex="-1" aria-disabled="true"' : ''}>Selanjutnya</a>`;
-            nextLi.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (currentPage < totalPages) loadArsipSurat(currentPage + 1);
-            });
-            paginationEl.appendChild(nextLi);
-        }
-        
-        function applyFilters() {
-            loadArsipSurat(1);
-        }
-        
-        function resetFilters() {
-            document.getElementById('filterJenis').value = '';
-            document.getElementById('filterKategori').value = '';
-            document.getElementById('filterPrioritas').value = '';
-            document.getElementById('filterTanggal').value = '';
-            loadArsipSurat(1);
-        }
-        
-        // Export functions
-        function exportToExcel() {
-            // Prepare data for export
-            const dataForExport = suratData.map(item => ({
-                'Jenis Surat': item.jenis === 'masuk' ? 'Surat Masuk' : 'Surat Keluar',
-                'No. Surat': item.noSurat,
-                'Tanggal Surat': formatDate(item.tanggalSurat),
-                'Pengirim': item.pengirim,
-                'Penerima': item.penerima,
-                'Perihal': item.perihal,
-                'Kategori': formatKategori(item.kategori),
-                'Prioritas': formatPrioritas(item.prioritas),
-                'Kode Validasi': item.kodeValidasi,
-                'Status': item.status === 'selesai' ? 'Selesai' : 'Pending'
-            }));
-            
-            // Create worksheet
-            const ws = XLSX.utils.json_to_sheet(dataForExport);
-            
-            // Create workbook
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Arsip Surat');
-            
-            // Export to Excel
-            XLSX.writeFile(wb, 'arsip_surat.xlsx');
-            
-            showNotification('Data berhasil diexport ke Excel!', 'success');
-        }
-        
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add title
-            doc.setFontSize(18);
-            doc.text('Laporan Arsip Surat', 105, 15, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text(`Tanggal: ${formatDate(new Date().toISOString().split('T')[0])}`, 105, 22, { align: 'center' });
-            
-            // Prepare data for table
-            const tableData = suratData.map(item => [
-                item.jenis === 'masuk' ? 'Masuk' : 'Keluar',
-                item.noSurat,
-                formatDate(item.tanggalSurat),
-                item.jenis === 'masuk' ? item.pengirim : item.penerima,
-                item.perihal,
-                formatKategori(item.kategori),
-                formatPrioritas(item.prioritas)
-            ]);
-            
-            // Add table
-            doc.autoTable({
-                head: [['Jenis', 'No. Surat', 'Tanggal', 'Pengirim/Penerima', 'Perihal', 'Kategori', 'Prioritas']],
-                body: tableData,
-                startY: 30,
-                theme: 'grid',
-                styles: { fontSize: 8 },
-                headStyles: { fillColor: [13, 71, 161] }
-            });
-            
-            // Save PDF
-            doc.save('arsip_surat.pdf');
-            
-            showNotification('Data berhasil diexport ke PDF!', 'success');
-        }
-        
-        // Laporan functions
-        function generateLaporan() {
-            const bulan = document.getElementById('laporanBulan').value;
-            
-            if (!bulan) {
-                showNotification('Pilih bulan dan tahun terlebih dahulu!', 'error');
+            // Validasi form
+            if (!reportType || !startDate || !endDate || !formatType) {
+                showNotification('Harap isi semua field yang diperlukan!', 'error');
                 return;
             }
             
-            const [year, month] = bulan.split('-');
-            const filteredData = suratData.filter(item => {
-                const itemDate = new Date(item.tanggalSurat);
-                return itemDate.getFullYear() === parseInt(year) && 
-                       (itemDate.getMonth() + 1) === parseInt(month);
+            // Filter data berdasarkan tanggal
+            const filteredReportData = suratData.filter(item => {
+                const itemDate = new Date(item.tanggal);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999); // Sampai akhir hari
+                
+                return itemDate >= start && itemDate <= end;
             });
             
-            const tableBody = document.getElementById('laporanTable');
-            tableBody.innerHTML = '';
-            
-            if (filteredData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Tidak ada data untuk bulan yang dipilih</td></tr>';
+            if (filteredReportData.length === 0) {
+                showNotification('Tidak ada data untuk periode yang dipilih!', 'warning');
                 return;
             }
             
-            filteredData.forEach((item, index) => {
-                const row = document.createElement('tr');
+            // Filter data berdasarkan jenis laporan
+            let finalData = [];
+            if (reportType === 'semua') {
+                finalData = filteredReportData;
+            } else if (reportType === 'masuk') {
+                finalData = filteredReportData.filter(item => item.jenis === 'masuk');
+            } else if (reportType === 'keluar') {
+                finalData = filteredReportData.filter(item => item.jenis === 'keluar');
+            } else if (reportType === 'kategori') {
+                // Kelompokkan berdasarkan kategori
+                const categories = {};
+                filteredReportData.forEach(item => {
+                    if (!categories[item.kategori]) {
+                        categories[item.kategori] = [];
+                    }
+                    categories[item.kategori].push(item);
+                });
                 
-                row.innerHTML = `
-                    <td class="text-center">${index + 1}</td>
-                    <td class="text-center"><span class="badge ${item.jenis === 'masuk' ? 'bg-success' : 'bg-warning'}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
-                    <td>${item.noSurat}</td>
-                    <td>${formatDate(item.tanggalSurat)}</td>
-                    <td>${item.jenis === 'masuk' ? item.pengirim : item.penerima}</td>
-                    <td>${item.perihal}</td>
-                    <td>${formatKategori(item.kategori)}</td>
-                    <td>${formatPrioritas(item.prioritas)}</td>
-                `;
+                // Untuk laporan kategori, kita hanya menampilkan ringkasan
+                finalData = Object.keys(categories).map(kategori => {
+                    return {
+                        kategori: kategori,
+                        jumlah: categories[kategori].length,
+                        data: categories[kategori]
+                    };
+                });
+            } else if (reportType === 'prioritas') {
+                // Kelompokkan berdasarkan prioritas
+                const priorities = {};
+                filteredReportData.forEach(item => {
+                    if (!priorities[item.prioritas]) {
+                        priorities[item.prioritas] = [];
+                    }
+                    priorities[item.prioritas].push(item);
+                });
                 
-                tableBody.appendChild(row);
-            });
+                // Untuk laporan prioritas, kita hanya menampilkan ringkasan
+                finalData = Object.keys(priorities).map(prioritas => {
+                    return {
+                        prioritas: prioritas,
+                        jumlah: priorities[prioritas].length,
+                        data: priorities[prioritas]
+                    };
+                });
+            }
             
+            // Generate laporan berdasarkan format
+            if (formatType === 'pdf') {
+                generatePDFReport(finalData, reportType, startDate, endDate, reportTitle);
+            } else if (formatType === 'excel') {
+                generateExcelReport(finalData, reportType, startDate, endDate, reportTitle);
+            }
+            
+            // Simpan ke riwayat laporan
+            saveReportToHistory(reportType, startDate, endDate, formatType);
+            
+            // Tampilkan notifikasi
             showNotification('Laporan berhasil digenerate!', 'success');
         }
         
-        function cetakLaporan() {
-            const periodeAwal = document.getElementById('periodeAwal').value;
-            const periodeAkhir = document.getElementById('periodeAkhir').value;
+        // Fungsi untuk generate laporan PDF
+        function generatePDFReport(data, reportType, startDate, endDate, title) {
+            // Gunakan jsPDF dengan autoTable plugin
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
-            if (!periodeAwal || !periodeAkhir) {
-                showNotification('Pilih periode awal dan akhir terlebih dahulu!', 'error');
-                return;
+            // Judul laporan
+            doc.setFontSize(18);
+            doc.text(title, 14, 15);
+            
+            // Informasi periode
+            doc.setFontSize(11);
+            const formattedStartDate = new Date(startDate).toLocaleDateString('id-ID');
+            const formattedEndDate = new Date(endDate).toLocaleDateString('id-ID');
+            doc.text(`Periode: ${formattedStartDate} - ${formattedEndDate}`, 14, 22);
+            doc.text(`Dibuat pada: ${new Date().toLocaleDateString('id-ID')}`, 14, 28);
+            
+            // Untuk laporan ringkasan (kategori/prioritas)
+            if (reportType === 'kategori' || reportType === 'prioritas') {
+                const summaryData = data.map(item => {
+                    return [
+                        reportType === 'kategori' ? item.kategori : item.prioritas,
+                        item.jumlah.toString()
+                    ];
+                });
+                
+                // Tambahkan tabel ringkasan
+                doc.autoTable({
+                    startY: 35,
+                    head: [[reportType === 'kategori' ? 'Kategori' : 'Prioritas', 'Jumlah Surat']],
+                    body: summaryData,
+                    theme: 'grid'
+                });
+                
+                // Tambahkan chart pie jika data tersedia
+                if (data.length > 0) {
+                    const chartY = doc.lastAutoTable.finalY + 10;
+                    
+                    // Jika ada ruang, tambahkan chart
+                    if (chartY < 250) {
+                        doc.text('Distribusi:', 14, chartY);
+                        
+                        // Buat chart sederhana (hanya teks karena membuat chart di PDF kompleks)
+                        data.forEach((item, index) {
+                            const yPos = chartY + 7 + (index * 5);
+                            const percentage = (item.jumlah / data.reduce((sum, curr) => sum + curr.jumlah, 0)) * 100;
+                            
+                            doc.setFillColor(50 + index * 40, 100 + index * 20, 150 - index * 20);
+                            doc.rect(14, yPos - 2, 3, 3, 'F');
+                            doc.text(`${reportType === 'kategori' ? item.kategori : item.prioritas}: ${item.jumlah} (${percentage.toFixed(1)}%)`, 20, yPos);
+                        });
+                    }
+                }
+            } else {
+                // Untuk laporan detail
+                const tableData = data.map(item => {
+                    return [
+                        item.jenis === 'masuk' ? 'Masuk' : 'Keluar',
+                        item.nomor,
+                        new Date(item.tanggal).toLocaleDateString('id-ID'),
+                        item.pengirim,
+                        item.penerima,
+                        item.perihal,
+                        item.kategori,
+                        item.prioritas,
+                        item.kodeValidasi
+                    ];
+                });
+                
+                // Tambahkan tabel detail
+                doc.autoTable({
+                    startY: 35,
+                    head: [['Jenis', 'Nomor', 'Tanggal', 'Pengirim', 'Penerima', 'Perihal', 'Kategori', 'Prioritas', 'Kode Validasi']],
+                    body: tableData,
+                    theme: 'grid',
+                    styles: { fontSize: 8 },
+                    headStyles: { fontSize: 8 },
+                    columnStyles: {
+                        0: { cellWidth: 15 },
+                        1: { cellWidth: 25 },
+                        2: { cellWidth: 20 },
+                        3: { cellWidth: 25 },
+                        4: { cellWidth: 25 },
+                        5: { cellWidth: 30 },
+                        6: { cellWidth: 20 },
+                        7: { cellWidth: 15 },
+                        8: { cellWidth: 20 }
+                    }
+                });
             }
             
-            const filteredData = suratData.filter(item => {
-                const itemDate = new Date(item.tanggalSurat);
-                const startDate = new Date(periodeAwal);
-                const endDate = new Date(periodeAkhir);
-                return itemDate >= startDate && itemDate <= endDate;
-            });
-            
-            if (filteredData.length === 0) {
-                showNotification('Tidak ada data untuk periode yang dipilih!', 'error');
-                return;
-            }
-            
-            // Create a print-friendly version
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Laporan Surat - ${formatDate(periodeAwal)} hingga ${formatDate(periodeAkhir)}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        .print-header { text-align: center; margin-bottom: 20px; }
-                        .print-title { font-size: 18px; font-weight: bold; }
-                        .print-subtitle { font-size: 14px; }
-                        .print-date { text-align: right; font-size: 12px; margin-bottom: 10px; }
-                        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-                        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                        .badge { padding: 3px 6px; border-radius: 4px; font-size: 10px; }
-                        .bg-success { background-color: #d4edda; color: #155724; }
-                        .bg-warning { background-color: #fff3cd; color: #856404; }
-                        @media print {
-                            @page { size: landscape; margin: 0.5cm; }
-                            body { margin: 0; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="print-header">
-                        <div class="print-title">Laporan Arsip Surat</div>
-                        <div class="print-subtitle">Periode: ${formatDate(periodeAwal)} hingga ${formatDate(periodeAkhir)}</div>
-                    </div>
-                    <div class="print-date">Dicetak pada: ${new Date().toLocaleString('id-ID')}</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Jenis</th>
-                                <th>No. Surat</th>
-                                <th>Tanggal</th>
-                                <th>Pengirim/Penerima</th>
-                                <th>Perihal</th>
-                                <th>Kategori</th>
-                                <th>Prioritas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `);
-            
-            filteredData.forEach((item, index) => {
-                printWindow.document.write(`
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td><span class="badge ${item.jenis === 'masuk' ? 'bg-success' : 'bg-warning'}">${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</span></td>
-                        <td>${item.noSurat}</td>
-                        <td>${formatDate(item.tanggalSurat)}</td>
-                        <td>${item.jenis === 'masuk' ? item.pengirim : item.penerima}</td>
-                        <td>${item.perihal}</td>
-                        <td>${formatKategori(item.kategori)}</td>
-                        <td>${formatPrioritas(item.prioritas)}</td>
-                    </tr>
-                `);
-            });
-            
-            printWindow.document.write(`
-                        </tbody>
-                    </table>
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
-            printWindow.focus();
-            
-            // Wait for content to load before printing
-            setTimeout(() => {
-                printWindow.print();
-                printWindow.close();
-            }, 250);
+            // Simpan PDF
+            doc.save(`${title.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`);
         }
         
-        // Pengaturan functions
-        function handleUbahKode(e) {
+        // Fungsi untuk generate laporan Excel
+        function generateExcelReport(data, reportType, startDate, endDate, title) {
+            // Siapkan data untuk Excel
+            let excelData = [];
+            
+            // Header
+            excelData.push([title]);
+            excelData.push(['Periode', `${startDate} hingga ${endDate}`]);
+            excelData.push(['Dibuat pada', new Date().toLocaleDateString('id-ID')]);
+            excelData.push([]);
+            
+            if (reportType === 'kategori' || reportType === 'prioritas') {
+                // Data ringkasan
+                excelData.push([reportType === 'kategori' 'Kategori' : 'Prioritas', 'Jumlah Surat']);
+                
+                data.forEach(item => {
+                    excelData.push([
+                        reportType === 'kategori' ? item.kategori : item.prioritas,
+                        item.jumlah
+                    ]);
+                });
+            } else {
+                // Data detail
+                excelData.push(['Jenis', 'Nomor Surat', 'Tanggal', 'Pengirim', 'Penerima', 'Perihal', 'Kategori', 'Prioritas', 'Kode Validasi']);
+                
+                data.forEach(item => {
+                    excelData.push([
+                        item.jenis === 'masuk' ? 'Masuk' : 'Keluar',
+                        item.nomor,
+                        item.tanggal,
+                        item.pengirim,
+                        item.penerima,
+                        item.perihal,
+                        item.kategori,
+                        item.prioritas,
+                        item.kodeValidasi
+                    ]);
+                });
+            }
+            
+            // Buat workbook
+            const ws = XLSX.utils.aoa_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Laporan Surat');
+            
+            // Simpan file
+            XLSX.writeFile(wb, `${title.replace(/\s+/g, '_')}_${new Date().getTime()}.xlsx`);
+        }
+        
+        // Fungsi untuk preview laporan
+        function previewReport() {
+            // Untuk preview, kita akan menampilkan data dalam modal
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Validasi form
+            if (!reportType || !startDate || !endDate) {
+                showNotification('Harap isi semua field yang diperlukan!', 'error');
+                return;
+            }
+            
+            // Filter data berdasarkan tanggal
+            const filteredReportData = suratData.filter(item => {
+                const itemDate = new Date(item.tanggal);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999); // Sampai akhir hari
+                
+                return itemDate >= start && itemDate <= end;
+            });
+            
+            if (filteredReportData.length === 0) {
+                showNotification('Tidak ada data untuk periode yang dipilih!', 'warning');
+                return;
+            }
+            
+            // Buat konten preview
+            let previewContent = `
+                <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Preview Laporan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5>Periode: ${startDate} hingga ${endDate}</h5>
+                                <p>Jenis Laporan: ${reportType}</p>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+            `;
+            
+            if (reportType === 'kategori') {
+                // Kelompokkan berdasarkan kategori
+                const categories = {};
+                filteredReportData.forEach(item => {
+                    if (!categories[item.kategori]) {
+                        categories[item.kategori] = [];
+                    }
+                    categories[item.kategori].push(item);
+                });
+                
+                previewContent += `
+                    <thead>
+                        <tr>
+                            <th>Kategori</th>
+                            <th>Jumlah Surat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                Object.keys(categories).forEach(kategori => {
+                    previewContent += `
+                        <tr>
+                            <td>${kategori}</td>
+                            <td>${categories[kategori].length}</td>
+                        </tr>
+                    `;
+                });
+                
+                previewContent += `</tbody>`;
+            } else if (reportType === 'prioritas') {
+                // Kelompokkan berdasarkan prioritas
+                const priorities = {};
+                filteredReportData.forEach(item => {
+                    if (!priorities[item.prioritas]) {
+                        priorities[item.prioritas] = [];
+                    }
+                    priorities[item.prioritas].push(item);
+                });
+                
+                previewContent += `
+                    <thead>
+                        <tr>
+                            <th>Prioritas</th>
+                            <th>Jumlah Surat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                Object.keys(prioritas).forEach(prioritas => {
+                    previewContent += `
+                        <tr>
+                            <td>${prioritas}</td>
+                            <td>${priorities[prioritas].length}</td>
+                        </tr>
+                    `;
+                });
+                
+                previewContent += `</tbody>`;
+            } else {
+                // Tampilkan data detail
+                let filteredData = filteredReportData;
+                if (reportType === 'masuk') {
+                    filteredData = filteredReportData.filter(item => item.jenis === 'masuk');
+                } else if (reportType === 'keluar') {
+                    filteredData = filteredReportData.filter(item => item.jenis === 'keluar');
+                }
+                
+                previewContent += `
+                    <thead>
+                        <tr>
+                            <th>Jenis</th>
+                            <th>Nomor Surat</th>
+                            <th>Tanggal</th>
+                            <th>Pengirim</th>
+                            <th>Penerima</th>
+                            <th>Perihal</th>
+                            <th>Kategori</th>
+                            <th>Prioritas</th>
+                            <th>Kode Validasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                filteredData.forEach(item => {
+                    previewContent += `
+                        <tr>
+                            <td>${item.jenis === 'masuk' ? 'Masuk' : 'Keluar'}</td>
+                            <td>${item.nomor}</td>
+                            <td>${item.tanggal}</td>
+                            <td>${item.pengirim}</td>
+                            <td>${item.penerima}</td>
+                            <td>${item.perihal}</td>
+                            <td>${item.kategori}</td>
+                            <td>${item.prioritas}</td>
+                            <td>${item.kodeValidasi}</td>
+                        </tr>
+                    `;
+                });
+                
+                previewContent += `</tbody>`;
+            }
+            
+            previewContent += `
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" onclick="generateReport()">
+                                    <i class="fas fa-download me-1"></i> Generate Laporan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan modal ke body dan tampilkan
+            document.body.insertAdjacentHTML('beforeend', previewContent);
+            const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+            previewModal.show();
+            
+            // Hapus modal dari DOM setelah ditutup
+            document.getElementById('previewModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+        
+        // Fungsi untuk menyimpan riwayat laporan
+        function saveReportToHistory(reportType, startDate, endDate, formatType) {
+            // Ambil riwayat yang ada dari localStorage
+            let reportHistory = JSON.parse(localStorage.getItem('reportHistory')) || [];
+            
+            // Tambahkan laporan baru
+            reportHistory.unshift({
+                date: new Date().toISOString(),
+                type: reportType,
+                startDate: startDate,
+                endDate: endDate,
+                format: formatType
+            });
+            
+            // Simpan kembali ke localStorage (maksimal 10 riwayat)
+            if (reportHistory.length > 10) {
+                reportHistory = reportHistory.slice(0, 10);
+            }
+            
+            localStorage.setItem('reportHistory', JSON.stringify(reportHistory));
+            
+            // Update tampilan riwayat
+            updateReportHistory();
+        }
+        
+        // Fungsi untuk mengupdate tampilan riwayat laporan
+        function updateReportHistory() {
+            const reportHistory = JSON.parse(localStorage.getItem('reportHistory')) || [];
+            const historyBody = document.getElementById('reportHistory');
+            
+            // Kosongkan konten
+            historyBody.innerHTML = '';
+            
+            // Isi dengan riwayat
+            if (reportHistory.length === 0) {
+                historyBody.innerHTML = '<tr><td colspan="5" class="text-center">Belum ada riwayat laporan</td></tr>';
+            } else {
+                reportHistory.forEach((report, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Format tanggal
+                    const formattedDate = new Date(report.date).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // Format jenis laporan
+                    let jenisLaporan = '';
+                    if (report.type === 'semua') {
+                        jenisLaporan = 'Semua Data';
+                    } else if (report.type === 'masuk') {
+                        jenisLaporan = 'Surat Masuk';
+                    } else if (report.type === 'keluar') {
+                        jenisLaporan = 'Surat Keluar';
+                    } else if (report.type === 'kategori') {
+                        jenisLaporan = 'Berdasarkan Kategori';
+                    } else if (report.type === 'prioritas') {
+                        jenisLaporan = 'Berdasarkan Prioritas';
+                    }
+                    
+                    // Format periode
+                    const formattedStartDate = new Date(report.startDate).toLocaleDateString('id-ID');
+                    const formattedEndDate = new Date(report.endDate).toLocaleDateString('id-ID');
+                    const periode = `${formattedStartDate} - ${formattedEndDate}`;
+                    
+                    // Format format laporan
+                    const format = report.format.toUpperCase();
+                    
+                    row.innerHTML = `
+                        <td>${formattedDate}</td>
+                        <td>${jenisLaporan}</td>
+                        <td>${periode}</td>
+                        <td>${format}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary view-history-btn" data-index="${index}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    historyBody.appendChild(row);
+                });
+                
+                // Tambahkan event listener untuk tombol lihat riwayat
+                document.querySelectorAll('.view-history-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        viewReportHistory(index);
+                    });
+                });
+            }
+        }
+        
+        // Fungsi untuk melihat riwayat laporan
+        function viewReportHistory(index) {
+            const reportHistory = JSON.parse(localStorage.getItem('reportHistory')) || [];
+            
+            if (reportHistory[index]) {
+                const report = reportHistory[index];
+                
+                // Set nilai form laporan
+                document.getElementById('reportType').value = report.type;
+                document.getElementById('startDate').value = report.startDate;
+                document.getElementById('endDate').value = report.endDate;
+                document.getElementById('formatType').value = report.format;
+                
+                // Tampilkan notifikasi
+                showNotification('Pengaturan laporan telah dimuat dari riwayat.', 'info');
+                
+                // Scroll ke form laporan
+                document.getElementById('reportForm').scrollIntoView();
+            }
+        }
+        
+        // Fungsi untuk mengupdate kode keamanan
+        function updateSecurityCode(e) {
             e.preventDefault();
             
-            const kodeLama = document.getElementById('kodeLama').value;
-            const kodeBaru = document.getElementById('kodeBaru').value;
-            const konfirmasiKode = document.getElementById('konfirmasiKode').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             
-            if (kodeLama !== securityCode) {
-                showNotification('Kode lama tidak sesuai!', 'error');
+            // Validasi
+            if (currentPassword !== securityCode) {
+                showNotification('Kode keamanan saat ini salah!', 'error');
                 return;
             }
             
-            if (kodeBaru !== konfirmasiKode) {
-                showNotification('Konfirmasi kode baru tidak sesuai!', 'error');
+            if (newPassword !== confirmPassword) {
+                showNotification('Konfirmasi kode keamanan baru tidak cocok!', 'error');
                 return;
             }
             
-            securityCode = kodeBaru;
-            showNotification('Kode keamanan berhasil diubah!', 'success');
-            document.getElementById('ubahKodeForm').reset();
+            if (newPassword.length < 4) {
+                showNotification('Kode keamanan baru harus minimal 4 karakter!', 'error');
+                return;
+            }
+            
+            // Update kode keamanan
+            securityCode = newPassword;
+            
+            // Simpan ke localStorage
+            saveToLocalStorage();
+            
+            // Reset form
+            document.getElementById('securityForm').reset();
+            
+            // Tampilkan notifikasi
+            showNotification('Kode keamanan berhasil diperbarui!', 'success');
         }
         
-        function backupData() {
-            const dataStr = JSON.stringify(suratData);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        // Fungsi untuk mengekspor data
+        function exportData() {
+            if (suratData.length === 0) {
+                showNotification('Tidak ada data untuk diekspor!', 'warning');
+                return;
+            }
             
-            const exportFileDefaultName = `sismat_backup_${new Date().toISOString().split('T')[0]}.json`;
+            // Buat data untuk diekspor
+            const exportData = suratData.map(item => {
+                return {
+                    Jenis: item.jenis === 'masuk' ? 'Surat Masuk' : 'Surat Keluar',
+                    'Nomor Surat': item.nomor,
+                    'Tanggal Surat': item.tanggal,
+                    'Tanggal Diterima/Dikirim': item.tanggalDiterima,
+                    Pengirim: item.pengirim,
+                    Penerima: item.penerima,
+                    Perihal: item.perihal,
+                    Kategori: item.kategori,
+                    Prioritas: item.prioritas,
+                    'Kode Validasi': item.kodeValidasi,
+                    'Link Google Drive': item.driveLink || '',
+                    Keterangan: item.keterangan || '',
+                    'Dibuat Pada': item.createdAt,
+                    'Diupdate Pada': item.updatedAt || ''
+                };
+            });
             
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
+            // Buat worksheet
+            const ws = XLSX.utils.json_to_sheet(exportData);
             
-            showNotification('Backup data berhasil!', 'success');
+            // Buat workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Data Surat');
+            
+            // Simpan file
+            XLSX.writeFile(wb, `sismat_backup_${new Date().getTime()}.xlsx`);
+            
+            // Tampilkan notifikasi
+            showNotification('Data berhasil diekspor!', 'success');
         }
         
-        function triggerRestore() {
-            document.getElementById('restoreFileInput').click();
-        }
-        
-        function restoreData(e) {
-            const file = e.target.files[0];
+        // Fungsi untuk mengimpor data
+        function importData() {
+            // Buat input file
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.xlsx, .xls';
             
-            if (!file) return;
-            
-            if (confirm('Restore data akan mengganti semua data yang ada. Lanjutkan?')) {
+            fileInput.onchange = function(e) {
+                const file = e.target.files[0];
+                
+                if (!file) {
+                    return;
+                }
+                
+                // Baca file Excel
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     try {
-                        const restoredData = JSON.parse(e.target.result);
-                        suratData = restoredData;
-                        saveSuratData();
-                        showNotification('Data berhasil direstore!', 'success');
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        
+                        // Ambil sheet pertama
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        
+                        // Konversi ke JSON
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        
+                        // Validasi data
+                        if (jsonData.length === 0) {
+                            showNotification('File tidak berisi data!', 'error');
+                            return;
+                        }
+                        
+                        // Konversi ke format SISMAT
+                        const importedData = jsonData.map(item => {
+                            return {
+                                id: Date.now() + Math.floor(Math.random() * 1000), // ID unik
+                                jenis: item.Jenis === 'Surat Masuk' ? 'masuk' : 'keluar',
+                                nomor: item['Nomor Surat'] || '',
+                                tanggal: item['Tanggal Surat'] || new Date().toISOString().split('T')[0],
+                                tanggalDiterima: item['Tanggal Diterima/Dikirim'] || new Date().toISOString().split('T')[0],
+                                pengirim: item.Pengirim || '',
+                                penerima: item.Penerima || '',
+                                perihal: item.Perihal || '',
+                                kategori: item.Kategori || 'lainnya',
+                                prioritas: item.Prioritas || 'sedang',
+                                kodeValidasi: item['Kode Validasi'] || generateKodeValidasi(),
+                                driveLink: item['Link Google Drive'] || '',
+                                keterangan: item.Keterangan || '',
+                                createdAt: item['Dibuat Pada'] || new Date().toISOString(),
+                                updatedAt: item['Diupdate Pada'] || ''
+                            };
+                        });
+                        
+                        // Tambahkan data yang diimpor
+                        suratData = [...importedData, ...suratData];
+                        
+                        // Simpan ke localStorage
+                        saveToLocalStorage();
                         
                         // Update UI
                         updateDashboard();
-                        loadArsipSurat();
+                        renderTable();
+                        
+                        // Tampilkan notifikasi
+                        showNotification(`Data berhasil diimpor! ${importedData.length} data ditambahkan.`, 'success');
                     } catch (error) {
-                        showNotification('File backup tidak valid!', 'error');
+                        console.error('Error importing data:', error);
+                        showNotification('Terjadi kesalahan saat mengimpor data!', 'error');
                     }
                 };
                 
-                reader.readAsText(file);
-            }
+                reader.readAsArrayBuffer(file);
+            };
             
-            // Reset input
-            e.target.value = '';
+            fileInput.click();
         }
         
+        // Fungsi untuk reset data
         function resetData() {
-            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan!')) {
+            if (confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan!')) {
+                // Reset data
                 suratData = [];
-                saveSuratData();
-                showNotification('Semua data berhasil dihapus!', 'success');
+                
+                // Simpan ke localStorage
+                saveToLocalStorage();
                 
                 // Update UI
                 updateDashboard();
-                loadArsipSurat();
+                renderTable();
+                
+                // Tampilkan notifikasi
+                showNotification('Semua data berhasil direset!', 'success');
             }
         }
         
-        // FAB function
-        function handleFabClick() {
-            // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.add('d-none');
-            });
+        // Fungsi untuk toggle menu mobile
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
             
-            // Show input surat section
-            document.getElementById('inputSurat').classList.remove('d-none');
-            
-            // Update active menu item
-            document.querySelectorAll('#menuList .nav-link').forEach(item => {
-                item.classList.remove('active');
-            });
-            document.querySelector('[data-bs-target="inputSurat"]').classList.add('active');
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            sidebar.classList.toggle('mobile-show');
+            overlay.classList.toggle('mobile-show');
         }
         
-        // Utility functions
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
+        // Fungsi untuk scroll ke atas
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
         }
         
-        function formatKategori(kategori) {
-            const kategoriMap = {
-                'pemerintah': 'Pemerintah',
-                'perusahaan': 'Perusahaan',
-                'lembaga': 'Lembaga',
-                'opd': 'OPD',
-                'upt': 'UPT',
-                'perorangan': 'Perorangan',
-                'lainnya': 'Lainnya'
-            };
-            
-            return kategoriMap[kategori] || kategori;
+        // Fungsi untuk logout
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                // Sembunyikan konten aplikasi
+                document.querySelector('.app-content-unauthenticated').style.display = 'none';
+                
+                // Tampilkan modal login
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+                
+                // Reset form login
+                document.getElementById('loginForm').reset();
+                
+                // Tampilkan notifikasi
+                showNotification('Anda telah logout dari aplikasi.', 'info');
+            }
         }
         
-        function formatPrioritas(prioritas) {
-            const prioritasMap = {
-                'tinggi': 'Tinggi',
-                'sedang': 'Sedang',
-                'rendah': 'Rendah'
-            };
-            
-            return prioritasMap[prioritas] || prioritas;
-        }
-        
+        // Fungsi untuk menampilkan notifikasi
         function showNotification(message, type = 'info') {
-            const toastBody = document.querySelector('.toast-body');
-            const toastHeader = document.querySelector('.toast-header');
+            const toast = document.getElementById('notificationToast');
+            const toastMessage = document.getElementById('toastMessage');
             
-            // Set message
-            toastBody.textContent = message;
+            // Set pesan dan warna berdasarkan type
+            toastMessage.textContent = message;
             
-            // Set color based on type
-            if (type === 'success') {
-                toastHeader.querySelector('i').className = 'fas fa-check-circle text-success me-2';
-            } else if (type === 'error') {
-                toastHeader.querySelector('i').className = 'fas fa-exclamation-circle text-danger me-2';
-            } else if (type === 'warning') {
-                toastHeader.querySelector('i').className = 'fas fa-exclamation-triangle text-warning me-2';
-            } else {
-                toastHeader.querySelector('i').className = 'fas fa-info-circle text-primary me-2';
+            // Ubah warna toast berdasarkan type
+            const toastHeader = toast.querySelector('.toast-header');
+            toastHeader.classList.remove('bg-primary', 'bg-success', 'bg-danger', 'bg-warning');
+            
+            switch (type) {
+                case 'success':
+                    toastHeader.classList.add('bg-success', 'text-white');
+                    break;
+                case 'error':
+                    toastHeader.classList.add('bg-danger', 'text-white');
+                    break;
+                case 'warning':
+                    toastHeader.classList.add('bg-warning');
+                    break;
+                default:
+                    toastHeader.classList.add('bg-primary', 'text-white');
             }
             
-            // Show toast
-            toast.show();
+            // Tampilkan toast
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
         }
+        
+        // Fungsi untuk inisialisasi datepicker
+        function initDatepickers() {
+            // Inisialisasi datepicker untuk input tanggal
+            $('#startDate, #endDate').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        }
+        
+        // Panggil fungsi inisialisasi datepicker setelah dokumen siap
+        document.addEventListener('DOMContentLoaded', initDatepickers);
+        
+        // Fungsi untuk update riwayat laporan saat pertama kali load
+        updateReportHistory();
         
         // FITUR BARU: Generate Kode Validasi
         function generateKodeValidasi() {
@@ -2773,6 +3501,8 @@
             
             document.getElementById('kodeValidasi').value = result;
             showNotification('Kode validasi berhasil digenerate!', 'success');
+            
+            return result;
         }
     </script>
 </body>
