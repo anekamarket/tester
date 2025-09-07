@@ -1176,7 +1176,7 @@
                     </div>
                     
                     <div class="login-copyright">
-                        <p>&copy; 2023 Lentera Karya Situbondo. All rights reserved.</p>
+                        <p>&copy; 2025 Lentera Karya Situbondo. All rights reserved.</p>
                     </div>
                 </div>
             </div>
@@ -2936,7 +2936,6 @@
             
             // Ambil nilai dari form
             const formData = {
-                id: generateId(),
                 noAgenda: document.getElementById('noAgendaMasuk').value,
                 noSurat: document.getElementById('noSuratMasuk').value,
                 tanggalSurat: document.getElementById('tanggalSuratMasuk').value,
@@ -2948,39 +2947,82 @@
                 lampiran: parseInt(document.getElementById('lampiranMasuk').value) || 0,
                 keterangan: document.getElementById('keteranganMasuk').value,
                 linkGoogleDrive: document.getElementById('linkGoogleDriveMasuk').value,
-                createdAt: new Date().toISOString()
             };
             
-            // Tambahkan ke data surat masuk
-            suratMasukData.unshift(formData);
+            // Cek apakah dalam mode edit
+            const editId = document.getElementById('formSuratMasuk').dataset.editId;
+            
+            if (editId) {
+                // Mode edit - update data yang ada
+                const index = suratMasukData.findIndex(item => item.id === editId);
+                if (index !== -1) {
+                    // Simpan createdAt dari data lama
+                    formData.createdAt = suratMasukData[index].createdAt;
+                    formData.id = editId;
+                    
+                    // Update data
+                    suratMasukData[index] = formData;
+                    
+                    // Update arsip
+                    const arsipIndex = arsipData.findIndex(item => item.id === editId);
+                    if (arsipIndex !== -1) {
+                        arsipData[arsipIndex] = {
+                            id: editId,
+                            jenis: 'masuk',
+                            noAgenda: formData.noAgenda,
+                            noSurat: formData.noSurat,
+                            tanggal: formData.tanggalSurat,
+                            pengirim: formData.pengirim,
+                            perihal: formData.perihal,
+                            kategori: formData.kategori,
+                            createdAt: formData.createdAt
+                        };
+                    }
+                    
+                    showToast('Surat masuk berhasil diupdate!', 'success');
+                }
+            } else {
+                // Mode tambah - buat data baru
+                formData.id = generateId();
+                formData.createdAt = new Date().toISOString();
+                
+                // Tambahkan ke data surat masuk
+                suratMasukData.unshift(formData);
+                
+                // Tambahkan ke arsip
+                addToArsip({
+                    id: formData.id,
+                    jenis: 'masuk',
+                    noAgenda: formData.noAgenda,
+                    noSurat: formData.noSurat,
+                    tanggal: formData.tanggalSurat,
+                    pengirim: formData.pengirim,
+                    perihal: formData.perihal,
+                    kategori: formData.kategori,
+                    createdAt: formData.createdAt
+                });
+                
+                showToast('Surat masuk berhasil disimpan!', 'success');
+            }
             
             // Simpan ke localStorage
             localStorage.setItem('suratMasukData', JSON.stringify(suratMasukData));
+            localStorage.setItem('arsipData', JSON.stringify(arsipData));
             
-            // Tambahkan ke arsip
-            addToArsip({
-                id: formData.id,
-                jenis: 'masuk',
-                noAgenda: formData.noAgenda,
-                noSurat: formData.noSurat,
-                tanggal: formData.tanggalSurat,
-                pengirim: formData.pengirim,
-                perihal: formData.perihal,
-                kategori: formData.kategori,
-                createdAt: formData.createdAt
-            });
-            
-            // Reset form
+            // Reset form dan mode edit
             document.getElementById('formSuratMasuk').reset();
+            delete document.getElementById('formSuratMasuk').dataset.editId;
+            
+            // Kembalikan teks tombol submit
+            const submitButton = document.querySelector('#formSuratMasuk button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Surat Masuk';
             
             // Update tabel
             renderSuratMasukTable();
+            renderArsipTable();
             
             // Update dashboard
             updateDashboard();
-            
-            // Tampilkan notifikasi
-            showToast('Surat masuk berhasil disimpan!', 'success');
         }
         
         // Fungsi untuk handle submit surat keluar
@@ -2995,7 +3037,6 @@
             
             // Ambil nilai dari form
             const formData = {
-                id: generateId(),
                 noAgenda: document.getElementById('noAgendaKeluar').value,
                 noSurat: document.getElementById('noSuratKeluar').value,
                 tanggalSurat: document.getElementById('tanggalSuratKeluar').value,
@@ -3006,39 +3047,82 @@
                 lampiran: parseInt(document.getElementById('lampiranKeluar').value) || 0,
                 keterangan: document.getElementById('keteranganKeluar').value,
                 linkGoogleDrive: document.getElementById('linkGoogleDriveKeluar').value,
-                createdAt: new Date().toISOString()
             };
             
-            // Tambahkan ke data surat keluar
-            suratKeluarData.unshift(formData);
+            // Cek apakah dalam mode edit
+            const editId = document.getElementById('formSuratKeluar').dataset.editId;
+            
+            if (editId) {
+                // Mode edit - update data yang ada
+                const index = suratKeluarData.findIndex(item => item.id === editId);
+                if (index !== -1) {
+                    // Simpan createdAt dari data lama
+                    formData.createdAt = suratKeluarData[index].createdAt;
+                    formData.id = editId;
+                    
+                    // Update data
+                    suratKeluarData[index] = formData;
+                    
+                    // Update arsip
+                    const arsipIndex = arsipData.findIndex(item => item.id === editId);
+                    if (arsipIndex !== -1) {
+                        arsipData[arsipIndex] = {
+                            id: editId,
+                            jenis: 'keluar',
+                            noAgenda: formData.noAgenda,
+                            noSurat: formData.noSurat,
+                            tanggal: formData.tanggalSurat,
+                            tujuan: formData.tujuan,
+                            perihal: formData.perihal,
+                            kategori: formData.kategori,
+                            createdAt: formData.createdAt
+                        };
+                    }
+                    
+                    showToast('Surat keluar berhasil diupdate!', 'success');
+                }
+            } else {
+                // Mode tambah - buat data baru
+                formData.id = generateId();
+                formData.createdAt = new Date().toISOString();
+                
+                // Tambahkan ke data surat keluar
+                suratKeluarData.unshift(formData);
+                
+                // Tambahkan ke arsip
+                addToArsip({
+                    id: formData.id,
+                    jenis: 'keluar',
+                    noAgenda: formData.noAgenda,
+                    noSurat: formData.noSurat,
+                    tanggal: formData.tanggalSurat,
+                    tujuan: formData.tujuan,
+                    perihal: formData.perihal,
+                    kategori: formData.kategori,
+                    createdAt: formData.createdAt
+                });
+                
+                showToast('Surat keluar berhasil disimpan!', 'success');
+            }
             
             // Simpan ke localStorage
             localStorage.setItem('suratKeluarData', JSON.stringify(suratKeluarData));
+            localStorage.setItem('arsipData', JSON.stringify(arsipData));
             
-            // Tambahkan ke arsip
-            addToArsip({
-                id: formData.id,
-                jenis: 'keluar',
-                noAgenda: formData.noAgenda,
-                noSurat: formData.noSurat,
-                tanggal: formData.tanggalSurat,
-                tujuan: formData.tujuan,
-                perihal: formData.perihal,
-                kategori: formData.kategori,
-                createdAt: formData.createdAt
-            });
-            
-            // Reset form
+            // Reset form dan mode edit
             document.getElementById('formSuratKeluar').reset();
+            delete document.getElementById('formSuratKeluar').dataset.editId;
+            
+            // Kembalikan teks tombol submit
+            const submitButton = document.querySelector('#formSuratKeluar button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Surat Keluar';
             
             // Update tabel
             renderSuratKeluarTable();
+            renderArsipTable();
             
             // Update dashboard
             updateDashboard();
-            
-            // Tampilkan notifikasi
-            showToast('Surat keluar berhasil disimpan!', 'success');
         }
         
         // Fungsi untuk validasi form
@@ -3072,6 +3156,26 @@
             });
             
             return isValid;
+        }
+
+        // Fungsi untuk reset form surat masuk
+        function resetFormSuratMasuk() {
+            document.getElementById('formSuratMasuk').reset();
+            delete document.getElementById('formSuratMasuk').dataset.editId;
+            
+            // Kembalikan teks tombol submit
+            const submitButton = document.querySelector('#formSuratMasuk button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Surat Masuk';
+        }
+        
+        // Fungsi untuk reset form surat keluar
+        function resetFormSuratKeluar() {
+            document.getElementById('formSuratKeluar').reset();
+            delete document.getElementById('formSuratKeluar').dataset.editId;
+            
+            // Kembalikan teks tombol submit
+            const submitButton = document.querySelector('#formSuratKeluar button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Simpan Surat Keluar';
         }
         
         // Fungsi untuk validasi Google Drive link
@@ -3149,13 +3253,20 @@
         function addToArsip(data) {
             // Tambahkan ke data arsip
             arsipData.unshift(data);
-            
+            localStorage.setItem('arsipData', JSON.stringify(arsipData));
+
+           // Update tabel arsip
+            renderArsipTable();
+
             // Simpan ke localStorage
             localStorage.setItem('arsipData', JSON.stringify(arsipData));
-            
-            // Update tabel arsip
-            renderArsipTable();
+             
+             // Fungsi untuk menghapus data dari arsip
+        function removeFromArsip(id) {
+            arsipData = arsipData.filter(item => item.id !== id);
+            localStorage.setItem('arsipData', JSON.stringify(arsipData));
         }
+            
         
         // Fungsi untuk update dashboard
         function updateDashboard() {
@@ -3657,8 +3768,12 @@
             document.getElementById('keteranganMasuk').value = data.keterangan || '';
             document.getElementById('linkGoogleDriveMasuk').value = data.linkGoogleDrive || '';
             
-            // Hapus data lama
-            deleteSuratMasuk(id, false);
+            // Set ID data yang sedang diedit
+            document.getElementById('formSuratMasuk').dataset.editId = id;
+            
+            // Ubah teks tombol submit
+            const submitButton = document.querySelector('#formSuratMasuk button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Update Surat Masuk';
             
             // Scroll ke form
             document.getElementById('formSuratMasuk').scrollIntoView({ behavior: 'smooth' });
@@ -3687,8 +3802,12 @@
             document.getElementById('keteranganKeluar').value = data.keterangan || '';
             document.getElementById('linkGoogleDriveKeluar').value = data.linkGoogleDrive || '';
             
-            // Hapus data lama
-            deleteSuratKeluar(id, false);
+            // Set ID data yang sedang diedit
+            document.getElementById('formSuratKeluar').dataset.editId = id;
+            
+            // Ubah teks tombol submit
+            const submitButton = document.querySelector('#formSuratKeluar button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-save me-2"></i> Update Surat Keluar';
             
             // Scroll ke form
             document.getElementById('formSuratKeluar').scrollIntoView({ behavior: 'smooth' });
