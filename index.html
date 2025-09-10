@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -39,17 +39,22 @@
             background: linear-gradient(135deg, var(--darkest) 0%, var(--darker) 50%, var(--dark) 100%);
             color: #fff;
             font-family: 'Montserrat', sans-serif;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
             position: relative;
             opacity: 0;
             animation: bodyFadeIn 1.5s ease-out forwards;
             touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        /* Particle Background - Optimized */
+        /* Particle Background */
         .particles {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -82,18 +87,24 @@
             animation-name: float-blue;
         }
 
-        /* Premium Loading Container */
-        .loading-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Main Container */
+        .main-container {
             width: 100%;
-            height: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Loading Container */
+        .loading-container {
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
             padding: 20px;
             opacity: 0;
             transform: scale(0.95);
@@ -102,16 +113,11 @@
 
         /* Portal Container */
         .portal-container {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 15;
             padding: 20px;
             opacity: 0;
             visibility: hidden;
@@ -123,7 +129,7 @@
             visibility: visible;
         }
 
-        /* Logo Animation - Preserved */
+        /* Logo Animation */
         .logo-container {
             position: relative;
             margin-bottom: 20px;
@@ -133,12 +139,17 @@
 
         .logo {
             width: 120px;
-            height: auto;
+            height: 120px;
+            object-fit: contain;
             filter: drop-shadow(0 0 10px rgba(100, 149, 237, 0.7));
             animation: 
                 fadeIn 1.5s ease-out forwards,
                 subtlePulse 4s ease-in-out infinite;
             opacity: 0;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .logo-glow {
@@ -159,7 +170,7 @@
             z-index: -1;
         }
 
-        /* Text Animation - Preserved */
+        /* Text Animation */
         .text-animation {
             font-size: 2rem;
             font-weight: 700;
@@ -192,7 +203,7 @@
             text-align: center;
         }
 
-        /* Progress Bar - Optimized */
+        /* Progress Bar */
         .progress-container {
             width: 90%;
             max-width: 400px;
@@ -235,7 +246,7 @@
             font-weight: 300;
         }
 
-        /* Loading Dots - Preserved */
+        /* Loading Dots */
         .loading-animation {
             display: flex;
             gap: 8px;
@@ -283,10 +294,11 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            padding: 18px 25px;
-            background: linear-gradient(135deg, rgba(15, 52, 96, 0.7), rgba(26, 26, 46, 0.9));
-            border: 2px solid rgba(105, 182, 255, 0.3);
-            border-radius: 12px;
+            padding: 20px 25px;
+            background: linear-gradient(145deg, rgba(15, 52, 96, 0.8), rgba(26, 26, 46, 0.95));
+            border: 2px solid;
+            border-image: linear-gradient(135deg, var(--gold), var(--accent)) 1;
+            border-radius: 16px;
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 600;
@@ -294,7 +306,7 @@
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             backdrop-filter: blur(10px);
             z-index: 1;
@@ -327,7 +339,7 @@
 
         .portal-button:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
         .portal-button:hover::after {
@@ -378,32 +390,29 @@
         /* Specific button styles */
         .barjas-button {
             --button-color: var(--barjas);
-            border-color: rgba(33, 150, 243, 0.3);
+            border-image: linear-gradient(135deg, var(--barjas), var(--secondary)) 1;
         }
 
         .barjas-button:hover {
-            border-color: var(--barjas);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(33, 150, 243, 0.4);
         }
 
         .sismat-button {
             --button-color: var(--sismat);
-            border-color: rgba(76, 175, 80, 0.3);
+            border-image: linear-gradient(135deg, var(--sismat), var(--secondary)) 1;
         }
 
         .sismat-button:hover {
-            border-color: var(--sismat);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(76, 175, 80, 0.4);
         }
 
         .help-button {
             --button-color: var(--help);
-            border-color: rgba(255, 152, 0, 0.3);
+            border-image: linear-gradient(135deg, var(--help), var(--gold)) 1;
         }
 
         .help-button:hover {
-            border-color: var(--help);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 152, 0, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 152, 0, 0.4);
         }
 
         /* Button badges */
@@ -411,7 +420,7 @@
             position: absolute;
             top: -8px;
             right: -8px;
-            background: var(--button-color);
+            background: linear-gradient(135deg, var(--button-color), var(--secondary));
             color: white;
             font-size: 0.6rem;
             padding: 3px 8px;
@@ -423,16 +432,15 @@
 
         /* Copyright */
         .copyright {
-            position: absolute;
-            bottom: 15px;
+            margin-top: 30px;
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             width: 100%;
             text-align: center;
             padding: 0 15px;
         }
 
-        /* Animations - Optimized */
+        /* Animations */
         @keyframes fadeIn {
             to { opacity: 1; }
         }
@@ -506,6 +514,7 @@
         @media (min-width: 768px) {
             .logo {
                 width: 150px;
+                height: 150px;
             }
             
             .logo-glow {
@@ -531,7 +540,7 @@
             }
 
             .portal-button {
-                padding: 20px 30px;
+                padding: 22px 30px;
                 font-size: 1.1rem;
             }
 
@@ -546,7 +555,7 @@
             }
         }
 
-        /* Performance Optimization */
+        /* Mobile Optimization */
         @media (max-width: 480px) {
             .particle {
                 animation-duration: 20s !important;
@@ -562,7 +571,7 @@
             }
 
             .portal-button {
-                padding: 15px 20px;
+                padding: 16px 20px;
                 font-size: 0.9rem;
             }
 
@@ -583,79 +592,81 @@
     <!-- Particle Background -->
     <div class="particles" id="particles"></div>
     
-    <!-- Loading Container -->
-    <div class="loading-container" id="loading-container">
-        <div class="logo-container">
-            <div class="logo-glow"></div>
-            <img src="https://raw.githubusercontent.com/disnakkansitubondo-web/loading/refs/heads/main/logo-barjas.png" alt="APLIKASI BARJAS Logo" class="logo">
-        </div>
-        
-        <h1 class="text-animation">PORTAL SISTEM</h1>
-        
-        <div class="loading-content">
-            <div class="progress-info">
-                <span class="loading-time" id="loading-time">Initializing system...</span>
-                <span class="percentage" id="percentage">0%</span>
+    <div class="main-container">
+        <!-- Loading Container -->
+        <div class="loading-container" id="loading-container">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <img src="https://raw.githubusercontent.com/disnakkansitubondo-web/loading/refs/heads/main/logo-barjas.png" alt="APLIKASI BARJAS Logo" class="logo">
             </div>
             
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
+            <h1 class="text-animation">PORTAL SISTEM</h1>
+            
+            <div class="loading-content">
+                <div class="progress-info">
+                    <span class="loading-time" id="loading-time">Initializing system...</span>
+                    <span class="percentage" id="percentage">0%</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div class="loading-animation">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                
+                <div class="loading-message">
+                    PREMIUM PLATFORM LOADING<br>
+                    PREPARING YOUR EXCLUSIVE EXPERIENCE
+                </div>
             </div>
             
-            <div class="loading-animation">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div>
-            
-            <div class="loading-message">
-                PREMIUM PLATFORM LOADING<br>
-                PREPARING YOUR EXCLUSIVE EXPERIENCE
+            <div class="copyright">
+                © 2025 CENDHANU™ | All Rights Reserved<br>
+                A Premium Digital Solution by Lenter Karya Situbondo
             </div>
         </div>
-        
-        <div class="copyright">
-            © 2025 CENDHANU™ | All Rights Reserved<br>
-            A Premium Digital Solution by Lenter Karya Situbondo
-        </div>
-    </div>
 
-    <!-- Portal Container -->
-    <div class="portal-container" id="portal-container">
-        <div class="logo-container">
-            <div class="logo-glow"></div>
-            <img src="https://raw.githubusercontent.com/pergunu/ujian-online/refs/heads/main/assets/images/logo.png" alt="APLIKASI BARJAS Logo" class="logo">
-        </div>
-        
-        <h1 class="portal-title">PORTAL APLIKASI</h1>
-        
-        <div class="portal-buttons">
-            <a href="https://pergunu.github.io/ujian-online/" class="portal-button barjas-button">
-                <div class="button-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="button-text">Aplikasi Ujian Online</div>
-                <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="button-badge">PREMIUM</div>
-            </a>
+        <!-- Portal Container -->
+        <div class="portal-container" id="portal-container">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <img src="https://raw.githubusercontent.com/pergunu/ujian-online/main/assets/images/logo.png" alt="APLIKASI BARJAS Logo" class="logo">
+            </div>
             
-            <a href="https://disnakkansitubondo-web.github.io/sismat/" class="portal-button sismat-button">
-                <div class="button-icon"><i class="fas fa-database"></i></div>
-                <div class="button-text">Aplikasi SISMAT</div>
-                <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="button-badge">NEW</div>
-            </a>
+            <h1 class="portal-title">PORTAL APLIKASI</h1>
             
-            <a href="https://wa.me/6285647709114?text=Haaaii Admin,%20saya%20meminta%20bantuan%20informasi%20detail%20terkait%20penggunaan%20portal%20sistem" class="portal-button help-button">
-                <div class="button-icon"><i class="fas fa-question-circle"></i></div>
-                <div class="button-text">Bantuan</div>
-                <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                <div class="button-badge">24/7</div>
-            </a>
-        </div>
-        
-        <div class="copyright">
-            © 2025 CENDHANU™ | All Rights Reserved<br>
-            A Premium Digital Solution by Lenter Karya Situbondo
+            <div class="portal-buttons">
+                <a href="https://pergunu.github.io/ujian-online/" class="portal-button barjas-button">
+                    <div class="button-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="button-text">Aplikasi Ujian Online</div>
+                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="button-badge">PREMIUM</div>
+                </a>
+                
+                <a href="https://disnakkansitubondo-web.github.io/sismat/" class="portal-button sismat-button">
+                    <div class="button-icon"><i class="fas fa-database"></i></div>
+                    <div class="button-text">Aplikasi SISMAT</div>
+                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="button-badge">NEW</div>
+                </a>
+                
+                <a href="https://wa.me/6285647709114?text=Haaaii Admin,%20saya%20meminta%20bantuan%20informasi%20detail%20terkait%20penggunaan%20portal%20sistem" class="portal-button help-button">
+                    <div class="button-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="button-text">Bantuan</div>
+                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="button-badge">24/7</div>
+                </a>
+            </div>
+            
+            <div class="copyright">
+                © 2025 CENDHANU™ | All Rights Reserved<br>
+                A Premium Digital Solution by Lenter Karya Situbondo
+            </div>
         </div>
     </div>
 
