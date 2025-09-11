@@ -2,880 +2,1227 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PORTAL APLIKASI | Premium Loading</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOTEL MANAGEMENT SYSTEM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #3a7bd5;
-            --secondary: #00d2ff;
-            --accent: #69b6ff;
-            --dark: #0f3460;
-            --darker: #16213e;
-            --darkest: #1a1a2e;
-            --gold: #FFD700;
-            --gold-light: rgba(255, 215, 0, 0.7);
-            --gold-glow: rgba(255, 215, 0, 0.5);
-            --platinum: #e5e4e2;
-            --diamond: #b9f2ff;
-            --lightning: #00f2ff;
-            --success: #4CAF50;
-            --warning: #FF9800;
-            --info: #2196F3;
-            --barjas: #2196F3;
-            --sismat: #4CAF50;
-            --help: #FF9800;
-            --button-radius: 14px;
+            --primary-color: #0d47a1;
+            --secondary-color: #00695c;
+            --accent-color: #ff8f00;
+            --light-blue: #e3f2fd;
+            --dark-blue: #082e5c;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--dark-blue));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #004d40);
+            --gradient-accent: linear-gradient(135deg, var(--accent-color), #e65100);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 28px rgba(0,0,0,0.15);
+            --login-gradient: linear-gradient(135deg, #0d47a1, #00695c, #ff8f00);
+            --hotel-primary: #0d47a1;
+            --hotel-secondary: #b71c1c;
+            --hotel-accent: #ff8f00;
+            --hotel-light: #fff8e1;
+            --hotel-dark: #3e2723;
+            --hotel-gradient: linear-gradient(135deg, var(--hotel-primary), var(--hotel-secondary));
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        
         body {
-            background: linear-gradient(135deg, var(--darkest) 0%, var(--darker) 50%, var(--dark) 100%);
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f9ff 0%, #e8f5e9 100%);
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             min-height: 100vh;
+            padding: 10px 0;
             overflow-x: hidden;
-            position: relative;
-            opacity: 0;
-            animation: bodyFadeIn 1.5s ease-out forwards;
-            touch-action: manipulation;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
         }
-
-        /* Particle Background */
-        .particles {
+        
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .app-header {
+            background: var(--hotel-gradient);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .app-logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+        
+        .app-subtitle {
+            font-size: 1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .nav-pills .nav-link {
+            border-radius: 8px;
+            margin-bottom: 8px;
+            padding: 12px 15px;
+            font-weight: 500;
+            color: #444;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: #f0f7ff;
+            transform: translateX(3px);
+        }
+        
+        .nav-pills .nav-link.active {
+            background: var(--hotel-gradient);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            transform: translateX(3px);
+            color: white;
+        }
+        
+        .section-title {
+            border-left: 4px solid var(--hotel-primary);
+            padding-left: 12px;
+            margin: 20px 0;
+            font-weight: 700;
+            color: var(--hotel-dark);
+            font-size: 1.4rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 12px;
+            width: 40px;
+            height: 2px;
+            background: var(--hotel-gradient);
+            border-radius: 2px;
+        }
+        
+        .btn-primary {
+            background: var(--hotel-gradient);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-success {
+            background: var(--gradient-secondary);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-warning {
+            background: var(--gradient-accent);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .form-label i {
+            margin-right: 6px;
+            color: var(--hotel-primary);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--hotel-primary);
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--hotel-light);
+            color: var(--hotel-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .data-table {
+            font-size: 0.85rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: var(--shadow-sm);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .data-table th {
+            background: var(--hotel-gradient);
+            color: white;
+            font-weight: 600;
+            padding: 12px 10px;
+            text-align: center;
+            position: relative;
+            font-size: 0.85rem;
+        }
+        
+        .data-table th::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .data-table td {
+            padding: 10px 8px;
+            vertical-align: middle;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: #f9fbff;
+        }
+        
+        .data-table tr:hover {
+            background-color: #edf5ff;
+        }
+        
+        .feature-icon {
+            font-size: 1.1rem;
+            margin-right: 8px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+            padding: 15px 20px;
+            background: var(--hotel-gradient);
+            color: white;
+            font-size: 0.95rem;
+        }
+        
+        .stats-box {
+            text-align: center;
+            padding: 20px 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .stats-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--hotel-gradient);
+            border-radius: 2px;
+        }
+        
+        .stats-box:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stats-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--hotel-primary);
+            margin: 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 280px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            max-width: calc(100vw - 40px);
+        }
+        
+        .input-error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            opacity: 0.8;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: 300;
+        }
+        
+        .control-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .control-title {
+            font-size: 1rem;
+            color: var(--hotel-primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--hotel-light);
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--hotel-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .floating-action-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .badge-custom {
+            background: var(--hotel-gradient);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1050;
+            background: var(--hotel-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .sidebar-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 1s ease-out 0.5s forwards;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
         }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            animation-timing-function: ease-in-out;
-            animation-iteration-count: infinite;
-        }
-
-        .gold-particle {
-            background: var(--gold-light);
-            filter: blur(0.8px);
-            box-shadow: 0 0 8px var(--gold-glow);
-            animation-name: float-gold;
-        }
-
-        .blue-particle {
-            background: var(--accent);
-            filter: blur(0.5px);
-            box-shadow: 0 0 8px rgba(105, 182, 255, 0.5);
-            animation-name: float-blue;
-        }
-
-        /* Main Container */
-        .main-container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-            position: relative;
-        }
-
-        /* Loading Container */
-        .loading-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 0;
-            transform: scale(0.95);
-            animation: containerFadeIn 1.2s ease-out 0.3s forwards;
-        }
-
-        /* Portal Container */
-        .portal-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.8s ease, visibility 0.8s;
-        }
-
-        .portal-container.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Logo Animation */
-        .logo-container {
-            position: relative;
-            margin-bottom: 20px;
-            text-align: center;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .logo {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(100, 149, 237, 0.7));
-            animation: 
-                fadeIn 1.5s ease-out forwards,
-                subtlePulse 4s ease-in-out infinite;
-            opacity: 0;
-            border-radius: 20px;
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-            padding: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        .logo-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle at center,
-                rgba(255, 215, 0, 0.3) 0%,
-                rgba(185, 242, 255, 0.2) 40%,
-                transparent 70%
-            );
-            animation: pulseGlow 3s infinite ease-in-out;
-            z-index: -1;
-        }
-
-        /* Text Animation */
-        .text-animation {
-            font-size: 2rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--gold), var(--diamond), var(--accent), var(--gold));
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s linear infinite;
-            text-shadow: 0 0 10px rgba(105, 182, 255, 0.3);
-            text-align: center;
-        }
-
-        .portal-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--gold), var(--diamond), var(--accent), var(--gold));
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s linear infinite;
-            text-shadow: 0 0 15px rgba(105, 182, 255, 0.5);
-            text-align: center;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            width: 90%;
-            max-width: 400px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 15px 0;
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            border-radius: 3px;
-            transition: width 0.4s ease;
-            position: relative;
-            box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            max-width: 400px;
-            margin-bottom: 10px;
-        }
-
-        .percentage {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--gold);
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-        }
-
-        .loading-time {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 300;
-        }
-
-        /* Loading Dots */
-        .loading-animation {
-            display: flex;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .loading-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--diamond));
-            box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
-            animation: bounce 1.5s infinite ease-in-out;
-        }
-
-        .loading-dot:nth-child(1) { animation-delay: 0s; }
-        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-        .loading-dot:nth-child(4) { animation-delay: 0.6s; }
-
-        /* Loading Message */
-        .loading-message {
-            margin-top: 10px;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.9);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-align: center;
-            line-height: 1.6;
-            animation: fade 3s infinite ease-in-out;
-        }
-
-        /* Enhanced Button Styles */
-        .portal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-            max-width: 450px;
-            margin: 20px 0;
-        }
-
-        .portal-button {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 22px 25px;
-            background: linear-gradient(145deg, rgba(15, 52, 96, 0.9), rgba(26, 26, 46, 0.95));
-            border: none;
-            border-radius: var(--button-radius);
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            z-index: 1;
-        }
-
-        .portal-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            clip-path: polygon(0 0, 100% 0, 100% 20%, 0 50%);
-            z-index: -1;
-            transition: all 0.5s ease;
-        }
-
-        .portal-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.6s;
-            z-index: -1;
-        }
-
-        .portal-button:hover {
-            transform: translateY(-7px);
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        .portal-button:hover::after {
-            left: 100%;
-        }
-
-        .portal-button:hover::before {
-            clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%);
-        }
-
-        .portal-button:active {
-            transform: translateY(-3px);
-            transition: transform 0.1s;
-        }
-
-        .button-icon {
-            margin-right: 15px;
-            font-size: 1.6rem;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .button-text {
-            flex: 1;
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-
-        .button-description {
-            display: block;
-            font-size: 0.75rem;
-            opacity: 0.8;
-            margin-top: 4px;
-            font-weight: 400;
-        }
-
-        .button-arrow {
-            font-size: 1.3rem;
-            opacity: 0.8;
-            transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.1);
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .portal-button:hover .button-arrow {
-            transform: translateX(5px);
-            opacity: 1;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .portal-button:hover .button-icon {
-            transform: scale(1.15) rotate(5deg);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .portal-button:hover .button-text {
-            letter-spacing: 0.3px;
-        }
-
-        /* Specific button styles */
-        .barjas-button {
-            --button-color: var(--barjas);
-            background: linear-gradient(145deg, rgba(15, 52, 96, 0.9), rgba(26, 26, 46, 0.95));
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.4),
-                0 0 15px rgba(33, 150, 243, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .barjas-button:hover {
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                0 0 25px rgba(33, 150, 243, 0.5),
-                inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        .barjas-button .button-icon {
-            color: var(--barjas);
-            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.1));
-        }
-
-        .sismat-button {
-            --button-color: var(--sismat);
-            background: linear-gradient(145deg, rgba(15, 52, 96, 0.9), rgba(26, 26, 46, 0.95));
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.4),
-                0 0 15px rgba(76, 175, 80, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .sismat-button:hover {
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                0 0 25px rgba(76, 175, 80, 0.5),
-                inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        .sismat-button .button-icon {
-            color: var(--sismat);
-            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
-        }
-
-        .help-button {
-            --button-color: var(--help);
-            background: linear-gradient(145deg, rgba(15, 52, 96, 0.9), rgba(26, 26, 46, 0.95));
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.4),
-                0 0 15px rgba(255, 152, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .help-button:hover {
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                0 0 25px rgba(255, 152, 0, 0.5),
-                inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        .help-button .button-icon {
-            color: var(--help);
-            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
-        }
-
-        /* Button badges */
-        .button-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: linear-gradient(135deg, var(--button-color), var(--secondary));
-            color: white;
-            font-size: 0.65rem;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-            animation: pulse 2s infinite;
-            z-index: 2;
-        }
-
-        /* Copyright */
-        .copyright {
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.7rem;
-            width: 100%;
-            text-align: center;
-            padding: 0 15px;
-        }
-
+        
         /* Animations */
         @keyframes fadeIn {
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes bodyFadeIn {
-            to { opacity: 1; }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease forwards;
         }
-
-        @keyframes containerFadeIn {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
         }
-
-        @keyframes subtlePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--hotel-primary);
+            border-radius: 8px;
         }
-
-        @keyframes shine {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--hotel-dark);
         }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        @keyframes float-gold {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-            50% { transform: translate(20px, 20px) scale(1.1); opacity: 0.8; }
-        }
-
-        @keyframes float-blue {
-            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-            50% { transform: translate(-15px, 15px) scale(1.1); opacity: 0.7; }
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
-            50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.9; }
-        }
-
-        @keyframes fade {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .fade-out {
-            animation: fadeOut 0.8s ease-out forwards;
-        }
-
-        @keyframes fadeOut {
-            to { 
-                opacity: 0; 
-                transform: scale(0.95);
-            }
-        }
-
-        /* Desktop Enhancements */
-        @media (min-width: 768px) {
-            .logo {
-                width: 150px;
-                height: 150px;
+        
+        /* Responsive styles */
+        @media (max-width: 991.98px) {
+            .col-md-3.col-lg-2 {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                bottom: 0;
+                z-index: 1050;
+                width: 280px;
+                transition: left 0.3s ease;
+                overflow-y: auto;
+                padding-top: 60px;
             }
             
-            .logo-glow {
-                width: 130px;
-                height: 130px;
+            .col-md-3.col-lg-2.mobile-show {
+                left: 0;
             }
             
-            .text-animation, .portal-title {
-                font-size: 2.5rem;
+            .col-md-9.col-lg-10 {
+                width: 100%;
+                flex: 0 0 100%;
+                max-width: 100%;
             }
             
-            .progress-container {
-                height: 8px;
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
-            .loading-dot {
-                width: 12px;
-                height: 12px;
-            }
-
-            .portal-buttons {
-                gap: 25px;
-            }
-
-            .portal-button {
-                padding: 25px 30px;
-                font-size: 1.1rem;
-            }
-
-            .button-icon {
-                font-size: 1.8rem;
-                width: 40px;
-                height: 40px;
-            }
-            
-            .button-badge {
-                font-size: 0.7rem;
-                padding: 5px 12px;
-            }
-
-            .button-description {
-                font-size: 0.8rem;
+            .sidebar-overlay.mobile-show {
+                display: block;
             }
         }
-
-        /* Mobile Optimization */
-        @media (max-width: 480px) {
-            .particle {
-                animation-duration: 20s !important;
+        
+        /* Print Styles - IMPROVED FOR LANDSCAPE */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0.5cm;
             }
             
-            .loading-dot {
-                animation-duration: 2s !important;
-            }
-
-            .portal-title {
-                font-size: 1.8rem;
-                margin-bottom: 20px;
-            }
-
-            .portal-button {
-                padding: 18px 20px;
-                font-size: 0.9rem;
-            }
-
-            .button-icon {
-                font-size: 1.4rem;
-                margin-right: 12px;
-                width: 30px;
-                height: 30px;
+            body * {
+                visibility: hidden;
             }
             
-            .button-badge {
-                font-size: 0.6rem;
-                padding: 3px 8px;
+            .app-container, .app-container * {
+                visibility: visible;
             }
-
-            .button-description {
-                font-size: 0.7rem;
+            
+            .app-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            
+            .nav-pills, .mobile-menu-btn, .sidebar-overlay, .floating-action-btn,
+            .btn-group, .filter-section, .toast {
+                display: none !important;
+            }
+            
+            .col-md-3.col-lg-2.p-4.bg-light {
+                display: none !important;
+            }
+            
+            .col-md-9.col-lg-10.p-5 {
+                width: 100%;
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0 !important;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .stats-box {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+            
+            .data-table {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                font-size: 12px;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 6px 4px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .stats-number {
+                font-size: 20px;
+            }
+            
+            .btn {
+                display: none !important;
+            }
+            
+            .watermark {
+                color: black;
+                opacity: 0.5;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Particle Background -->
-    <div class="particles" id="particles"></div>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
     
-    <div class="main-container">
-        <!-- Loading Container -->
-        <div class="loading-container" id="loading-container">
-            <div class="logo-container">
-                <div class="logo-glow"></div>
-                <img src="https://raw.githubusercontent.com/disnakkansitubondo-web/loading/refs/heads/main/logo-barjas.png" alt="APLIKASI BARJAS Logo" class="logo">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div class="app-container">
+        <div class="app-header">
+            <div class="app-logo">
+                <i class="fas fa-hotel"></i>
+            </div>
+            <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
+            <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
+            <div class="watermark">v2.0.1</div>
+        </div>
+        
+        <div class="row g-0">
+            <!-- Sidebar Navigation -->
+            <div class="col-md-3 col-lg-2 p-4 bg-light" id="sidebar">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-bs-target="dashboard">
+                            <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="reservations">
+                            <i class="fas fa-calendar-check feature-icon"></i> Reservasi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="guests">
+                            <i class="fas fa-users feature-icon"></i> Data Tamu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="rooms">
+                            <i class="fas fa-bed feature-icon"></i> Manajemen Kamar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="billing">
+                            <i class="fas fa-receipt feature-icon"></i> Billing & Invoice
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="reports">
+                            <i class="fas fa-chart-bar feature-icon"></i> Laporan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-target="settings">
+                            <i class="fas fa-cog feature-icon"></i> Pengaturan
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="control-panel mt-4">
+                    <div class="control-title">Kontrol Cepat</div>
+                    <button class="btn btn-primary w-100 mb-2" id="newReservationBtn">
+                        <i class="fas fa-plus"></i> Reservasi Baru
+                    </button>
+                    <button class="btn btn-success w-100 mb-2" id="checkInBtn">
+                        <i class="fas fa-sign-in-alt"></i> Check-In
+                    </button>
+                    <button class="btn btn-warning w-100" id="checkOutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Check-Out
+                    </button>
+                </div>
             </div>
             
-            <h1 class="text-animation">PORTAL SISTEM</h1>
-            
-            <div class="loading-content">
-                <div class="progress-info">
-                    <span class="loading-time" id="loading-time">Initializing system...</span>
-                    <span class="percentage" id="percentage">0%</span>
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 p-5">
+                <!-- Dashboard Section -->
+                <div class="content-section" id="dashboard">
+                    <h3 class="section-title">Dashboard</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                                <div class="stats-number">42</div>
+                                <div class="stats-label">Tamu Check-In</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-bed fa-2x text-success"></i>
+                                <div class="stats-number">18</div>
+                                <div class="stats-label">Kamar Tersedia</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-calendar-day fa-2x text-warning"></i>
+                                <div class="stats-number">7</div>
+                                <div class="stats-label">Check-In Hari Ini</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stats-box">
+                                <i class="fas fa-money-bill-wave fa-2x text-info"></i>
+                                <div class="stats-number">Rp 12.450.000</div>
+                                <div class="stats-label">Pendapatan Hari Ini</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-line"></i> Statistik Pendapatan Bulanan
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="revenueChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-pie"></i> Tingkat Okupansi Kamar
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="occupancyChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-list"></i> Reservasi Terbaru</span>
+                                    <button class="btn btn-sm btn-primary">Lihat Semua</button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nama Tamu</th>
+                                                    <th>Tipe Kamar</th>
+                                                    <th>Check-In</th>
+                                                    <th>Check-Out</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>RES001</td>
+                                                    <td>Budi Santoso</td>
+                                                    <td>Deluxe</td>
+                                                    <td>12/09/2023</td>
+                                                    <td>15/09/2023</td>
+                                                    <td><span class="badge bg-success">Check-In</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info">Detail</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>RES002</td>
+                                                    <td>Siti Rahayu</td>
+                                                    <td>Suite</td>
+                                                    <td>13/09/2023</td>
+                                                    <td>16/09/2023</td>
+                                                    <td><span class="badge bg-warning">Booking</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info">Detail</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>RES003</td>
+                                                    <td>Agus Prasetyo</td>
+                                                    <td>Standard</td>
+                                                    <td>14/09/2023</td>
+                                                    <td>17/09/2023</td>
+                                                    <td><span class="badge bg-primary">Confirmed</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info">Detail</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>RES004</td>
+                                                    <td>Dewi Anggraini</td>
+                                                    <td>Family</td>
+                                                    <td>15/09/2023</td>
+                                                    <td>18/09/2023</td>
+                                                    <td><span class="badge bg-secondary">Pending</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-info">Detail</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
+                <!-- Reservations Section -->
+                <div class="content-section d-none" id="reservations">
+                    <h3 class="section-title">Manajemen Reservasi</h3>
+                    
+                    <div class="filter-section">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select">
+                                        <option>Semua Status</option>
+                                        <option>Pending</option>
+                                        <option>Confirmed</option>
+                                        <option>Check-In</option>
+                                        <option>Check-Out</option>
+                                        <option>Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Tanggal Check-In</label>
+                                    <input type="date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">Tanggal Check-Out</label>
+                                    <input type="date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary w-100">Terapkan Filter</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-list"></i> Daftar Reservasi</span>
+                            <button class="btn btn-sm btn-primary" id="addReservationBtn">
+                                <i class="fas fa-plus"></i> Tambah Reservasi
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama Tamu</th>
+                                            <th>Tipe Kamar</th>
+                                            <th>Check-In</th>
+                                            <th>Check-Out</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>RES001</td>
+                                            <td>Budi Santoso</td>
+                                            <td>Deluxe</td>
+                                            <td>12/09/2023</td>
+                                            <td>15/09/2023</td>
+                                            <td>Rp 2.250.000</td>
+                                            <td><span class="badge bg-success">Check-In</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-info">Detail</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>RES002</td>
+                                            <td>Siti Rahayu</td>
+                                            <td>Suite</td>
+                                            <td>13/09/2023</td>
+                                            <td>16/09/2023</td>
+                                            <td>Rp 3.600.000</td>
+                                            <td><span class="badge bg-warning">Booking</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-info">Detail</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>RES003</td>
+                                            <td>Agus Prasetyo</td>
+                                            <td>Standard</td>
+                                            <td>14/09/2023</td>
+                                            <td>17/09/2023</td>
+                                            <td>Rp 1.350.000</td>
+                                            <td><span class="badge bg-primary">Confirmed</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-info">Detail</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>RES004</td>
+                                            <td>Dewi Anggraini</td>
+                                            <td>Family</td>
+                                            <td>15/09/2023</td>
+                                            <td>18/09/2023</td>
+                                            <td>Rp 3.150.000</td>
+                                            <td><span class="badge bg-secondary">Pending</span></td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-sm btn-info">Detail</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="loading-animation">
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
+                <!-- Billing Section -->
+                <div class="content-section d-none" id="billing">
+                    <h3 class="section-title">Billing & Invoice</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-file-invoice-dollar"></i> Generate Invoice
+                                </div>
+                                <div class="card-body">
+                                    <form id="billingForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Pilih Reservasi</label>
+                                            <select class="form-select" required>
+                                                <option value="">-- Pilih Reservasi --</option>
+                                                <option value="RES001">RES001 - Budi Santoso</option>
+                                                <option value="RES002">RES002 - Siti Rahayu</option>
+                                                <option value="RES003">RES003 - Agus Prasetyo</option>
+                                                <option value="RES004">RES004 - Dewi Anggraini</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Tambahan Layanan</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="100000" id="breakfast">
+                                                <label class="form-check-label" for="breakfast">
+                                                    Sarapan (Rp 100.000)
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="250000" id="laundry">
+                                                <label class="form-check-label" for="laundry">
+                                                    Laundry (Rp 250.000)
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="150000" id="spa">
+                                                <label class="form-check-label" for="spa">
+                                                    Spa (Rp 150.000)
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Pajak (10%)</label>
+                                            <input type="text" class="form-control" value="Termasuk" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Diskon (jika ada)</label>
+                                            <input type="number" class="form-control" placeholder="Masukkan jumlah diskon">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">Generate Invoice</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-receipt"></i> Preview Invoice
+                                </div>
+                                <div class="card-body">
+                                    <div class="border p-3 mb-3">
+                                        <div class="text-center mb-3">
+                                            <h4>HOTEL GRAND LUXURY</h4>
+                                            <p>Jl. Kemang Raya No. 12, Jakarta Selatan</p>
+                                            <p>Telp: (021) 12345678</p>
+                                        </div>
+                                        <hr>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-4"><strong>No. Invoice:</strong></div>
+                                            <div class="col-sm-8">INV-20230915-001</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-4"><strong>Tanggal:</strong></div>
+                                            <div class="col-sm-8">15 September 2023</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-4"><strong>Nama Tamu:</strong></div>
+                                            <div class="col-sm-8">Budi Santoso</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-4"><strong>Kamar:</strong></div>
+                                            <div class="col-sm-8">Deluxe - 3 Malam</div>
+                                        </div>
+                                        <hr>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-6">Kamar Deluxe (3 malam)</div>
+                                            <div class="col-sm-6 text-end">Rp 2.250.000</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-6">Sarapan</div>
+                                            <div class="col-sm-6 text-end">Rp 100.000</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-6">Pajak (10%)</div>
+                                            <div class="col-sm-6 text-end">Rp 235.000</div>
+                                        </div>
+                                        <hr>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-6"><strong>Total:</strong></div>
+                                            <div class="col-sm-6 text-end"><strong>Rp 2.585.000</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-success" id="printBillBtn">
+                                            <i class="fas fa-print"></i> Cetak Bill
+                                        </button>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-download"></i> Download PDF
+                                        </button>
+                                        <button class="btn btn-info">
+                                            <i class="fas fa-paper-plane"></i> Kirim Email
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="loading-message">
-                    PREMIUM PLATFORM LOADING<br>
-                    PREPARING YOUR EXCLUSIVE EXPERIENCE
-                </div>
-            </div>
-            
-            <div class="copyright">
-                © 2025 CENDHANU™ | All Rights Reserved<br>
-                A Premium Digital Solution by Lenter Karya Situbondo
             </div>
         </div>
-
-        <!-- Portal Container -->
-        <div class="portal-container" id="portal-container">
-            <div class="logo-container">
-                <div class="logo-glow"></div>
-                <img src="https://raw.githubusercontent.com/pergunu/ujian-online/main/assets/images/logo.png" alt="APLIKASI BARJAS Logo" class="logo">
-            </div>
-            
-            <h1 class="portal-title">PORTAL APLIKASI</h1>
-            
-            <div class="portal-buttons">
-                <a href="https://pergunu.github.io/ujian-online/" class="portal-button barjas-button">
-                    <div class="button-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <div class="button-text">
-                        Aplikasi Ujian Online
-                        <span class="button-description">Sistem ujian online terintegrasi</span>
-                    </div>
-                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                    <div class="button-badge">POPULAR</div>
-                </a>
-                
-                <a href="https://disnakkansitubondo-web.github.io/sismat/" class="portal-button sismat-button">
-                    <div class="button-icon"><i class="fas fa-database"></i></div>
-                    <div class="button-text">
-                        Aplikasi SISMAT
-                        <span class="button-description">Sistem manajemen terpadu</span>
-                    </div>
-                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                    <div class="button-badge">NEW</div>
-                </a>
-                
-                <a href="https://wa.me/6285647709114?text=Haaaii Admin,%20saya%20meminta%20bantuan%20informasi%20detail%20terkait%20penggunaan%20portal%20sistem" class="portal-button help-button">
-                    <div class="button-icon"><i class="fas fa-headset"></i></div>
-                    <div class="button-text">
-                        Pusat Bantuan
-                        <span class="button-description">Dukungan informasi untuk pengguna</span>
-                    </div>
-                    <div class="button-arrow"><i class="fas fa-arrow-right"></i></div>
-                    <div class="button-badge">24/7</div>
-                </a>
-            </div>
-            
-            <div class="copyright">
-                © 2025 CENDHANU™ | All Rights Reserved<br>
-                A Premium Digital Solution by Lenter Karya Situbondo
-            </div>
+        
+        <div class="copyright">
+            &copy; 2023 Hotel Management System - Developed by Hotel Grand Luxury
+        </div>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <div class="floating-action-btn" id="helpBtn">
+        <i class="fas fa-question"></i>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-primary text-white">
+            <strong class="me-auto"><i class="fas fa-bell"></i> Notifikasi</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Operasi berhasil dilakukan!
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    
     <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+        
+        // Initialize toast
+        var toastEl = document.querySelector('.toast')
+        var toast = new bootstrap.Toast(toastEl)
+        
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault()
+                
+                // Hide all content sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('d-none')
+                })
+                
+                // Show the selected section
+                const target = this.getAttribute('data-bs-target')
+                document.getElementById(target).classList.remove('d-none')
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active')
+                })
+                this.classList.add('active')
+            })
+        })
+        
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('mobile-show')
+            document.getElementById('sidebarOverlay').classList.toggle('mobile-show')
+        })
+        
+        document.getElementById('sidebarOverlay').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('mobile-show')
+            this.classList.remove('mobile-show')
+        })
+        
+        // Show toast notification
+        function showToast(message) {
+            document.querySelector('.toast-body').textContent = message
+            toast.show()
+        }
+        
+        // Print Bill Function
+        document.getElementById('printBillBtn').addEventListener('click', function() {
+            window.print()
+        })
+        
+        // Initialize charts
         document.addEventListener('DOMContentLoaded', function() {
-            const loadingContainer = document.getElementById('loading-container');
-            const portalContainer = document.getElementById('portal-container');
-            const progressBar = document.getElementById('progress-bar');
-            const percentageElement = document.getElementById('percentage');
-            const loadingTimeElement = document.getElementById('loading-time');
-            const particlesContainer = document.getElementById('particles');
-            
-            // Optimized particle creation
-            function createParticles() {
-                particlesContainer.innerHTML = '';
-                
-                // Adjusted particle count based on device
-                const particleCount = window.innerWidth < 768 ? 40 : 80;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    createParticle('gold', i);
-                    createParticle('blue', i);
-                }
-            }
-            
-            function createParticle(type, index) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle', `${type}-particle`);
-                
-                const size = type === 'gold' ? Math.random() * 4 + 2 : Math.random() * 3 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.top = `${Math.random() * 100}vh`;
-                
-                const duration = (Math.random() * 15 + 10) * (window.innerWidth < 480 ? 1.5 : 1);
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
-                
-                particlesContainer.appendChild(particle);
-            }
-            
-            // Loading animation with preserved effects
-            function startLoadingAnimation() {
-                const milestones = [
-                    { time: 800, percent: 5, message: "Starting premium systems..." },
-                    { time: 2000, percent: 20, message: "Loading luxury modules..." },
-                    { time: 3500, percent: 35, message: "Initializing secure database..." },
-                    { time: 5000, percent: 50, message: "Halfway there..." },
-                    { time: 6500, percent: 65, message: "Optimizing performance..." },
-                    { time: 8000, percent: 80, message: "Finalizing components..." },
-                    { time: 9500, percent: 95, message: "Almost ready..." },
-                    { time: 10000, percent: 100, message: "Ready to launch..." }
-                ];
-                
-                const startTime = Date.now();
-                const totalDuration = 11000; // 11 seconds total
-                
-                function update() {
-                    const elapsed = Date.now() - startTime;
-                    const progress = Math.min(elapsed / totalDuration, 1);
-                    
-                    // Find current milestone
-                    let currentMilestone = milestones[milestones.length - 1];
-                    for (const milestone of milestones) {
-                        if (elapsed >= milestone.time) {
-                            currentMilestone = milestone;
-                        } else {
-                            break;
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d')
+            const revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                    datasets: [{
+                        label: 'Pendapatan (Juta Rupiah)',
+                        data: [45, 52, 48, 55, 58, 65, 72, 68, 74, 80, 85, 90],
+                        backgroundColor: 'rgba(13, 71, 161, 0.7)',
+                        borderColor: 'rgba(13, 71, 161, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Pendapatan Bulanan Tahun 2023'
                         }
                     }
-                    
-                    // Update UI
-                    progressBar.style.width = `${currentMilestone.percent}%`;
-                    percentageElement.textContent = `${currentMilestone.percent}%`;
-                    loadingTimeElement.textContent = currentMilestone.message;
-                    
-                    // Enhanced effects at different percentages
-                    if (currentMilestone.percent > 50) {
-                        progressBar.style.boxShadow = `0 0 10px rgba(0, 210, 255, 0.6)`;
-                    }
-                    if (currentMilestone.percent > 80) {
-                        progressBar.style.boxShadow = `0 0 15px rgba(255, 215, 0, 0.7)`;
-                    }
-                    
-                    // Handle completion
-                    if (currentMilestone.percent === 100) {
-                        if (elapsed >= totalDuration - 800) {
-                            loadingContainer.classList.add('fade-out');
-                            setTimeout(() => {
-                                loadingContainer.style.display = 'none';
-                                portalContainer.classList.add('active');
-                            }, 800);
-                        } else {
-                            const remaining = (totalDuration - elapsed) / 1000;
-                            loadingTimeElement.textContent = `Launching in ${remaining.toFixed(1)}s...`;
+                }
+            })
+            
+            // Occupancy Chart
+            const occupancyCtx = document.getElementById('occupancyChart').getContext('2d')
+            const occupancyChart = new Chart(occupancyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Terisi', 'Tersedia', 'Maintenance'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: [
+                            'rgba(13, 71, 161, 0.8)',
+                            'rgba(0, 105, 92, 0.8)',
+                            'rgba(255, 143, 0, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(13, 71, 161, 1)',
+                            'rgba(0, 105, 92, 1)',
+                            'rgba(255, 143, 0, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tingkat Okupansi Kamar'
                         }
                     }
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(update);
-                    }
                 }
-                
-                update();
-            }
-            
-            // Preload logo image
-            const logoImage = new Image();
-            logoImage.src = 'https://raw.githubusercontent.com/disnakkansitubondo-web/loading/refs/heads/main/logo-barjas.png';
-            logoImage.onload = () => {
-                createParticles();
-                setTimeout(startLoadingAnimation, 300);
-            };
-            
-            // Handle resize with debounce
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    createParticles();
-                }, 200);
-            });
-        });
+            })
+        })
+        
+        // Show toast on page load for demo
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                showToast('Selamat datang di Hotel Management System!')
+            }, 1000)
+        })
     </script>
 </body>
 </html>
