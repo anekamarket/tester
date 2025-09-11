@@ -591,413 +591,966 @@
             background-color: #17a2b8;
         }
         
-        /* Invoice styles */
-        .invoice-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .invoice-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eee;
-        }
-        
-        .invoice-logo {
-            font-size: 2.5rem;
-            color: var(--hotel-primary);
-            margin-bottom: 10px;
-        }
-        
-        .invoice-details {
-            margin-bottom: 20px;
-        }
-        
-        .invoice-items {
-            margin-bottom: 20px;
-        }
-        
-        .invoice-totals {
-            border-top: 2px solid #eee;
-            padding-top: 20px;
-            margin-top: 20px;
-        }
-        
-        /* Modal styles */
-        .modal-content {
-            border-radius: 15px;
-            overflow: hidden;
-            border: none;
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .modal-header {
-            background: var(--hotel-gradient);
-            color: white;
-        }
-        
-        /* Room card styles */
-        .room-card {
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .room-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        /* Guest photo placeholder */
-        .guest-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            color: #999;
+        /* Loading spinner */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.2em;
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <button class="mobile-menu-btn no-print" id="mobileMenuBtn">
         <i class="fas fa-bars"></i>
     </button>
     
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-overlay no-print" id="sidebarOverlay"></div>
     
-    <div class="app-container">
-        <div class="app-header">
-            <div class="app-logo">
-                <i class="fas fa-hotel"></i>
-            </div>
-            <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
-            <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
-            <div class="watermark">v2.0.1</div>
-        </div>
-        
-        <div class="row g-0">
-            <!-- Sidebar Navigation -->
-            <div class="col-md-3 col-lg-2 p-4 bg-light" id="sidebar">
-                <ul class="nav nav-pills flex-column mb-auto" id="mainNav">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active" data-target="dashboard">
-                            <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="reservations">
-                            <i class="fas fa-calendar-check feature-icon"></i> Reservasi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="guests">
-                            <i class="fas fa-users feature-icon"></i> Data Tamu
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="rooms">
-                            <i class="fas fa-bed feature-icon"></i> Manajemen Kamar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="billing">
-                            <i class="fas fa-receipt feature-icon"></i> Billing & Invoice
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="reports">
-                            <i class="fas fa-chart-bar feature-icon"></i> Laporan
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-target="settings">
-                            <i class="fas fa-cog feature-icon"></i> Pengaturan
-                        </a>
-                    </li>
-                </ul>
+    <div class="container-fluid app-container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light p-0 no-print" id="sidebar">
+                <div class="app-header d-md-none">
+                    <div class="app-logo">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h1 class="app-title">HOTEL MANAGEMENT</h1>
+                    <p class="app-subtitle">Sistem Manajemen Hotel</p>
+                </div>
                 
-                <div class="control-panel mt-4">
-                    <div class="control-title">Kontrol Cepat</div>
-                    <button class="btn btn-primary w-100 mb-2" id="newReservationBtn">
-                        <i class="fas fa-plus"></i> Reservasi Baru
-                    </button>
-                    <button class="btn btn-success w-100 mb-2" id="checkInBtn">
-                        <i class="fas fa-sign-in-alt"></i> Check-In
-                    </button>
-                    <button class="btn btn-warning w-100" id="checkOutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Check-Out
-                    </button>
+                <div class="p-3">
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt feature-icon"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="reservations">
+                                <i class="fas fa-calendar-check feature-icon"></i> Reservasi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="checkin">
+                                <i class="fas fa-sign-in-alt feature-icon"></i> Check-In
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="checkout">
+                                <i class="fas fa-sign-out-alt feature-icon"></i> Check-Out
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="rooms">
+                                <i class="fas fa-bed feature-icon"></i> Kamar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="guests">
+                                <i class="fas fa-users feature-icon"></i> Tamu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="reports">
+                                <i class="fas fa-chart-bar feature-icon"></i> Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="settings">
+                                <i class="fas fa-cog feature-icon"></i> Pengaturan
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="text-center">
+                        <button class="btn btn-sm btn-outline-secondary mb-2" id="toggleTheme">
+                            <i class="fas fa-moon"></i> Mode Gelap
+                        </button>
+                    </div>
                 </div>
             </div>
-            
+
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 p-5">
+            <div class="col-md-9 col-lg-10 p-4">
                 <!-- Dashboard Section -->
                 <div class="content-section" id="dashboard">
-                    <h3 class="section-title">Dashboard</h3>
-                    
-                    <div class="row">
-                        <div class="col-md-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="section-title">Dashboard</h2>
+                        <div>
+                            <span id="currentDateTime" class="badge bg-primary p-2">Senin, 1 Januari 2023 00:00:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Overview -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 col-sm-6">
                             <div class="stats-box">
-                                <i class="fas fa-users fa-2x text-primary"></i>
-                                <div class="stats-number" id="guestCount">42</div>
-                                <div class="stats-label">Tamu Check-In</div>
+                                <i class="fas fa-bed fa-2x text-primary"></i>
+                                <div class="stats-number" id="totalRooms">25</div>
+                                <div class="stats-label">Total Kamar</div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
                             <div class="stats-box">
-                                <i class="fas fa-bed fa-2x text-success"></i>
-                                <div class="stats-number" id="availableRooms">18</div>
+                                <i class="fas fa-users fa-2x text-success"></i>
+                                <div class="stats-number" id="occupiedRooms">12</div>
+                                <div class="stats-label">Kamar Terisi</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="stats-box">
+                                <i class="fas fa-user-check fa-2x text-info"></i>
+                                <div class="stats-number" id="availableRooms">8</div>
                                 <div class="stats-label">Kamar Tersedia</div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-sm-6">
                             <div class="stats-box">
-                                <i class="fas fa-calendar-day fa-2x text-warning"></i>
-                                <div class="stats-number" id="todayCheckins">7</div>
-                                <div class="stats-label">Check-In Hari Ini</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-box">
-                                <i class="fas fa-money-bill-wave fa-2x text-info"></i>
-                                <div class="stats-number" id="todayRevenue">Rp 12.450.000</div>
-                                <div class="stats-label">Pendapatan Hari Ini</div>
+                                <i class="fas fa-tools fa-2x text-warning"></i>
+                                <div class="stats-number" id="maintenanceRooms">5</div>
+                                <div class="stats-label">Dalam Perawatan</div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-line"></i> Statistik Pendapatan Bulanan
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="revenueChart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-pie"></i> Tingkat Okupansi Kamar
+
+                    <!-- Recent Activities and Occupancy -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-chart-line me-2"></i> Tingkat Okupansi (Mingguan)</span>
+                                    <button class="btn btn-sm btn-outline-light">
+                                        <i class="fas fa-download"></i> Unduh
+                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <canvas id="occupancyChart" height="250"></canvas>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-4">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-bell me-2"></i> Aktivitas Terbaru
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush" id="recentActivities">
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Kamar 101 Check-Out</span>
+                                                <small class="text-muted">2 jam lalu</small>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Kamar 205 Check-In</span>
+                                                <small class="text-muted">5 jam lalu</small>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Reservasi Baru #1234</span>
+                                                <small class="text-muted">10 jam lalu</small>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Pembaruan Tarif Kamar</span>
+                                                <small class="text-muted">1 hari lalu</small>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Kamar 307 Maintenance</span>
+                                                <small class="text-muted">2 hari lalu</small>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="row mt-4">
+
+                    <!-- Quick Actions -->
+                    <div class="row">
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <span><i class="fas fa-list"></i> Reservasi Terbaru</span>
-                                    <button class="btn btn-sm btn-primary" id="viewAllReservations">Lihat Semua</button>
+                                <div class="card-header">
+                                    <i class="fas fa-bolt me-2"></i> Akses Cepat
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table data-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Nama Tamu</th>
-                                                    <th>Tipe Kamar</th>
-                                                    <th>Check-In</th>
-                                                    <th>Check-Out</th>
-                                                    <th>Status</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="recentReservations">
-                                                <tr>
-                                                    <td>RES001</td>
-                                                    <td>Budi Santoso</td>
-                                                    <td>Deluxe</td>
-                                                    <td>12/09/2023</td>
-                                                    <td>15/09/2023</td>
-                                                    <td><span class="badge bg-success">Check-In</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-info view-reservation" data-id="RES001">Detail</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>RES002</td>
-                                                    <td>Siti Rahayu</td>
-                                                    <td>Suite</td>
-                                                    <td>13/09/2023</td>
-                                                    <td>16/09/2023</td>
-                                                    <td><span class="badge bg-warning">Booking</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-info view-reservation" data-id="RES002">Detail</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>RES003</td>
-                                                    <td>Agus Prasetyo</td>
-                                                    <td>Standard</td>
-                                                    <td>14/09/2023</td>
-                                                    <td>17/09/2023</td>
-                                                    <td><span class="badge bg-primary">Confirmed</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-info view-reservation" data-id="RES003">Detail</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>RES004</td>
-                                                    <td>Dewi Anggraini</td>
-                                                    <td>Family</td>
-                                                    <td>15/09/2023</td>
-                                                    <td>18/09/2023</td>
-                                                    <td><span class="badge bg-secondary">Pending</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-info view-reservation" data-id="RES004">Detail</button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button class="btn btn-primary" data-section="reservations">
+                                            <i class="fas fa-plus me-1"></i> Reservasi Baru
+                                        </button>
+                                        <button class="btn btn-success" data-section="checkin">
+                                            <i class="fas fa-sign-in-alt me-1"></i> Check-In
+                                        </button>
+                                        <button class="btn btn-warning" data-section="checkout">
+                                            <i class="fas fa-sign-out-alt me-1"></i> Check-Out
+                                        </button>
+                                        <button class="btn btn-info" data-section="guests">
+                                            <i class="fas fa-user-plus me-1"></i> Tamu Baru
+                                        </button>
+                                        <button class="btn btn-secondary" data-section="rooms">
+                                            <i class="fas fa-bed me-1"></i> Kelola Kamar
+                                        </button>
+                                        <button class="btn btn-danger">
+                                            <i class="fas fa-print me-1"></i> Cetak Laporan
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Reservations Section -->
                 <div class="content-section d-none" id="reservations">
-                    <h3 class="section-title">Manajemen Reservasi</h3>
+                    <h2 class="section-title">Manajemen Reservasi</h2>
                     
-                    <div class="filter-section">
+                    <div class="filter-section mb-4">
                         <div class="row">
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" id="filterStatus">
-                                        <option value="">Semua Status</option>
-                                        <option value="pending">Pending</option>
-                                        <option value="confirmed">Confirmed</option>
-                                        <option value="checked-in">Check-In</option>
-                                        <option value="checked-out">Check-Out</option>
-                                        <option value="cancelled">Cancelled</option>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-search"></i> Cari</label>
+                                    <input type="text" class="form-control" placeholder="Cari reservasi...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-filter"></i> Status</label>
+                                    <select class="form-select">
+                                        <option>Semua Status</option>
+                                        <option>Dikonfirmasi</option>
+                                        <option>Pending</option>
+                                        <option>Dibatalkan</option>
+                                        <option>Selesai</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label">Tanggal Check-In</label>
-                                    <input type="date" class="form-control" id="filterCheckIn">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar"></i> Dari Tanggal</label>
+                                    <input type="text" class="form-control datepicker" placeholder="Pilih tanggal">
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label">Tanggal Check-Out</label>
-                                    <input type="date" class="form-control" id="filterCheckOut">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar"></i> Sampai Tanggal</label>
+                                    <input type="text" class="form-control datepicker" placeholder="Pilih tanggal">
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label">&nbsp;</label>
-                                    <button class="btn btn-primary w-100" id="applyFilterBtn">Terapkan Filter</button>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary me-2">
+                                <i class="fas fa-filter me-1"></i> Terapkan Filter
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-sync me-1"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="m-0">Daftar Reservasi</h5>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
+                            <i class="fas fa-plus me-1"></i> Reservasi Baru
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tamu</th>
+                                    <th>Kamar</th>
+                                    <th>Check-In</th>
+                                    <th>Check-Out</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>RES-001</td>
+                                    <td>Budi Santoso</td>
+                                    <td>101 (Standard)</td>
+                                    <td>15 Jun 2023</td>
+                                    <td>17 Jun 2023</td>
+                                    <td><span class="badge bg-success">Dikonfirmasi</span></td>
+                                    <td>Rp 800.000</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                        <button class="btn btn-sm btn-danger">Batalkan</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>RES-002</td>
+                                    <td>Siti Rahayu</td>
+                                    <td>201 (Deluxe)</td>
+                                    <td>20 Jun 2023</td>
+                                    <td>25 Jun 2023</td>
+                                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                    <td>Rp 1.500.000</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                        <button class="btn btn-sm btn-success">Konfirmasi</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>RES-003</td>
+                                    <td>Ahmad Fauzi</td>
+                                    <td>305 (Suite)</td>
+                                    <td>10 Jul 2023</td>
+                                    <td>15 Jul 2023</td>
+                                    <td><span class="badge bg-success">Dikonfirmasi</span></td>
+                                    <td>Rp 3.250.000</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                        <button class="btn btn-sm btn-danger">Batalkan</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>RES-004</td>
+                                    <td>Dewi Anggraini</td>
+                                    <td>102 (Standard)</td>
+                                    <td>05 Jun 2023</td>
+                                    <td>07 Jun 2023</td>
+                                    <td><span class="badge bg-secondary">Selesai</span></td>
+                                    <td>Rp 600.000</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-secondary">Invoice</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>RES-005</td>
+                                    <td>Rudi Hermawan</td>
+                                    <td>202 (Deluxe)</td>
+                                    <td>18 Jun 2023</td>
+                                    <td>20 Jun 2023</td>
+                                    <td><span class="badge bg-danger">Dibatalkan</span></td>
+                                    <td>Rp 900.000</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-secondary">Hapus</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Sebelumnya</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Selanjutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Check-In Section -->
+                <div class="content-section d-none" id="checkin">
+                    <h2 class="section-title">Proses Check-In</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-info-circle me-2"></i> Informasi Check-In
+                                </div>
+                                <div class="card-body">
+                                    <p>Gunakan fitur ini untuk melakukan check-in tamu yang telah melakukan reservasi atau tamu walk-in.</p>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-lightbulb me-2"></i> 
+                                        <strong>Tip:</strong> Cari reservasi berdasarkan nama tamu, ID reservasi, atau tanggal untuk proses yang lebih cepat.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-search me-2"></i> Cari Reservasi
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">ID Reservasi atau Nama Tamu</label>
+                                        <input type="text" class="form-control" placeholder="Masukkan ID reservasi atau nama tamu">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tanggal Check-In</label>
+                                        <input type="text" class="form-control datepicker" placeholder="Pilih tanggal check-in">
+                                    </div>
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-search me-1"></i> Cari Reservasi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-user-check me-2"></i> Form Check-In
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">ID Reservasi</label>
+                                        <input type="text" class="form-control" value="RES-002" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Tamu</label>
+                                        <input type="text" class="form-control" value="Siti Rahayu" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Kamar yang Dipesan</label>
+                                        <input type="text" class="form-control" value="201 (Deluxe)" readonly>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Tanggal Check-In</label>
+                                                <input type="text" class="form-control datepicker" value="20 Jun 2023">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Waktu Check-In</label>
+                                                <input type="time" class="form-control" value="14:00">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Metode Pembayaran</label>
+                                        <select class="form-select">
+                                            <option>Transfer Bank</option>
+                                            <option selected>Tunai</option>
+                                            <option>Kartu Kredit</option>
+                                            <option>Debit</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Jumlah Dibayar</label>
+                                        <input type="text" class="form-control" value="Rp 1.500.000">
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="agreeTerms">
+                                        <label class="form-check-label" for="agreeTerms">Saya telah memverifikasi identitas tamu dan informasi pembayaran</label>
+                                    </div>
+                                    <button class="btn btn-success w-100">
+                                        <i class="fas fa-check-circle me-1"></i> Proses Check-In
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Check-Out Section -->
+                <div class="content-section d-none" id="checkout">
+                    <h2 class="section-title">Proses Check-Out</h2>
                     
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span><i class="fas fa-list"></i> Daftar Reservasi</span>
-                            <button class="btn btn-sm btn-primary" id="addReservationBtn">
-                                <i class="fas fa-plus"></i> Tambah Reservasi
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-info-circle me-2"></i> Informasi Check-Out
+                                </div>
+                                <div class="card-body">
+                                    <p>Gunakan fitur ini untuk melakukan check-out tamu yang telah menyelesaikan masa inap.</p>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i> 
+                                        <strong>Perhatian:</strong> Pastikan semua tagihan tambahan telah dimasukkan sebelum proses check-out.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-search me-2"></i> Cari Tamu Check-Out
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Kamar atau Nama Tamu</label>
+                                        <input type="text" class="form-control" placeholder="Masukkan nomor kamar atau nama tamu">
+                                    </div>
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-search me-1"></i> Cari
+                                    </button>
+                                    
+                                    <hr>
+                                    
+                                    <h6 class="mb-3">Tamu yang Akan Check-Out Hari Ini</h6>
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Kamar 101 - Budi Santoso</h6>
+                                                <small>14:00</small>
+                                            </div>
+                                            <p class="mb-1">Check-out: Hari ini</p>
+                                            <small>RES-001</small>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Kamar 305 - Ahmad Fauzi</h6>
+                                                <small>12:00</small>
+                                            </div>
+                                            <p class="mb-1">Check-out: Hari ini</p>
+                                            <small>RES-003</small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-receipt me-2"></i> Detail Check-Out dan Tagihan
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="border p-3 rounded">
+                                                <h6>Informasi Tamu</h6>
+                                                <p class="mb-1"><strong>Nama:</strong> Budi Santoso</p>
+                                                <p class="mb-1"><strong>Kamar:</strong> 101 (Standard)</p>
+                                                <p class="mb-1"><strong>Check-In:</strong> 15 Jun 2023</p>
+                                                <p class="mb-0"><strong>Check-Out:</strong> 17 Jun 2023</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border p-3 rounded">
+                                                <h6>Detail Reservasi</h6>
+                                                <p class="mb-1"><strong>ID Reservasi:</strong> RES-001</p>
+                                                <p class="mb-1"><strong>Durasi:</strong> 2 Malam</p>
+                                                <p class="mb-1"><strong>Tarif Kamar:</strong> Rp 400.000/malam</p>
+                                                <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Aktif</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h6>Tagihan Tambahan</h6>
+                                    <div class="table-responsive mb-4">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Deskripsi</th>
+                                                    <th>Jumlah</th>
+                                                    <th>Harga</th>
+                                                    <th>Total</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Minibar</td>
+                                                    <td>2</td>
+                                                    <td>Rp 50.000</td>
+                                                    <td>Rp 100.000</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Laundry</td>
+                                                    <td>1</td>
+                                                    <td>Rp 75.000</td>
+                                                    <td>Rp 75.000</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-plus me-1"></i> Tambah Item
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="border p-3 rounded mb-3">
+                                                <h6>Ringkasan Pembayaran</h6>
+                                                <table class="table table-sm table-borderless">
+                                                    <tr>
+                                                        <td>Subtotal Kamar</td>
+                                                        <td class="text-end">Rp 800.000</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tagihan Tambahan</td>
+                                                        <td class="text-end">Rp 175.000</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Pajak (10%)</td>
+                                                        <td class="text-end">Rp 97.500</td>
+                                                    </tr>
+                                                    <tr class="fw-bold">
+                                                        <td>Total</td>
+                                                        <td class="text-end">Rp 1.072.500</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Sudah Dibayar</td>
+                                                        <td class="text-end">Rp 800.000</td>
+                                                    </tr>
+                                                    <tr class="fw-bold text-primary">
+                                                        <td>Sisa Pembayaran</td>
+                                                        <td class="text-end">Rp 272.500</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="border p-3 rounded">
+                                                <h6>Pembayaran</h6>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Metode Pembayaran</label>
+                                                    <select class="form-select">
+                                                        <option>Tunai</option>
+                                                        <option>Transfer Bank</option>
+                                                        <option>Kartu Kredit</option>
+                                                        <option>Debit</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Jumlah Dibayar</label>
+                                                    <input type="text" class="form-control" value="Rp 272.500">
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" id="confirmPayment">
+                                                    <label class="form-check-label" for="confirmPayment">
+                                                        Konfirmasi pembayaran telah diterima
+                                                    </label>
+                                                </div>
+                                                <button class="btn btn-success w-100">
+                                                    <i class="fas fa-check-circle me-1"></i> Proses Check-Out
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rooms Section -->
+                <div class="content-section d-none" id="rooms">
+                    <h2 class="section-title">Manajemen Kamar</h2>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-9">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary active">Semua Kamar</button>
+                                <button type="button" class="btn btn-outline-primary">Tersedia</button>
+                                <button type="button" class="btn btn-outline-primary">Terisi</button>
+                                <button type="button" class="btn btn-outline-primary">Perawatan</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                                <i class="fas fa-plus me-1"></i> Tambah Kamar
                             </button>
+                        </div>
+                    </div>
+
+                    <div class="row" id="roomGrid">
+                        <!-- Room cards will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Guests Section -->
+                <div class="content-section d-none" id="guests">
+                    <h2 class="section-title">Manajemen Tamu</h2>
+                    
+                    <div class="filter-section mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-search"></i> Cari Tamu</label>
+                                    <input type="text" class="form-control" placeholder="Nama, email, atau telepon">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-filter"></i> Status</label>
+                                    <select class="form-select">
+                                        <option>Semua Status</option>
+                                        <option>Sedang Menginap</option>
+                                        <option>Sudah Check-Out</option>
+                                        <option>Reservasi</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-calendar"></i> Periode</label>
+                                    <input type="text" class="form-control datepicker" placeholder="Pilih periode">
+                                </div>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-primary w-100">
+                                    <i class="fas fa-filter me-1"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Telepon</th>
+                                    <th>Kamar</th>
+                                    <th>Check-In</th>
+                                    <th>Check-Out</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>G-001</td>
+                                    <td>Budi Santoso</td>
+                                    <td>budi@email.com</td>
+                                    <td>08123456789</td>
+                                    <td>101</td>
+                                    <td>15 Jun 2023</td>
+                                    <td>17 Jun 2023</td>
+                                    <td><span class="badge bg-success">Sedang Menginap</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>G-002</td>
+                                    <td>Siti Rahayu</td>
+                                    <td>siti@email.com</td>
+                                    <td>08129876543</td>
+                                    <td>201</td>
+                                    <td>20 Jun 2023</td>
+                                    <td>25 Jun 2023</td>
+                                    <td><span class="badge bg-warning text-dark">Reservasi</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>G-003</td>
+                                    <td>Ahmad Fauzi</td>
+                                    <td>ahmad@email.com</td>
+                                    <td>082112345678</td>
+                                    <td>305</td>
+                                    <td>10 Jul 2023</td>
+                                    <td>15 Jul 2023</td>
+                                    <td><span class="badge bg-warning text-dark">Reservasi</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>G-004</td>
+                                    <td>Dewi Anggraini</td>
+                                    <td>dewi@email.com</td>
+                                    <td>081387654321</td>
+                                    <td>102</td>
+                                    <td>05 Jun 2023</td>
+                                    <td>07 Jun 2023</td>
+                                    <td><span class="badge bg-secondary">Sudah Check-Out</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>G-005</td>
+                                    <td>Rudi Hermawan</td>
+                                    <td>rudi@email.com</td>
+                                    <td>085678901234</td>
+                                    <td>202</td>
+                                    <td>18 Jun 2023</td>
+                                    <td>20 Jun 2023</td>
+                                    <td><span class="badge bg-danger">Dibatalkan</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">Detail</button>
+                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Sebelumnya</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Selanjutnya</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="content-section d-none" id="reports">
+                    <h2 class="section-title">Laporan dan Analitik</h2>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-chart-bar me-2"></i> Laporan Pendapatan
+                                </div>
+                                <div class="card-body">
+                                    <p>Generate laporan pendapatan berdasarkan periode tertentu.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Periode</label>
+                                        <select class="form-select">
+                                            <option>Hari Ini</option>
+                                            <option>Minggu Ini</option>
+                                            <option selected>Bulan Ini</option>
+                                            <option>Kuartal Ini</option>
+                                            <option>Tahun Ini</option>
+                                            <option>Periode Kustom</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-download me-1"></i> Generate Laporan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-bed me-2"></i> Laporan Okupansi
+                                </div>
+                                <div class="card-body">
+                                    <p>Laporan tingkat okupansi kamar dan statistik penggunaan.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Periode</label>
+                                        <select class="form-select">
+                                            <option>Hari Ini</option>
+                                            <option>Minggu Ini</option>
+                                            <option selected>Bulan Ini</option>
+                                            <option>Kuartal Ini</option>
+                                            <option>Tahun Ini</option>
+                                            <option>Periode Kustom</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-download me-1"></i> Generate Laporan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <i class="fas fa-users me-2"></i> Laporan Tamu
+                                </div>
+                                <div class="card-body">
+                                    <p>Laporan data tamu dan preferensi.</p>
+                                    <div class="mb-3">
+                                        <label class="form-label">Jenis Laporan</label>
+                                        <select class="form-select">
+                                            <option>Data Tamu</option>
+                                            <option>Kebangsaan</option>
+                                            <option>Preferensi</option>
+                                            <option>Ulasan</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-100">
+                                        <i class="fas fa-download me-1"></i> Generate Laporan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-history me-2"></i> Riwayat Laporan
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table data-table">
+                                <table class="table table-hover data-table">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Nama Tamu</th>
-                                            <th>Tipe Kamar</th>
-                                            <th>Check-In</th>
-                                            <th>Check-Out</th>
-                                            <th>Total</th>
-                                            <th>Status</th>
+                                            <th>Nama Laporan</th>
+                                            <th>Jenis</th>
+                                            <th>Periode</th>
+                                            <th>Dibuat Pada</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="reservationsTable">
+                                    <tbody>
                                         <tr>
-                                            <td>RES001</td>
-                                            <td>Budi Santoso</td>
-                                            <td>Deluxe</td>
-                                            <td>12/09/2023</td>
-                                            <td>15/09/2023</td>
-                                            <td>Rp 2.250.000</td>
-                                            <td><span class="badge bg-success">Check-In</span></td>
+                                            <td>Laporan Pendapatan Juni 2023</td>
+                                            <td>Pendapatan</td>
+                                            <td>1 Jun 2023 - 30 Jun 2023</td>
+                                            <td>1 Jul 2023 10:30</td>
                                             <td>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-sm btn-info view-reservation" data-id="RES001">Detail</button>
-                                                    <button class="btn btn-sm btn-warning edit-reservation" data-id="RES001">Edit</button>
-                                                    <button class="btn btn-sm btn-danger cancel-reservation" data-id="RES001">Batal</button>
-                                                </div>
+                                                <button class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-download me-1"></i> Unduh
+                                                </button>
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>RES002</td>
-                                            <td>Siti Rahayu</td>
-                                            <td>Suite</td>
-                                            <td>13/09/2023</td>
-                                            <td>16/09/2023</td>
-                                            <td>Rp 3.600.000</td>
-                                            <td><span class="badge bg-warning">Booking</span></td>
+                                            <td>Laporan Okupansi Q2 2023</td>
+                                            <td>Okupansi</td>
+                                            <td>1 Apr 2023 - 30 Jun 2023</td>
+                                            <td>2 Jul 2023 14:15</td>
                                             <td>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-sm btn-info view-reservation" data-id="RES002">Detail</button>
-                                                    <button class="btn btn-sm btn-warning edit-reservation" data-id="RES002">Edit</button>
-                                                    <button class="btn btn-sm btn-danger cancel-reservation" data-id="RES002">Batal</button>
-                                                </div>
+                                                <button class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-download me-1"></i> Unduh
+                                                </button>
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>RES003</td>
-                                            <td>Agus Prasetyo</td>
-                                            <td>Standard</td>
-                                            <td>14/09/2023</td>
-                                            <td>17/09/2023</td>
-                                            <td>Rp 1.350.000</td>
-                                            <td><span class="badge bg-primary">Confirmed</span></td>
+                                            <td>Data Tamu Mei 2023</td>
+                                            <td>Tamu</td>
+                                            <td>1 Mei 2023 - 31 Mei 2023</td>
+                                            <td>1 Jun 2023 09:45</td>
                                             <td>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-sm btn-info view-reservation" data-id="RES003">Detail</button>
-                                                    <button class="btn btn-sm btn-warning edit-reservation" data-id="RES003">Edit</button>
-                                                    <button class="btn btn-sm btn-danger cancel-reservation" data-id="RES003">Batal</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>RES004</td>
-                                            <td>Dewi Anggraini</td>
-                                            <td>Family</td>
-                                            <td>15/09/2023</td>
-                                            <td>18/09/2023</td>
-                                            <td>Rp 3.150.000</td>
-                                            <td><span class="badge bg-secondary">Pending</span></td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-sm btn-info view-reservation" data-id="RES004">Detail</button>
-                                                    <button class="btn btn-sm btn-warning edit-reservation" data-id="RES004">Edit</button>
-                                                    <button class="btn btn-sm btn-danger cancel-reservation" data-id="RES004">Batal</button>
-                                                </div>
+                                                <button class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-download me-1"></i> Unduh
+                                                </button>
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash me-1"></i> Hapus
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -1006,521 +1559,900 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Billing Section -->
-                <div class="content-section d-none" id="billing">
-                    <h3 class="section-title">Billing & Invoice</h3>
+
+                <!-- Settings Section -->
+                <div class="content-section d-none" id="settings">
+                    <h2 class="section-title">Pengaturan Sistem</h2>
                     
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-file-invoice-dollar"></i> Generate Invoice
+                        <div class="col-md-3">
+                            <div class="list-group mb-4" id="settingsMenu">
+                                <a href="#" class="list-group-item list-group-item-action active" data-settings-tab="general">
+                                    <i class="fas fa-cog me-2"></i> Umum
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" data-settings-tab="room-types">
+                                    <i class="fas fa-bed me-2"></i> Tipe Kamar
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" data-settings-tab="taxes">
+                                    <i class="fas fa-percent me-2"></i> Pajak & Biaya
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" data-settings-tab="users">
+                                    <i class="fas fa-users me-2"></i> Pengguna
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action" data-settings-tab="backup">
+                                    <i class="fas fa-database me-2"></i> Backup & Restore
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-9">
+                            <div class="settings-content">
+                                <!-- General Settings -->
+                                <div class="settings-tab-content" id="general-settings">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-cog me-2"></i> Pengaturan Umum
+                                        </div>
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Nama Hotel</label>
+                                                            <input type="text" class="form-control" value="Grand Luxury Hotel">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Mata Uang</label>
+                                                            <select class="form-select">
+                                                                <option>IDR (Rupiah Indonesia)</option>
+                                                                <option>USD (Dolar Amerika)</option>
+                                                                <option>EUR (Euro)</option>
+                                                                <option>SGD (Dolar Singapura)</option>
+                                                                <option>MYR (Ringgit Malaysia)</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Zona Waktu</label>
+                                                            <select class="form-select">
+                                                                <option selected>Asia/Jakarta (WIB)</option>
+                                                                <option>Asia/Makassar (WITA)</option>
+                                                                <option>Asia/Jayapura (WIT)</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Format Tanggal</label>
+                                                            <select class="form-select">
+                                                                <option selected>DD/MM/YYYY</option>
+                                                                <option>MM/DD/YYYY</option>
+                                                                <option>YYYY-MM-DD</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Alamat Hotel</label>
+                                                    <textarea class="form-control" rows="3">Jl. Contoh No. 123, Jakarta Selatan, Indonesia</textarea>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Telepon</label>
+                                                            <input type="text" class="form-control" value="+62 21 1234567">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Email</label>
+                                                            <input type="email" class="form-control" value="info@grandluxuryhotel.com">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save me-1"></i> Simpan Pengaturan
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <form id="billingForm">
-                                        <div class="mb-3">
-                                            <label class="form-label">Pilih Reservasi</label>
-                                            <select class="form-select" id="reservationSelect" required>
-                                                <option value="">-- Pilih Reservasi --</option>
-                                                <option value="RES001">RES001 - Budi Santoso</option>
-                                                <option value="RES002">RES002 - Siti Rahayu</option>
-                                                <option value="RES003">RES003 - Agus Prasetyo</option>
-                                                <option value="RES004">RES004 - Dewi Anggraini</option>
-                                            </select>
+                                
+                                <!-- Room Types Settings -->
+                                <div class="settings-tab-content d-none" id="room-types-settings">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-bed me-2"></i> Tipe Kamar</span>
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-plus me-1"></i> Tambah Tipe Kamar
+                                            </button>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Tambahan Layanan</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input service-check" type="checkbox" value="100000" id="breakfast" data-name="Sarapan">
-                                                <label class="form-check-label" for="breakfast">
-                                                    Sarapan (Rp 100.000)
-                                                </label>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nama</th>
+                                                            <th>Deskripsi</th>
+                                                            <th>Kapasitas</th>
+                                                            <th>Harga Per Malam</th>
+                                                            <th>Jumlah Kamar</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Standard</td>
+                                                            <td>Kamar dengan fasilitas standar</td>
+                                                            <td>2 Orang</td>
+                                                            <td>Rp 400.000</td>
+                                                            <td>10</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Hapus</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Deluxe</td>
+                                                            <td>Kamar dengan fasilitas lebih lengkap</td>
+                                                            <td>2 Orang</td>
+                                                            <td>Rp 650.000</td>
+                                                            <td>8</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Hapus</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Suite</td>
+                                                            <td>Kamar mewah dengan ruang tamu terpisah</td>
+                                                            <td>3 Orang</td>
+                                                            <td>Rp 1.200.000</td>
+                                                            <td>5</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Hapus</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Executive</td>
+                                                            <td>Kamar dengan fasilitas eksekutif</td>
+                                                            <td>2 Orang</td>
+                                                            <td>Rp 850.000</td>
+                                                            <td>4</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Hapus</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Presidential</td>
+                                                            <td>Kamar terbaik dengan fasilitas lengkap</td>
+                                                            <td>4 Orang</td>
+                                                            <td>Rp 2.500.000</td>
+                                                            <td>2</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Hapus</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input service-check" type="checkbox" value="250000" id="laundry" data-name="Laundry">
-                                                <label class="form-check-label" for="laundry">
-                                                    Laundry (Rp 250.000)
-                                                </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Taxes Settings -->
+                                <div class="settings-tab-content d-none" id="taxes-settings">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-percent me-2"></i> Pajak & Biaya
+                                        </div>
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Pajak Pertambahan Nilai (PPN)</label>
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" value="10">
+                                                                <span class="input-group-text">%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Pajak Pelayanan</label>
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" value="5">
+                                                                <span class="input-group-text">%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Biaya Tambahan Lainnya</label>
+                                                    <div class="input-group mb-2">
+                                                        <span class="input-group-text">Nama</span>
+                                                        <input type="text" class="form-control" placeholder="Nama biaya">
+                                                        <span class="input-group-text">Jumlah</span>
+                                                        <input type="number" class="form-control" placeholder="0">
+                                                        <button class="btn btn-outline-danger" type="button">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-plus me-1"></i> Tambah Biaya
+                                                    </button>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-save me-1"></i> Simpan Pengaturan
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Users Settings -->
+                                <div class="settings-tab-content d-none" id="users-settings">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-users me-2"></i> Manajemen Pengguna</span>
+                                            <button class="btn btn-sm btn-primary">
+                                                <i class="fas fa-plus me-1"></i> Tambah Pengguna
+                                            </button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nama</th>
+                                                            <th>Email</th>
+                                                            <th>Role</th>
+                                                            <th>Status</th>
+                                                            <th>Terakhir Login</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Admin Utama</td>
+                                                            <td>admin@hotel.com</td>
+                                                            <td>Administrator</td>
+                                                            <td><span class="badge bg-success">Aktif</span></td>
+                                                            <td>17 Jun 2023 14:30</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Nonaktifkan</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Resepsionis 1</td>
+                                                            <td>resepsionis1@hotel.com</td>
+                                                            <td>Resepsionis</td>
+                                                            <td><span class="badge bg-success">Aktif</span></td>
+                                                            <td>17 Jun 2023 10:15</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Nonaktifkan</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Manajer</td>
+                                                            <td>manajer@hotel.com</td>
+                                                            <td>Manajer</td>
+                                                            <td><span class="badge bg-success">Aktif</span></td>
+                                                            <td>16 Jun 2023 16:45</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-danger">Nonaktifkan</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Resepsionis 2</td>
+                                                            <td>resepsionis2@hotel.com</td>
+                                                            <td>Resepsionis</td>
+                                                            <td><span class="badge bg-secondary">Nonaktif</span></td>
+                                                            <td>10 Jun 2023 09:20</td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-warning">Edit</button>
+                                                                <button class="btn btn-sm btn-success">Aktifkan</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input service-check" type="checkbox" value="150000" id="spa" data-name="Spa">
-                                                <label class="form-check-label" for="spa">
-                                                    Spa (Rp 150.000)
-                                                </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Backup Settings -->
+                                <div class="settings-tab-content d-none" id="backup-settings">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-database me-2"></i> Backup & Restore
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row mb-4">
+                                                <div class="col-md-6">
+                                                    <div class="card h-100">
+                                                        <div class="card-header">
+                                                            <i class="fas fa-download me-2"></i> Backup Database
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <p>Buat cadangan database sistem untuk keamanan data.</p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Jenis Backup</label>
+                                                                <select class="form-select">
+                                                                    <option>Backup Lengkap</option>
+                                                                    <option>Hanya Data</option>
+                                                                    <option>Hanya Struktur</option>
+                                                                </select>
+                                                            </div>
+                                                            <button class="btn btn-primary w-100">
+                                                                <i class="fas fa-download me-1"></i> Buat Backup
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100">
+                                                        <div class="card-header">
+                                                            <i class="fas fa-upload me-2"></i> Restore Database
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <p>Pulihkan database dari cadangan sebelumnya.</p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Pilih File Backup</label>
+                                                                <input type="file" class="form-control">
+                                                            </div>
+                                                            <button class="btn btn-warning w-100">
+                                                                <i class="fas fa-upload me-1"></i> Restore Database
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <i class="fas fa-history me-2"></i> Riwayat Backup
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover data-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nama File</th>
+                                                                    <th>Tanggal</th>
+                                                                    <th>Ukuran</th>
+                                                                    <th>Jenis</th>
+                                                                    <th>Aksi</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>backup_20230617.sql</td>
+                                                                    <td>17 Jun 2023 00:00</td>
+                                                                    <td>5.2 MB</td>
+                                                                    <td>Lengkap</td>
+                                                                    <td>
+                                                                        <button class="btn btn-sm btn-primary">
+                                                                            <i class="fas fa-download me-1"></i> Unduh
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-danger">
+                                                                            <i class="fas fa-trash me-1"></i> Hapus
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>backup_20230610.sql</td>
+                                                                    <td>10 Jun 2023 00:00</td>
+                                                                    <td>4.8 MB</td>
+                                                                    <td>Lengkap</td>
+                                                                    <td>
+                                                                        <button class="btn btn-sm btn-primary">
+                                                                            <i class="fas fa-download me-1"></i> Unduh
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-danger">
+                                                                            <i class="fas fa-trash me-1"></i> Hapus
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>backup_20230603.sql</td>
+                                                                    <td>3 Jun 2023 00:00</td>
+                                                                    <td>4.5 MB</td>
+                                                                    <td>Lengkap</td>
+                                                                    <td>
+                                                                        <button class="btn btn-sm btn-primary">
+                                                                            <i class="fas fa-download me-1"></i> Unduh
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-danger">
+                                                                            <i class="fas fa-trash me-1"></i> Hapus
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Pajak (10%)</label>
-                                            <input type="text" class="form-control" value="Termasuk" disabled>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Diskon (jika ada)</label>
-                                            <input type="number" class="form-control" id="discountInput" placeholder="Masukkan jumlah diskon" min="0">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary w-100" id="generateInvoiceBtn">Generate Invoice</button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <i class="fas fa-receipt"></i> Preview Invoice
-                                </div>
-                                <div class="card-body">
-                                    <div class="invoice-container" id="invoicePreview">
-                                        <div class="invoice-header">
-                                            <div class="invoice-logo">
-                                                <i class="fas fa-hotel"></i>
-                                            </div>
-                                            <h4>HOTEL GRAND LUXURY</h4>
-                                            <p>Jl. Kemang Raya No. 12, Jakarta Selatan</p>
-                                            <p>Telp: (021) 12345678 | Email: info@grandluxuryhotel.com</p>
-                                        </div>
-                                        
-                                        <div class="invoice-details">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>No. Invoice:</strong> INV-20230915-001</p>
-                                                    <p><strong>Tanggal:</strong> 15 September 2023</p>
-                                                    <p><strong>Nama Tamu:</strong> Budi Santoso</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>No. Reservasi:</strong> RES001</p>
-                                                    <p><strong>Kamar:</strong> Deluxe - 301</p>
-                                                    <p><strong>Periode:</strong> 12/09/2023 - 15/09/2023 (3 Malam)</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="invoice-items">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Deskripsi</th>
-                                                        <th>Jumlah</th>
-                                                        <th>Harga</th>
-                                                        <th>Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Kamar Deluxe (3 malam)</td>
-                                                        <td>3</td>
-                                                        <td>Rp 750.000</td>
-                                                        <td>Rp 2.250.000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Sarapan</td>
-                                                        <td>3</td>
-                                                        <td>Rp 100.000</td>
-                                                        <td>Rp 300.000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="3">Pajak (10%)</td>
-                                                        <td>Rp 255.000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="3">Diskon</td>
-                                                        <td>Rp 0</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="invoice-totals">
-                                            <div class="row">
-                                                <div class="col-md-6"></div>
-                                                <div class="col-md-6">
-                                                    <div class="d-flex justify-content-between">
-                                                        <strong>Subtotal:</strong>
-                                                        <span>Rp 2.550.000</span>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between">
-                                                        <strong>Pajak (10%):</strong>
-                                                        <span>Rp 255.000</span>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between">
-                                                        <strong>Diskon:</strong>
-                                                        <span>Rp 0</span>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="d-flex justify-content-between">
-                                                        <strong>Total:</strong>
-                                                        <strong>Rp 2.805.000</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mt-4 text-center">
-                                            <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between mt-3 no-print">
-                                        <button class="btn btn-success" id="printBillBtn">
-                                            <i class="fas fa-print"></i> Cetak Bill
-                                        </button>
-                                        <button class="btn btn-primary" id="downloadPdfBtn">
-                                            <i class="fas fa-download"></i> Download PDF
-                                        </button>
-                                        <button class="btn btn-info" id="sendEmailBtn">
-                                            <i class="fas fa-paper-plane"></i> Kirim Email
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Other sections would be here -->
-                <div class="content-section d-none" id="guests">
-                    <h3 class="section-title">Data Tamu</h3>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Fitur manajemen tamu akan segera hadir.
-                    </div>
-                </div>
-                
-                <div class="content-section d-none" id="rooms">
-                    <h3 class="section-title">Manajemen Kamar</h3>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Fitur manajemen kamar akan segera hadir.
-                    </div>
-                </div>
-                
-                <div class="content-section d-none" id="reports">
-                    <h3 class="section-title">Laporan</h3>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Fitur laporan akan segera hadir.
-                    </div>
-                </div>
-                
-                <div class="content-section d-none" id="settings">
-                    <h3 class="section-title">Pengaturan</h3>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Fitur pengaturan akan segera hadir.
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="copyright">
-            &copy; 2023 Hotel Management System - Developed by Hotel Grand Luxury
-        </div>
     </div>
-    
+
+    <div class="copyright no-print">
+        &copy; 2023 Hotel Management System - Dibuat dengan <i class="fas fa-heart text-danger"></i> oleh Tim Pengembang
+    </div>
+
     <!-- Floating Action Button -->
-    <div class="floating-action-btn" id="helpBtn">
-        <i class="fas fa-question"></i>
+    <div class="floating-action-btn no-print" id="fab">
+        <i class="fas fa-plus"></i>
     </div>
-    
+
     <!-- Toast Notification -->
-    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-        <div class="toast-header bg-primary text-white">
-            <strong class="me-auto"><i class="fas fa-bell"></i> Notifikasi</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="toast notification-toast no-print" role="alert" aria-live="assertive" aria-atomic="true" id="notificationToast">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Notification</strong>
+            <small id="toastTime">Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body">
-            Operasi berhasil dilakukan!
+        <div class="toast-body" id="toastMessage">
+            Operation completed successfully.
         </div>
     </div>
 
-    <!-- Reservation Detail Modal -->
-    <div class="modal fade" id="reservationDetailModal" tabindex="-1" aria-hidden="true">
+    <!-- Modals -->
+    <!-- Add Reservation Modal -->
+    <div class="modal fade" id="addReservationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Detail Reservasi</h5>
+                    <h5 class="modal-title">Tambah Reservasi Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Informasi Tamu</h6>
-                            <p><strong>Nama:</strong> Budi Santoso</p>
-                            <p><strong>Email:</strong> budi.santoso@example.com</p>
-                            <p><strong>Telepon:</strong> 081234567890</p>
-                            <p><strong>Identitas:</strong> KTP 1234567890123456</p>
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nama Tamu</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Detail Reservasi</h6>
-                            <p><strong>ID Reservasi:</strong> RES001</p>
-                            <p><strong>Kamar:</strong> Deluxe - 301</p>
-                            <p><strong>Check-in:</strong> 12/09/2023</p>
-                            <p><strong>Check-out:</strong> 15/09/2023</p>
-                            <p><strong>Durasi:</strong> 3 Malam</p>
-                            <p><strong>Status:</strong> <span class="badge bg-success">Check-In</span></p>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Telepon</label>
+                                    <input type="tel" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Jumlah Tamu</label>
+                                    <input type="number" class="form-control" min="1" max="10" value="1" required>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Detail Pembayaran</h6>
-                            <p><strong>Total:</strong> Rp 2.250.000</p>
-                            <p><strong>Deposit:</strong> Rp 500.000</p>
-                            <p><strong>Sisa:</strong> Rp 1.750.000</p>
-                            <p><strong>Metode:</strong> Transfer Bank</p>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tanggal Check-In</label>
+                                    <input type="text" class="form-control datepicker" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tanggal Check-Out</label>
+                                    <input type="text" class="form-control datepicker" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Layanan Tambahan</h6>
-                            <ul>
-                                <li>Sarapan (3x) - Rp 300.000</li>
-                                <li>Laundry - Rp 150.000</li>
-                            </ul>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tipe Kamar</label>
+                                    <select class="form-select" required>
+                                        <option value="">Pilih Tipe Kamar</option>
+                                        <option>Standard</option>
+                                        <option>Deluxe</option>
+                                        <option>Suite</option>
+                                        <option>Executive</option>
+                                        <option>Presidential</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Kamar Tersedia</label>
+                                    <select class="form-select" required>
+                                        <option value="">Pilih Kamar</option>
+                                        <option>101 - Standard</option>
+                                        <option>102 - Standard</option>
+                                        <option>201 - Deluxe</option>
+                                        <option>202 - Deluxe</option>
+                                        <option>305 - Suite</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Permintaan Khusus</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Cetak</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary">Simpan Reservasi</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Add Room Modal -->
+    <div class="modal fade" id="addRoomModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Kamar Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Nomor Kamar</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipe Kamar</label>
+                            <select class="form-select" required>
+                                <option value="">Pilih Tipe Kamar</option>
+                                <option>Standard</option>
+                                <option>Deluxe</option>
+                                <option>Suite</option>
+                                <option>Executive</option>
+                                <option>Presidential</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lantai</label>
+                            <input type="number" class="form-control" min="1" max="10" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" required>
+                                <option value="">Pilih Status</option>
+                                <option>Tersedia</option>
+                                <option>Terisi</option>
+                                <option>Perawatan</option>
+                                <option>Dipesan</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Harga Per Malam</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fasilitas</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary">Simpan Kamar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
-        // Initialize tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-        
-        // Initialize toast
-        var toastEl = document.querySelector('.toast')
-        var toast = new bootstrap.Toast(toastEl)
-        
-        // Initialize modals
-        const reservationDetailModal = new bootstrap.Modal(document.getElementById('reservationDetailModal'))
-        
-        // Show toast notification
-        function showToast(message, type = 'success') {
-            const toastBody = document.querySelector('.toast-body')
-            const toastHeader = document.querySelector('.toast-header')
-            
-            toastBody.textContent = message
-            
-            // Change color based on type
-            if (type === 'error') {
-                toastHeader.classList.remove('bg-primary')
-                toastHeader.classList.add('bg-danger')
-            } else if (type === 'warning') {
-                toastHeader.classList.remove('bg-primary')
-                toastHeader.classList.add('bg-warning')
-            } else {
-                toastHeader.classList.remove('bg-danger', 'bg-warning')
-                toastHeader.classList.add('bg-primary')
-            }
-            
-            toast.show()
-        }
-        
-        // Navigation
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault()
-                
-                // Hide all content sections
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.add('d-none')
-                })
-                
-                // Show the selected section
-                const target = this.getAttribute('data-target')
-                document.getElementById(target).classList.remove('d-none')
-                
-                // Update active nav link
-                document.querySelectorAll('.nav-link').forEach(navLink => {
-                    navLink.classList.remove('active')
-                })
-                this.classList.add('active')
-                
-                // Close mobile menu if open
-                document.getElementById('sidebar').classList.remove('mobile-show')
-                document.getElementById('sidebarOverlay').classList.remove('mobile-show')
-            })
-        })
-        
-        // Mobile menu toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('mobile-show')
-            document.getElementById('sidebarOverlay').classList.toggle('mobile-show')
-        })
-        
-        document.getElementById('sidebarOverlay').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.remove('mobile-show')
-            this.classList.remove('mobile-show')
-        })
-        
-        // Quick control buttons
-        document.getElementById('newReservationBtn').addEventListener('click', function() {
-            document.querySelector('[data-target="reservations"]').click()
-            showToast('Membuka form reservasi baru')
-        })
-        
-        document.getElementById('checkInBtn').addEventListener('click', function() {
-            showToast('Fitur check-in akan segera hadir', 'info')
-        })
-        
-        document.getElementById('checkOutBtn').addEventListener('click', function() {
-            showToast('Fitur check-out akan segera hadir', 'info')
-        })
-        
-        // View all reservations
-        document.getElementById('viewAllReservations').addEventListener('click', function() {
-            document.querySelector('[data-target="reservations"]').click()
-        })
-        
-        // Apply filter
-        document.getElementById('applyFilterBtn').addEventListener('click', function() {
-            const status = document.getElementById('filterStatus').value
-            const checkIn = document.getElementById('filterCheckIn').value
-            const checkOut = document.getElementById('filterCheckOut').value
-            
-            showToast(`Filter diterapkan: Status=${status || 'Semua'}, Check-in=${checkIn || 'Semua'}, Check-out=${checkOut || 'Semua'}`)
-        })
-        
-        // Add reservation
-        document.getElementById('addReservationBtn').addEventListener('click', function() {
-            showToast('Membuka form tambah reservasi', 'info')
-        })
-        
-        // View reservation details
-        document.querySelectorAll('.view-reservation').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const reservationId = this.getAttribute('data-id')
-                reservationDetailModal.show()
-                showToast(`Menampilkan detail reservasi ${reservationId}`)
-            })
-        })
-        
-        // Edit reservation
-        document.querySelectorAll('.edit-reservation').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const reservationId = this.getAttribute('data-id')
-                showToast(`Mengedit reservasi ${reservationId}`, 'info')
-            })
-        })
-        
-        // Cancel reservation
-        document.querySelectorAll('.cancel-reservation').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const reservationId = this.getAttribute('data-id')
-                if (confirm(`Apakah Anda yakin ingin membatalkan reservasi ${reservationId}?`)) {
-                    showToast(`Reservasi ${reservationId} telah dibatalkan`, 'warning')
-                }
-            })
-        })
-        
-        // Generate invoice
-        document.getElementById('billingForm').addEventListener('submit', function(e) {
-            e.preventDefault()
-            const reservationId = document.getElementById('reservationSelect').value
-            if (!reservationId) {
-                showToast('Pilih reservasi terlebih dahulu', 'error')
-                return
-            }
-            
-            showToast(`Invoice untuk ${reservationId} berhasil digenerate`)
-        })
-        
-        // Print bill
-        document.getElementById('printBillBtn').addEventListener('click', function() {
-            window.print()
-        })
-        
-        // Download PDF
-        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            showToast('Mengunduh invoice dalam format PDF', 'info')
-        })
-        
-        // Send email
-        document.getElementById('sendEmailBtn').addEventListener('click', function() {
-            showToast('Mengirim invoice melalui email', 'info')
-        })
-        
-        // Help button
-        document.getElementById('helpBtn').addEventListener('click', function() {
-            showToast('Bantuan sedang dipersiapkan', 'info')
-        })
-        
-        // Initialize charts
+        // Initialize datepicker
         document.addEventListener('DOMContentLoaded', function() {
-            // Revenue Chart
-            const revenueCtx = document.getElementById('revenueChart').getContext('2d')
-            const revenueChart = new Chart(revenueCtx, {
-                type: 'bar',
+            // Initialize datepickers
+            var datepickers = document.querySelectorAll('.datepicker');
+            datepickers.forEach(function(el) {
+                el.datepicker = new Datepicker(el, {
+                    format: 'dd/mm/yyyy',
+                    autohide: true
+                });
+            });
+
+            // Initialize chart
+            var ctx = document.getElementById('occupancyChart').getContext('2d');
+            var occupancyChart = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
                     datasets: [{
-                        label: 'Pendapatan (Juta Rupiah)',
-                        data: [45, 52, 48, 55, 58, 65, 72, 68, 74, 80, 85, 90],
-                        backgroundColor: 'rgba(13, 71, 161, 0.7)',
+                        label: 'Tingkat Okupansi (%)',
+                        data: [65, 75, 70, 80, 85, 95, 90],
+                        backgroundColor: 'rgba(13, 71, 161, 0.1)',
                         borderColor: 'rgba(13, 71, 161, 1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointBackgroundColor: 'rgba(13, 71, 161, 1)',
+                        pointRadius: 4
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Pendapatan Bulanan Tahun 2023'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
                         }
                     }
                 }
-            })
+            });
+
+            // Update date and time
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                document.getElementById('currentDateTime').textContent = now.toLocaleDateString('id-ID', options);
+            }
             
-            // Occupancy Chart
-            const occupancyCtx = document.getElementById('occupancyChart').getContext('2d')
-            const occupancyChart = new Chart(occupancyCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Terisi', 'Tersedia', 'Maintenance'],
-                    datasets: [{
-                        data: [65, 25, 10],
-                        backgroundColor: [
-                            'rgba(13, 71, 161, 0.8)',
-                            'rgba(0, 105, 92, 0.8)',
-                            'rgba(255, 143, 0, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(13, 71, 161, 1)',
-                            'rgba(0, 105, 92, 1)',
-                            'rgba(255, 143, 0, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Tingkat Okupansi Kamar'
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Generate room cards
+            generateRoomCards();
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('mobile-show');
+                document.getElementById('sidebarOverlay').classList.toggle('mobile-show');
+            });
+
+            document.getElementById('sidebarOverlay').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.remove('mobile-show');
+                this.classList.remove('mobile-show');
+            });
+
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(function(el) {
+                        el.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = this.getAttribute('data-section');
+                    document.querySelectorAll('.content-section').forEach(function(section) {
+                        section.classList.add('d-none');
+                    });
+                    document.getElementById(sectionId).classList.remove('d-none');
+                    
+                    // Close mobile menu after selection
+                    document.getElementById('sidebar').classList.remove('mobile-show');
+                    document.getElementById('sidebarOverlay').classList.remove('mobile-show');
+                });
+            });
+
+            // Settings tabs
+            document.querySelectorAll('[data-settings-tab]').forEach(function(tab) {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active tab
+                    document.querySelectorAll('[data-settings-tab]').forEach(function(el) {
+                        el.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show corresponding settings content
+                    const tabId = this.getAttribute('data-settings-tab');
+                    document.querySelectorAll('.settings-tab-content').forEach(function(content) {
+                        content.classList.add('d-none');
+                    });
+                    document.getElementById(tabId + '-settings').classList.remove('d-none');
+                });
+            });
+
+            // Quick action buttons
+            document.querySelectorAll('.btn[data-section]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('data-section');
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(function(el) {
+                        el.classList.remove('active');
+                        if (el.getAttribute('data-section') === sectionId) {
+                            el.classList.add('active');
                         }
-                    }
+                    });
+                    
+                    // Show corresponding section
+                    document.querySelectorAll('.content-section').forEach(function(section) {
+                        section.classList.add('d-none');
+                    });
+                    document.getElementById(sectionId).classList.remove('d-none');
+                });
+            });
+
+            // Theme toggle
+            document.getElementById('toggleTheme').addEventListener('click', function() {
+                document.body.classList.toggle('dark-theme');
+                if (document.body.classList.contains('dark-theme')) {
+                    this.innerHTML = '<i class="fas fa-sun"></i> Mode Terang';
+                } else {
+                    this.innerHTML = '<i class="fas fa-moon"></i> Mode Gelap';
                 }
-            })
-        })
-        
-        // Show toast on page load for demo
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                showToast('Selamat datang di Hotel Management System!')
-            }, 1000)
-        })
+            });
+
+            // FAB action
+            document.getElementById('fab').addEventListener('click', function() {
+                showNotification('Info', 'Fitur akan segera tersedia!', 'info');
+            });
+
+            // Initialize toast
+            var toastEl = document.getElementById('notificationToast');
+            var toast = new bootstrap.Toast(toastEl, {
+                autohide: true,
+                delay: 3000
+            });
+
+            // Show notification function
+            window.showNotification = function(title, message, type = 'info') {
+                document.getElementById('toastTitle').textContent = title;
+                document.getElementById('toastMessage').textContent = message;
+                
+                const toastHeader = toastEl.querySelector('.toast-header');
+                switch(type) {
+                    case 'success':
+                        toastHeader.classList.add('bg-success', 'text-white');
+                        toastHeader.classList.remove('bg-danger', 'bg-warning', 'bg-info');
+                        break;
+                    case 'error':
+                        toastHeader.classList.add('bg-danger', 'text-white');
+                        toastHeader.classList.remove('bg-success', 'bg-warning', 'bg-info');
+                        break;
+                    case 'warning':
+                        toastHeader.classList.add('bg-warning', 'text-dark');
+                        toastHeader.classList.remove('bg-success', 'bg-danger', 'bg-info');
+                        break;
+                    default:
+                        toastHeader.classList.add('bg-info', 'text-white');
+                        toastHeader.classList.remove('bg-success', 'bg-danger', 'bg-warning');
+                }
+                
+                const now = new Date();
+                document.getElementById('toastTime').textContent = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                toast.show();
+            };
+        });
+
+        // Generate room cards
+        function generateRoomCards() {
+            const rooms = [
+                { number: '101', type: 'Standard', status: 'available', price: 'Rp 400.000' },
+                { number: '102', type: 'Standard', status: 'occupied', price: 'Rp 400.000' },
+                { number: '103', type: 'Standard', status: 'maintenance', price: 'Rp 400.000' },
+                { number: '201', type: 'Deluxe', status: 'available', price: 'Rp 650.000' },
+                { number: '202', type: 'Deluxe', status: 'reserved', price: 'Rp 650.000' },
+                { number: '203', type: 'Deluxe', status: 'available', price: 'Rp 650.000' },
+                { number: '301', type: 'Suite', status: 'occupied', price: 'Rp 1.200.000' },
+                { number: '302', type: 'Suite', status: 'available', price: 'Rp 1.200.000' },
+                { number: '303', type: 'Suite', status: 'maintenance', price: 'Rp 1.200.000' },
+                { number: '401', type: 'Executive', status: 'available', price: 'Rp 850.000' },
+                { number: '402', type: 'Executive', status: 'occupied', price: 'Rp 850.000' },
+                { number: '501', type: 'Presidential', status: 'reserved', price: 'Rp 2.500.000' },
+                { number: '502', type: 'Presidential', status: 'available', price: 'Rp 2.500.000' }
+            ];
+
+            const roomGrid = document.getElementById('roomGrid');
+            roomGrid.innerHTML = '';
+
+            rooms.forEach(room => {
+                let statusClass, statusText;
+                switch(room.status) {
+                    case 'available':
+                        statusClass = 'success';
+                        statusText = 'Tersedia';
+                        break;
+                    case 'occupied':
+                        statusClass = 'danger';
+                        statusText = 'Terisi';
+                        break;
+                    case 'maintenance':
+                        statusClass = 'warning';
+                        statusText = 'Perawatan';
+                        break;
+                    case 'reserved':
+                        statusClass = 'info';
+                        statusText = 'Dipesan';
+                        break;
+                }
+
+                const roomCard = `
+                    <div class="col-md-3 col-sm-4 col-6 mb-4">
+                        <div class="card room-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title">Kamar ${room.number}</h5>
+                                    <span class="badge bg-${statusClass}">${statusText}</span>
+                                </div>
+                                <p class="card-text mb-1">Tipe: ${room.type}</p>
+                                <p class="card-text mb-2">Harga: ${room.price}/malam</p>
+                                <div class="d-grid gap-2">
+                                    ${room.status === 'available' ? 
+                                        '<button class="btn btn-sm btn-success">Check-In</button>' : 
+                                        room.status === 'occupied' ? 
+                                        '<button class="btn btn-sm btn-warning">Check-Out</button>' : 
+                                        '<button class="btn btn-sm btn-secondary" disabled> Tidak Tersedia</button>'
+                                    }
+                                    <button class="btn btn-sm btn-outline-primary">Detail</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                roomGrid.innerHTML += roomCard;
+            });
+        }
+
+        // Export functions
+        function exportToPDF() {
+            showNotification('Ekspor PDF', 'Fitur ekspor PDF akan segera tersedia!', 'info');
+        }
+
+        function exportToExcel() {
+            showNotification('Ekspor Excel', 'Fitur ekspor Excel akan segera tersedia!', 'info');
+        }
+
+        function printReport() {
+            window.print();
+        }
     </script>
 </body>
 </html>
