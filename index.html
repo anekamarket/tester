@@ -624,6 +624,64 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Bill/Invoice Styles */
+        .invoice-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--hotel-primary);
+            padding-bottom: 20px;
+        }
+        
+        .invoice-logo {
+            font-size: 2.5rem;
+            color: var(--hotel-primary);
+            margin-bottom: 10px;
+        }
+        
+        .invoice-details {
+            margin-bottom: 30px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .invoice-table th {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .invoice-table td {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .invoice-total {
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .invoice-footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -1510,6 +1568,97 @@
             Operation completed successfully.
         </div>
     </div>
+
+    <!-- Bill/Invoice Modal -->
+    <div class="modal fade" id="billModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cetak Bill Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="invoice-container" id="invoiceContent">
+                        <div class="invoice-header">
+                            <div class="invoice-logo">
+                                <i class="fas fa-hotel"></i>
+                            </div>
+                            <h2>Grand Luxury Hotel</h2>
+                            <p>Jl. Kemanggisan Raya No. 123, Jakarta Barat</p>
+                            <p>Telp: (021) 1234567 | Email: info@grandluxuryhotel.com</p>
+                        </div>
+                        
+                        <div class="invoice-details">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>ID Transaksi:</strong> <span id="billTransactionId">T001</span></p>
+                                    <p><strong>Tanggal:</strong> <span id="billDate">20 November 2023</span></p>
+                                    <p><strong>ID Reservasi:</strong> <span id="billReservationId">R001</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Nama Tamu:</strong> <span id="billGuestName">Ahmad Riyadi</span></p>
+                                    <p><strong>Kamar:</strong> <span id="billRoom">Deluxe 201</span></p>
+                                    <p><strong>Check-in/Check-out:</strong> <span id="billDates">20 Nov - 25 Nov 2023</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Deskripsi</th>
+                                    <th>Jumlah</th>
+                                    <th>Harga</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Kamar Deluxe (5 malam)</td>
+                                    <td>1</td>
+                                    <td>Rp 550.000</td>
+                                    <td>Rp 2.750.000</td>
+                                </tr>
+                                <tr>
+                                    <td>Layanan Kamar</td>
+                                    <td>5</td>
+                                    <td>Rp 50.000</td>
+                                    <td>Rp 250.000</td>
+                                </tr>
+                                <tr>
+                                    <td>Restoran</td>
+                                    <td>2</td>
+                                    <td>Rp 150.000</td>
+                                    <td>Rp 300.000</td>
+                                </tr>
+                                <tr>
+                                    <td>Pajak (10%)</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Rp 330.000</td>
+                                </tr>
+                                <tr class="table-primary fw-bold">
+                                    <td colspan="3" class="text-end">TOTAL</td>
+                                    <td>Rp 3.630.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="invoice-footer">
+                            <p>Terima kasih atas kunjungan Anda</p>
+                            <p>Manager, Grand Luxury Hotel</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-success" id="printBillBtn">
+                        <i class="fas fa-print"></i> Cetak
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
@@ -1691,6 +1840,11 @@
             
             document.getElementById('resetData').addEventListener('click', function() {
                 resetData();
+            });
+
+            // Print bill button
+            document.getElementById('printBillBtn').addEventListener('click', function() {
+                printBill();
             });
         }
         
@@ -2138,7 +2292,7 @@
                     
                     row.innerHTML = `
                         <td>${res.id}</td>
-                        <td>${guest.name}</td>
+                        <td>${guest.name</td>
                         <td>${room.number} (${room.type})</td>
                         <td>${formatDate(res.checkIn)}</td>
                         <td>${formatDate(res.checkOut)}</td>
@@ -2149,7 +2303,7 @@
                             <button class="btn btn-sm btn-warning me-1" onclick="editReservation(${res.id})">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="cancelReservation(${res.id})">
+                            <button class="btn btn-sm btn-danger" onclick="deleteReservation(${res.id})">
                                 <i class="fas fa-times"></i>
                             </button>
                         </td>
@@ -2958,7 +3112,7 @@
                         backgroundColor: [
                             'rgba(40, 167, 69, 0.8)',
                             'rgba(220, 53, 69, 0.8)',
-                            'rgba(23, 162, 184, 0.8)',
+                                                        'rgba(23, 162, 184, 0.8)',
                             'rgba(255, 193, 7, 0.8)',
                             'rgba(108, 117, 125, 0.8)'
                         ],
@@ -2989,6 +3143,7 @@
         
         // Utility functions
         function formatDate(dateString) {
+            if (!dateString) return '-';
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             return new Date(dateString).toLocaleDateString('id-ID', options);
         }
@@ -2996,51 +3151,119 @@
         function getRoomNumber(roomId) {
             const rooms = getData('rooms');
             const room = rooms.find(r => r.id === roomId);
-            return room ? room.number : 'N/A';
+            return room ? room.number : '-';
         }
         
-        // Placeholder functions for future implementation
         function viewReservation(id) {
-            showNotification('Info', `Melihat detail reservasi ${id}`, 'info');
+            // Implementation for viewing reservation details
+            showNotification('Info', `Melihat detail reservasi #${id}`, 'info');
         }
         
         function editReservation(id) {
-            showNotification('Info', `Mengedit reservasi ${id}`, 'info');
+            // Implementation for editing reservation
+            showNotification('Info', `Mengedit reservasi #${id}`, 'info');
         }
         
-        function cancelReservation(id) {
-            if (confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')) {
-                showNotification('Sukses', `Reservasi ${id} dibatalkan`, 'success');
+        function deleteReservation(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus reservasi ini?')) {
+                const reservations = getData('reservations');
+                const updatedReservations = reservations.filter(r => r.id !== id);
+                saveData('reservations', updatedReservations);
+                
+                // Update UI
+                loadReservations();
+                updateDashboard();
+                
+                showNotification('Sukses', 'Reservasi berhasil dihapus', 'success');
             }
         }
         
         function viewGuestDetails(id) {
-            showNotification('Info', `Melihat detail tamu ${id}`, 'info');
+            // Implementation for viewing guest details
+            showNotification('Info', `Melihat detail tamu #${id}`, 'info');
+        }
+        
+        function viewRoom(id) {
+            // Implementation for viewing room details
+            showNotification('Info', `Melihat detail kamar #${id}`, 'info');
+        }
+        
+        function editRoom(id) {
+            // Implementation for editing room
+            showNotification('Info', `Mengedit kamar #${id}`, 'info');
+        }
+        
+        function deleteRoom(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus kamar ini?')) {
+                const rooms = getData('rooms');
+                const updatedRooms = rooms.filter(r => r.id !== id);
+                saveData('rooms', updatedRooms);
+                
+                // Update UI
+                loadRooms();
+                updateDashboard();
+                
+                showNotification('Sukses', 'Kamar berhasil dihapus', 'success');
+            }
         }
         
         function editGuest(id) {
-            showNotification('Info', `Mengedit data tamu ${id}`, 'info');
+            // Implementation for editing guest
+            showNotification('Info', `Mengedit tamu #${id}`, 'info');
         }
         
         function deleteGuest(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data tamu ini?')) {
-                showNotification('Sukses', `Data tamu ${id} dihapus`, 'success');
+                const guests = getData('guests');
+                const updatedGuests = guests.filter(g => g.id !== id);
+                saveData('guests', updatedGuests);
+                
+                // Update UI
+                loadGuests();
+                updateDashboard();
+                
+                showNotification('Sukses', 'Data tamu berhasil dihapus', 'success');
             }
         }
-        
-        function viewRoom(id) {
-            showNotification('Info', `Melihat detail kamar ${id}`, 'info');
+
+        function printBill() {
+            const invoiceContent = document.getElementById('invoiceContent');
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cetak Invoice</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .invoice-container { max-width: 800px; margin: 0 auto; }
+                        .invoice-header { text-align: center; margin-bottom: 30px; }
+                        .invoice-logo { font-size: 2.5rem; color: #0d47a1; }
+                        .invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        .invoice-table th, .invoice-table td { padding: 10px; border-bottom: 1px solid #ddd; }
+                        .invoice-table th { background-color: #f8f9fa; text-align: left; }
+                        .invoice-footer { margin-top: 50px; text-align: center; color: #6c757d; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${invoiceContent.innerHTML}
+                    <div class="no-print" style="text-align: center; margin-top: 20px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; background: #0d47a1; color: white; border: none; border-radius: 5px; cursor: pointer;">Cetak</button>
+                        <button onclick="window.close()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">Tutup</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
         }
-        
-        function editRoom(id) {
-            showNotification('Info', `Mengedit data kamar ${id}`, 'info');
-        }
-        
-        function deleteRoom(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus data kamar ini?')) {
-                showNotification('Sukses', `Data kamar ${id} dihapus`, 'success');
-            }
-        }
+
+        // Initialize the application
+        initApp();
     </script>
 </body>
 </html>
