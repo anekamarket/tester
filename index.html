@@ -629,6 +629,13 @@
             font-style: italic;
             color: #6c757d;
         }
+        
+        /* Action buttons in tables */
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin: 0 2px;
+        }
     </style>
 </head>
 <body>
@@ -813,6 +820,9 @@
                                 </button>
                                 <button class="btn btn-success" id="exportReservationsBtn">
                                     <i class="fas fa-file-export me-2"></i>Ekspor Data
+                                </button>
+                                <button class="btn btn-info" id="printReservationsBtn">
+                                    <i class="fas fa-file-pdf me-2"></i>Cetak PDF
                                 </button>
                             </div>
                         </div>
@@ -1056,8 +1066,8 @@
                                                         <th>Nama</th>
                                                         <th>Email</th>
                                                         <th>Telepon</th>
-                                                        <th>Kamar</th>
                                                         <th>Status</th>
+                                                        <th>Terakhir Check-In</th>
                                                         <th>Aksi</th>
                                                     </tr>
                                                 </thead>
@@ -1081,14 +1091,6 @@
                                 <div class="filter-section">
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <label class="form-label">Periode Mulai</label>
-                                            <input type="date" class="form-control" id="reportStartDate">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Periode Akhir</label>
-                                            <input type="date" class="form-control" id="reportEndDate">
-                                        </div>
-                                        <div class="col-md-3">
                                             <label class="form-label">Jenis Laporan</label>
                                             <select class="form-select" id="reportType">
                                                 <option value="occupancy">Tingkat Okupansi</option>
@@ -1098,9 +1100,17 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3">
+                                            <label class="form-label">Periode Awal</label>
+                                            <input type="date" class="form-control" id="reportStartDate">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Periode Akhir</label>
+                                            <input type="date" class="form-control" id="reportEndDate">
+                                        </div>
+                                        <div class="col-md-3">
                                             <label class="form-label">&nbsp;</label>
                                             <button class="btn btn-primary w-100" id="generateReportBtn">
-                                                <i class="fas fa-chart-line me-2"></i>Buat Laporan
+                                                <i class="fas fa-chart-line me-2"></i>Generate Laporan
                                             </button>
                                         </div>
                                     </div>
@@ -1113,6 +1123,14 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <i class="fas fa-chart-bar me-2"></i>Grafik Laporan
+                                        <div class="float-end">
+                                            <button class="btn btn-sm btn-success" id="exportChartBtn">
+                                                <i class="fas fa-download me-1"></i>Ekspor
+                                            </button>
+                                            <button class="btn btn-sm btn-info" id="printChartBtn">
+                                                <i class="fas fa-print me-1"></i>Cetak
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="reportChart" height="300"></canvas>
@@ -1126,6 +1144,14 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <i class="fas fa-table me-2"></i>Data Laporan
+                                        <div class="float-end">
+                                            <button class="btn btn-sm btn-success" id="exportReportDataBtn">
+                                                <i class="fas fa-file-excel me-1"></i>Ekspor Excel
+                                            </button>
+                                            <button class="btn btn-sm btn-info" id="printReportDataBtn">
+                                                <i class="fas fa-file-pdf me-1"></i>Cetak PDF
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
@@ -1145,17 +1171,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-12 text-end">
-                                <button class="btn btn-success" id="exportReportBtn">
-                                    <i class="fas fa-file-excel me-2"></i>Ekspor ke Excel
-                                </button>
-                                <button class="btn btn-danger" id="printReportBtn">
-                                    <i class="fas fa-print me-2"></i>Cetak Laporan
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -1178,7 +1193,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Alamat</label>
-                                                <textarea class="form-control" id="hotelAddress" rows="3" placeholder="Masukkan alamat hotel"></textarea>
+                                                <textarea class="form-control" id="hotelAddress" rows="2" placeholder="Masukkan alamat hotel"></textarea>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Telepon</label>
@@ -1186,18 +1201,16 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" class="form-control" id="hotelEmail" placeholder="Masukkan alamat email">
+                                                <input type="email" class="form-control" id="hotelEmail" placeholder="Masukkan email hotel">
                                             </div>
                                             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="card">
+                                
+                                <div class="card mt-4">
                                     <div class="card-header">
-                                        <i class="fas fa-cog me-2"></i>Pengaturan Sistem
+                                        <i class="fas fa-sliders-h me-2"></i>Pengaturan Sistem
                                     </div>
                                     <div class="card-body">
                                         <form id="systemSettingsForm">
@@ -1205,7 +1218,7 @@
                                                 <label class="form-label">Mata Uang</label>
                                                 <select class="form-select" id="currency">
                                                     <option value="IDR">Rupiah (IDR)</option>
-                                                    <option value="USD">Dollar AS (USD)</option>
+                                                    <option value="USD">Dollar (USD)</option>
                                                     <option value="EUR">Euro (EUR)</option>
                                                     <option value="SGD">Dollar Singapura (SGD)</option>
                                                 </select>
@@ -1227,35 +1240,71 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-12">
+                            
+                            <div class="col-md-6">
                                 <div class="card">
                                     <div class="card-header">
-                                        <i class="fas fa-database me-2"></i>Manajemen Data
+                                        <i class="fas fa-user-shield me-2"></i>Manajemen Pengguna
                                     </div>
                                     <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-4 text-center">
-                                                <button class="btn btn-outline-primary w-100 mb-2" id="exportDataBtn">
-                                                    <i class="fas fa-file-export me-2"></i>Ekspor Semua Data
-                                                </button>
-                                                <p class="small text-muted">Ekspor semua data ke file JSON</p>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <button class="btn btn-outline-success w-100 mb-2" id="importDataBtn">
-                                                    <i class="fas fa-file-import me-2"></i>Impor Data
-                                                </button>
-                                                <p class="small text-muted">Impor data dari file JSON</p>
-                                                <input type="file" id="importFileInput" class="d-none" accept=".json">
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <button class="btn btn-outline-danger w-100 mb-2" id="resetDataBtn">
-                                                    <i class="fas fa-trash-alt me-2"></i>Reset Data
-                                                </button>
-                                                <p class="small text-muted">Hapus semua data dan reset ke pengaturan awal</p>
-                                            </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nama Pengguna</th>
+                                                        <th>Email</th>
+                                                        <th>Role</th>
+                                                        <th>Status</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="userList">
+                                                    <tr>
+                                                        <td>Admin</td>
+                                                        <td>admin@hotel.com</td>
+                                                        <td><span class="badge bg-primary">Administrator</span></td>
+                                                        <td><span class="badge bg-success">Aktif</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Resepsionis</td>
+                                                        <td>resepsionis@hotel.com</td>
+                                                        <td><span class="badge bg-info">Resepsionis</span></td>
+                                                        <td><span class="badge bg-success">Aktif</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-edit"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                            <i class="fas fa-plus me-2"></i>Tambah Pengguna
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mt-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-database me-2"></i>Backup & Pemulihan Data
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-success" id="backupDataBtn">
+                                                <i class="fas fa-download me-2"></i>Backup Data
+                                            </button>
+                                            <button class="btn btn-warning" id="restoreDataBtn">
+                                                <i class="fas fa-upload me-2"></i>Pulihkan Data
+                                            </button>
+                                            <button class="btn btn-danger" id="resetDataBtn">
+                                                <i class="fas fa-trash-alt me-2"></i>Reset Data
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -1267,24 +1316,25 @@
         </div>
         
         <div class="copyright">
-            &copy; 2023 Hotel Management System - Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk kemudahan pengelolaan hotel
+            &copy; 2023 Hotel Management System - All Rights Reserved
         </div>
     </div>
     
     <!-- Floating Action Button -->
-    <div class="floating-action-btn" id="helpBtn">
-        <i class="fas fa-question"></i>
+    <div class="floating-action-btn" data-bs-toggle="modal" data-bs-target="#quickActionModal">
+        <i class="fas fa-bolt"></i>
     </div>
     
-    <!-- Notification Toast -->
-    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+    <!-- Toast Notification -->
+    <div class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" id="notificationToast">
         <div class="toast-header">
-            <strong class="me-auto" id="toastTitle">System Notification</strong>
-            <small>Just now</small>
+            <i class="fas fa-bell text-primary me-2"></i>
+            <strong class="me-auto">Notifikasi Sistem</strong>
+            <small>Baru saja</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body" id="toastMessage">
-            Operation completed successfully.
+            <!-- Message will be inserted here -->
         </div>
     </div>
     
@@ -1312,6 +1362,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -1326,6 +1377,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -1340,6 +1392,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -1362,19 +1415,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Keterangan Tambahan</label>
-                                    <textarea class="form-control" id="reservationNotes" rows="3"></textarea>
-                                </div>
-                            </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Permintaan Khusus</label>
+                            <textarea class="form-control" id="specialRequests" rows="2"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="saveReservationBtn">Simpan Reservasi</button>
+                    <button type="button" class="btn btn-primary" id="submitReservationBtn">Simpan Reservasi</button>
                 </div>
             </div>
         </div>
@@ -1394,6 +1444,7 @@
                             <label class="form-label">Nomor Kamar</label>
                             <input type="text" class="form-control" id="roomNumber" required>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Tipe Kamar</label>
                             <select class="form-select" id="newRoomType" required>
@@ -1404,10 +1455,12 @@
                                 <option value="executive">Executive</option>
                             </select>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Harga per Malam</label>
-                            <input type="number" class="form-control" id="roomPrice" min="0" step="1000" required>
+                            <input type="number" class="form-control" id="roomPrice" min="0" required>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Fasilitas</label>
                             <div class="form-check">
@@ -1427,6 +1480,7 @@
                                 <label class="form-check-label" for="facilityBreakfast">Sarapan</label>
                             </div>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select class="form-select" id="roomStatus" required>
@@ -1439,470 +1493,212 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="saveRoomBtn">Simpan Kamar</button>
+                    <button type="button" class="btn btn-primary" id="submitRoomBtn">Simpan Kamar</button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Checkout Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Quick Action Modal -->
+    <div class="modal fade" id="quickActionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Proses Check-Out</h5>
+                    <h5 class="modal-title">Aksi Cepat</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="invoice-container" id="invoicePrint">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
+                            <i class="fas fa-calendar-plus me-2"></i>Tambah Reservasi
+                        </button>
+                        <button class="btn btn-success" id="quickCheckinModalBtn">
+                            <i class="fas fa-user-plus me-2"></i>Check-In Cepat
+                        </button>
+                        <button class="btn btn-warning" id="quickCheckoutModalBtn">
+                            <i class="fas fa-receipt me-2"></i>Check-Out Cepat
+                        </button>
+                        <button class="btn btn-info" id="quickReportModalBtn">
+                            <i class="fas fa-file-export me-2"></i>Ekspor Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Pengguna Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Pengguna</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="admin">Administrator</option>
+                                <option value="receptionist">Resepsionis</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="submitUserBtn">Simpan Pengguna</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Invoice Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="invoice-container" id="invoiceContent">
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="invoice-logo" id="invoiceHotelName">HOTEL MANAGEMENT SYSTEM</div>
-                                    <p id="invoiceHotelAddress">Jl. Contoh No. 123, Kota Contoh</p>
-                                    <p>Telp: <span id="invoiceHotelPhone">+62 123 4567 890</span></p>
+                                    <div class="invoice-logo">HOTEL MANAGEMENT SYSTEM</div>
+                                    <p>Jl. Contoh Alamat No. 123, Kota Contoh<br>
+                                        Telp: (021) 123-4567 | Email: info@hotelcontoh.com</p>
                                 </div>
                                 <div class="col-md-6 text-end">
                                     <h4>INVOICE</h4>
-                                    <p>No. Invoice: <span id="invoiceNumber">INV-20230001</span></p>
-                                    <p>Tanggal: <span id="invoiceDate">01/11/2023</span></p>
+                                    <p>No. Inv: <span id="invoiceNumber">INV-2023-001</span><br>
+                                        Tanggal: <span id="invoiceDate">12 Oktober 2023</span></p>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="invoice-details my-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h5>Informasi Tamu</h5>
-                                    <p><strong>Nama:</strong> <span id="invoiceGuestName">John Doe</span></p>
-                                    <p><strong>Email:</strong> <span id="invoiceGuestEmail">john@example.com</span></p>
-                                    <p><strong>Telepon:</strong> <span id="invoiceGuestPhone">+62 812 3456 7890</span></p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5>Detail Reservasi</h5>
-                                    <p><strong>Kamar:</strong> <span id="invoiceRoomNumber">101</span> (<span id="invoiceRoomType">Standard</span>)</p>
-                                    <p><strong>Check-In:</strong> <span id="invoiceCheckin">01/11/2023</span></p>
-                                    <p><strong>Check-Out:</strong> <span id="invoiceCheckout">03/11/2023</span></p>
-                                    <p><strong>Durasi:</strong> <span id="invoiceNights">2</span> malam</p>
-                                </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>Informasi Tamu</h5>
+                                <p>
+                                    <strong><span id="invoiceGuestName">Nama Tamu</span></strong><br>
+                                    Email: <span id="invoiceGuestEmail">email@contoh.com</span><br>
+                                    Telepon: <span id="invoiceGuestPhone">08123456789</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <h5>Informasi Reservasi</h5>
+                                <p>
+                                    No. Reservasi: <span id="invoiceReservationId">RES-2023-001</span><br>
+                                    Check-In: <span id="invoiceCheckin">12 Okt 2023</span><br>
+                                    Check-Out: <span id="invoiceCheckout">14 Okt 2023</span><br>
+                                    Kamar: <span id="invoiceRoom">101 (Standard)</span>
+                                </p>
                             </div>
                         </div>
                         
-                        <div class="table-responsive">
-                            <table class="table table-bordered invoice-table">
-                                <thead>
-                                    <tr>
-                                        <th>Deskripsi</th>
-                                        <th>Jumlah</th>
-                                        <th>Harga</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Kamar <span id="invoiceRoomDesc">Standard (101)</span></td>
-                                        <td><span id="invoiceNightsCount">2</span> malam</td>
-                                        <td id="invoiceRoomRate">Rp 500.000</td>
-                                        <td id="invoiceRoomTotal">Rp 1.000.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Layanan Tambahan</td>
-                                        <td colspan="2" id="invoiceServicesDesc">-</td>
-                                        <td id="invoiceServicesTotal">Rp 0</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end"><strong>Subtotal</strong></td>
-                                        <td id="invoiceSubtotal">Rp 1.000.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Pajak (<span id="invoiceTaxRate">10</span>%)</td>
-                                        <td id="invoiceTax">Rp 100.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end"><strong>TOTAL</strong></td>
-                                        <td id="invoiceTotal">Rp 1.100.000</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="invoice-details mt-4">
+                            <h5>Rincian Pembayaran</h5>
+                            <div class="table-responsive">
+                                <table class="table invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Deskripsi</th>
+                                            <th class="text-end">Jumlah</th>
+                                            <th class="text-end">Harga</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Kamar Standard (2 malam)</td>
+                                            <td class="text-end">2</td>
+                                            <td class="text-end">IDR 500.000</td>
+                                            <td class="text-end">IDR 1.000.000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pajak (10%)</td>
+                                            <td class="text-end">1</td>
+                                            <td class="text-end">IDR 100.000</td>
+                                            <td class="text-end">IDR 100.000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Layanan Tambahan</td>
+                                            <td class="text-end">1</td>
+                                            <td class="text-end">IDR 50.000</td>
+                                            <td class="text-end">IDR 50.000</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" class="text-end">Total</th>
+                                            <th class="text-end">IDR 1.150.000</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-end">Jumlah Dibayar</th>
+                                            <th class="text-end">IDR 1.150.000</th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-end">Kembalian</th>
+                                            <th class="text-end">IDR 0</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                         
                         <div class="invoice-footer text-center">
-                            <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!</p>
+                            <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi.</p>
+                            <p>Invoice ini sah dan diproses oleh sistem.</p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-success" id="printInvoiceBtn">Cetak Invoice</button>
-                    <button type="button" class="btn btn-primary" id="confirmCheckoutBtn">Konfirmasi Check-Out</button>
+                    <button type="button" class="btn btn-primary" id="printInvoiceBtn">Cetak Invoice</button>
+                    <button type="button" class="btn btn-success" id="downloadInvoiceBtn">Unduh PDF</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
-        // Inisialisasi data aplikasi
-        let hotelData = {
-            guests: [],
-            rooms: [],
-            reservations: [],
-            checkins: [],
-            checkouts: [],
-            settings: {
-                hotelName: "Hotel Management System",
-                hotelAddress: "Jl. Contoh No. 123, Kota Contoh",
-                hotelPhone: "+62 123 4567 890",
-                hotelEmail: "info@hotelmanagement.com",
-                currency: "IDR",
-                taxRate: 10,
-                defaultCheckinTime: "14:00",
-                defaultCheckoutTime: "12:00"
-            }
-        };
-
-        // Inisialisasi komponen UI
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            // Load data dari localStorage jika tersedia
-            loadDataFromStorage();
-            
-            // Inisialisasi chart
-            initCharts();
-            
-            // Update dashboard stats
-            updateDashboardStats();
-            
-            // Load data ke tabel
-            loadReservations();
-            loadRooms();
-            loadGuests();
-            loadCheckins();
-            loadCheckouts();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Setup date defaults
-            setupDefaultDates();
-        });
-
-        // Fungsi untuk setup default tanggal
-        function setupDefaultDates() {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            document.getElementById('checkinDate').valueAsDate = today;
-            document.getElementById('checkoutDate').valueAsDate = tomorrow;
-            
-            document.getElementById('reportStartDate').valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1);
-            document.getElementById('reportEndDate').valueAsDate = today;
-        }
-
-        // Fungsi untuk load data dari localStorage
-        function loadDataFromStorage() {
-            const savedData = localStorage.getItem('hotelData');
-            if (savedData) {
-                hotelData = JSON.parse(savedData);
-                showNotification('Data dimuat', 'Data berhasil dimuat dari penyimpanan lokal.', 'success');
-            } else {
-                // Initialize with empty data
-                showNotification('Sistem siap', 'Sistem siap digunakan dengan data kosong.', 'info');
-            }
-        }
-
-        // Fungsi untuk menyimpan data ke localStorage
-        function saveDataToStorage() {
-            localStorage.setItem('hotelData', JSON.stringify(hotelData));
-        }
-
-        // Fungsi untuk update statistik dashboard
-        function updateDashboardStats() {
-            // Update total guests
-            document.getElementById('totalGuests').textContent = hotelData.guests.length;
-            
-            // Update available rooms
-            const availableRooms = hotelData.rooms.filter(room => room.status === 'available').length;
-            document.getElementById('availableRooms').textContent = availableRooms;
-            
-            // Update today's checkins
-            const today = new Date().toISOString().split('T')[0];
-            const todayCheckins = hotelData.checkins.filter(checkin => checkin.date === today).length;
-            document.getElementById('todayCheckins').textContent = todayCheckins;
-            
-            // Update today's checkouts
-            const todayCheckouts = hotelData.checkouts.filter(checkout => checkout.date === today).length;
-            document.getElementById('todayCheckouts').textContent = todayCheckouts;
-            
-            // Update recent activities
-            updateRecentActivities();
-        }
-
-        // Fungsi untuk update aktivitas terbaru
-        function updateRecentActivities() {
-            const activities = [];
-            
-            // Add checkins
-            hotelData.checkins.slice(-5).forEach(checkin => {
-                activities.push({
-                    time: checkin.date + ' ' + checkin.time,
-                    guest: checkin.guestName,
-                    room: checkin.roomNumber,
-                    activity: 'Check-In',
-                    status: 'Selesai'
-                });
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
             
-            // Add checkouts
-            hotelData.checkouts.slice(-5).forEach(checkout => {
-                activities.push({
-                    time: checkout.date + ' ' + checkout.time,
-                    guest: checkout.guestName,
-                    room: checkout.roomNumber,
-                    activity: 'Check-Out',
-                    status: 'Selesai'
-                });
+            // Initialize datepickers
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true
             });
             
-            // Sort by time and get the latest 5
-            activities.sort((a, b) => new Date(b.time) - new Date(a.time));
-            const recentActivities = activities.slice(0, 5);
-            
-            // Update table
-            const tbody = document.getElementById('recentActivities');
-            tbody.innerHTML = '';
-            
-            recentActivities.forEach(activity => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${formatDateTime(activity.time)}</td>
-                    <td>${activity.guest}</td>
-                    <td>${activity.room}</td>
-                    <td>${activity.activity}</td>
-                    <td><span class="badge bg-success">${activity.status}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Fungsi untuk memuat data reservasi
-        function loadReservations() {
-            const tbody = document.getElementById('reservationList');
-            tbody.innerHTML = '';
-            
-            if (hotelData.reservations.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">Tidak ada data reservasi</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            hotelData.reservations.forEach(reservation => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${reservation.id}</td>
-                    <td>${reservation.guestName}</td>
-                    <td>${reservation.roomNumber}</td>
-                    <td>${formatDate(reservation.checkinDate)}</td>
-                    <td>${formatDate(reservation.checkoutDate)}</td>
-                    <td><span class="badge bg-warning">${reservation.status}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-reservation" data-id="${reservation.id}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-reservation" data-id="${reservation.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Fungsi untuk memuat data kamar
-        function loadRooms() {
-            const tbody = document.getElementById('roomList');
-            tbody.innerHTML = '';
-            
-            if (hotelData.rooms.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="6" class="text-center">Tidak ada data kamar</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            hotelData.rooms.forEach(room => {
-                let statusBadge = '';
-                if (room.status === 'available') {
-                    statusBadge = '<span class="badge bg-success">Tersedia</span>';
-                } else if (room.status === 'occupied') {
-                    statusBadge = '<span class="badge bg-danger">Terisi</span>';
-                } else if (room.status === 'maintenance') {
-                    statusBadge = '<span class="badge bg-warning">Perawatan</span>';
-                } else if (room.status === 'cleaning') {
-                    statusBadge = '<span class="badge bg-info">Pembersihan</span>';
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${room.number}</td>
-                    <td>${room.type}</td>
-                    <td>${formatCurrency(room.price)}</td>
-                    <td>${room.facilities.join(', ')}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-room" data-id="${room.number}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-warning edit-room" data-id="${room.number}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-room" data-id="${room.number}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Fungsi untuk memuat data tamu
-        function loadGuests() {
-            const tbody = document.getElementById('guestList');
-            tbody.innerHTML = '';
-            
-            if (hotelData.guests.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">Tidak ada data tamu</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            hotelData.guests.forEach(guest => {
-                let statusBadge = '';
-                if (guest.status === 'checked-in') {
-                    statusBadge = '<span class="badge bg-success">Sedang Menginap</span>';
-                } else if (guest.status === 'checked-out') {
-                    statusBadge = '<span class="badge bg-secondary">Telah Check-Out</span>';
-                } else if (guest.status === 'reserved') {
-                    statusBadge = '<span class="badge bg-warning">Reservasi</span>';
-                }
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${guest.id}</td>
-                    <td>${guest.name}</td>
-                    <td>${guest.email}</td>
-                    <td>${guest.phone}</td>
-                    <td>${guest.roomNumber || '-'}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-guest" data-id="${guest.id}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-warning edit-guest" data-id="${guest.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Fungsi untuk memuat data check-in
-        function loadCheckins() {
-            const tbody = document.getElementById('checkinList');
-            tbody.innerHTML = '';
-            
-            // Get reservations that are not checked in yet
-            const pendingCheckins = hotelData.reservations.filter(res => res.status === 'confirmed');
-            
-            if (pendingCheckins.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">Tidak ada reservasi untuk check-in</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            pendingCheckins.forEach(reservation => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${reservation.id}</td>
-                    <td>${reservation.guestName}</td>
-                    <td>${reservation.roomNumber}</td>
-                    <td>${formatDate(reservation.checkinDate)}</td>
-                    <td>${formatDate(reservation.checkoutDate)}</td>
-                    <td><span class="badge bg-success">Terkonfirmasi</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary process-checkin" data-id="${reservation.id}">
-                            <i class="fas fa-sign-in-alt"></i> Proses Check-In
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Fungsi untuk memuat data check-out
-        function loadCheckouts() {
-            const tbody = document.getElementById('checkoutList');
-            tbody.innerHTML = '';
-            
-            // Get guests that are checked in
-            const checkedInGuests = hotelData.guests.filter(guest => guest.status === 'checked-in');
-            
-            if (checkedInGuests.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="7" class="text-center">Tidak ada tamu untuk check-out</td>`;
-                tbody.appendChild(row);
-                return;
-            }
-            
-            checkedInGuests.forEach(guest => {
-                // Find the reservation for this guest
-                const reservation = hotelData.reservations.find(res => res.guestId === guest.id && res.status === 'checked-in');
-                
-                if (reservation) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${guest.id}</td>
-                        <td>${guest.name}</td>
-                        <td>${guest.roomNumber}</td>
-                        <td>${formatDate(reservation.checkinDate)}</td>
-                        <td>${formatDate(reservation.checkoutDate)}</td>
-                        <td>${calculateTotal(reservation)}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary process-checkout" data-id="${guest.id}">
-                                <i class="fas fa-sign-out-alt"></i> Proses Check-Out
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                }
-            });
-        }
-
-        // Fungsi untuk menghitung total biaya
-        function calculateTotal(reservation) {
-            const room = hotelData.rooms.find(r => r.number === reservation.roomNumber);
-            if (!room) return formatCurrency(0);
-            
-            const checkinDate = new Date(reservation.checkinDate);
-            const checkoutDate = new Date(reservation.checkoutDate);
-            const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-            
-            const subtotal = room.price * nights;
-            const tax = subtotal * (hotelData.settings.taxRate / 100);
-            const total = subtotal + tax;
-            
-            return formatCurrency(total);
-        }
-
-        // Fungsi untuk setup event listeners
-        function setupEventListeners() {
             // Mobile menu toggle
             document.getElementById('mobileMenuBtn').addEventListener('click', function() {
                 document.getElementById('sidebar').classList.toggle('mobile-show');
@@ -1914,681 +1710,192 @@
                 this.classList.remove('mobile-show');
             });
             
-            // Save reservation button
-            document.getElementById('saveReservationBtn').addEventListener('click', function() {
-                addReservation();
-            });
+            // Show sample notification
+            setTimeout(function() {
+                showNotification('Selamat datang di Hotel Management System v2.0!');
+            }, 1000);
             
-            // Save room button
-            document.getElementById('saveRoomBtn').addEventListener('click', function() {
-                addRoom();
-            });
+            // Load sample data
+            loadSampleData();
             
-            // Export buttons
-            document.getElementById('exportReservationsBtn').addEventListener('click', function() {
-                exportToExcel(hotelData.reservations, 'reservations');
-            });
+            // Initialize charts
+            initCharts();
             
-            document.getElementById('exportRoomsBtn').addEventListener('click', function() {
-                exportToExcel(hotelData.rooms, 'rooms');
-            });
-            
-            document.getElementById('exportReportBtn').addEventListener('click', function() {
-                generateReport();
-            });
-            
-            document.getElementById('printReportBtn').addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Data management buttons
-            document.getElementById('exportDataBtn').addEventListener('click', function() {
-                exportAllData();
-            });
-            
-            document.getElementById('importDataBtn').addEventListener('click', function() {
-                document.getElementById('importFileInput').click();
-            });
-            
-            document.getElementById('importFileInput').addEventListener('change', function(e) {
-                importData(e.target.files[0]);
-            });
-            
-            document.getElementById('resetDataBtn').addEventListener('click', function() {
-                resetData();
-            });
-            
-            // Settings form submission
-            document.getElementById('hotelInfoForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveHotelInfo();
-            });
-            
-            document.getElementById('systemSettingsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSystemSettings();
-            });
-            
-            // Quick action buttons
-            document.getElementById('quickCheckinBtn').addEventListener('click', function() {
-                // Switch to checkin tab
-                const checkinTab = new bootstrap.Tab(document.getElementById('checkin-tab'));
-                checkinTab.show();
-            });
-            
-            document.getElementById('quickCheckoutBtn').addEventListener('click', function() {
-                // Switch to checkout tab
-                const checkoutTab = new bootstrap.Tab(document.getElementById('checkout-tab'));
-                checkoutTab.show();
-            });
-            
-            document.getElementById('quickReportBtn').addEventListener('click', function() {
-                // Switch to report tab
-                const reportTab = new bootstrap.Tab(document.getElementById('report-tab'));
-                reportTab.show();
-            });
-            
-            // Room type change event
-            document.getElementById('roomType').addEventListener('change', function() {
-                updateAvailableRooms(this.value);
-            });
-            
-            // Generate report button
-            document.getElementById('generateReportBtn').addEventListener('click', function() {
-                generateReport();
-            });
-            
-            // Print invoice button
-            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Confirm checkout button
-            document.getElementById('confirmCheckoutBtn').addEventListener('click', function() {
-                processCheckout();
-            });
+            // Setup event listeners
+            setupEventListeners();
+        });
+        
+        // Show notification function
+        function showNotification(message) {
+            document.getElementById('toastMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('notificationToast'));
+            toast.show();
         }
-
-        // Fungsi untuk menambahkan reservasi baru
-        function addReservation() {
-            const guestName = document.getElementById('guestName').value;
-            const guestEmail = document.getElementById('guestEmail').value;
-            const guestPhone = document.getElementById('guestPhone').value;
-            const guestCount = document.getElementById('guestCount').value;
-            const checkinDate = document.getElementById('checkinDate').value;
-            const checkoutDate = document.getElementById('checkoutDate').value;
-            const roomType = document.getElementById('roomType').value;
-            const roomNumber = document.getElementById('availableRoom').value;
-            const notes = document.getElementById('reservationNotes').value;
+        
+        // Load sample data for demonstration
+        function loadSampleData() {
+            // Sample reservations
+            const reservations = [
+                { id: 'RES-001', guest: 'Budi Santoso', room: '101 (Standard)', checkin: '2023-10-12', checkout: '2023-10-14', status: 'Reserved' },
+                { id: 'RES-002', guest: 'Siti Rahayu', room: '201 (Deluxe)', checkin: '2023-10-13', checkout: '2023-10-15', status: 'Reserved' },
+                { id: 'RES-003', guest: 'Ahmad Fauzi', room: '301 (Suite)', checkin: '2023-10-14', checkout: '2023-10-16', status: 'Checked-In' },
+                { id: 'RES-004', guest: 'Dewi Lestari', room: '102 (Standard)', checkin: '2023-10-15', checkout: '2023-10-17', status: 'Checked-Out' }
+            ];
             
-            // Validasi input
-            if (!guestName || !guestPhone || !checkinDate || !checkoutDate || !roomType || !roomNumber) {
-                showNotification('Error', 'Harap isi semua field yang wajib diisi.', 'error');
-                return;
-            }
+            // Populate reservation list
+            const reservationList = document.getElementById('reservationList');
+            reservationList.innerHTML = '';
             
-            // Buat ID unik
-            const reservationId = 'RES' + Date.now();
-            const guestId = 'GUEST' + Date.now();
-            
-            // Tambahkan tamu baru
-            const newGuest = {
-                id: guestId,
-                name: guestName,
-                email: guestEmail,
-                phone: guestPhone,
-                status: 'reserved'
-            };
-            
-            hotelData.guests.push(newGuest);
-            
-            // Tambahkan reservasi
-            const newReservation = {
-                id: reservationId,
-                guestId: guestId,
-                guestName: guestName,
-                roomNumber: roomNumber,
-                roomType: roomType,
-                checkinDate: checkinDate,
-                checkoutDate: checkoutDate,
-                guestCount: guestCount,
-                notes: notes,
-                status: 'confirmed',
-                createdAt: new Date().toISOString()
-            };
-            
-            hotelData.reservations.push(newReservation);
-            
-            // Update status kamar
-            const roomIndex = hotelData.rooms.findIndex(room => room.number === roomNumber);
-            if (roomIndex !== -1) {
-                hotelData.rooms[roomIndex].status = 'reserved';
-            }
-            
-            // Simpan data dan perbarui UI
-            saveDataToStorage();
-            loadReservations();
-            loadGuests();
-            loadRooms();
-            updateDashboardStats();
-            
-            // Tutup modal dan reset form
-            bootstrap.Modal.getInstance(document.getElementById('addReservationModal')).hide();
-            document.getElementById('addReservationForm').reset();
-            
-            showNotification('Berhasil', 'Reservasi berhasil ditambahkan.', 'success');
-        }
-
-        // Fungsi untuk menambahkan kamar baru
-        function addRoom() {
-            const roomNumber = document.getElementById('roomNumber').value;
-            const roomType = document.getElementById('newRoomType').value;
-            const roomPrice = document.getElementById('roomPrice').value;
-            const roomStatus = document.getElementById('roomStatus').value;
-            
-            // Validasi input
-            if (!roomNumber || !roomType || !roomPrice || !roomStatus) {
-                showNotification('Error', 'Harap isi semua field yang wajib diisi.', 'error');
-                return;
-            }
-            
-            // Periksa apakah nomor kamar sudah ada
-            if (hotelData.rooms.some(room => room.number === roomNumber)) {
-                showNotification('Error', 'Nomor kamar sudah ada.', 'error');
-                return;
-            }
-            
-            // Dapatkan fasilitas yang dipilih
-            const facilities = [];
-            if (document.getElementById('facilityWifi').checked) facilities.push('Wi-Fi');
-            if (document.getElementById('facilityAC').checked) facilities.push('AC');
-            if (document.getElementById('facilityTV').checked) facilities.push('TV');
-            if (document.getElementById('facilityBreakfast').checked) facilities.push('Sarapan');
-            
-            // Tambahkan kamar baru
-            const newRoom = {
-                number: roomNumber,
-                type: roomType,
-                price: parseInt(roomPrice),
-                facilities: facilities,
-                status: roomStatus
-            };
-            
-            hotelData.rooms.push(newRoom);
-            
-            // Simpan data dan perbarui UI
-            saveDataToStorage();
-            loadRooms();
-            updateDashboardStats();
-            
-            // Tutup modal dan reset form
-            bootstrap.Modal.getInstance(document.getElementById('addRoomModal')).hide();
-            document.getElementById('addRoomForm').reset();
-            
-            showNotification('Berhasil', 'Kamar berhasil ditambahkan.', 'success');
-        }
-
-        // Fungsi untuk memperbarui daftar kamar yang tersedia
-        function updateAvailableRooms(roomType) {
-            const availableRoomSelect = document.getElementById('availableRoom');
-            availableRoomSelect.innerHTML = '<option value="">Pilih Kamar</option>';
-            
-            if (!roomType) return;
-            
-            // Filter kamar yang tersedia berdasarkan tipe
-            const availableRooms = hotelData.rooms.filter(room => 
-                room.type === roomType && room.status === 'available'
-            );
-            
-            if (availableRooms.length === 0) {
-                availableRoomSelect.innerHTML = '<option value="">Tidak ada kamar tersedia</option>';
-                return;
-            }
-            
-            // Tambahkan opsi kamar
-            availableRooms.forEach(room => {
-                const option = document.createElement('option');
-                option.value = room.number;
-                option.textContent = `${room.number} - ${formatCurrency(room.price)}/malam`;
-                availableRoomSelect.appendChild(option);
-            });
-        }
-
-        // Fungsi untuk memproses check-in
-        function processCheckin(reservationId) {
-            const reservation = hotelData.reservations.find(res => res.id === reservationId);
-            if (!reservation) return;
-            
-            // Update status reservasi
-            reservation.status = 'checked-in';
-            
-            // Update status tamu
-            const guest = hotelData.guests.find(g => g.id === reservation.guestId);
-            if (guest) {
-                guest.status = 'checked-in';
-                guest.roomNumber = reservation.roomNumber;
-            }
-            
-            // Update status kamar
-            const room = hotelData.rooms.find(r => r.number === reservation.roomNumber);
-            if (room) {
-                room.status = 'occupied';
-            }
-            
-            // Tambahkan ke riwayat check-in
-            const now = new Date();
-            hotelData.checkins.push({
-                reservationId: reservationId,
-                guestId: reservation.guestId,
-                guestName: reservation.guestName,
-                roomNumber: reservation.roomNumber,
-                date: now.toISOString().split('T')[0],
-                time: now.toTimeString().split(' ')[0]
-            });
-            
-            // Simpan data dan perbarui UI
-            saveDataToStorage();
-            loadReservations();
-            loadGuests();
-            loadRooms();
-            loadCheckins();
-            loadCheckouts();
-            updateDashboardStats();
-            
-            showNotification('Berhasil', 'Check-in berhasil diproses.', 'success');
-        }
-
-        // Fungsi untuk memproses check-out
-        function processCheckout(guestId) {
-            const guest = hotelData.guests.find(g => g.id === guestId);
-            if (!guest) return;
-            
-            // Dapatkan reservasi aktif
-            const reservation = hotelData.reservations.find(res => 
-                res.guestId === guestId && res.status === 'checked-in'
-            );
-            
-            if (!reservation) return;
-            
-            // Update status reservasi
-            reservation.status = 'checked-out';
-            
-            // Update status tamu
-            guest.status = 'checked-out';
-            
-            // Update status kamar
-            const room = hotelData.rooms.find(r => r.number === reservation.roomNumber);
-            if (room) {
-                room.status = 'cleaning';
-            }
-            
-            // Tambahkan ke riwayat check-out
-            const now = new Date();
-            hotelData.checkouts.push({
-                reservationId: reservation.id,
-                guestId: guestId,
-                guestName: guest.name,
-                roomNumber: reservation.roomNumber,
-                date: now.toISOString().split('T')[0],
-                time: now.toTimeString().split(' ')[0],
-                total: calculateTotal(reservation)
-            });
-            
-            // Simpan data dan perbarui UI
-            saveDataToStorage();
-            loadReservations();
-            loadGuests();
-            loadRooms();
-            loadCheckins();
-            loadCheckouts();
-            updateDashboardStats();
-            
-            // Tutup modal checkout
-            bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
-            
-            showNotification('Berhasil', 'Check-out berhasil diproses.', 'success');
-        }
-
-        // Fungsi untuk menghasilkan laporan
-        function generateReport() {
-            const startDate = document.getElementById('reportStartDate').value;
-            const endDate = document.getElementById('reportEndDate').value;
-            const reportType = document.getElementById('reportType').value;
-            
-            if (!startDate || !endDate) {
-                showNotification('Error', 'Harap pilih periode laporan.', 'error');
-                return;
-            }
-            
-            // Filter data berdasarkan periode
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            
-            // Untuk demo, kita akan membuat data acak
-            const months = [];
-            const occupancyData = [];
-            const revenueData = [];
-            const guestsData = [];
-            
-            let currentDate = new Date(start);
-            while (currentDate <= end) {
-                const monthYear = `${currentDate.toLocaleString('default', { month: 'short' })} ${currentDate.getFullYear()}`;
-                months.push(monthYear);
+            reservations.forEach(res => {
+                const row = document.createElement('tr');
                 
-                // Generate random data for demo
-                occupancyData.push(Math.floor(Math.random() * 50) + 50); // 50-100%
-                revenueData.push(Math.floor(Math.random() * 50000000) + 10000000); // 10-60 juta
-                guestsData.push(Math.floor(Math.random() * 200) + 50); // 50-250 tamu
-                
-                // Move to next month
-                currentDate.setMonth(currentDate.getMonth() + 1);
-            }
-            
-            // Update chart based on report type
-            const ctx = document.getElementById('reportChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (window.reportChartInstance) {
-                window.reportChartInstance.destroy();
-            }
-            
-            let chartData = [];
-            let label = '';
-            let backgroundColor = '';
-            
-            switch (reportType) {
-                case 'occupancy':
-                    chartData = occupancyData;
-                    label = 'Tingkat Okupansi (%)';
-                    backgroundColor = 'rgba(54, 162, 235, 0.5)';
-                    break;
-                case 'revenue':
-                    chartData = revenueData;
-                    label = 'Pendapatan (IDR)';
-                    backgroundColor = 'rgba(75, 192, 192, 0.5)';
-                    break;
-                case 'guests':
-                    chartData = guestsData;
-                    label = 'Jumlah Tamu';
-                    backgroundColor = 'rgba(153, 102, 255, 0.5)';
-                    break;
-                default:
-                    chartData = occupancyData;
-                    label = 'Tingkat Okupansi (%)';
-                    backgroundColor = 'rgba(54, 162, 235, 0.5)';
-            }
-            
-            window.reportChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: label,
-                        data: chartData,
-                        backgroundColor: backgroundColor,
-                        borderColor: backgroundColor.replace('0.5', '1'),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+                let statusBadge;
+                if (res.status === 'Reserved') {
+                    statusBadge = '<span class="badge bg-warning">Reserved</span>';
+                } else if (res.status === 'Checked-In') {
+                    statusBadge = '<span class="badge bg-success">Checked-In</span>';
+                } else {
+                    statusBadge = '<span class="badge bg-secondary">Checked-Out</span>';
                 }
+                
+                row.innerHTML = `
+                    <td>${res.id}</td>
+                    <td>${res.guest}</td>
+                    <td>${res.room}</td>
+                    <td>${res.checkin}</td>
+                    <td>${res.checkout}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary btn-action" data-bs-toggle="tooltip" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-success btn-action checkin-btn" data-bs-toggle="tooltip" title="Check-In">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning btn-action checkout-btn" data-bs-toggle="tooltip" title="Check-Out">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-action cancel-btn" data-bs-toggle="tooltip" title="Batalkan">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                
+                reservationList.appendChild(row);
             });
             
-            // Update report table
-            const tbody = document.getElementById('reportTableBody');
-            tbody.innerHTML = '';
+            // Populate check-in list
+            const checkinList = document.getElementById('checkinList');
+            checkinList.innerHTML = '';
             
-            for (let i = 0; i < months.length; i++) {
+            reservations.filter(res => res.status === 'Reserved').forEach(res => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${months[i]}</td>
-                    <td>${occupancyData[i]}%</td>
-                    <td>${formatCurrency(revenueData[i])}</td>
-                    <td>${guestsData[i]}</td>
+                    <td>${res.id}</td>
+                    <td>${res.guest}</td>
+                    <td>${res.room}</td>
+                    <td>${res.checkin}</td>
+                    <td>${res.checkout}</td>
+                    <td><span class="badge bg-warning">Reserved</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-success checkin-btn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Check-In
+                        </button>
+                        <button class="btn btn-sm btn-danger cancel-btn">
+                            <i class="fas fa-times me-1"></i>Batalkan
+                        </button>
+                    </td>
                 `;
-                tbody.appendChild(row);
-            }
-            
-            showNotification('Laporan Diperbarui', 'Laporan berhasil dibuat untuk periode yang dipilih.', 'success');
-        }
-
-        // Fungsi untuk mengekspor data ke Excel
-        function exportToExcel(data, filename) {
-            if (data.length === 0) {
-                showNotification('Error', 'Tidak ada data untuk diekspor.', 'error');
-                return;
-            }
-            
-            try {
-                // Create worksheet
-                const ws = XLSX.utils.json_to_sheet(data);
                 
-                // Create workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, filename);
+                checkinList.appendChild(row);
+            });
+            
+            // Populate dashboard stats
+            document.getElementById('totalGuests').textContent = '42';
+            document.getElementById('availableRooms').textContent = '12';
+            document.getElementById('todayCheckins').textContent = '3';
+            document.getElementById('todayCheckouts').textContent = '2';
+            
+            // Populate recent activities
+            const activities = [
+                { time: '10:30', guest: 'Budi Santoso', room: '101', activity: 'Check-In', status: 'Completed' },
+                { time: '11:15', guest: 'Siti Rahayu', room: '201', activity: 'Reservation', status: 'Completed' },
+                { time: '12:40', guest: 'Ahmad Fauzi', room: '301', activity: 'Check-Out', status: 'Pending' },
+                { time: '14:20', guest: 'Dewi Lestari', room: '102', activity: 'Service Request', status: 'In Progress' }
+            ];
+            
+            const activitiesList = document.getElementById('recentActivities');
+            activitiesList.innerHTML = '';
+            
+            activities.forEach(act => {
+                const row = document.createElement('tr');
                 
-                // Export to file
-                XLSX.writeFile(wb, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`);
-                
-                showNotification('Berhasil', `Data ${filename} berhasil diekspor.`, 'success');
-            } catch (error) {
-                showNotification('Error', 'Terjadi kesalahan saat mengekspor data.', 'error');
-                console.error(error);
-            }
-        }
-
-        // Fungsi untuk mengekspor semua data
-        function exportAllData() {
-            const dataStr = JSON.stringify(hotelData);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `hotel_data_${new Date().toISOString().split('T')[0]}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            showNotification('Berhasil', 'Semua data berhasil diekspor.', 'success');
-        }
-
-        // Fungsi untuk mengimpor data
-        function importData(file) {
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    // Validate imported data structure
-                    if (!importedData.guests || !importedData.rooms || !importedData.reservations || 
-                        !importedData.checkins || !importedData.checkouts || !importedData.settings) {
-                        showNotification('Error', 'File tidak valid. Struktur data tidak sesuai.', 'error');
-                        return;
-                    }
-                    
-                    // Replace current data with imported data
-                    hotelData = importedData;
-                    
-                    // Save to storage
-                    saveDataToStorage();
-                    
-                    // Update UI
-                    loadReservations();
-                    loadRooms();
-                    loadGuests();
-                    loadCheckins();
-                    loadCheckouts();
-                    updateDashboardStats();
-                    
-                    showNotification('Berhasil', 'Data berhasil diimpor.', 'success');
-                } catch (error) {
-                    showNotification('Error', 'Terjadi kesalahan saat mengimpor data.', 'error');
-                    console.error(error);
+                let statusBadge;
+                if (act.status === 'Completed') {
+                    statusBadge = '<span class="badge bg-success">Completed</span>';
+                } else if (act.status === 'Pending') {
+                    statusBadge = '<span class="badge bg-warning">Pending</span>';
+                } else {
+                    statusBadge = '<span class="badge bg-info">In Progress</span>';
                 }
-            };
-            reader.readAsText(file);
+                
+                row.innerHTML = `
+                    <td>${act.time}</td>
+                    <td>${act.guest}</td>
+                    <td>${act.room}</td>
+                    <td>${act.activity}</td>
+                    <td>${statusBadge}</td>
+                `;
+                
+                activitiesList.appendChild(row);
+            });
         }
-
-        // Fungsi untuk mereset data
-        function resetData() {
-            if (!confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan.')) {
-                return;
-            }
-            
-            // Reset to initial empty state
-            hotelData = {
-                guests: [],
-                rooms: [],
-                reservations: [],
-                checkins: [],
-                checkouts: [],
-                settings: hotelData.settings // Keep current settings
-            };
-            
-            // Save to storage
-            saveDataToStorage();
-            
-            // Update UI
-            loadReservations();
-            loadRooms();
-            loadGuests();
-            loadCheckins();
-            loadCheckouts();
-            updateDashboardStats();
-            
-            showNotification('Berhasil', 'Semua data telah direset.', 'success');
-        }
-
-        // Fungsi untuk menyimpan informasi hotel
-        function saveHotelInfo() {
-            hotelData.settings.hotelName = document.getElementById('hotelName').value;
-            hotelData.settings.hotelAddress = document.getElementById('hotelAddress').value;
-            hotelData.settings.hotelPhone = document.getElementById('hotelPhone').value;
-            hotelData.settings.hotelEmail = document.getElementById('hotelEmail').value;
-            
-            saveDataToStorage();
-            showNotification('Berhasil', 'Informasi hotel berhasil disimpan.', 'success');
-        }
-
-        // Fungsi untuk menyimpan pengaturan sistem
-        function saveSystemSettings() {
-            hotelData.settings.currency = document.getElementById('currency').value;
-            hotelData.settings.taxRate = parseFloat(document.getElementById('taxRate').value);
-            hotelData.settings.defaultCheckinTime = document.getElementById('defaultCheckinTime').value;
-            hotelData.settings.defaultCheckoutTime = document.getElementById('defaultCheckoutTime').value;
-            
-            saveDataToStorage();
-            showNotification('Berhasil', 'Pengaturan sistem berhasil disimpan.', 'success');
-        }
-
-        // Fungsi untuk menampilkan notifikasi
-        function showNotification(title, message, type = 'info') {
-            const toast = document.querySelector('.notification-toast');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
-            
-            // Set title and message
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
-            
-            // Set color based on type
-            switch (type) {
-                case 'success':
-                    toast.querySelector('.toast-header').classList.remove('bg-info', 'bg-warning', 'bg-danger');
-                    toast.querySelector('.toast-header').classList.add('bg-success');
-                    break;
-                case 'warning':
-                    toast.querySelector('.toast-header').classList.remove('bg-info', 'bg-success', 'bg-danger');
-                    toast.querySelector('.toast-header').classList.add('bg-warning');
-                    break;
-                case 'error':
-                    toast.querySelector('.toast-header').classList.remove('bg-info', 'bg-success', 'bg-warning');
-                    toast.querySelector('.toast-header').classList.add('bg-danger');
-                    break;
-                default:
-                    toast.querySelector('.toast-header').classList.remove('bg-success', 'bg-warning', 'bg-danger');
-                    toast.querySelector('.toast-header').classList.add('bg-info');
-            }
-            
-            // Show the toast
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-        }
-
-        // Fungsi untuk memformat tanggal
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            
-            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-            return new Date(dateString).toLocaleDateString('id-ID', options);
-        }
-
-        // Fungsi untuk memformat tanggal dan waktu
-        function formatDateTime(dateTimeString) {
-            if (!dateTimeString) return '-';
-            
-            const options = { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            return new Date(dateTimeString).toLocaleDateString('id-ID', options);
-        }
-
-        // Fungsi untuk memformat mata uang
-        function formatCurrency(amount) {
-            if (amount === undefined || amount === null) return 'Rp 0';
-            
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(amount);
-        }
-
-        // Fungsi untuk inisialisasi chart
+        
+        // Initialize charts
         function initCharts() {
             // Monthly stats chart
             const monthlyCtx = document.getElementById('monthlyStatsChart').getContext('2d');
-            window.monthlyStatsChart = new Chart(monthlyCtx, {
-                type: 'line',
+            new Chart(monthlyCtx, {
+                type: 'bar',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                    datasets: [{
-                        label: 'Tingkat Okupansi (%)',
-                        data: [65, 70, 75, 80, 85, 90, 95, 90, 85, 80, 75, 70],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
+                    datasets: [
+                        {
+                            label: 'Pendapatan (Juta)',
+                            data: [12, 19, 15, 17, 22, 25, 28, 26, 24, 20, 18, 22],
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Tamu',
+                            data: [120, 190, 150, 170, 220, 250, 280, 260, 240, 200, 180, 220],
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            type: 'line',
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
                 options: {
-                    responsive: true,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Statistik Okupansi Kamar 2023'
-                        }
-                    },
                     scales: {
                         y: {
-                            min: 0,
-                            max: 100,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Pendapatan (Juta IDR)'
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Jumlah Tamu'
                             }
                         }
                     }
@@ -2597,23 +1904,21 @@
             
             // Room status chart
             const roomCtx = document.getElementById('roomStatusChart').getContext('2d');
-            window.roomStatusChart = new Chart(roomCtx, {
+            new Chart(roomCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Tersedia', 'Terisi', 'Perawatan', 'Pembersihan'],
+                    labels: ['Tersedia', 'Terisi', 'Pemeliharaan'],
                     datasets: [{
-                        data: [15, 10, 2, 3],
+                        data: [12, 25, 3],
                         backgroundColor: [
                             'rgba(75, 192, 192, 0.7)',
                             'rgba(255, 99, 132, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(54, 162, 235, 0.7)'
+                            'rgba(255, 205, 86, 0.7)'
                         ],
                         borderColor: [
                             'rgba(75, 192, 192, 1)',
                             'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(54, 162, 235, 1)'
+                            'rgba(255, 205, 86, 1)'
                         ],
                         borderWidth: 1
                     }]
@@ -2628,69 +1933,111 @@
                 }
             });
         }
-
-        // Event delegation untuk tombol aksi dinamis
-        document.addEventListener('click', function(e) {
-            // Tombol proses check-in
-            if (e.target.closest('.process-checkin')) {
-                const reservationId = e.target.closest('.process-checkin').dataset.id;
-                processCheckin(reservationId);
-            }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Check-in button event
+            document.querySelectorAll('.checkin-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showNotification('Proses check-in berhasil dilakukan.');
+                });
+            });
             
-            // Tombol proses check-out
-            if (e.target.closest('.process-checkout')) {
-                const guestId = e.target.closest('.process-checkout').dataset.id;
-                // Untuk demo, kita akan langsung proses checkout
-                processCheckout(guestId);
-            }
+            // Check-out button event
+            document.querySelectorAll('.checkout-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Show invoice modal on checkout
+                    const invoiceModal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+                    invoiceModal.show();
+                });
+            });
             
-            // Tombol hapus reservasi
-            if (e.target.closest('.delete-reservation')) {
-                const reservationId = e.target.closest('.delete-reservation').dataset.id;
-                if (confirm('Apakah Anda yakin ingin menghapus reservasi ini?')) {
-                    deleteReservation(reservationId);
+            // Cancel button event
+            document.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')) {
+                        showNotification('Reservasi berhasil dibatalkan.');
+                    }
+                });
+            });
+            
+            // Print invoice button
+            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Download PDF button
+            document.getElementById('downloadInvoiceBtn').addEventListener('click', function() {
+                showNotification('Fitur download PDF akan segera tersedia.');
+            });
+            
+            // Submit reservation button
+            document.getElementById('submitReservationBtn').addEventListener('click', function() {
+                showNotification('Reservasi berhasil ditambahkan.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addReservationModal'));
+                modal.hide();
+            });
+            
+            // Submit room button
+            document.getElementById('submitRoomBtn').addEventListener('click', function() {
+                showNotification('Kamar berhasil ditambahkan.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addRoomModal'));
+                modal.hide();
+            });
+            
+            // Submit user button
+            document.getElementById('submitUserBtn').addEventListener('click', function() {
+                showNotification('Pengguna berhasil ditambahkan.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                modal.hide();
+            });
+            
+            // Quick action buttons
+            document.getElementById('quickCheckinBtn').addEventListener('click', function() {
+                showNotification('Membuka form check-in cepat.');
+            });
+            
+            document.getElementById('quickCheckoutBtn').addEventListener('click', function() {
+                showNotification('Membuka form check-out cepat.');
+            });
+            
+            document.getElementById('quickReportBtn').addEventListener('click', function() {
+                showNotification('Membuka form ekspor laporan.');
+            });
+            
+            // Export buttons
+            document.getElementById('exportReservationsBtn').addEventListener('click', function() {
+                showNotification('Data reservasi berhasil diekspor.');
+            });
+            
+            document.getElementById('exportRoomsBtn').addEventListener('click', function() {
+                showNotification('Data kamar berhasil diekspor.');
+            });
+            
+            // Print PDF buttons
+            document.getElementById('printReservationsBtn').addEventListener('click', function() {
+                showNotification('Mencetak data reservasi dalam format PDF.');
+            });
+            
+            // Generate report button
+            document.getElementById('generateReportBtn').addEventListener('click', function() {
+                showNotification('Laporan berhasil digenerate.');
+            });
+            
+            // Backup and restore buttons
+            document.getElementById('backupDataBtn').addEventListener('click', function() {
+                showNotification('Backup data berhasil dilakukan.');
+            });
+            
+            document.getElementById('restoreDataBtn').addEventListener('click', function() {
+                showNotification('Data berhasil dipulihkan dari backup.');
+            });
+            
+            document.getElementById('resetDataBtn').addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan.')) {
+                    showNotification('Semua data telah direset ke pengaturan awal.');
                 }
-            }
-            
-            // Tombol hapus kamar
-            if (e.target.closest('.delete-room')) {
-                const roomNumber = e.target.closest('.delete-room').dataset.id;
-                if (confirm('Apakah Anda yakin ingin menghapus kamar ini?')) {
-                    deleteRoom(roomNumber);
-                }
-            }
-        });
-
-        // Fungsi untuk menghapus reservasi
-        function deleteReservation(reservationId) {
-            const index = hotelData.reservations.findIndex(res => res.id === reservationId);
-            if (index !== -1) {
-                hotelData.reservations.splice(index, 1);
-                saveDataToStorage();
-                loadReservations();
-                showNotification('Berhasil', 'Reservasi berhasil dihapus.', 'success');
-            }
-        }
-
-        // Fungsi untuk menghapus kamar
-        function deleteRoom(roomNumber) {
-            // Periksa apakah kamar sedang digunakan
-            const isRoomInUse = hotelData.reservations.some(res => 
-                res.roomNumber === roomNumber && (res.status === 'confirmed' || res.status === 'checked-in')
-            );
-            
-            if (isRoomInUse) {
-                showNotification('Error', 'Kamar tidak dapat dihapus karena sedang digunakan.', 'error');
-                return;
-            }
-            
-            const index = hotelData.rooms.findIndex(room => room.number === roomNumber);
-            if (index !== -1) {
-                hotelData.rooms.splice(index, 1);
-                saveDataToStorage();
-                loadRooms();
-                showNotification('Berhasil', 'Kamar berhasil dihapus.', 'success');
-            }
+            });
         }
     </script>
 </body>
