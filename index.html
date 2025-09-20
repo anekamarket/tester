@@ -54,6 +54,21 @@
             max-width: 400px;
             text-align: center;
         }
+        
+        .login-box .developer-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 25px;
+        }
+
+        .login-box .developer-info a {
+            color: var(--hotel-primary);
+            text-decoration: none;
+        }
+
+        .login-box .developer-info a:hover {
+            text-decoration: underline;
+        }
 
         .login-box .app-logo {
             font-size: 3rem;
@@ -270,6 +285,16 @@
             color: var(--hotel-dark);
             font-size: 0.9rem;
             font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .copyright a {
+            color: var(--hotel-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .copyright a:hover {
+            text-decoration: underline;
         }
         
         .data-table {
@@ -413,10 +438,17 @@
             font-weight: 500;
         }
         
-        .watermark {
+        .watermark-container {
             position: absolute;
             bottom: 10px;
             right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .watermark-item {
             opacity: 0.8;
             font-size: 0.8rem;
             color: white;
@@ -612,6 +644,9 @@
             .no-print {
                 display: none !important;
             }
+            .printable-area .invoice-watermark {
+                display: block !important;
+            }
         }
 
         /* Room status indicators */
@@ -645,6 +680,26 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .invoice-watermark {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 6rem;
+            font-weight: 800;
+            color: rgba(220, 53, 69, 0.15);
+            z-index: 0;
+            pointer-events: none;
+            letter-spacing: 5px;
+        }
+
+        .invoice-container.watermarked .invoice-watermark {
+            display: block;
         }
         
         .invoice-header {
@@ -682,6 +737,16 @@
             font-style: italic;
             color: #6c757d;
         }
+        
+        #reportSummary {
+            background-color: var(--hotel-light);
+            border-left: 5px solid var(--hotel-primary);
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--hotel-dark);
+        }
 
     </style>
 </head>
@@ -704,6 +769,12 @@
                 <button type="submit" class="btn btn-primary w-100 btn-lg">Login</button>
                 <div id="loginError" class="error-message mt-3" style="display: none;">Username atau password salah.</div>
             </form>
+            <div class="developer-info">
+                Developed by <strong>Lentera Karya Situbondo</strong><br>
+                <a href="https://wa.me/6287865614222" target="_blank">WhatsApp: 087865614222</a> | 
+                <a href="http://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a><br>
+                &copy; Hak Cipta Sejak 2025
+            </div>
         </div>
     </div>
 
@@ -721,7 +792,10 @@
                 </div>
                 <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
                 <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
-                <div class="watermark">v2.5 Secured</div>
+                <div class="watermark-container">
+                    <div class="watermark-item">v2.5 Secured</div>
+                    <div class="watermark-item" style="font-size: 0.7rem;">By Lentera Karya Situbondo</div>
+                </div>
             </div>
             
             <div class="row g-0">
@@ -747,7 +821,7 @@
                                 <i class="fas fa-sign-out-alt feature-icon"></i>Check-Out
                             </a>
                         </li>
-                        <li class="nav-item">
+                         <li class="nav-item">
                             <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">
                                 <i class="fas fa-history feature-icon"></i>Histori Check-Out
                             </a>
@@ -1188,10 +1262,15 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="card">
-                                        <div class="card-header">
-                                            <i class="fas fa-chart-bar me-2"></i>Grafik Laporan
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <div><i class="fas fa-chart-bar me-2"></i>Grafik Laporan</div>
+                                            <div id="reportActions" style="display: none;">
+                                                <button class="btn btn-sm btn-info" id="printReportBtn"><i class="fas fa-print me-2"></i>Cetak Laporan</button>
+                                                <button class="btn btn-sm btn-danger" id="downloadReportPdfBtn"><i class="fas fa-file-pdf me-2"></i>Unduh PDF</button>
+                                            </div>
                                         </div>
                                         <div class="card-body">
+                                            <div id="reportSummary" class="mb-3" style="display: none;"></div>
                                             <canvas id="reportChart" height="300"></canvas>
                                         </div>
                                     </div>
@@ -1341,7 +1420,8 @@
             </div>
             
             <div class="copyright no-print">
-                &copy; 2023 Hotel Management System. All rights reserved.
+                Developed by <strong><a href="http://www.anekamarket.my.id" target="_blank">Lentera Karya Situbondo</a></strong> &copy; Hak Cipta Sejak 2025. All rights reserved.<br>
+                Contact: <a href="https://wa.me/6287865614222" target="_blank">WhatsApp (087865614222)</a>
             </div>
         </div>
         
@@ -1904,6 +1984,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="invoice-container printable-area" id="checkoutInvoice">
+                        <div class="invoice-watermark">BELUM LUNAS</div>
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
@@ -2109,6 +2190,8 @@
             initApp();
         });
         
+        let currentReportData = {}; // To store generated report data
+
         function initApp() {
             checkLoginState();
         }
@@ -2226,7 +2309,9 @@
             document.getElementById('printGuestPdfBtn').addEventListener('click', printGuestPdf);
             
             document.getElementById('generateReportBtn').addEventListener('click', generateReport);
-            
+            document.getElementById('printReportBtn').addEventListener('click', printReport);
+            document.getElementById('downloadReportPdfBtn').addEventListener('click', downloadReportPdf);
+
             document.getElementById('roomStatusFilter').addEventListener('click', function(e) {
                 if (e.target.tagName === 'BUTTON') {
                     const status = e.target.dataset.status;
@@ -2891,6 +2976,13 @@
             document.getElementById('invoiceTaxRate').textContent = settings.taxRate;
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
+
+            // Watermark logic
+            if (reservation.paymentStatus === 'pending') {
+                document.getElementById('checkoutInvoice').classList.add('watermarked');
+            } else {
+                document.getElementById('checkoutInvoice').classList.remove('watermarked');
+            }
             
             return totalAmount;
         }
@@ -2902,7 +2994,7 @@
             document.getElementById('checkoutModalTitle').textContent = 'Proses Check-Out & Invoice';
             document.getElementById('checkoutPaymentSection').style.display = 'block';
             document.getElementById('confirmCheckoutBtn').style.display = 'inline-block';
-            document.getElementById('confirmCheckoutBtn').disabled = true; // Disable button on open
+            document.getElementById('confirmCheckoutBtn').disabled = true;
 
             const totalAmount = populateInvoiceModal(reservation);
             
@@ -2942,11 +3034,12 @@
             const totalAmount = parseFloat(document.getElementById('checkoutModal').dataset.totalAmount) || 0;
             const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
             const change = amountPaid >= totalAmount ? amountPaid - totalAmount : 0;
+            const paymentStatus = document.getElementById('checkoutPaymentStatus').value;
 
             reservations[index].status = 'checked-out';
             reservations[index].actualCheckout = new Date().toISOString();
             reservations[index].paymentMethod = document.getElementById('checkoutPaymentMethod').value;
-            reservations[index].paymentStatus = document.getElementById('checkoutPaymentStatus').value;
+            reservations[index].paymentStatus = paymentStatus;
             reservations[index].updatedAt = new Date().toISOString();
             reservations[index].totalAmount = totalAmount;
             reservations[index].amountPaid = amountPaid;
@@ -3156,31 +3249,28 @@
         
         async function printInvoice() {
             const logoImg = document.getElementById('invoiceLogoImg');
-            const originalSrc = logoImg.src;
-
             try {
-                // Fetch the logo and convert to Base64 to ensure it's embedded for printing
-                const logoBase64 = await urlToBas64(originalSrc);
+                const logoBase64 = await urlToBas64(logoImg.src);
+                logoImg.src = logoBase64;
                 logoImg.onload = () => {
-                    window.print();
+                    setTimeout(() => window.print(), 100); // Small delay to ensure render
                 };
-                logoImg.src = logoBase64; // Set the src to the Base64 string
             } catch (error) {
                 console.error("Gagal memuat logo untuk dicetak:", error);
                 showNotification('Warning', 'Gagal memuat logo, cetakan mungkin tidak menampilkan logo.', 'warning');
-                window.print(); // Proceed to print even if the logo fails
+                window.print();
             }
         }
 
-        async function urlToBas64(url) {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
+        function urlToBas64(url) {
+            return fetch(url)
+                .then(response => response.blob())
+                .then(blob => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                }));
         }
 
         async function downloadInvoicePdf() {
@@ -3217,7 +3307,6 @@
                 const imgHeight = (img.height * imgWidth) / img.width;
                 doc.addImage(logoBase64, 'PNG', 14, currentY, imgWidth, imgHeight);
                 currentY += imgHeight + 5;
-
             } catch (error) {
                 console.error("Gagal memuat logo:", error);
                 showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
@@ -3234,7 +3323,6 @@
             doc.text(settings.hotelAddress || 'Alamat Hotel', 14, currentY);
             currentY += 5;
             doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, currentY);
-
 
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(14);
@@ -3326,10 +3414,19 @@
             doc.setFontSize(12);
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
+            
+            // Add watermark to PDF if status is pending
+            if (reservation.paymentStatus === 'pending') {
+                doc.setFontSize(72);
+                doc.setFont('Helvetica', 'bold');
+                doc.setTextColor(220, 53, 69, 0.2);
+                doc.text('BELUM LUNAS', 105, 160, { angle: -35, align: 'center' });
+                doc.setTextColor(0,0,0);
+            }
 
             doc.setFont('Helvetica', 'italic');
             doc.setFontSize(10);
-            doc.text('Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!', 105, finalY + 40, { align: 'center' });
+            doc.text('Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!', 105, doc.internal.pageSize.height - 20, { align: 'center' });
 
             doc.save(`invoice-${reservation.id}.pdf`);
             showNotification('Sukses', 'Invoice PDF berhasil diunduh.', 'success');
@@ -3419,7 +3516,7 @@
                     settings: JSON.parse(localStorage.getItem('hotel_settings') || '{}')
                 };
                 
-                const jsonString = JSON.stringify(backupData, null, 2); // Pretty print JSON
+                const jsonString = JSON.stringify(backupData, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 
@@ -3480,14 +3577,17 @@
             const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
             const changeDueEl = document.getElementById('changeDue');
             const confirmBtn = document.getElementById('confirmCheckoutBtn');
+            const paymentStatusSelect = document.getElementById('checkoutPaymentStatus');
 
-            if (amountPaid > 0 && amountPaid >= totalAmount) {
+            if (amountPaid >= totalAmount) {
                 const change = amountPaid - totalAmount;
                 changeDueEl.value = formatCurrency(change);
                 confirmBtn.disabled = false;
+                paymentStatusSelect.value = 'paid';
             } else {
                 changeDueEl.value = '';
                 confirmBtn.disabled = true;
+                paymentStatusSelect.value = 'pending';
             }
         }
         
@@ -3602,10 +3702,11 @@
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             
-            let data = {};
             let tableHeaders = [];
             let tableRows = [];
             let chartLabel = '';
+            let totalValue = 0;
+            let summaryText = '';
 
             const dateMap = new Map();
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
@@ -3615,19 +3716,26 @@
             switch(reportType) {
                 case 'revenue':
                     chartLabel = 'Total Pendapatan';
+                    summaryText = 'Total Pendapatan';
                     reservations.filter(r => r.status === 'checked-out' && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
                         .forEach(r => {
                             const date = new Date(r.actualCheckout).toISOString().split('T')[0];
                             if(dateMap.has(date)) {
-                                dateMap.set(date, dateMap.get(date) + r.totalAmount);
+                                const newTotal = dateMap.get(date) + (r.totalAmount || 0);
+                                dateMap.set(date, newTotal);
                             }
                         });
                     tableHeaders = ['Tanggal', 'Pendapatan'];
-                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), formatCurrency(value)]));
+                    dateMap.forEach((value, key) => {
+                        tableRows.push([formatDate(key), formatCurrency(value)]);
+                        totalValue += value;
+                    });
+                    summaryText = `Total Pendapatan: ${formatCurrency(totalValue)}`;
                     break;
                 
                 case 'occupancy':
                     chartLabel = 'Tingkat Okupansi (%)';
+                    summaryText = 'Rata-rata Okupansi';
                     const totalRooms = rooms.length;
                     if (totalRooms === 0) {
                         showNotification('Warning', 'Tidak ada kamar terdaftar. Okupansi selalu 0%.', 'warning');
@@ -3643,14 +3751,21 @@
                             return ['checked-in', 'confirmed', 'reserved'].includes(r.status) && currentDate >= checkin && currentDate < checkout;
                         }).length;
                         const occupancyRate = (occupiedCount / totalRooms) * 100;
-                        dateMap.set(key, occupancyRate.toFixed(2));
+                        dateMap.set(key, parseFloat(occupancyRate.toFixed(2)));
                     });
                     tableHeaders = ['Tanggal', 'Kamar Terisi', 'Tingkat Okupansi (%)'];
-                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), Math.round(value/100 * totalRooms), `${value}%` ]));
+                    let totalOccupancyRate = 0;
+                    dateMap.forEach((value, key) => {
+                        tableRows.push([formatDate(key), Math.round(value/100 * totalRooms), `${value}%` ]);
+                        totalOccupancyRate += value;
+                    });
+                    totalValue = totalOccupancyRate / dateMap.size;
+                    summaryText = `Rata-rata Okupansi: ${totalValue.toFixed(2)}%`;
                     break;
 
                 case 'guests':
                     chartLabel = 'Tamu Baru';
+                    summaryText = 'Total Tamu Baru';
                     guests.filter(g => new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
                         .forEach(g => {
                             const date = new Date(g.createdAt).toISOString().split('T')[0];
@@ -3659,11 +3774,16 @@
                             }
                         });
                     tableHeaders = ['Tanggal Registrasi', 'Jumlah Tamu Baru'];
-                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), value]));
+                    dateMap.forEach((value, key) => {
+                        tableRows.push([formatDate(key), value]);
+                        totalValue += value;
+                    });
+                    summaryText = `Total Tamu Baru: ${totalValue}`;
                     break;
 
                 case 'reservations':
                     chartLabel = 'Reservasi Baru';
+                    summaryText = 'Total Reservasi Baru';
                     reservations.filter(r => new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
                         .forEach(r => {
                             const date = new Date(r.createdAt).toISOString().split('T')[0];
@@ -3672,7 +3792,11 @@
                             }
                         });
                     tableHeaders = ['Tanggal Reservasi', 'Jumlah Reservasi Baru'];
-                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), value]));
+                     dateMap.forEach((value, key) => {
+                        tableRows.push([formatDate(key), value]);
+                        totalValue += value;
+                    });
+                    summaryText = `Total Reservasi Baru: ${totalValue}`;
                     break;
             }
 
@@ -3688,11 +3812,20 @@
                 }]
             };
 
-            updateReportView(chartData, tableHeaders, tableRows);
+            currentReportData = {
+                title: `Laporan ${document.getElementById('reportType').options[document.getElementById('reportType').selectedIndex].text}`,
+                period: `Periode: ${formatDate(startDateStr)} - ${formatDate(endDateStr)}`,
+                headers: tableHeaders,
+                rows: tableRows,
+                summary: summaryText,
+                type: reportType
+            };
+
+            updateReportView(chartData, tableHeaders, tableRows, summaryText);
             showNotification('Sukses', `Laporan ${reportType} berhasil dibuat.`, 'success');
         }
 
-        function updateReportView(chartData, tableHeaders, tableRows) {
+        function updateReportView(chartData, tableHeaders, tableRows, summaryText) {
             const ctx = document.getElementById('reportChart').getContext('2d');
             if (reportChart) {
                 reportChart.destroy();
@@ -3706,8 +3839,74 @@
             if (tableRows.length === 0) {
                 body.innerHTML = `<tr><td colspan="${tableHeaders.length}" class="text-center">Tidak ada data untuk periode yang dipilih.</td></tr>`;
             }
+
+            document.getElementById('reportSummary').textContent = summaryText;
+            document.getElementById('reportSummary').style.display = 'block';
+            document.getElementById('reportActions').style.display = 'block';
         }
         
+        function printReport() {
+            if (!currentReportData.title) {
+                showNotification('Error', 'Generate laporan terlebih dahulu sebelum mencetak.', 'error');
+                return;
+            }
+
+            const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
+            
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Cetak Laporan</title>');
+            printWindow.document.write('<style>body{font-family:sans-serif;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ddd; padding:8px; text-align:left;} th{background-color:#f2f2f2;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(`<h1>${settings.hotelName || 'Hotel'}</h1>`);
+            printWindow.document.write(`<h2>${currentReportData.title}</h2>`);
+            printWindow.document.write(`<p>${currentReportData.period}</p>`);
+            printWindow.document.write(`<h3>${currentReportData.summary}</h3>`);
+            printWindow.document.write('<table><thead><tr>');
+            currentReportData.headers.forEach(header => printWindow.document.write(`<th>${header}</th>`));
+            printWindow.document.write('</tr></thead><tbody>');
+            currentReportData.rows.forEach(row => {
+                printWindow.document.write('<tr>');
+                row.forEach(cell => printWindow.document.write(`<td>${cell}</td>`));
+                printWindow.document.write('</tr>');
+            });
+            printWindow.document.write('</tbody></table>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => { printWindow.print(); }, 500);
+        }
+
+        function downloadReportPdf() {
+            if (!currentReportData.title) {
+                showNotification('Error', 'Generate laporan terlebih dahulu sebelum mengunduh PDF.', 'error');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
+
+            doc.setFontSize(18);
+            doc.text(`${settings.hotelName} - ${currentReportData.title}`, 14, 22);
+            doc.setFontSize(11);
+            doc.text(currentReportData.period, 14, 30);
+            
+            doc.setFontSize(12);
+            doc.setFont('Helvetica', 'bold');
+            doc.text(currentReportData.summary, 14, 40);
+
+            doc.autoTable({
+                head: [currentReportData.headers],
+                body: currentReportData.rows,
+                startY: 45,
+                theme: 'grid',
+                headStyles: { fillColor: [13, 71, 161] }
+            });
+
+            doc.save(`laporan_${currentReportData.type}_${new Date().toISOString().split('T')[0]}.pdf`);
+            showNotification('Sukses', 'PDF Laporan berhasil dibuat.', 'success');
+        }
+
+
         function handleGuestSearch(e) {
             const searchTerm = e.target.value.toLowerCase();
             const isEdit = e.target.id === 'editReservationGuestName';
