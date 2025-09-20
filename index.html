@@ -2509,6 +2509,12 @@
                     const historyRow = historyList.insertRow();
                     const paymentStatusText = res.paymentStatus === 'paid' ? 'Lunas' : 'Menunggu';
                     const paymentStatusClass = res.paymentStatus === 'paid' ? 'bg-success' : 'bg-warning';
+
+                    let actionsHtml = `<button class="btn btn-sm btn-info reprint-invoice-btn" data-id="${res.id}"><i class="fas fa-print"></i> Cetak Ulang</button>`;
+                    if (res.paymentStatus === 'pending') {
+                        actionsHtml += ` <button class="btn btn-sm btn-success pay-now-btn" data-id="${res.id}"><i class="fas fa-money-check-alt"></i> Bayar Sekarang</button>`;
+                    }
+
                     historyRow.innerHTML = `
                         <td>${res.id}</td>
                         <td>${guestName}</td>
@@ -2516,7 +2522,7 @@
                         <td>${formatDateTime(res.actualCheckout)}</td>
                         <td>${formatCurrency(res.totalAmount)}</td>
                         <td><span class="badge ${paymentStatusClass}">${paymentStatusText}</span></td>
-                        <td><button class="btn btn-sm btn-info reprint-invoice-btn" data-id="${res.id}"><i class="fas fa-print"></i> Cetak Ulang</button></td>
+                        <td>${actionsHtml}</td>
                     `;
                 }
             });
@@ -2525,7 +2531,7 @@
         }
 
         function addDynamicEventListeners() {
-            document.querySelectorAll('.edit-guest, .delete-guest, .edit-room, .delete-room, .edit-reservation, .delete-reservation, .checkin-btn, .checkout-btn, .reprint-invoice-btn').forEach(btn => {
+            document.querySelectorAll('.edit-guest, .delete-guest, .edit-room, .delete-room, .edit-reservation, .delete-reservation, .checkin-btn, .checkout-btn, .reprint-invoice-btn, .pay-now-btn').forEach(btn => {
                 btn.removeEventListener('click', handleDynamicButtonClick);
                 btn.addEventListener('click', handleDynamicButtonClick);
             });
@@ -2543,6 +2549,7 @@
             else if (target.classList.contains('checkin-btn')) openCheckinModal(id);
             else if (target.classList.contains('checkout-btn')) openCheckoutModal(id);
             else if (target.classList.contains('reprint-invoice-btn')) reprintInvoice(id);
+            else if (target.classList.contains('pay-now-btn')) processPayment(id);
         }
 
         function loadSettings() {
@@ -2906,7 +2913,27 @@
             updateDashboardStats();
             showNotification('Sukses', 'Check-in berhasil diproses.', 'success');
         }
-        
+
+        function processPayment(id) {
+            if (!confirm('Apakah Anda yakin ingin memproses pembayaran untuk invoice ini?')) {
+                return;
+            }
+
+            const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+            const index = reservations.findIndex(r => r.id === id);
+            if (index === -1) {
+                showNotification('Error', 'Reservasi tidak ditemukan.', 'error');
+                return;
+            }
+
+            reservations[index].paymentStatus = 'paid';
+            reservations[index].updatedAt = new Date().toISOString();
+
+            localStorage.setItem('hotel_reservations', JSON.stringify(reservations));
+            loadReservations(); // Reload only the reservation list to update the view
+            showNotification('Sukses', 'Pembayaran berhasil dikonfirmasi.', 'success');
+        }
+
         function populateInvoiceModal(reservation) {
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
@@ -3208,7 +3235,9 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = JSON.parse(e.target.result);
+                    // Decode the Base64 string first
+                    const decodedString = decodeURIComponent(escape(atob(e.target.result)));
+                    const data = JSON.parse(decodedString);
                     const overwrite = document.getElementById('importOverwrite').checked;
 
                     if (overwrite) {
@@ -3229,7 +3258,8 @@
                     bootstrap.Modal.getInstance(document.getElementById('importDataModal')).hide();
                     showNotification('Sukses', 'Data berhasil diimpor.', 'success');
                 } catch (error) {
-                    showNotification('Error', 'Format file JSON tidak valid.', 'error');
+                    console.error("Import error:", error);
+                    showNotification('Error', 'Gagal mengimpor data. File mungkin rusak atau tidak dalam format yang benar.', 'error');
                 }
             };
             reader.readAsText(file);
@@ -3516,8 +3546,11 @@
                     settings: JSON.parse(localStorage.getItem('hotel_settings') || '{}')
                 };
                 
-                const jsonString = JSON.stringify(backupData, null, 2);
-                const blob = new Blob([jsonString], { type: 'application/json' });
+                // Stringify without pretty-printing, then encode to Base64
+                const jsonString = JSON.stringify(backupData);
+                // Handle unicode characters before encoding
+                const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
+                const blob = new Blob([encodedData], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 
                 const a = document.createElement('a');
