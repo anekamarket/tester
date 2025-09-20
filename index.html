@@ -3711,6 +3711,9 @@
             });
         }
         
+        // =================================================================
+        // == PERBAIKAN DAN PENYEDERHANAAN FUNGSI LAPORAN DIMULAI DI SINI ==
+        // =================================================================
         function generateReport() {
             const reportType = document.getElementById('reportType').value;
             const startDateStr = document.getElementById('reportStartDate').value;
@@ -3735,113 +3738,112 @@
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             
+            const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthlyData = Array(12).fill(0);
+            
             let tableHeaders = [];
             let tableRows = [];
             let chartLabel = '';
             let totalValue = 0;
             let summaryText = '';
-
-            const dateMap = new Map();
-            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                dateMap.set(d.toISOString().split('T')[0], 0);
-            }
+            let dataUnit = ''; // For table display (e.g., 'Tamu', 'Reservasi')
 
             switch(reportType) {
                 case 'revenue':
                     chartLabel = 'Total Pendapatan';
-                    summaryText = 'Total Pendapatan';
-                    reservations.filter(r => r.status === 'checked-out' && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
+                    dataUnit = 'Pendapatan';
+                    reservations.filter(r => r.status === 'checked-out' && r.actualCheckout && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
                         .forEach(r => {
-                            const date = new Date(r.actualCheckout).toISOString().split('T')[0];
-                            if(dateMap.has(date)) {
-                                const newTotal = dateMap.get(date) + (r.totalAmount || 0);
-                                dateMap.set(date, newTotal);
-                            }
+                            const month = new Date(r.actualCheckout).getMonth();
+                            monthlyData[month] += r.totalAmount || 0;
                         });
-                    tableHeaders = ['Tanggal', 'Pendapatan'];
-                    dateMap.forEach((value, key) => {
-                        tableRows.push([formatDate(key), formatCurrency(value)]);
-                        totalValue += value;
-                    });
+                    tableHeaders = ['Bulan', 'Total Pendapatan'];
+                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0);
                     summaryText = `Total Pendapatan: ${formatCurrency(totalValue)}`;
                     break;
                 
                 case 'occupancy':
-                    chartLabel = 'Tingkat Okupansi (%)';
-                    summaryText = 'Rata-rata Okupansi';
+                    chartLabel = 'Rata-rata Okupansi (%)';
+                    dataUnit = 'Okupansi';
                     const totalRooms = rooms.length;
                     if (totalRooms === 0) {
                         showNotification('Warning', 'Tidak ada kamar terdaftar. Okupansi selalu 0%.', 'warning');
                         return;
                     }
-                    dateMap.forEach((value, key) => {
-                        const currentDate = new Date(key);
+                    const monthlyOccupancyDays = Array(12).fill(0);
+                    const daysInMonth = Array(12).fill(0);
+                    
+                    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                        const month = d.getMonth();
+                        daysInMonth[month]++;
                         const occupiedCount = reservations.filter(r => {
                             const checkin = new Date(r.checkinDate);
                             checkin.setHours(0,0,0,0);
                             const checkout = new Date(r.checkoutDate);
                             checkout.setHours(0,0,0,0);
-                            return ['checked-in', 'confirmed', 'reserved'].includes(r.status) && currentDate >= checkin && currentDate < checkout;
+                            return ['checked-in', 'confirmed', 'reserved'].includes(r.status) && d >= checkin && d < checkout;
                         }).length;
-                        const occupancyRate = (occupiedCount / totalRooms) * 100;
-                        dateMap.set(key, parseFloat(occupancyRate.toFixed(2)));
-                    });
-                    tableHeaders = ['Tanggal', 'Kamar Terisi', 'Tingkat Okupansi (%)'];
-                    let totalOccupancyRate = 0;
-                    dateMap.forEach((value, key) => {
-                        tableRows.push([formatDate(key), Math.round(value/100 * totalRooms), `${value}%` ]);
-                        totalOccupancyRate += value;
-                    });
-                    totalValue = totalOccupancyRate / dateMap.size;
-                    summaryText = `Rata-rata Okupansi: ${totalValue.toFixed(2)}%`;
+                        monthlyOccupancyDays[month] += occupiedCount;
+                    }
+
+                    for(let i = 0; i < 12; i++) {
+                        if (daysInMonth[i] > 0) {
+                            const avgOccupancy = (monthlyOccupancyDays[i] / (daysInMonth[i] * totalRooms)) * 100;
+                            monthlyData[i] = parseFloat(avgOccupancy.toFixed(2));
+                        }
+                    }
+
+                    tableHeaders = ['Bulan', 'Rata-rata Okupansi'];
+                    const totalMonths = daysInMonth.filter(d => d > 0).length || 1;
+                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0) / totalMonths;
+                    summaryText = `Rata-rata Okupansi Keseluruhan: ${totalValue.toFixed(2)}%`;
                     break;
 
                 case 'guests':
                     chartLabel = 'Tamu Baru';
-                    summaryText = 'Total Tamu Baru';
-                    guests.filter(g => new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
+                    dataUnit = 'Tamu Baru';
+                    guests.filter(g => g.createdAt && new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
                         .forEach(g => {
-                            const date = new Date(g.createdAt).toISOString().split('T')[0];
-                            if (dateMap.has(date)) {
-                                dateMap.set(date, dateMap.get(date) + 1);
-                            }
+                            const month = new Date(g.createdAt).getMonth();
+                            monthlyData[month]++;
                         });
-                    tableHeaders = ['Tanggal Registrasi', 'Jumlah Tamu Baru'];
-                    dateMap.forEach((value, key) => {
-                        tableRows.push([formatDate(key), value]);
-                        totalValue += value;
-                    });
+                    tableHeaders = ['Bulan', 'Jumlah Tamu Baru'];
+                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0);
                     summaryText = `Total Tamu Baru: ${totalValue}`;
                     break;
 
                 case 'reservations':
                     chartLabel = 'Reservasi Baru';
-                    summaryText = 'Total Reservasi Baru';
-                    reservations.filter(r => new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
+                    dataUnit = 'Reservasi Baru';
+                    reservations.filter(r => r.createdAt && new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
                         .forEach(r => {
-                            const date = new Date(r.createdAt).toISOString().split('T')[0];
-                            if(dateMap.has(date)) {
-                                dateMap.set(date, dateMap.get(date) + 1);
-                            }
+                            const month = new Date(r.createdAt).getMonth();
+                            monthlyData[month]++;
                         });
-                    tableHeaders = ['Tanggal Reservasi', 'Jumlah Reservasi Baru'];
-                     dateMap.forEach((value, key) => {
-                        tableRows.push([formatDate(key), value]);
-                        totalValue += value;
-                    });
+                    tableHeaders = ['Bulan', 'Jumlah Reservasi Baru'];
+                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0);
                     summaryText = `Total Reservasi Baru: ${totalValue}`;
                     break;
             }
+            
+            // Populate table rows from monthly data
+            monthLabels.forEach((month, index) => {
+                if(monthlyData[index] > 0 || (reportType === 'occupancy' && monthlyData[index] >= 0 && new Date(startDate).getMonth() <= index && new Date(endDate).getMonth() >= index)) {
+                    let value = monthlyData[index];
+                    if (reportType === 'revenue') value = formatCurrency(value);
+                    if (reportType === 'occupancy') value = `${value}%`;
+                    tableRows.push([monthLabels[index], value]);
+                }
+            });
 
             const chartData = {
-                labels: Array.from(dateMap.keys()).map(d => formatDate(d)),
+                labels: monthLabels,
                 datasets: [{
                     label: chartLabel,
-                    data: Array.from(dateMap.values()),
+                    data: monthlyData,
+                    backgroundColor: 'rgba(13, 71, 161, 0.7)',
                     borderColor: 'var(--hotel-primary)',
-                    backgroundColor: 'rgba(13, 71, 161, 0.2)',
-                    fill: true,
-                    tension: 0.1
+                    borderWidth: 1
                 }]
             };
 
@@ -3863,7 +3865,20 @@
             if (reportChart) {
                 reportChart.destroy();
             }
-            reportChart = new Chart(ctx, { type: 'line', data: chartData, options: { responsive: true, maintainAspectRatio: false } });
+            // Use 'bar' chart for a simpler, clearer view
+            reportChart = new Chart(ctx, { 
+                type: 'bar', 
+                data: chartData, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    } 
+                } 
+            });
 
             const header = document.getElementById('reportTableHeader');
             const body = document.getElementById('reportTableBody');
@@ -3877,6 +3892,10 @@
             document.getElementById('reportSummary').style.display = 'block';
             document.getElementById('reportActions').style.display = 'block';
         }
+
+        // ===============================================================
+        // == AKHIR BAGIAN PERBAIKAN FUNGSI LAPORAN                     ==
+        // ===============================================================
         
         function printReport() {
             if (!currentReportData.title) {
