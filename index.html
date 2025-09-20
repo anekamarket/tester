@@ -468,6 +468,13 @@
             background: rgba(0,0,0,0.5);
             z-index: 1040;
         }
+
+        .guest-search-results .list-group-item {
+            cursor: pointer;
+        }
+        .guest-search-results .list-group-item:hover {
+            background-color: #f0f0f0;
+        }
         
         /* Animations */
         @keyframes fadeIn {
@@ -598,6 +605,11 @@
             margin-bottom: 30px;
         }
         
+        .invoice-logo-img {
+            max-height: 60px;
+            margin-bottom: 10px;
+        }
+
         .invoice-logo {
             font-size: 2rem;
             color: var(--hotel-primary);
@@ -1281,9 +1293,11 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Tamu</label>
-                                    <select class="form-select" id="reservationGuest" required>
-                                        <option value="">Pilih Tamu</option>
-                                        </select>
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control" id="reservationGuestName" placeholder="Ketik untuk mencari nama tamu..." required autocomplete="off">
+                                        <input type="hidden" id="reservationGuestId">
+                                        <div class="list-group position-absolute w-100 guest-search-results" id="guestSearchResults" style="z-index: 1000;"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1491,8 +1505,11 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Tamu</label>
-                                    <select class="form-select" id="editReservationGuest" required>
-                                        </select>
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control" id="editReservationGuestName" placeholder="Ketik untuk mencari nama tamu..." required autocomplete="off">
+                                        <input type="hidden" id="editReservationGuestId">
+                                        <div class="list-group position-absolute w-100 guest-search-results" id="editGuestSearchResults" style="z-index: 1000;"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1743,8 +1760,9 @@
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="invoice-logo" id="invoiceHotelName">HOTEL MANAGEMENT SYSTEM</div>
-                                    <p id="invoiceHotelAddress">Jl. Contoh No. 123, Jakarta</p>
+                                    <img src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
+                                    <div class="invoice-logo" id="invoiceHotelName" style="font-size: 1.5rem; line-height: 1.2;">HOTEL MANAGEMENT SYSTEM</div>
+                                    <p id="invoiceHotelAddress" class="mb-0">Jl. Contoh No. 123, Jakarta</p>
                                     <p>Telp: <span id="invoiceHotelPhone">021-1234567</span></p>
                                 </div>
                                 <div class="col-md-6 text-end">
@@ -1854,6 +1872,7 @@
                 <div class="modal-footer no-print">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-info" id="printInvoiceBtn"><i class="fas fa-print"></i> Cetak Invoice</button>
+                    <button type="button" class="btn btn-success" id="downloadInvoicePdfBtn"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
                     <button type="button" class="btn btn-primary" id="confirmCheckoutBtn">Proses & Selesaikan Check-Out</button>
                 </div>
             </div>
@@ -1985,12 +2004,25 @@
             document.getElementById('resetDataBtn').addEventListener('click', resetData);
             
             document.getElementById('printInvoiceBtn').addEventListener('click', printInvoice);
+            document.getElementById('downloadInvoicePdfBtn').addEventListener('click', downloadInvoicePdf); // New event listener for PDF download
             document.getElementById('amountPaid').addEventListener('input', calculateChange);
             
             document.getElementById('printReservationPdfBtn').addEventListener('click', printReservationPdf);
             document.getElementById('printGuestPdfBtn').addEventListener('click', printGuestPdf);
             
             document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+
+            // New event listeners for guest search
+            document.getElementById('reservationGuestName').addEventListener('input', handleGuestSearch);
+            document.getElementById('editReservationGuestName').addEventListener('input', handleGuestSearch);
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.position-relative')) {
+                    document.getElementById('guestSearchResults').innerHTML = '';
+                    document.getElementById('editGuestSearchResults').innerHTML = '';
+                }
+            });
         }
         
         function toggleMobileMenu() {
@@ -2019,22 +2051,11 @@
         function loadGuests() {
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const guestList = document.getElementById('guestList');
-            const reservationGuest = document.getElementById('reservationGuest');
-            const editReservationGuest = document.getElementById('editReservationGuest');
-
-            reservationGuest.innerHTML = '<option value="">Pilih Tamu</option>';
-            editReservationGuest.innerHTML = '<option value="">Pilih Tamu</option>';
             guestList.innerHTML = '';
             
             guests.sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`));
 
             guests.forEach(guest => {
-                const option = document.createElement('option');
-                option.value = guest.id;
-                option.textContent = `${guest.firstName} ${guest.lastName}`;
-                reservationGuest.appendChild(option.cloneNode(true));
-                editReservationGuest.appendChild(option);
-                
                 const row = guestList.insertRow();
                 row.innerHTML = `
                     <td>${guest.id}</td>
@@ -2059,7 +2080,7 @@
             const editReservationRoom = document.getElementById('editReservationRoom');
 
             reservationRoom.innerHTML = '<option value="">Pilih Kamar</option>';
-            editReservationRoom.innerHTML = '<option value="">Pilih Kamar</option>';
+            editReservationRoom.innerHTML = ''; // Will be populated with all rooms
             roomList.innerHTML = '';
             
             rooms.sort((a,b) => a.number.localeCompare(b.number));
@@ -2122,7 +2143,6 @@
                 const statusClass = getStatusClass(res.status);
                 const statusText = getStatusText(res.status);
 
-                // Populate main reservation list
                 if (res.status !== 'checked-out') {
                     const resRow = reservationList.insertRow();
                     resRow.innerHTML = `
@@ -2139,7 +2159,6 @@
                     `;
                 }
 
-                // Populate Check-In list
                 if (res.status === 'confirmed') {
                     const checkinRow = checkinList.insertRow();
                     checkinRow.innerHTML = `
@@ -2153,7 +2172,6 @@
                     `;
                 }
 
-                // Populate Check-Out list
                 if (res.status === 'checked-in') {
                     const checkoutRow = checkoutList.insertRow();
                     checkoutRow.innerHTML = `
@@ -2167,7 +2185,6 @@
                     `;
                 }
 
-                // PENAMBAHAN FITUR: Populate Checkout History list
                 if (res.status === 'checked-out') {
                     const historyRow = historyList.insertRow();
                     const paymentStatusText = res.paymentStatus === 'paid' ? 'Lunas' : 'Menunggu';
@@ -2205,7 +2222,7 @@
             else if (target.classList.contains('delete-reservation')) showDeleteConfirm(id, 'reservation');
             else if (target.classList.contains('checkin-btn')) openCheckinModal(id);
             else if (target.classList.contains('checkout-btn')) openCheckoutModal(id);
-            else if (target.classList.contains('reprint-invoice-btn')) reprintInvoice(id); // PENAMBAHAN FITUR: Event handler untuk tombol cetak ulang
+            else if (target.classList.contains('reprint-invoice-btn')) reprintInvoice(id);
         }
 
         function loadSettings() {
@@ -2217,7 +2234,7 @@
         }
         
         function saveReservation() {
-            const guestId = document.getElementById('reservationGuest').value;
+            const guestId = document.getElementById('reservationGuestId').value;
             const roomId = document.getElementById('reservationRoom').value;
             const checkinDate = document.getElementById('reservationCheckin').value;
             const checkoutDate = document.getElementById('reservationCheckout').value;
@@ -2268,7 +2285,7 @@
             }
             
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
-            if (guests.some(guest => guest.email === email)) {
+            if (guests.some(guest => guest.email.toLowerCase() === email.toLowerCase())) {
                 showNotification('Error', 'Email sudah terdaftar.', 'error');
                 return;
             }
@@ -2340,11 +2357,18 @@
             const reservation = reservations.find(r => r.id === id);
             if (!reservation) return;
             
-            Object.keys(reservation).forEach(key => {
-                const el = document.getElementById(`editReservation${key.charAt(0).toUpperCase() + key.slice(1)}`);
-                if (el) el.value = reservation[key];
-            });
+            const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
+            const guest = guests.find(g => g.id === reservation.guestId);
+
             document.getElementById('editReservationId').value = reservation.id;
+            document.getElementById('editReservationGuestName').value = guest ? `${guest.firstName} ${guest.lastName}` : '';
+            document.getElementById('editReservationGuestId').value = reservation.guestId;
+            document.getElementById('editReservationRoom').value = reservation.roomId;
+            document.getElementById('editReservationCheckin').value = reservation.checkinDate;
+            document.getElementById('editReservationCheckout').value = reservation.checkoutDate;
+            document.getElementById('editReservationGuests').value = reservation.guests;
+            document.getElementById('editReservationStatus').value = reservation.status;
+            document.getElementById('editReservationNotes').value = reservation.notes;
             
             new bootstrap.Modal(document.getElementById('editReservationModal')).show();
         }
@@ -2360,7 +2384,7 @@
 
             reservations[index] = {
                 ...reservations[index],
-                guestId: document.getElementById('editReservationGuest').value,
+                guestId: document.getElementById('editReservationGuestId').value,
                 roomId: document.getElementById('editReservationRoom').value,
                 checkinDate: document.getElementById('editReservationCheckin').value,
                 checkoutDate: document.getElementById('editReservationCheckout').value,
@@ -2575,7 +2599,6 @@
             new bootstrap.Modal(checkoutModal).show();
         }
         
-        // PENAMBAHAN FITUR: Fungsi untuk mencetak ulang invoice dari histori
         function reprintInvoice(id) {
             const reservation = JSON.parse(localStorage.getItem('hotel_reservations') || '[]').find(r => r.id === id);
             if (!reservation) return;
@@ -2792,6 +2815,118 @@
         function printInvoice() {
             window.print();
         }
+
+        async function urlToBas64(url) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        async function downloadInvoicePdf() {
+            const reservationId = document.getElementById('checkoutReservationId').value;
+            if (!reservationId) {
+                showNotification('Error', 'Tidak ada data reservasi untuk diunduh.', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+            const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
+            const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
+            const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
+            const reservation = reservations.find(r => r.id === reservationId);
+            const guest = guests.find(g => g.id === reservation.guestId) || {};
+            const room = rooms.find(r => r.id === reservation.roomId) || {};
+
+            try {
+                const logoUrl = 'https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png';
+                const logoBase64 = await urlToBas64(logoUrl);
+                doc.addImage(logoBase64, 'PNG', 14, 15, 40, 13);
+            } catch (error) {
+                console.error("Gagal memuat logo:", error);
+                showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
+            }
+            
+            doc.setFontSize(16);
+            doc.text(settings.hotelName || 'Hotel Management System', 14, 35);
+            doc.setFontSize(10);
+            doc.text(settings.hotelAddress || 'Alamat Hotel', 14, 40);
+            doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, 45);
+
+            doc.setFontSize(14);
+            doc.text('INVOICE', 200, 20, { align: 'right' });
+            doc.setFontSize(10);
+            doc.text(`No: INV-${reservation.id.slice(-6)}`, 200, 27, { align: 'right' });
+            doc.text(`Tanggal: ${formatDate(reservation.actualCheckout || new Date().toISOString())}`, 200, 34, { align: 'right' });
+
+            doc.setLineWidth(0.5);
+            doc.line(14, 55, 200, 55);
+
+            doc.setFontSize(12);
+            doc.text('Detail Tamu', 14, 65);
+            doc.setFontSize(10);
+            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, 72);
+            doc.text(`Telepon: ${guest.phone || '-'}`, 14, 77);
+            doc.text(`Email: ${guest.email || '-'}`, 14, 82);
+
+            doc.setFontSize(12);
+            doc.text('Detail Reservasi', 200, 65, { align: 'right' });
+            doc.setFontSize(10);
+            const checkinDate = new Date(reservation.checkinDate);
+            const checkoutDate = new Date(reservation.checkoutDate);
+            const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24)) || 1;
+            doc.text(`Kamar: ${room.number || '-'} (${room.type || '-'})`, 200, 72, { align: 'right' });
+            doc.text(`Check-In: ${formatDate(reservation.checkinDate)}`, 200, 77, { align: 'right' });
+            doc.text(`Check-Out: ${formatDate(reservation.checkoutDate)}`, 200, 82, { align: 'right' });
+            doc.text(`Lama Menginap: ${nights} malam`, 200, 87, { align: 'right' });
+
+            const roomTotal = (room.price || 0) * nights;
+            const taxAmount = roomTotal * ((settings.taxRate || 0) / 100);
+            const totalAmount = roomTotal + taxAmount;
+
+            const tableColumn = ["Deskripsi", "Jumlah", "Harga Satuan", "Subtotal"];
+            const tableRows = [];
+            const itemData = [
+                `Menginap di Kamar ${room.number || '-'} (${room.type || '-'})`,
+                `${nights} malam`,
+                formatCurrency(room.price || 0),
+                formatCurrency(roomTotal)
+            ];
+            tableRows.push(itemData);
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 95,
+                theme: 'grid',
+                headStyles: { fillColor: [13, 71, 161] }
+            });
+
+            const finalY = doc.autoTable.previous.finalY;
+            doc.setFontSize(10);
+            doc.text('Subtotal', 150, finalY + 10, { align: 'right' });
+            doc.text(formatCurrency(roomTotal), 200, finalY + 10, { align: 'right' });
+            doc.text(`Pajak (${settings.taxRate || 0}%)`, 150, finalY + 15, { align: 'right' });
+            doc.text(formatCurrency(taxAmount), 200, finalY + 15, { align: 'right' });
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Total', 150, finalY + 22, { align: 'right' });
+            doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'italic');
+            doc.text('Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!', 105, finalY + 40, { align: 'center' });
+
+            doc.save(`invoice-${reservation.id}.pdf`);
+            showNotification('Sukses', 'Invoice PDF berhasil diunduh.', 'success');
+        }
         
         function printReservationPdf() {
             const { jsPDF } = window.jspdf;
@@ -2942,13 +3077,11 @@
             });
         }
         
-        // --- Chart Initialization ---
         let monthlyStatsChart, roomStatusChart, reportChart;
         function initCharts() {
             const monthlyCtx = document.getElementById('monthlyStatsChart').getContext('2d');
             if(monthlyStatsChart) monthlyStatsChart.destroy();
             
-            // --- Contoh Data Statistik Bulanan ---
             const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
             const monthlyRevenue = new Array(12).fill(0);
             const monthlyGuests = new Array(12).fill(0);
@@ -2996,7 +3129,6 @@
             });
         }
         
-        // --- PERBAIKAN FITUR: Fungsi Laporan ---
         function generateReport() {
             const reportType = document.getElementById('reportType').value;
             const startDateStr = document.getElementById('reportStartDate').value;
@@ -3125,6 +3257,47 @@
             if (tableRows.length === 0) {
                 body.innerHTML = `<tr><td colspan="${tableHeaders.length}" class="text-center">Tidak ada data untuk periode yang dipilih.</td></tr>`;
             }
+        }
+        
+        function handleGuestSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const isEdit = e.target.id === 'editReservationGuestName';
+            const resultsContainer = document.getElementById(isEdit ? 'editGuestSearchResults' : 'guestSearchResults');
+            const hiddenInput = document.getElementById(isEdit ? 'editReservationGuestId' : 'reservationGuestId');
+
+            resultsContainer.innerHTML = '';
+            if (searchTerm.length < 1) {
+                hiddenInput.value = '';
+                return;
+            }
+
+            const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
+            const filteredGuests = guests.filter(guest => 
+                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm)
+            ).slice(0, 5); // Limit results to 5
+
+            filteredGuests.forEach(guest => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = `${guest.firstName} ${guest.lastName} (${guest.email})`;
+                item.onclick = (event) => {
+                    event.preventDefault();
+                    selectGuest(guest, e.target.id);
+                };
+                resultsContainer.appendChild(item);
+            });
+        }
+
+        function selectGuest(guest, inputId) {
+            const isEdit = inputId === 'editReservationGuestName';
+            const nameInput = document.getElementById(inputId);
+            const idInput = document.getElementById(isEdit ? 'editReservationGuestId' : 'reservationGuestId');
+            const resultsContainer = document.getElementById(isEdit ? 'editGuestSearchResults' : 'guestSearchResults');
+
+            nameInput.value = `${guest.firstName} ${guest.lastName}`;
+            idInput.value = guest.id;
+            resultsContainer.innerHTML = '';
         }
         
         // --- Helper Functions ---
