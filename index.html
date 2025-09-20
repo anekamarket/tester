@@ -639,7 +639,7 @@
             </div>
             <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
             <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
-            <div class="watermark">v2.2</div>
+            <div class="watermark">v2.3 Final</div>
         </div>
         
         <div class="row g-0">
@@ -663,6 +663,11 @@
                     <li class="nav-item">
                         <a class="nav-link" id="checkout-tab" data-bs-toggle="tab" href="#checkout" role="tab">
                             <i class="fas fa-sign-out-alt feature-icon"></i>Check-Out
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">
+                            <i class="fas fa-history feature-icon"></i>Histori Check-Out
                         </a>
                     </li>
                     <li class="nav-item">
@@ -933,6 +938,39 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="tab-pane fade" id="history" role="tabpanel">
+                        <h3 class="section-title">Histori Check-Out</h3>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <i class="fas fa-history me-2"></i>Daftar Tamu yang Sudah Check-Out
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID Reservasi</th>
+                                                        <th>Nama Tamu</th>
+                                                        <th>Kamar</th>
+                                                        <th>Waktu Check-Out</th>
+                                                        <th>Total Tagihan</th>
+                                                        <th>Status Bayar</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="checkoutHistoryList">
+                                                    </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="tab-pane fade" id="room" role="tabpanel">
                         <h3 class="section-title">Manajemen Kamar</h3>
@@ -1033,10 +1071,10 @@
                                         <div class="col-md-3">
                                             <label class="form-label">Jenis Laporan</label>
                                             <select class="form-select" id="reportType">
-                                                <option value="occupancy">Tingkat Okupansi</option>
                                                 <option value="revenue">Pendapatan</option>
-                                                <option value="guests">Data Tamu</option>
-                                                <option value="reservations">Reservasi</option>
+                                                <option value="occupancy">Tingkat Okupansi</option>
+                                                <option value="guests">Registrasi Tamu</option>
+                                                <option value="reservations">Jumlah Reservasi</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
@@ -1081,15 +1119,10 @@
                                         <div class="table-responsive">
                                             <table class="table table-hover data-table">
                                                 <thead id="reportTableHeader">
-                                                    <tr>
-                                                        <th>Bulan</th>
-                                                        <th>Pendapatan</th>
-                                                        <th>Jumlah Tamu</th>
-                                                        <th>Tingkat Okupansi</th>
-                                                    </tr>
-                                                </thead>
+                                                    </thead>
                                                 <tbody id="reportTableBody">
-                                                    </tbody>
+                                                    <tr><td colspan="4" class="text-center">Silakan generate laporan untuk melihat data.</td></tr>
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -1702,7 +1735,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header no-print">
-                    <h5 class="modal-title">Proses Check-Out & Invoice</h5>
+                    <h5 class="modal-title" id="checkoutModalTitle">Proses Check-Out & Invoice</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -1774,7 +1807,7 @@
                         </div>
                     </div>
                     
-                    <div class="mt-4 no-print">
+                    <div class="mt-4 no-print" id="checkoutPaymentSection">
                         <form id="checkoutForm">
                             <input type="hidden" id="checkoutReservationId">
                             <div class="row">
@@ -1951,9 +1984,8 @@
             
             document.getElementById('resetDataBtn').addEventListener('click', resetData);
             
-            // --- FIX & ENHANCEMENT LISTENERS ---
             document.getElementById('printInvoiceBtn').addEventListener('click', printInvoice);
-            document.getElementById('amountPaid').addEventListener('input', calculateChange); // Added for new feature
+            document.getElementById('amountPaid').addEventListener('input', calculateChange);
             
             document.getElementById('printReservationPdfBtn').addEventListener('click', printReservationPdf);
             document.getElementById('printGuestPdfBtn').addEventListener('click', printGuestPdf);
@@ -2072,10 +2104,12 @@
             const reservationList = document.getElementById('reservationList');
             const checkinList = document.getElementById('checkinList');
             const checkoutList = document.getElementById('checkoutList');
+            const historyList = document.getElementById('checkoutHistoryList');
             
             reservationList.innerHTML = '';
             checkinList.innerHTML = '';
             checkoutList.innerHTML = '';
+            historyList.innerHTML = '';
             
             reservations.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -2089,19 +2123,21 @@
                 const statusText = getStatusText(res.status);
 
                 // Populate main reservation list
-                const resRow = reservationList.insertRow();
-                resRow.innerHTML = `
-                    <td>${res.id}</td>
-                    <td>${guestName}</td>
-                    <td>${roomName}</td>
-                    <td>${formatDate(res.checkinDate)}</td>
-                    <td>${formatDate(res.checkoutDate)}</td>
-                    <td><span class="badge ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-warning edit-reservation" data-id="${res.id}"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger delete-reservation" data-id="${res.id}"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
+                if (res.status !== 'checked-out') {
+                    const resRow = reservationList.insertRow();
+                    resRow.innerHTML = `
+                        <td>${res.id}</td>
+                        <td>${guestName}</td>
+                        <td>${roomName}</td>
+                        <td>${formatDate(res.checkinDate)}</td>
+                        <td>${formatDate(res.checkoutDate)}</td>
+                        <td><span class="badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-reservation" data-id="${res.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger delete-reservation" data-id="${res.id}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                }
 
                 // Populate Check-In list
                 if (res.status === 'confirmed') {
@@ -2130,14 +2166,30 @@
                         <td><button class="btn btn-sm btn-primary checkout-btn" data-id="${res.id}"><i class="fas fa-sign-out-alt"></i> Check-Out</button></td>
                     `;
                 }
+
+                // PENAMBAHAN FITUR: Populate Checkout History list
+                if (res.status === 'checked-out') {
+                    const historyRow = historyList.insertRow();
+                    const paymentStatusText = res.paymentStatus === 'paid' ? 'Lunas' : 'Menunggu';
+                    const paymentStatusClass = res.paymentStatus === 'paid' ? 'bg-success' : 'bg-warning';
+                    historyRow.innerHTML = `
+                        <td>${res.id}</td>
+                        <td>${guestName}</td>
+                        <td>${roomName}</td>
+                        <td>${formatDateTime(res.actualCheckout)}</td>
+                        <td>${formatCurrency(res.totalAmount)}</td>
+                        <td><span class="badge ${paymentStatusClass}">${paymentStatusText}</span></td>
+                        <td><button class="btn btn-sm btn-info reprint-invoice-btn" data-id="${res.id}"><i class="fas fa-print"></i> Cetak Ulang</button></td>
+                    `;
+                }
             });
 
             addDynamicEventListeners();
         }
 
         function addDynamicEventListeners() {
-            document.querySelectorAll('.edit-guest, .delete-guest, .edit-room, .delete-room, .edit-reservation, .delete-reservation, .checkin-btn, .checkout-btn').forEach(btn => {
-                btn.removeEventListener('click', handleDynamicButtonClick); // Prevent duplicate listeners
+            document.querySelectorAll('.edit-guest, .delete-guest, .edit-room, .delete-room, .edit-reservation, .delete-reservation, .checkin-btn, .checkout-btn, .reprint-invoice-btn').forEach(btn => {
+                btn.removeEventListener('click', handleDynamicButtonClick);
                 btn.addEventListener('click', handleDynamicButtonClick);
             });
         }
@@ -2153,6 +2205,7 @@
             else if (target.classList.contains('delete-reservation')) showDeleteConfirm(id, 'reservation');
             else if (target.classList.contains('checkin-btn')) openCheckinModal(id);
             else if (target.classList.contains('checkout-btn')) openCheckoutModal(id);
+            else if (target.classList.contains('reprint-invoice-btn')) reprintInvoice(id); // PENAMBAHAN FITUR: Event handler untuk tombol cetak ulang
         }
 
         function loadSettings() {
@@ -2291,7 +2344,7 @@
                 const el = document.getElementById(`editReservation${key.charAt(0).toUpperCase() + key.slice(1)}`);
                 if (el) el.value = reservation[key];
             });
-            document.getElementById('editReservationId').value = reservation.id; // handle id separately
+            document.getElementById('editReservationId').value = reservation.id;
             
             new bootstrap.Modal(document.getElementById('editReservationModal')).show();
         }
@@ -2319,7 +2372,6 @@
 
             localStorage.setItem('hotel_reservations', JSON.stringify(reservations));
             
-            // Update room status based on reservation status change
             const roomId = reservations[index].roomId;
             if(originalStatus !== newStatus) {
                 if (newStatus === 'confirmed' || newStatus === 'reserved') updateRoomStatus(roomId, 'reserved');
@@ -2382,11 +2434,10 @@
             document.getElementById('editRoomPrice').value = room.price;
             document.getElementById('editRoomStatus').value = room.status;
 
-            // Reset and set facilities
             document.querySelectorAll('#editRoomForm .form-check-input').forEach(cb => cb.checked = false);
             if(Array.isArray(room.facilities)) {
                 room.facilities.forEach(facility => {
-                    const cb = document.getElementById(`editFacility${facility.replace(/\s+/g, '')}`); // Handle spaces in facility names if any
+                    const cb = document.getElementById(`editFacility${facility.replace(/\s+/g, '')}`);
                     if (cb) cb.checked = true;
                 });
             }
@@ -2454,10 +2505,7 @@
             showNotification('Sukses', 'Check-in berhasil diproses.', 'success');
         }
         
-        function openCheckoutModal(id) {
-            const reservation = JSON.parse(localStorage.getItem('hotel_reservations') || '[]').find(r => r.id === id);
-            if (!reservation) return;
-
+        function populateInvoiceModal(reservation) {
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
@@ -2466,7 +2514,10 @@
             const room = rooms.find(r => r.id === reservation.roomId) || {};
             
             const checkinDate = new Date(reservation.checkinDate);
-            const checkoutDate = new Date(reservation.checkoutDate);
+            let checkoutDate = new Date(reservation.checkoutDate);
+            if (reservation.status === 'checked-out' && reservation.actualCheckout) {
+                checkoutDate = new Date(reservation.actualCheckout);
+            }
             const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24)) || 1;
             
             const roomTotal = (room.price || 0) * nights;
@@ -2477,7 +2528,7 @@
             document.getElementById('invoiceHotelAddress').textContent = settings.hotelAddress;
             document.getElementById('invoiceHotelPhone').textContent = settings.hotelPhone;
             document.getElementById('invoiceNumber').textContent = `INV-${reservation.id.slice(-6)}`;
-            document.getElementById('invoiceDate').textContent = formatDate(new Date().toISOString());
+            document.getElementById('invoiceDate').textContent = formatDate(reservation.actualCheckout || new Date().toISOString());
             document.getElementById('invoiceGuestName').textContent = `${guest.firstName} ${guest.lastName}`;
             document.getElementById('invoiceGuestPhone').textContent = `Telepon: ${guest.phone || '-'}`;
             document.getElementById('invoiceGuestEmail').textContent = `Email: ${guest.email || '-'}`;
@@ -2500,25 +2551,50 @@
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
             
+            return totalAmount;
+        }
+
+        function openCheckoutModal(id) {
+            const reservation = JSON.parse(localStorage.getItem('hotel_reservations') || '[]').find(r => r.id === id);
+            if (!reservation) return;
+
+            document.getElementById('checkoutModalTitle').textContent = 'Proses Check-Out & Invoice';
+            document.getElementById('checkoutPaymentSection').style.display = 'block';
+            document.getElementById('confirmCheckoutBtn').style.display = 'inline-block';
+
+            const totalAmount = populateInvoiceModal(reservation);
+            
             document.getElementById('checkoutReservationId').value = reservation.id;
             
-            // --- ENHANCEMENT: Populate payment section ---
             const checkoutModal = document.getElementById('checkoutModal');
-            checkoutModal.dataset.totalAmount = totalAmount; // Store raw value for calculation
+            checkoutModal.dataset.totalAmount = totalAmount;
             document.getElementById('checkoutTotalBill').value = formatCurrency(totalAmount);
-            document.getElementById('amountPaid').value = ''; // Reset fields
-            document.getElementById('changeDue').value = ''; // Reset fields
+            document.getElementById('amountPaid').value = '';
+            document.getElementById('changeDue').value = '';
 
             new bootstrap.Modal(checkoutModal).show();
         }
         
+        // PENAMBAHAN FITUR: Fungsi untuk mencetak ulang invoice dari histori
+        function reprintInvoice(id) {
+            const reservation = JSON.parse(localStorage.getItem('hotel_reservations') || '[]').find(r => r.id === id);
+            if (!reservation) return;
+
+            document.getElementById('checkoutModalTitle').textContent = 'Histori Invoice';
+            document.getElementById('checkoutPaymentSection').style.display = 'none';
+            document.getElementById('confirmCheckoutBtn').style.display = 'none';
+
+            populateInvoiceModal(reservation);
+            
+            new bootstrap.Modal(document.getElementById('checkoutModal')).show();
+        }
+
         function processCheckout() {
             const reservationId = document.getElementById('checkoutReservationId').value;
             const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
             const index = reservations.findIndex(r => r.id === reservationId);
             if (index === -1) return;
             
-            // --- ENHANCEMENT: Get payment details ---
             const totalAmount = parseFloat(document.getElementById('checkoutModal').dataset.totalAmount) || 0;
             const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
             const change = amountPaid >= totalAmount ? amountPaid - totalAmount : 0;
@@ -2528,7 +2604,7 @@
             reservations[index].paymentMethod = document.getElementById('checkoutPaymentMethod').value;
             reservations[index].paymentStatus = document.getElementById('checkoutPaymentStatus').value;
             reservations[index].updatedAt = new Date().toISOString();
-            reservations[index].totalAmount = totalAmount; // Save payment info
+            reservations[index].totalAmount = totalAmount;
             reservations[index].amountPaid = amountPaid;
             reservations[index].change = change;
             
@@ -2561,7 +2637,6 @@
                 return;
             }
             
-            // Validation before deletion
             const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
             if (type === 'guest' && reservations.some(r => r.guestId === id && ['confirmed', 'checked-in'].includes(r.status))) {
                 showNotification('Error', 'Tidak dapat menghapus tamu dengan reservasi aktif.', 'error');
@@ -2574,7 +2649,6 @@
                 return;
             }
 
-            // If deleting a confirmed reservation, free up the room
             if (type === 'reservation' && ['confirmed', 'reserved'].includes(data[index].status)) {
                 updateRoomStatus(data[index].roomId, 'available');
             }
@@ -2715,11 +2789,6 @@
             }
         }
         
-        /**
-         * FIX: The print function now correctly uses window.print() and relies on CSS @media print rules.
-         * This prevents the page's event listeners from being destroyed, which was likely the cause of other
-         * buttons appearing "not to work" after a print attempt.
-         */
         function printInvoice() {
             window.print();
         }
@@ -2785,7 +2854,7 @@
                     `${guest.firstName} ${guest.lastName}`,
                     guest.email,
                     guest.phone,
-                    guest.address.replace(/\n/g, ', ') // a simple way to handle multiline address
+                    guest.address.replace(/\n/g, ', ')
                 ];
                 tableRows.push(guestData);
             });
@@ -2797,10 +2866,6 @@
             });
             doc.save(`data-tamu_${new Date().toISOString().split('T')[0]}.pdf`);
             showNotification('Sukses', 'PDF Laporan Tamu berhasil dibuat.', 'success');
-        }
-        
-        function generateReport() {
-            showNotification('Info', `Fitur laporan canggih sedang dalam pengembangan.`, 'info');
         }
         
         function updateRoomStatus(roomId, status) {
@@ -2828,9 +2893,6 @@
             return roomTotal + taxAmount;
         }
 
-        /**
-         * NEW FEATURE: Calculates and displays the change due based on amount paid.
-         */
         function calculateChange() {
             const checkoutModal = document.getElementById('checkoutModal');
             const totalAmount = parseFloat(checkoutModal.dataset.totalAmount) || 0;
@@ -2858,7 +2920,7 @@
             document.getElementById('todayCheckouts').textContent = reservations.filter(r => r.status === 'checked-out' && r.actualCheckout && r.actualCheckout.startsWith(today)).length;
             
             updateRecentActivities(reservations, guests, rooms);
-            initCharts(); // Refresh charts with new data
+            initCharts();
         }
         
         function updateRecentActivities(reservations, guests, rooms) {
@@ -2881,20 +2943,33 @@
         }
         
         // --- Chart Initialization ---
-        let monthlyStatsChart, roomStatusChart;
+        let monthlyStatsChart, roomStatusChart, reportChart;
         function initCharts() {
             const monthlyCtx = document.getElementById('monthlyStatsChart').getContext('2d');
             if(monthlyStatsChart) monthlyStatsChart.destroy();
+            
+            // --- Contoh Data Statistik Bulanan ---
+            const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+            const monthlyRevenue = new Array(12).fill(0);
+            const monthlyGuests = new Array(12).fill(0);
+            reservations.forEach(res => {
+                if (res.status === 'checked-out' && res.actualCheckout) {
+                    const month = new Date(res.actualCheckout).getMonth();
+                    monthlyRevenue[month] += res.totalAmount || 0;
+                    monthlyGuests[month]++;
+                }
+            });
+
             monthlyStatsChart = new Chart(monthlyCtx, {
                 type: 'bar',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
                     datasets: [{
-                        label: 'Pendapatan (Contoh)', data: [12, 19, 3, 5, 2, 3, 8, 10, 6, 9, 11, 15].map(v => v * 1000000),
+                        label: 'Pendapatan', data: monthlyRevenue,
                         backgroundColor: 'rgba(13, 71, 161, 0.7)',
                     }, {
-                        label: 'Tamu (Contoh)', data: [45, 52, 48, 55, 60, 58, 65, 70, 68, 75, 80, 85],
-                        type: 'line', yAxisID: 'y1'
+                        label: 'Tamu Check-Out', data: monthlyGuests,
+                        type: 'line', yAxisID: 'y1', borderColor: '#b71c1c', backgroundColor: '#b71c1c'
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, y1: { position: 'right', grid: { drawOnChartArea: false } } } }
@@ -2919,6 +2994,137 @@
                 },
                  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
+        }
+        
+        // --- PERBAIKAN FITUR: Fungsi Laporan ---
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDateStr = document.getElementById('reportStartDate').value;
+            const endDateStr = document.getElementById('reportEndDate').value;
+
+            if (!startDateStr || !endDateStr) {
+                showNotification('Error', 'Silakan pilih periode mulai dan akhir.', 'error');
+                return;
+            }
+
+            const startDate = new Date(startDateStr);
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = new Date(endDateStr);
+            endDate.setHours(23, 59, 59, 999);
+
+            if (startDate > endDate) {
+                showNotification('Error', 'Tanggal mulai tidak boleh melebihi tanggal akhir.', 'error');
+                return;
+            }
+
+            const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+            const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
+            const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
+            
+            let data = {};
+            let tableHeaders = [];
+            let tableRows = [];
+            let chartLabel = '';
+
+            const dateMap = new Map();
+            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                dateMap.set(d.toISOString().split('T')[0], 0);
+            }
+
+            switch(reportType) {
+                case 'revenue':
+                    chartLabel = 'Total Pendapatan';
+                    reservations.filter(r => r.status === 'checked-out' && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
+                        .forEach(r => {
+                            const date = new Date(r.actualCheckout).toISOString().split('T')[0];
+                            if(dateMap.has(date)) {
+                                dateMap.set(date, dateMap.get(date) + r.totalAmount);
+                            }
+                        });
+                    tableHeaders = ['Tanggal', 'Pendapatan'];
+                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), formatCurrency(value)]));
+                    break;
+                
+                case 'occupancy':
+                    chartLabel = 'Tingkat Okupansi (%)';
+                    const totalRooms = rooms.length;
+                    if (totalRooms === 0) {
+                        showNotification('Warning', 'Tidak ada kamar terdaftar. Okupansi selalu 0%.', 'warning');
+                        return;
+                    }
+                    dateMap.forEach((value, key) => {
+                        const currentDate = new Date(key);
+                        const occupiedCount = reservations.filter(r => {
+                            const checkin = new Date(r.checkinDate);
+                            checkin.setHours(0,0,0,0);
+                            const checkout = new Date(r.checkoutDate);
+                            checkout.setHours(0,0,0,0);
+                            return ['checked-in', 'confirmed', 'reserved'].includes(r.status) && currentDate >= checkin && currentDate < checkout;
+                        }).length;
+                        const occupancyRate = (occupiedCount / totalRooms) * 100;
+                        dateMap.set(key, occupancyRate.toFixed(2));
+                    });
+                    tableHeaders = ['Tanggal', 'Kamar Terisi', 'Tingkat Okupansi (%)'];
+                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), Math.round(value/100 * totalRooms), `${value}%` ]));
+                    break;
+
+                case 'guests':
+                    chartLabel = 'Tamu Baru';
+                    guests.filter(g => new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
+                        .forEach(g => {
+                            const date = new Date(g.createdAt).toISOString().split('T')[0];
+                            if (dateMap.has(date)) {
+                                dateMap.set(date, dateMap.get(date) + 1);
+                            }
+                        });
+                    tableHeaders = ['Tanggal Registrasi', 'Jumlah Tamu Baru'];
+                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), value]));
+                    break;
+
+                case 'reservations':
+                    chartLabel = 'Reservasi Baru';
+                    reservations.filter(r => new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
+                        .forEach(r => {
+                            const date = new Date(r.createdAt).toISOString().split('T')[0];
+                            if(dateMap.has(date)) {
+                                dateMap.set(date, dateMap.get(date) + 1);
+                            }
+                        });
+                    tableHeaders = ['Tanggal Reservasi', 'Jumlah Reservasi Baru'];
+                    dateMap.forEach((value, key) => tableRows.push([formatDate(key), value]));
+                    break;
+            }
+
+            const chartData = {
+                labels: Array.from(dateMap.keys()).map(d => formatDate(d)),
+                datasets: [{
+                    label: chartLabel,
+                    data: Array.from(dateMap.values()),
+                    borderColor: 'var(--hotel-primary)',
+                    backgroundColor: 'rgba(13, 71, 161, 0.2)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            };
+
+            updateReportView(chartData, tableHeaders, tableRows);
+            showNotification('Sukses', `Laporan ${reportType} berhasil dibuat.`, 'success');
+        }
+
+        function updateReportView(chartData, tableHeaders, tableRows) {
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            if (reportChart) {
+                reportChart.destroy();
+            }
+            reportChart = new Chart(ctx, { type: 'line', data: chartData, options: { responsive: true, maintainAspectRatio: false } });
+
+            const header = document.getElementById('reportTableHeader');
+            const body = document.getElementById('reportTableBody');
+            header.innerHTML = `<tr>${tableHeaders.map(h => `<th>${h}</th>`).join('')}</tr>`;
+            body.innerHTML = tableRows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+            if (tableRows.length === 0) {
+                body.innerHTML = `<tr><td colspan="${tableHeaders.length}" class="text-center">Tidak ada data untuk periode yang dipilih.</td></tr>`;
+            }
         }
         
         // --- Helper Functions ---
