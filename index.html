@@ -709,7 +709,7 @@
                 </div>
                 <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
                 <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
-                <div class="watermark">v2.4 Secured</div>
+                <div class="watermark">v2.5 Secured</div>
             </div>
             
             <div class="row g-0">
@@ -1045,14 +1045,21 @@
                         <div class="tab-pane fade" id="room" role="tabpanel">
                             <h3 class="section-title">Manajemen Kamar</h3>
                             
-                            <div class="row mb-4">
-                                <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
                                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
                                         <i class="fas fa-plus me-2"></i>Tambah Kamar
                                     </button>
                                     <button class="btn btn-success" id="exportRoomsBtn">
                                         <i class="fas fa-file-excel me-2"></i>Ekspor Data
                                     </button>
+                                </div>
+                                <div class="btn-group" role="group" id="roomStatusFilter">
+                                    <button type="button" class="btn btn-outline-primary active" data-status="all">Semua</button>
+                                    <button type="button" class="btn btn-outline-success" data-status="available">Tersedia</button>
+                                    <button type="button" class="btn btn-outline-danger" data-status="occupied">Terisi</button>
+                                    <button type="button" class="btn btn-outline-info" data-status="reserved">Dipesan</button>
+                                    <button type="button" class="btn btn-outline-warning" data-status="maintenance">Pemeliharaan</button>
                                 </div>
                             </div>
                             
@@ -1998,6 +2005,31 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="settingsPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Keamanan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Untuk menyimpan perubahan, silakan masukkan kata sandi pengaturan.</p>
+                    <form id="settingsPasswordForm">
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="settingsPassword" placeholder="Password" required>
+                            <label for="settingsPassword">Password</label>
+                        </div>
+                         <div id="settingsPasswordError" class="error-message" style="display: none;">Password salah.</div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="confirmSettingsSaveBtn">Konfirmasi & Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -2008,15 +2040,13 @@
         });
         
         function initApp() {
-            checkLoginState(); // Check login status first
-            // The rest of the initializations will be called after a successful login
+            checkLoginState();
         }
 
         function checkLoginState() {
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
-                // Proceed with app initialization
                 initializeAppCore();
             } else {
                 document.getElementById('loginOverlay').style.display = 'flex';
@@ -2031,7 +2061,6 @@
             const pass = document.getElementById('password').value;
             const errorEl = document.getElementById('loginError');
 
-            // Default credentials
             if (user === 'Admin' && pass === 'Hotelku.1945') {
                 sessionStorage.setItem('isLoggedIn', 'true');
                 errorEl.style.display = 'none';
@@ -2083,7 +2112,7 @@
         }
         
         function setupEventListeners() {
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout); // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
             document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
             document.getElementById('sidebarOverlay').addEventListener('click', toggleMobileMenu);
@@ -2103,6 +2132,7 @@
             
             document.getElementById('generalSettingsForm').addEventListener('submit', saveGeneralSettings);
             document.getElementById('otherSettingsForm').addEventListener('submit', saveOtherSettings);
+            document.getElementById('confirmSettingsSaveBtn').addEventListener('click', executeSaveGeneralSettings);
             
             document.getElementById('exportReservationsBtn').addEventListener('click', exportReservations);
             document.getElementById('exportGuestsBtn').addEventListener('click', exportGuests);
@@ -2115,19 +2145,26 @@
             document.getElementById('resetDataBtn').addEventListener('click', resetData);
             
             document.getElementById('printInvoiceBtn').addEventListener('click', printInvoice);
-            document.getElementById('downloadInvoicePdfBtn').addEventListener('click', downloadInvoicePdf); // New event listener for PDF download
+            document.getElementById('downloadInvoicePdfBtn').addEventListener('click', downloadInvoicePdf);
             document.getElementById('amountPaid').addEventListener('input', calculateChange);
             
             document.getElementById('printReservationPdfBtn').addEventListener('click', printReservationPdf);
             document.getElementById('printGuestPdfBtn').addEventListener('click', printGuestPdf);
             
             document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+            
+            document.getElementById('roomStatusFilter').addEventListener('click', function(e) {
+                if (e.target.tagName === 'BUTTON') {
+                    const status = e.target.dataset.status;
+                    filterRoomsByStatus(status);
+                    document.querySelectorAll('#roomStatusFilter button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                }
+            });
 
-            // New event listeners for guest search
             document.getElementById('reservationGuestName').addEventListener('input', handleGuestSearch);
             document.getElementById('editReservationGuestName').addEventListener('input', handleGuestSearch);
 
-            // Hide search results when clicking outside
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.position-relative')) {
                     document.getElementById('guestSearchResults').innerHTML = '';
@@ -2184,26 +2221,13 @@
             addDynamicEventListeners();
         }
         
-        function loadRooms() {
-            const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
+        function renderRoomList(roomsToRender) {
             const roomList = document.getElementById('roomList');
-            const reservationRoom = document.getElementById('reservationRoom');
-            const editReservationRoom = document.getElementById('editReservationRoom');
-
-            reservationRoom.innerHTML = '<option value="">Pilih Kamar</option>';
-            editReservationRoom.innerHTML = ''; // Will be populated with all rooms
             roomList.innerHTML = '';
-            
-            rooms.sort((a,b) => a.number.localeCompare(b.number));
 
-            rooms.forEach(room => {
-                // Populate dropdowns with all rooms. Availability will be checked later.
-                const option = document.createElement('option');
-                option.value = room.id;
-                option.textContent = `${room.number} (${room.type})`;
-                reservationRoom.appendChild(option.cloneNode(true));
-                editReservationRoom.appendChild(option.cloneNode(true));
+            roomsToRender.sort((a,b) => a.number.localeCompare(b.number));
 
+            roomsToRender.forEach(room => {
                 const statusClass = getStatusClass(room.status);
                 const facilities = Array.isArray(room.facilities) ? room.facilities.join(', ') : '';
                 
@@ -2221,7 +2245,37 @@
                 `;
             });
 
-            addDynamicEventListeners();
+             addDynamicEventListeners();
+        }
+
+        function filterRoomsByStatus(status) {
+            const allRooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
+            if (status === 'all') {
+                renderRoomList(allRooms);
+            } else {
+                const filteredRooms = allRooms.filter(room => room.status === status);
+                renderRoomList(filteredRooms);
+            }
+        }
+        
+        function loadRooms() {
+            const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
+            const reservationRoom = document.getElementById('reservationRoom');
+            const editReservationRoom = document.getElementById('editReservationRoom');
+
+            reservationRoom.innerHTML = '<option value="">Pilih Kamar</option>';
+            editReservationRoom.innerHTML = '';
+
+            rooms.forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = `${room.number} (${room.type})`;
+                reservationRoom.appendChild(option.cloneNode(true));
+                editReservationRoom.appendChild(option.cloneNode(true));
+            });
+
+            renderRoomList(rooms);
+            document.querySelector('#roomStatusFilter button[data-status="all"]').click();
         }
         
         function loadReservations() {
@@ -2345,24 +2399,20 @@
             const newStart = new Date(checkinDate);
             const newEnd = new Date(checkoutDate);
 
-            // Find conflicting reservations for the same room
             const conflictingReservation = allReservations.find(res => {
-                // Skip if it's the reservation we are currently editing
                 if (res.id === excludeReservationId) return false;
                 
-                // Check only for the same room and active statuses
                 if (res.roomId !== roomId || ['cancelled', 'checked-out'].includes(res.status)) {
                     return false;
                 }
 
                 const existingStart = new Date(res.checkinDate);
                 const existingEnd = new Date(res.checkoutDate);
-
-                // Check for overlap: (StartA <= EndB) and (EndA >= StartB)
+                
                 return newStart < existingEnd && newEnd > existingStart;
             });
 
-            return !conflictingReservation; // If a conflicting reservation is found, the room is NOT available
+            return !conflictingReservation;
         }
 
         function saveReservation() {
@@ -2737,6 +2787,7 @@
             
             const checkoutModal = document.getElementById('checkoutModal');
             checkoutModal.dataset.totalAmount = totalAmount;
+            checkoutModal.dataset.reprintId = reservation.id; // Store for PDF download
             document.getElementById('checkoutTotalBill').value = formatCurrency(totalAmount);
             document.getElementById('amountPaid').value = '';
             document.getElementById('changeDue').value = '';
@@ -2754,7 +2805,9 @@
 
             populateInvoiceModal(reservation);
             
-            new bootstrap.Modal(document.getElementById('checkoutModal')).show();
+            const checkoutModal = document.getElementById('checkoutModal');
+            checkoutModal.dataset.reprintId = reservation.id; // Store for PDF download
+            new bootstrap.Modal(checkoutModal).show();
         }
 
         function processCheckout() {
@@ -2832,6 +2885,21 @@
         
         function saveGeneralSettings(e) {
             e.preventDefault();
+            const passwordModal = new bootstrap.Modal(document.getElementById('settingsPasswordModal'));
+            document.getElementById('settingsPassword').value = '';
+            document.getElementById('settingsPasswordError').style.display = 'none';
+            passwordModal.show();
+        }
+
+        function executeSaveGeneralSettings() {
+            const password = document.getElementById('settingsPassword').value;
+            const errorEl = document.getElementById('settingsPasswordError');
+
+            if (password !== 'LKS.1945') {
+                errorEl.style.display = 'block';
+                return;
+            }
+
             const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
             const updatedSettings = { ...settings, 
                 hotelName: document.getElementById('hotelName').value,
@@ -2840,7 +2908,10 @@
                 hotelEmail: document.getElementById('hotelEmail').value
             };
             localStorage.setItem('hotel_settings', JSON.stringify(updatedSettings));
+            
+            bootstrap.Modal.getInstance(document.getElementById('settingsPasswordModal')).hide();
             showNotification('Sukses', 'Pengaturan umum berhasil disimpan.', 'success');
+            loadSettings(); // Reload to show new settings
         }
         
         function saveOtherSettings(e) {
@@ -2974,7 +3045,7 @@
 
         async function downloadInvoicePdf() {
             const checkoutModal = document.getElementById('checkoutModal');
-            const reservationId = checkoutModal.querySelector('#checkoutReservationId').value || checkoutModal.dataset.reprintId;
+            const reservationId = checkoutModal.dataset.reprintId;
 
             if (!reservationId) {
                 showNotification('Error', 'Tidak ada data reservasi untuk diunduh.', 'error');
@@ -2992,6 +3063,8 @@
             const guest = guests.find(g => g.id === reservation.guestId) || {};
             const room = rooms.find(r => r.id === reservation.roomId) || {};
 
+            let currentY = 15; // Starting Y position
+
             try {
                 const logoUrl = 'https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png';
                 const logoBase64 = await urlToBas64(logoUrl);
@@ -2999,23 +3072,29 @@
                 const img = new Image();
                 img.src = logoBase64;
                 await new Promise(resolve => img.onload = resolve);
-                const imgWidth = 40; // Set desired width
-                const imgHeight = (img.height * imgWidth) / img.width; // Calculate height to maintain aspect ratio
-                doc.addImage(logoBase64, 'PNG', 14, 15, imgWidth, imgHeight);
+                
+                const imgWidth = 40;
+                const imgHeight = (img.height * imgWidth) / img.width;
+                doc.addImage(logoBase64, 'PNG', 14, currentY, imgWidth, imgHeight);
+                currentY += imgHeight + 5; // Update Y position after adding logo + margin
 
             } catch (error) {
                 console.error("Gagal memuat logo:", error);
                 showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
+                currentY += 15; // Add space if logo fails
             }
 
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(16);
-            doc.text(settings.hotelName || 'Hotel Management System', 14, 40);
-            
+            doc.text(settings.hotelName || 'Hotel Management System', 14, currentY);
+            currentY += 5;
+
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(settings.hotelAddress || 'Alamat Hotel', 14, 45);
-            doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, 50);
+            doc.text(settings.hotelAddress || 'Alamat Hotel', 14, currentY);
+            currentY += 5;
+            doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, currentY);
+
 
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(14);
@@ -3026,34 +3105,37 @@
             doc.text(`No: INV-${reservation.id.slice(-6)}`, 200, 27, { align: 'right' });
             doc.text(`Tanggal: ${formatDate(reservation.actualCheckout || new Date().toISOString())}`, 200, 34, { align: 'right' });
 
+            currentY = Math.max(currentY, 50) + 10; // Ensure we start below header details
             doc.setLineWidth(0.5);
-            doc.line(14, 60, 200, 60);
+            doc.line(14, currentY, 200, currentY);
+            currentY += 10;
 
+            const guestDetailsY = currentY;
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
-            doc.text('Detail Tamu', 14, 70);
+            doc.text('Detail Tamu', 14, guestDetailsY);
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, 77);
-            doc.text(`Telepon: ${guest.phone || '-'}`, 14, 82);
-            doc.text(`Email: ${guest.email || '-'}`, 14, 87);
+            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, guestDetailsY + 7);
+            doc.text(`Telepon: ${guest.phone || '-'}`, 14, guestDetailsY + 12);
+            doc.text(`Email: ${guest.email || '-'}`, 14, guestDetailsY + 17);
 
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
-            doc.text('Detail Reservasi', 200, 70, { align: 'right' });
+            doc.text('Detail Reservasi', 200, guestDetailsY, { align: 'right' });
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
             const checkinDate = new Date(reservation.checkinDate);
             const checkoutDate = new Date(reservation.checkoutDate);
             const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24)) || 1;
-            doc.text(`Kamar: ${room.number || '-'} (${room.type || '-'})`, 200, 77, { align: 'right' });
-            doc.text(`Check-In: ${formatDate(reservation.checkinDate)}`, 200, 82, { align: 'right' });
-            doc.text(`Check-Out: ${formatDate(reservation.checkoutDate)}`, 200, 87, { align: 'right' });
-            doc.text(`Lama Menginap: ${nights} malam`, 200, 92, { align: 'right' });
+            doc.text(`Kamar: ${room.number || '-'} (${room.type || '-'})`, 200, guestDetailsY + 7, { align: 'right' });
+            doc.text(`Check-In: ${formatDate(reservation.checkinDate)}`, 200, guestDetailsY + 12, { align: 'right' });
+            doc.text(`Check-Out: ${formatDate(reservation.checkoutDate)}`, 200, guestDetailsY + 17, { align: 'right' });
+            doc.text(`Lama Menginap: ${nights} malam`, 200, guestDetailsY + 22, { align: 'right' });
 
             const roomTotal = (room.price || 0) * nights;
             const taxAmount = roomTotal * ((settings.taxRate || 0) / 100);
-            const totalAmount = reservation.totalAmount || (roomTotal + taxAmount); // Use stored total if available
+            const totalAmount = reservation.totalAmount || (roomTotal + taxAmount);
 
             const tableColumn = ["Deskripsi", "Jumlah", "Harga Satuan", "Subtotal"];
             const tableRows = [];
@@ -3068,7 +3150,7 @@
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
-                startY: 100,
+                startY: guestDetailsY + 30,
                 theme: 'grid',
                 headStyles: { fillColor: [13, 71, 161] }
             });
@@ -3173,7 +3255,6 @@
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             const index = rooms.findIndex(r => r.id === roomId);
             if (index !== -1) {
-                // Only update status if the room is not under maintenance
                 if(rooms[index].status !== 'maintenance') {
                     rooms[index].status = status;
                     rooms[index].updatedAt = new Date().toISOString();
@@ -3443,7 +3524,7 @@
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const filteredGuests = guests.filter(guest => 
                 `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm)
-            ).slice(0, 5); // Limit results to 5
+            ).slice(0, 5);
 
             filteredGuests.forEach(guest => {
                 const item = document.createElement('a');
