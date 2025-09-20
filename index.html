@@ -1321,6 +1321,9 @@
                                                 <button class="btn btn-success" id="exportAllDataBtn">
                                                     <i class="fas fa-file-export me-2"></i>Ekspor Semua Data (Excel)
                                                 </button>
+                                                <button class="btn btn-info" id="backupAllDataJsonBtn">
+                                                    <i class="fas fa-file-archive me-2"></i>Backup Semua Data (JSON)
+                                                </button>
                                                 <button class="btn btn-warning" id="importDataBtn">
                                                     <i class="fas fa-file-import me-2"></i>Impor Data (JSON)
                                                 </button>
@@ -1904,7 +1907,7 @@
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <img src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
+                                    <img id="invoiceLogoImg" src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
                                     <div class="invoice-logo" id="invoiceHotelName" style="font-size: 1.5rem; line-height: 1.2;">HOTEL MANAGEMENT SYSTEM</div>
                                     <p id="invoiceHotelAddress" class="mb-0">Jl. Contoh No. 123, Jakarta</p>
                                     <p>Telp: <span id="invoiceHotelPhone">021-1234567</span></p>
@@ -2208,6 +2211,7 @@
             document.getElementById('exportGuestsBtn').addEventListener('click', exportGuests);
             document.getElementById('exportRoomsBtn').addEventListener('click', exportRooms);
             document.getElementById('exportAllDataBtn').addEventListener('click', exportAllData);
+            document.getElementById('backupAllDataJsonBtn').addEventListener('click', backupAllDataJson);
             
             document.getElementById('importDataBtn').addEventListener('click', () => new bootstrap.Modal(document.getElementById('importDataModal')).show());
             document.getElementById('confirmImportBtn').addEventListener('click', importData);
@@ -2778,7 +2782,6 @@
             
             const room = JSON.parse(localStorage.getItem('hotel_rooms') || '[]').find(r => r.id === reservation.roomId) || {};
             
-            // NEW: Check if room is under maintenance
             if (room.status === 'maintenance') {
                 showNotification(
                     'Check-In Ditolak', 
@@ -2899,6 +2902,7 @@
             document.getElementById('checkoutModalTitle').textContent = 'Proses Check-Out & Invoice';
             document.getElementById('checkoutPaymentSection').style.display = 'block';
             document.getElementById('confirmCheckoutBtn').style.display = 'inline-block';
+            document.getElementById('confirmCheckoutBtn').disabled = true; // Disable button on open
 
             const totalAmount = populateInvoiceModal(reservation);
             
@@ -2906,7 +2910,7 @@
             
             const checkoutModal = document.getElementById('checkoutModal');
             checkoutModal.dataset.totalAmount = totalAmount;
-            checkoutModal.dataset.reprintId = reservation.id; // Store for PDF download
+            checkoutModal.dataset.reprintId = reservation.id; 
             document.getElementById('checkoutTotalBill').value = formatCurrency(totalAmount);
             document.getElementById('amountPaid').value = '';
             document.getElementById('changeDue').value = '';
@@ -2925,7 +2929,7 @@
             populateInvoiceModal(reservation);
             
             const checkoutModal = document.getElementById('checkoutModal');
-            checkoutModal.dataset.reprintId = reservation.id; // Store for PDF download
+            checkoutModal.dataset.reprintId = reservation.id; 
             new bootstrap.Modal(checkoutModal).show();
         }
 
@@ -3033,7 +3037,7 @@
             
             bootstrap.Modal.getInstance(document.getElementById('settingsPasswordModal')).hide();
             showNotification('Sukses', 'Pengaturan umum berhasil disimpan.', 'success');
-            loadSettings(); // Reload to show new settings
+            loadSettings();
         }
         
         function saveOtherSettings(e) {
@@ -3150,8 +3154,22 @@
             }
         }
         
-        function printInvoice() {
-            window.print();
+        async function printInvoice() {
+            const logoImg = document.getElementById('invoiceLogoImg');
+            const originalSrc = logoImg.src;
+
+            try {
+                // Fetch the logo and convert to Base64 to ensure it's embedded for printing
+                const logoBase64 = await urlToBas64(originalSrc);
+                logoImg.onload = () => {
+                    window.print();
+                };
+                logoImg.src = logoBase64; // Set the src to the Base64 string
+            } catch (error) {
+                console.error("Gagal memuat logo untuk dicetak:", error);
+                showNotification('Warning', 'Gagal memuat logo, cetakan mungkin tidak menampilkan logo.', 'warning');
+                window.print(); // Proceed to print even if the logo fails
+            }
         }
 
         async function urlToBas64(url) {
@@ -3185,7 +3203,7 @@
             const guest = guests.find(g => g.id === reservation.guestId) || {};
             const room = rooms.find(r => r.id === reservation.roomId) || {};
 
-            let currentY = 15; // Starting Y position
+            let currentY = 15;
 
             try {
                 const logoUrl = 'https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png';
@@ -3198,12 +3216,12 @@
                 const imgWidth = 40;
                 const imgHeight = (img.height * imgWidth) / img.width;
                 doc.addImage(logoBase64, 'PNG', 14, currentY, imgWidth, imgHeight);
-                currentY += imgHeight + 5; // Update Y position after adding logo + margin
+                currentY += imgHeight + 5;
 
             } catch (error) {
                 console.error("Gagal memuat logo:", error);
                 showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
-                currentY += 15; // Add space if logo fails
+                currentY += 15;
             }
 
             doc.setFont('Helvetica', 'bold');
@@ -3227,7 +3245,7 @@
             doc.text(`No: INV-${reservation.id.slice(-6)}`, 200, 27, { align: 'right' });
             doc.text(`Tanggal: ${formatDate(reservation.actualCheckout || new Date().toISOString())}`, 200, 34, { align: 'right' });
 
-            currentY = Math.max(currentY, 50) + 10; // Ensure we start below header details
+            currentY = Math.max(currentY, 50) + 10;
             doc.setLineWidth(0.5);
             doc.line(14, currentY, 200, currentY);
             currentY += 10;
@@ -3391,6 +3409,34 @@
             doc.save(`data-tamu_${new Date().toISOString().split('T')[0]}.pdf`);
             showNotification('Sukses', 'PDF Laporan Tamu berhasil dibuat.', 'success');
         }
+
+        function backupAllDataJson() {
+            try {
+                const backupData = {
+                    guests: JSON.parse(localStorage.getItem('hotel_guests') || '[]'),
+                    rooms: JSON.parse(localStorage.getItem('hotel_rooms') || '[]'),
+                    reservations: JSON.parse(localStorage.getItem('hotel_reservations') || '[]'),
+                    settings: JSON.parse(localStorage.getItem('hotel_settings') || '{}')
+                };
+                
+                const jsonString = JSON.stringify(backupData, null, 2); // Pretty print JSON
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hotel_backup_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('Sukses', 'Backup data JSON berhasil dibuat.', 'success');
+            } catch (error) {
+                console.error('Gagal membuat backup JSON:', error);
+                showNotification('Error', 'Terjadi kesalahan saat membuat backup data.', 'error');
+            }
+        }
         
         function updateRoomStatus(roomId, status) {
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
@@ -3433,12 +3479,15 @@
             const totalAmount = parseFloat(checkoutModal.dataset.totalAmount) || 0;
             const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
             const changeDueEl = document.getElementById('changeDue');
+            const confirmBtn = document.getElementById('confirmCheckoutBtn');
 
             if (amountPaid > 0 && amountPaid >= totalAmount) {
                 const change = amountPaid - totalAmount;
                 changeDueEl.value = formatCurrency(change);
+                confirmBtn.disabled = false;
             } else {
                 changeDueEl.value = '';
+                confirmBtn.disabled = true;
             }
         }
         
