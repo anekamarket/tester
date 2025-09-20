@@ -1261,16 +1261,29 @@
                             
                             <div class="row">
                                 <div class="col-12">
-                                     <div class="card">
+                                    <div class="card">
                                         <div class="card-header d-flex justify-content-between align-items-center">
-                                            <div><i class="fas fa-file-alt me-2"></i>Hasil Laporan</div>
+                                            <div><i class="fas fa-chart-bar me-2"></i>Grafik Laporan</div>
                                             <div id="reportActions" style="display: none;">
-                                                <button class="btn btn-sm btn-info" id="printReportBtn"><i class="fas fa-print me-2"></i>Cetak</button>
+                                                <button class="btn btn-sm btn-info" id="printReportBtn"><i class="fas fa-print me-2"></i>Cetak Laporan</button>
                                                 <button class="btn btn-sm btn-danger" id="downloadReportPdfBtn"><i class="fas fa-file-pdf me-2"></i>Unduh PDF</button>
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <div id="reportSummary" class="mb-4" style="display: none;"></div>
+                                            <div id="reportSummary" class="mb-3" style="display: none;"></div>
+                                            <canvas id="reportChart" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-table me-2"></i>Data Laporan
+                                        </div>
+                                        <div class="card-body">
                                             <div class="table-responsive">
                                                 <table class="table table-hover data-table">
                                                     <thead id="reportTableHeader">
@@ -1975,7 +1988,7 @@
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <img id="invoiceLogoImg" src="" alt="Logo Hotel" class="invoice-logo-img">
+                                    <img id="invoiceLogoImg" src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
                                     <div class="invoice-logo" id="invoiceHotelName" style="font-size: 1.5rem; line-height: 1.2;">HOTEL MANAGEMENT SYSTEM</div>
                                     <p id="invoiceHotelAddress" class="mb-0">Jl. Contoh No. 123, Jakarta</p>
                                     <p>Telp: <span id="invoiceHotelPhone">021-1234567</span></p>
@@ -2178,7 +2191,6 @@
         });
         
         let currentReportData = {}; // To store generated report data
-        const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAACBCAMAAABTdsyCAAAAYFBMVEX////AAD/qan/RUX/Nzf/ICD/WVn/y8v/f3//paX/8/P/t7f/39//YGD/vr7/n5//KSn/d3f/oKD/UFD/zMz/jo7/hIT/amr/rq7/wcH/DAz/sbH/5ub/ERH/7+//Li7/X1//srLYAAAEjElFTVR4nO2di3aiMBCGIzYgCIqKD977/d95tqAonrS1nd1KJvP+nMnEWJr2dDrd/o0kSZIkSZIkSZIkSZIkSZIkSZIkSZIkSZIkSVL9+vP5A7A7V1gKby0/gD6zP+13Qn9s7/vL8jL4z+L3r3A1fA/f11vB7y/gC8EwWACe/Fz4uPBP8P0K3g9+Jvz+Cj4vPCd+BvxgBP8p/C58/xT+L3x8Be83fgX+eAJ/LXxc+Pl7+Bf4+R8c4F/AH8PPa/gH8eMX+C/w0xP8D/j5PzjAT/7D+Gn4eQe/EX+ewv+MP3+Ff+DnPzjAb8BPz/D78OMz/C78+D7+EX4ehV/Hr/s/8PMPDhH4ZfxxBb8Tf3yO354fx6fhc3D4zG9l+B4cvk+n05fH78rPy6/L8jL8fXq9vgC/f0c/L3+8An8An8An8An8T6fX/v/4Zfj5/P4B+D35+f13fAFeAL+A348fx5+n5evg/fL1T/AN+Pv5fQO+Ad8A78c34LvhG/DN+Ab88f1z+Gb8wQX+eHzfAP8I/gh+Af4s/h1+C/45fgP+Zfy+gb8M3xfw/43/E//7A74J/zH+5x/41/Bf49/E/3H8+gX+P34+/u8DfAn+UfwZ/vMH/n/8x/D/jP8K/38+/783+3341/D/H/9d/m/4/g/8fvy+gd8A/wr+j/8M/z78fvyT+PMP/Ov43/Hf5c8A/x8//8E34N/B34V/+eXf4c/iH1n9vPzb+Pvx3+O3z3+Pnz//HX6+/Dv8vfj3P/Db+ffh/fLvwx+Uf4+/b3//wS/Jvx//3vx3+fv2/y/k34d/8s/Dv5R/h38D/hH+hfnf5u/b//8F/t78y/yX5V/k34f/y8+A/xH/Yv6F+Tfm35h/k3+BfwP+5vyL+VfmX8y/yL9B/gX8y/n35t+bf2/+bf5t/hX+dfz7+Xfzv+ffzX+bf5u/gf+bfzH/Yv6F+RfmX+RfwL+afzH/Yv6l+Vflf/H+xvyL+VfkX/1/+pvyL+ZfkX+BfyX/Yv6l+Vflf47/R/mX5V+Vf/H+N+RflX+BfyH/av7V/Kvy7+RfkH8x/5b+bfm38+9I/lX51/DvyL/KvyL/Kv9G/kX+xfyL/Cv5l/Jv5V/Fv5t/N/9G/p38e/lX+e/k3+c/i58Lvx0/h38VvxQ+8tP3l/58+J/wQ+HTb8Mfh38f/if4d/Dvhw/8X/hZ+I8/sP+Hnw/f+374+Xl++oUf4+838HP45/G3g+f+4//j38HP4R/j5+HXc/jw/wU/v/8h/k78PPz/+fv4W/jv8OPj4w+cH5W9/8K/jX+Nvx+fhd+Hn498b+P341fh7w1//sH+E39fwx/D/k7/h38Vvh78d//kXfnr8Bvze/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/F78Xvxe/J/8X3wffB98H3wfP7J/Efw/L2Xg5S/M/5nBf7+8v/q+F6KkSRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkhr8B2qf+121013aAAAAAElFTkSuQmCC';
 
         function initApp() {
             checkLoginState();
@@ -2927,9 +2939,6 @@
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
             
-            // FIX: Set the logo source from Base64 constant to prevent loading errors.
-            document.getElementById('invoiceLogoImg').src = LOGO_BASE64;
-            
             const guest = guests.find(g => g.id === reservation.guestId) || {};
             const room = rooms.find(r => r.id === reservation.roomId) || {};
             
@@ -2995,11 +3004,11 @@
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
 
-            // Watermark logic REVISED: Show watermark if status is not 'paid'.
-            if (reservation.paymentStatus === 'paid') {
-                document.getElementById('checkoutInvoice').classList.remove('watermarked');
-            } else {
+            // Watermark logic
+            if (reservation.paymentStatus === 'pending') {
                 document.getElementById('checkoutInvoice').classList.add('watermarked');
+            } else {
+                document.getElementById('checkoutInvoice').classList.remove('watermarked');
             }
             
             return totalAmount;
@@ -3270,19 +3279,30 @@
         
         async function printInvoice() {
             const logoImg = document.getElementById('invoiceLogoImg');
-            // Ensure the source is the reliable Base64 string
-            logoImg.src = LOGO_BASE64;
-        
-            // Wait for the image to be processed by the browser after ensuring src is set
-            logoImg.onload = () => {
-                setTimeout(() => window.print(), 100); 
-            };
-            // If the image is already cached/loaded, onload might not fire, so call print directly.
-            if (logoImg.complete) {
-                setTimeout(() => window.print(), 100);
+            try {
+                const logoBase64 = await urlToBas64(logoImg.src);
+                logoImg.src = logoBase64;
+                logoImg.onload = () => {
+                    setTimeout(() => window.print(), 100); // Small delay to ensure render
+                };
+            } catch (error) {
+                console.error("Gagal memuat logo untuk dicetak:", error);
+                showNotification('Warning', 'Gagal memuat logo, cetakan mungkin tidak menampilkan logo.', 'warning');
+                window.print();
             }
         }
-        
+
+        function urlToBas64(url) {
+            return fetch(url)
+                .then(response => response.blob())
+                .then(blob => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                }));
+        }
+
         async function downloadInvoicePdf() {
             const checkoutModal = document.getElementById('checkoutModal');
             const reservationId = checkoutModal.dataset.reprintId;
@@ -3306,20 +3326,19 @@
             let currentY = 15;
 
             try {
+                const logoUrl = 'https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png';
+                const logoBase64 = await urlToBas64(logoUrl);
+                
                 const img = new Image();
-                img.src = LOGO_BASE64;
-                await new Promise((resolve, reject) => { 
-                    img.onload = resolve; 
-                    img.onerror = reject;
-                    if (img.complete) resolve(); 
-                });
+                img.src = logoBase64;
+                await new Promise(resolve => img.onload = resolve);
                 
                 const imgWidth = 40;
                 const imgHeight = (img.height * imgWidth) / img.width;
-                doc.addImage(LOGO_BASE64, 'PNG', 14, currentY, imgWidth, imgHeight);
+                doc.addImage(logoBase64, 'PNG', 14, currentY, imgWidth, imgHeight);
                 currentY += imgHeight + 5;
             } catch (error) {
-                console.error("Gagal memuat logo Base64 untuk PDF:", error);
+                console.error("Gagal memuat logo:", error);
                 showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
                 currentY += 15;
             }
@@ -3426,8 +3445,8 @@
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
             
-            // Add watermark to PDF if status is not 'paid'
-            if (reservation.paymentStatus !== 'paid') {
+            // Add watermark to PDF if status is pending
+            if (reservation.paymentStatus === 'pending') {
                 doc.setFontSize(72);
                 doc.setFont('Helvetica', 'bold');
                 doc.setTextColor(220, 53, 69, 0.2);
@@ -3640,7 +3659,7 @@
             });
         }
         
-        let monthlyStatsChart, roomStatusChart;
+        let monthlyStatsChart, roomStatusChart, reportChart;
         function initCharts() {
             const monthlyCtx = document.getElementById('monthlyStatsChart').getContext('2d');
             if(monthlyStatsChart) monthlyStatsChart.destroy();
@@ -3692,6 +3711,9 @@
             });
         }
         
+        // =================================================================
+        // == PERBAIKAN DAN PENYEDERHANAAN FUNGSI LAPORAN DIMULAI DI SINI ==
+        // =================================================================
         function generateReport() {
             const reportType = document.getElementById('reportType').value;
             const startDateStr = document.getElementById('reportStartDate').value;
@@ -3721,11 +3743,15 @@
             
             let tableHeaders = [];
             let tableRows = [];
+            let chartLabel = '';
             let totalValue = 0;
             let summaryText = '';
+            let dataUnit = ''; // For table display (e.g., 'Tamu', 'Reservasi')
 
             switch(reportType) {
                 case 'revenue':
+                    chartLabel = 'Total Pendapatan';
+                    dataUnit = 'Pendapatan';
                     reservations.filter(r => r.status === 'checked-out' && r.actualCheckout && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
                         .forEach(r => {
                             const month = new Date(r.actualCheckout).getMonth();
@@ -3737,12 +3763,11 @@
                     break;
                 
                 case 'occupancy':
+                    chartLabel = 'Rata-rata Okupansi (%)';
+                    dataUnit = 'Okupansi';
                     const totalRooms = rooms.length;
                     if (totalRooms === 0) {
                         showNotification('Warning', 'Tidak ada kamar terdaftar. Okupansi selalu 0%.', 'warning');
-                        tableHeaders = ['Bulan', 'Rata-rata Okupansi'];
-                        summaryText = `Rata-rata Okupansi Keseluruhan: 0.00%`;
-                        updateReportView(tableHeaders, [], summaryText);
                         return;
                     }
                     const monthlyOccupancyDays = Array(12).fill(0);
@@ -3769,13 +3794,14 @@
                     }
 
                     tableHeaders = ['Bulan', 'Rata-rata Okupansi'];
-                    const totalDaysInRange = (endDate - startDate) / (1000 * 60 * 60 * 24);
-                    const totalOccupancyDays = monthlyOccupancyDays.reduce((sum, val) => sum + val, 0);
-                    totalValue = (totalOccupancyDays / (totalDaysInRange * totalRooms)) * 100 || 0;
+                    const totalMonths = daysInMonth.filter(d => d > 0).length || 1;
+                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0) / totalMonths;
                     summaryText = `Rata-rata Okupansi Keseluruhan: ${totalValue.toFixed(2)}%`;
                     break;
 
                 case 'guests':
+                    chartLabel = 'Tamu Baru';
+                    dataUnit = 'Tamu Baru';
                     guests.filter(g => g.createdAt && new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
                         .forEach(g => {
                             const month = new Date(g.createdAt).getMonth();
@@ -3787,6 +3813,8 @@
                     break;
 
                 case 'reservations':
+                    chartLabel = 'Reservasi Baru';
+                    dataUnit = 'Reservasi Baru';
                     reservations.filter(r => r.createdAt && new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
                         .forEach(r => {
                             const month = new Date(r.createdAt).getMonth();
@@ -3808,6 +3836,17 @@
                 }
             });
 
+            const chartData = {
+                labels: monthLabels,
+                datasets: [{
+                    label: chartLabel,
+                    data: monthlyData,
+                    backgroundColor: 'rgba(13, 71, 161, 0.7)',
+                    borderColor: 'var(--hotel-primary)',
+                    borderWidth: 1
+                }]
+            };
+
             currentReportData = {
                 title: `Laporan ${document.getElementById('reportType').options[document.getElementById('reportType').selectedIndex].text}`,
                 period: `Periode: ${formatDate(startDateStr)} - ${formatDate(endDateStr)}`,
@@ -3817,11 +3856,30 @@
                 type: reportType
             };
 
-            updateReportView(tableHeaders, tableRows, summaryText);
+            updateReportView(chartData, tableHeaders, tableRows, summaryText);
             showNotification('Sukses', `Laporan ${reportType} berhasil dibuat.`, 'success');
         }
 
-        function updateReportView(tableHeaders, tableRows, summaryText) {
+        function updateReportView(chartData, tableHeaders, tableRows, summaryText) {
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            if (reportChart) {
+                reportChart.destroy();
+            }
+            // Use 'bar' chart for a simpler, clearer view
+            reportChart = new Chart(ctx, { 
+                type: 'bar', 
+                data: chartData, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    } 
+                } 
+            });
+
             const header = document.getElementById('reportTableHeader');
             const body = document.getElementById('reportTableBody');
             header.innerHTML = `<tr>${tableHeaders.map(h => `<th>${h}</th>`).join('')}</tr>`;
@@ -3834,6 +3892,10 @@
             document.getElementById('reportSummary').style.display = 'block';
             document.getElementById('reportActions').style.display = 'block';
         }
+
+        // ===============================================================
+        // == AKHIR BAGIAN PERBAIKAN FUNGSI LAPORAN                     ==
+        // ===============================================================
         
         function printReport() {
             if (!currentReportData.title) {
