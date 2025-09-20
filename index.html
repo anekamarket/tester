@@ -30,6 +30,42 @@
             padding: 10px 0;
             overflow-x: hidden;
         }
+
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box .app-logo {
+            font-size: 3rem;
+            color: var(--hotel-primary);
+            margin-bottom: 15px;
+        }
+
+        .login-box h2 {
+            margin-bottom: 25px;
+            color: var(--hotel-dark);
+            font-weight: 700;
+        }
         
         .app-container {
             max-width: 1600px;
@@ -638,592 +674,626 @@
     </style>
 </head>
 <body>
-    <button class="mobile-menu-btn no-print" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <div class="sidebar-overlay no-print" id="sidebarOverlay"></div>
-    
-    <div class="app-container">
-        <div class="app-header no-print">
+    <div id="loginOverlay">
+        <div class="login-box animate-fadeIn">
             <div class="app-logo">
                 <i class="fas fa-hotel"></i>
             </div>
-            <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
-            <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
-            <div class="watermark">v2.3 Final</div>
+            <h2>Hotel Management System Login</h2>
+            <form id="loginForm">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Username" required>
+                    <label for="username">Username</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Login</button>
+                <div id="loginError" class="error-message mt-3" style="display: none;">Username atau password salah.</div>
+            </form>
         </div>
+    </div>
+
+    <main id="mainApp" style="display: none;">
+        <button class="mobile-menu-btn no-print" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
         
-        <div class="row g-0">
-            <div class="col-md-3 col-lg-2 bg-light p-3 no-print" id="sidebar">
-                <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab">
-                            <i class="fas fa-tachometer-alt feature-icon"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="reservation-tab" data-bs-toggle="tab" href="#reservation" role="tab">
-                            <i class="fas fa-calendar-check feature-icon"></i>Reservasi
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="checkin-tab" data-bs-toggle="tab" href="#checkin" role="tab">
-                            <i class="fas fa-sign-in-alt feature-icon"></i>Check-In
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="checkout-tab" data-bs-toggle="tab" href="#checkout" role="tab">
-                            <i class="fas fa-sign-out-alt feature-icon"></i>Check-Out
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">
-                            <i class="fas fa-history feature-icon"></i>Histori Check-Out
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="room-tab" data-bs-toggle="tab" href="#room" role="tab">
-                            <i class="fas fa-bed feature-icon"></i>Manajemen Kamar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="guest-tab" data-bs-toggle="tab" href="#guest" role="tab">
-                            <i class="fas fa-users feature-icon"></i>Data Tamu
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="report-tab" data-bs-toggle="tab" href="#report" role="tab">
-                            <i class="fas fa-chart-bar feature-icon"></i>Laporan
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab">
-                            <i class="fas fa-cog feature-icon"></i>Pengaturan
-                        </a>
-                    </li>
-                </ul>
+        <div class="sidebar-overlay no-print" id="sidebarOverlay"></div>
+        
+        <div class="app-container">
+            <div class="app-header no-print">
+                <div class="app-logo">
+                    <i class="fas fa-hotel"></i>
+                </div>
+                <h1 class="app-title">HOTEL MANAGEMENT SYSTEM</h1>
+                <p class="app-subtitle">Sistem Manajemen Hotel Terintegrasi</p>
+                <div class="watermark">v2.4 Secured</div>
             </div>
             
-            <div class="col-md-9 col-lg-10 p-4">
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
-                        <h3 class="section-title">Dashboard</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-users text-primary fa-2x"></i>
-                                    <div class="stats-number" id="totalGuests">0</div>
-                                    <div class="stats-label">Total Tamu</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-bed text-success fa-2x"></i>
-                                    <div class="stats-number" id="availableRooms">0</div>
-                                    <div class="stats-label">Kamar Tersedia</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-calendar-check text-warning fa-2x"></i>
-                                    <div class="stats-number" id="todayCheckins">0</div>
-                                    <div class="stats-label">Check-In Hari Ini</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stats-box">
-                                    <i class="fas fa-sign-out-alt text-danger fa-2x"></i>
-                                    <div class="stats-number" id="todayCheckouts">0</div>
-                                    <div class="stats-label">Check-Out Hari Ini</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-line me-2"></i>Statistik Bulanan
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="monthlyStatsChart" height="250"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-bed me-2"></i>Status Kamar
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="roomStatusChart" height="250"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i>Aktivitas Terbaru
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Waktu</th>
-                                                        <th>Tamu</th>
-                                                        <th>Kamar</th>
-                                                        <th>Aktivitas</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="recentActivities">
-                                                    </tbody>
-                                            </table>
-                                        </div>
+            <div class="row g-0">
+                <div class="col-md-3 col-lg-2 bg-light p-3 no-print" id="sidebar">
+                    <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab">
+                                <i class="fas fa-tachometer-alt feature-icon"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="reservation-tab" data-bs-toggle="tab" href="#reservation" role="tab">
+                                <i class="fas fa-calendar-check feature-icon"></i>Reservasi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkin-tab" data-bs-toggle="tab" href="#checkin" role="tab">
+                                <i class="fas fa-sign-in-alt feature-icon"></i>Check-In
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkout-tab" data-bs-toggle="tab" href="#checkout" role="tab">
+                                <i class="fas fa-sign-out-alt feature-icon"></i>Check-Out
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab">
+                                <i class="fas fa-history feature-icon"></i>Histori Check-Out
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="room-tab" data-bs-toggle="tab" href="#room" role="tab">
+                                <i class="fas fa-bed feature-icon"></i>Manajemen Kamar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="guest-tab" data-bs-toggle="tab" href="#guest" role="tab">
+                                <i class="fas fa-users feature-icon"></i>Data Tamu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="report-tab" data-bs-toggle="tab" href="#report" role="tab">
+                                <i class="fas fa-chart-bar feature-icon"></i>Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="settings-tab" data-bs-toggle="tab" href="#settings" role="tab">
+                                <i class="fas fa-cog feature-icon"></i>Pengaturan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-9 col-lg-10 p-4">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                            <h3 class="section-title">Dashboard</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="stats-box">
+                                        <i class="fas fa-users text-primary fa-2x"></i>
+                                        <div class="stats-number" id="totalGuests">0</div>
+                                        <div class="stats-label">Total Tamu</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="reservation" role="tabpanel">
-                        <h3 class="section-title">Manajemen Reservasi</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
-                                    <i class="fas fa-plus me-2"></i>Tambah Reservasi
-                                </button>
-                                <button class="btn btn-success" id="exportReservationsBtn">
-                                    <i class="fas fa-file-excel me-2"></i>Ekspor Excel
-                                </button>
-                                <button class="btn btn-danger" id="printReservationPdfBtn">
-                                    <i class="fas fa-file-pdf me-2"></i>Cetak PDF
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i>Daftar Reservasi
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Nama Tamu</th>
-                                                        <th>Kamar</th>
-                                                        <th>Check-In</th>
-                                                        <th>Check-Out</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="reservationList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
+                                <div class="col-md-3">
+                                    <div class="stats-box">
+                                        <i class="fas fa-bed text-success fa-2x"></i>
+                                        <div class="stats-number" id="availableRooms">0</div>
+                                        <div class="stats-label">Kamar Tersedia</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="checkin" role="tabpanel">
-                        <h3 class="section-title">Proses Check-In</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <div class="filter-section">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Cari berdasarkan nama atau ID reservasi</label>
-                                            <input type="text" class="form-control" id="searchReservation" placeholder="Masukkan nama atau ID...">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Tanggal Check-In</label>
-                                            <input type="date" class="form-control" id="filterCheckinDate">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button class="btn btn-primary w-100" id="applyFilterBtn">
-                                                <i class="fas fa-filter me-2"></i>Terapkan Filter
-                                            </button>
-                                        </div>
+                                <div class="col-md-3">
+                                    <div class="stats-box">
+                                        <i class="fas fa-calendar-check text-warning fa-2x"></i>
+                                        <div class="stats-number" id="todayCheckins">0</div>
+                                        <div class="stats-label">Check-In Hari Ini</div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i>Daftar Reservasi untuk Check-In
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Nama Tamu</th>
-                                                        <th>Kamar</th>
-                                                        <th>Check-In</th>
-                                                        <th>Check-Out</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="checkinList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="checkout" role="tabpanel">
-                        <h3 class="section-title">Proses Check-Out</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <div class="filter-section">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <label class="form-label">Cari berdasarkan nama atau nomor kamar</label>
-                                            <input type="text" class="form-control" id="searchCheckout" placeholder="Masukkan nama atau nomor kamar...">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">Tanggal Check-Out</label>
-                                            <input type="date" class="form-control" id="filterCheckoutDate">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button class="btn btn-primary w-100" id="applyCheckoutFilterBtn">
-                                                <i class="fas fa-filter me-2"></i>Terapkan Filter
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-list me-2"></i>Daftar Tamu untuk Check-Out
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Nama Tamu</th>
-                                                        <th>Kamar</th>
-                                                        <th>Check-In</th>
-                                                        <th>Check-Out</th>
-                                                        <th>Total</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="checkoutList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="history" role="tabpanel">
-                        <h3 class="section-title">Histori Check-Out</h3>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-history me-2"></i>Daftar Tamu yang Sudah Check-Out
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID Reservasi</th>
-                                                        <th>Nama Tamu</th>
-                                                        <th>Kamar</th>
-                                                        <th>Waktu Check-Out</th>
-                                                        <th>Total Tagihan</th>
-                                                        <th>Status Bayar</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="checkoutHistoryList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="room" role="tabpanel">
-                        <h3 class="section-title">Manajemen Kamar</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
-                                    <i class="fas fa-plus me-2"></i>Tambah Kamar
-                                </button>
-                                <button class="btn btn-success" id="exportRoomsBtn">
-                                    <i class="fas fa-file-excel me-2"></i>Ekspor Data
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-bed me-2"></i>Daftar Kamar
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No. Kamar</th>
-                                                        <th>Tipe</th>
-                                                        <th>Harga per Malam</th>
-                                                        <th>Fasilitas</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="roomList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="guest" role="tabpanel">
-                        <h3 class="section-title">Manajemen Data Tamu</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGuestModal">
-                                    <i class="fas fa-plus me-2"></i>Tambah Tamu
-                                </button>
-                                <button class="btn btn-success" id="exportGuestsBtn">
-                                    <i class="fas fa-file-excel me-2"></i>Ekspor Data
-                                </button>
-                                <button class="btn btn-danger" id="printGuestPdfBtn">
-                                    <i class="fas fa-file-pdf me-2"></i>Cetak PDF
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-users me-2"></i>Daftar Tamu
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Nama</th>
-                                                        <th>Email</th>
-                                                        <th>Telepon</th>
-                                                        <th>Alamat</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="guestList">
-                                                    </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="report" role="tabpanel">
-                        <h3 class="section-title">Laporan dan Analisis</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <div class="filter-section">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label class="form-label">Jenis Laporan</label>
-                                            <select class="form-select" id="reportType">
-                                                <option value="revenue">Pendapatan</option>
-                                                <option value="occupancy">Tingkat Okupansi</option>
-                                                <option value="guests">Registrasi Tamu</option>
-                                                <option value="reservations">Jumlah Reservasi</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Periode Mulai</label>
-                                            <input type="date" class="form-control" id="reportStartDate">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">Periode Akhir</label>
-                                            <input type="date" class="form-control" id="reportEndDate">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label">&nbsp;</label>
-                                            <button class="btn btn-primary w-100" id="generateReportBtn">
-                                                <i class="fas fa-chart-bar me-2"></i>Generate Laporan
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-2"></i>Grafik Laporan
-                                    </div>
-                                    <div class="card-body">
-                                        <canvas id="reportChart" height="300"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-table me-2"></i>Data Laporan
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover data-table">
-                                                <thead id="reportTableHeader">
-                                                    </thead>
-                                                <tbody id="reportTableBody">
-                                                    <tr><td colspan="4" class="text-center">Silakan generate laporan untuk melihat data.</td></tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-pane fade" id="settings" role="tabpanel">
-                        <h3 class="section-title">Pengaturan Sistem</h3>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-cog me-2"></i>Pengaturan Umum
-                                    </div>
-                                    <div class="card-body">
-                                        <form id="generalSettingsForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Nama Hotel</label>
-                                                <input type="text" class="form-control" id="hotelName" placeholder="Masukkan nama hotel">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Alamat Hotel</label>
-                                                <textarea class="form-control" id="hotelAddress" rows="3" placeholder="Masukkan alamat hotel"></textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Telepon Hotel</label>
-                                                <input type="text" class="form-control" id="hotelPhone" placeholder="Masukkan telepon hotel">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Email Hotel</label>
-                                                <input type="email" class="form-control" id="hotelEmail" placeholder="Masukkan email hotel">
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
-                                        </form>
+                                <div class="col-md-3">
+                                    <div class="stats-box">
+                                        <i class="fas fa-sign-out-alt text-danger fa-2x"></i>
+                                        <div class="stats-number" id="todayCheckouts">0</div>
+                                        <div class="stats-label">Check-Out Hari Ini</div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <i class="fas fa-sliders-h me-2"></i>Pengaturan Lainnya
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-chart-line me-2"></i>Statistik Bulanan
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="monthlyStatsChart" height="250"></canvas>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <form id="otherSettingsForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Mata Uang</label>
-                                                <select class="form-select" id="currency">
-                                                    <option value="IDR">Rupiah (IDR)</option>
-                                                    <option value="USD">Dollar (USD)</option>
-                                                    <option value="EUR">Euro (EUR)</option>
-                                                    <option value="SGD">Dollar Singapura (SGD)</option>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-bed me-2"></i>Status Kamar
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="roomStatusChart" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-list me-2"></i>Aktivitas Terbaru
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Waktu</th>
+                                                            <th>Tamu</th>
+                                                            <th>Kamar</th>
+                                                            <th>Aktivitas</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="recentActivities">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="reservation" role="tabpanel">
+                            <h3 class="section-title">Manajemen Reservasi</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReservationModal">
+                                        <i class="fas fa-plus me-2"></i>Tambah Reservasi
+                                    </button>
+                                    <button class="btn btn-success" id="exportReservationsBtn">
+                                        <i class="fas fa-file-excel me-2"></i>Ekspor Excel
+                                    </button>
+                                    <button class="btn btn-danger" id="printReservationPdfBtn">
+                                        <i class="fas fa-file-pdf me-2"></i>Cetak PDF
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-list me-2"></i>Daftar Reservasi
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nama Tamu</th>
+                                                            <th>Kamar</th>
+                                                            <th>Check-In</th>
+                                                            <th>Check-Out</th>
+                                                            <th>Status</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="reservationList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="checkin" role="tabpanel">
+                            <h3 class="section-title">Proses Check-In</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="filter-section">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Cari berdasarkan nama atau ID reservasi</label>
+                                                <input type="text" class="form-control" id="searchReservation" placeholder="Masukkan nama atau ID...">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Tanggal Check-In</label>
+                                                <input type="date" class="form-control" id="filterCheckinDate">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">&nbsp;</label>
+                                                <button class="btn btn-primary w-100" id="applyFilterBtn">
+                                                    <i class="fas fa-filter me-2"></i>Terapkan Filter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-list me-2"></i>Daftar Reservasi untuk Check-In
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nama Tamu</th>
+                                                            <th>Kamar</th>
+                                                            <th>Check-In</th>
+                                                            <th>Check-Out</th>
+                                                            <th>Status</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="checkinList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="checkout" role="tabpanel">
+                            <h3 class="section-title">Proses Check-Out</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="filter-section">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Cari berdasarkan nama atau nomor kamar</label>
+                                                <input type="text" class="form-control" id="searchCheckout" placeholder="Masukkan nama atau nomor kamar...">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Tanggal Check-Out</label>
+                                                <input type="date" class="form-control" id="filterCheckoutDate">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">&nbsp;</label>
+                                                <button class="btn btn-primary w-100" id="applyCheckoutFilterBtn">
+                                                    <i class="fas fa-filter me-2"></i>Terapkan Filter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-list me-2"></i>Daftar Tamu untuk Check-Out
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nama Tamu</th>
+                                                            <th>Kamar</th>
+                                                            <th>Check-In</th>
+                                                            <th>Check-Out</th>
+                                                            <th>Total</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="checkoutList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="history" role="tabpanel">
+                            <h3 class="section-title">Histori Check-Out</h3>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-history me-2"></i>Daftar Tamu yang Sudah Check-Out
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID Reservasi</th>
+                                                            <th>Nama Tamu</th>
+                                                            <th>Kamar</th>
+                                                            <th>Waktu Check-Out</th>
+                                                            <th>Total Tagihan</th>
+                                                            <th>Status Bayar</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="checkoutHistoryList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="room" role="tabpanel">
+                            <h3 class="section-title">Manajemen Kamar</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                                        <i class="fas fa-plus me-2"></i>Tambah Kamar
+                                    </button>
+                                    <button class="btn btn-success" id="exportRoomsBtn">
+                                        <i class="fas fa-file-excel me-2"></i>Ekspor Data
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-bed me-2"></i>Daftar Kamar
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No. Kamar</th>
+                                                            <th>Tipe</th>
+                                                            <th>Harga per Malam</th>
+                                                            <th>Fasilitas</th>
+                                                            <th>Status</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="roomList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="guest" role="tabpanel">
+                            <h3 class="section-title">Manajemen Data Tamu</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGuestModal">
+                                        <i class="fas fa-plus me-2"></i>Tambah Tamu
+                                    </button>
+                                    <button class="btn btn-success" id="exportGuestsBtn">
+                                        <i class="fas fa-file-excel me-2"></i>Ekspor Data
+                                    </button>
+                                    <button class="btn btn-danger" id="printGuestPdfBtn">
+                                        <i class="fas fa-file-pdf me-2"></i>Cetak PDF
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-users me-2"></i>Daftar Tamu
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nama</th>
+                                                            <th>Email</th>
+                                                            <th>Telepon</th>
+                                                            <th>Alamat</th>
+                                                            <th>Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="guestList">
+                                                        </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="report" role="tabpanel">
+                            <h3 class="section-title">Laporan dan Analisis</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="filter-section">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Jenis Laporan</label>
+                                                <select class="form-select" id="reportType">
+                                                    <option value="revenue">Pendapatan</option>
+                                                    <option value="occupancy">Tingkat Okupansi</option>
+                                                    <option value="guests">Registrasi Tamu</option>
+                                                    <option value="reservations">Jumlah Reservasi</option>
                                                 </select>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Pajak (%)</label>
-                                                <input type="number" class="form-control" id="taxRate" min="0" max="30" step="0.1" placeholder="Masukkan persentase pajak">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Periode Mulai</label>
+                                                <input type="date" class="form-control" id="reportStartDate">
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Waktu Check-In Default</label>
-                                                <input type="time" class="form-control" id="defaultCheckinTime" value="14:00">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Periode Akhir</label>
+                                                <input type="date" class="form-control" id="reportEndDate">
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Waktu Check-Out Default</label>
-                                                <input type="time" class="form-control" id="defaultCheckoutTime" value="12:00">
+                                            <div class="col-md-3">
+                                                <label class="form-label">&nbsp;</label>
+                                                <button class="btn btn-primary w-100" id="generateReportBtn">
+                                                    <i class="fas fa-chart-bar me-2"></i>Generate Laporan
+                                                </button>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
-                                        </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-chart-bar me-2"></i>Grafik Laporan
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="reportChart" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-table me-2"></i>Data Laporan
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover data-table">
+                                                    <thead id="reportTableHeader">
+                                                        </thead>
+                                                    <tbody id="reportTableBody">
+                                                        <tr><td colspan="4" class="text-center">Silakan generate laporan untuk melihat data.</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                            <h3 class="section-title">Pengaturan Sistem</h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-cog me-2"></i>Pengaturan Umum
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="generalSettingsForm">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Nama Hotel</label>
+                                                    <input type="text" class="form-control" id="hotelName" placeholder="Masukkan nama hotel">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Alamat Hotel</label>
+                                                    <textarea class="form-control" id="hotelAddress" rows="3" placeholder="Masukkan alamat hotel"></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Telepon Hotel</label>
+                                                    <input type="text" class="form-control" id="hotelPhone" placeholder="Masukkan telepon hotel">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email Hotel</label>
+                                                    <input type="email" class="form-control" id="hotelEmail" placeholder="Masukkan email hotel">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-4">
+                                        <div class="card-header">
+                                            <i class="fas fa-user-circle me-2"></i>Akun
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Anda login sebagai <strong>Admin</strong>.</p>
+                                            <button class="btn btn-danger" id="logoutBtn">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <div class="card mt-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-database me-2"></i>Manajemen Data
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <i class="fas fa-sliders-h me-2"></i>Pengaturan Lainnya
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="otherSettingsForm">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Mata Uang</label>
+                                                    <select class="form-select" id="currency">
+                                                        <option value="IDR">Rupiah (IDR)</option>
+                                                        <option value="USD">Dollar (USD)</option>
+                                                        <option value="EUR">Euro (EUR)</option>
+                                                        <option value="SGD">Dollar Singapura (SGD)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Pajak (%)</label>
+                                                    <input type="number" class="form-control" id="taxRate" min="0" max="30" step="0.1" placeholder="Masukkan persentase pajak">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Waktu Check-In Default</label>
+                                                    <input type="time" class="form-control" id="defaultCheckinTime" value="14:00">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Waktu Check-Out Default</label>
+                                                    <input type="time" class="form-control" id="defaultCheckoutTime" value="12:00">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-success" id="exportAllDataBtn">
-                                                <i class="fas fa-file-export me-2"></i>Ekspor Semua Data (Excel)
-                                            </button>
-                                            <button class="btn btn-warning" id="importDataBtn">
-                                                <i class="fas fa-file-import me-2"></i>Impor Data (JSON)
-                                            </button>
-                                            <button class="btn btn-danger" id="resetDataBtn">
-                                                <i class="fas fa-trash-alt me-2"></i>Reset Data
-                                            </button>
+                                    
+                                    <div class="card mt-4">
+                                        <div class="card-header">
+                                            <i class="fas fa-database me-2"></i>Manajemen Data
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-success" id="exportAllDataBtn">
+                                                    <i class="fas fa-file-export me-2"></i>Ekspor Semua Data (Excel)
+                                                </button>
+                                                <button class="btn btn-warning" id="importDataBtn">
+                                                    <i class="fas fa-file-import me-2"></i>Impor Data (JSON)
+                                                </button>
+                                                <button class="btn btn-danger" id="resetDataBtn">
+                                                    <i class="fas fa-trash-alt me-2"></i>Reset Data
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1232,18 +1302,18 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="copyright no-print">
+                &copy; 2023 Hotel Management System. All rights reserved.
+            </div>
         </div>
         
-        <div class="copyright no-print">
-            &copy; 2023 Hotel Management System. All rights reserved.
+        <div class="floating-action-btn no-print" data-bs-toggle="modal" data-bs-target="#quickActionModal">
+            <i class="fas fa-plus"></i>
         </div>
-    </div>
+    </main>
     
-    <div class="floating-action-btn no-print" data-bs-toggle="modal" data-bs-target="#quickActionModal">
-        <i class="fas fa-plus"></i>
-    </div>
-    
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1051">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2051">
         <div id="notificationToast" class="toast text-white" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto" id="toastTitle">System Notification</strong>
@@ -1938,6 +2008,45 @@
         });
         
         function initApp() {
+            checkLoginState(); // Check login status first
+            // The rest of the initializations will be called after a successful login
+        }
+
+        function checkLoginState() {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                // Proceed with app initialization
+                initializeAppCore();
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            }
+        }
+        
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+
+            // Default credentials
+            if (user === 'Admin' && pass === 'Hotelku.1945') {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                errorEl.style.display = 'none';
+                checkLoginState();
+            } else {
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.reload();
+        }
+        
+        function initializeAppCore() {
             initStorage();
             loadInitialData();
             setupEventListeners();
@@ -1974,6 +2083,8 @@
         }
         
         function setupEventListeners() {
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout); // Logout button
+
             document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
             document.getElementById('sidebarOverlay').addEventListener('click', toggleMobileMenu);
             
@@ -2086,16 +2197,12 @@
             rooms.sort((a,b) => a.number.localeCompare(b.number));
 
             rooms.forEach(room => {
-                if (room.status === 'available') {
-                    const option = document.createElement('option');
-                    option.value = room.id;
-                    option.textContent = `${room.number} (${room.type})`;
-                    reservationRoom.appendChild(option.cloneNode(true));
-                }
-                const editOption = document.createElement('option');
-                editOption.value = room.id;
-                editOption.textContent = `${room.number} (${room.type})`;
-                editReservationRoom.appendChild(editOption);
+                // Populate dropdowns with all rooms. Availability will be checked later.
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = `${room.number} (${room.type})`;
+                reservationRoom.appendChild(option.cloneNode(true));
+                editReservationRoom.appendChild(option.cloneNode(true));
 
                 const statusClass = getStatusClass(room.status);
                 const facilities = Array.isArray(room.facilities) ? room.facilities.join(', ') : '';
@@ -2233,6 +2340,31 @@
             });
         }
         
+        function isRoomAvailableForPeriod(roomId, checkinDate, checkoutDate, excludeReservationId = null) {
+            const allReservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+            const newStart = new Date(checkinDate);
+            const newEnd = new Date(checkoutDate);
+
+            // Find conflicting reservations for the same room
+            const conflictingReservation = allReservations.find(res => {
+                // Skip if it's the reservation we are currently editing
+                if (res.id === excludeReservationId) return false;
+                
+                // Check only for the same room and active statuses
+                if (res.roomId !== roomId || ['cancelled', 'checked-out'].includes(res.status)) {
+                    return false;
+                }
+
+                const existingStart = new Date(res.checkinDate);
+                const existingEnd = new Date(res.checkoutDate);
+
+                // Check for overlap: (StartA <= EndB) and (EndA >= StartB)
+                return newStart < existingEnd && newEnd > existingStart;
+            });
+
+            return !conflictingReservation; // If a conflicting reservation is found, the room is NOT available
+        }
+
         function saveReservation() {
             const guestId = document.getElementById('reservationGuestId').value;
             const roomId = document.getElementById('reservationRoom').value;
@@ -2245,6 +2377,11 @@
             }
             if (new Date(checkinDate) >= new Date(checkoutDate)) {
                 showNotification('Error', 'Tanggal check-out harus setelah tanggal check-in.', 'error');
+                return;
+            }
+
+            if (!isRoomAvailableForPeriod(roomId, checkinDate, checkoutDate)) {
+                showNotification('Error', 'Kamar tidak tersedia untuk periode yang dipilih. Sudah ada reservasi lain.', 'error');
                 return;
             }
             
@@ -2378,6 +2515,15 @@
             const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
             const index = reservations.findIndex(r => r.id === id);
             if (index === -1) return;
+
+            const roomId = document.getElementById('editReservationRoom').value;
+            const checkinDate = document.getElementById('editReservationCheckin').value;
+            const checkoutDate = document.getElementById('editReservationCheckout').value;
+
+            if (!isRoomAvailableForPeriod(roomId, checkinDate, checkoutDate, id)) {
+                showNotification('Error', 'Kamar tidak tersedia untuk periode yang dipilih. Sudah ada reservasi lain.', 'error');
+                return;
+            }
             
             const originalStatus = reservations[index].status;
             const newStatus = document.getElementById('editReservationStatus').value;
@@ -2385,9 +2531,9 @@
             reservations[index] = {
                 ...reservations[index],
                 guestId: document.getElementById('editReservationGuestId').value,
-                roomId: document.getElementById('editReservationRoom').value,
-                checkinDate: document.getElementById('editReservationCheckin').value,
-                checkoutDate: document.getElementById('editReservationCheckout').value,
+                roomId: roomId,
+                checkinDate: checkinDate,
+                checkoutDate: checkoutDate,
                 guests: parseInt(document.getElementById('editReservationGuests').value),
                 status: newStatus,
                 notes: document.getElementById('editReservationNotes').value,
@@ -2396,7 +2542,6 @@
 
             localStorage.setItem('hotel_reservations', JSON.stringify(reservations));
             
-            const roomId = reservations[index].roomId;
             if(originalStatus !== newStatus) {
                 if (newStatus === 'confirmed' || newStatus === 'reserved') updateRoomStatus(roomId, 'reserved');
                 else if (newStatus === 'checked-in') updateRoomStatus(roomId, 'occupied');
@@ -2828,7 +2973,9 @@
         }
 
         async function downloadInvoicePdf() {
-            const reservationId = document.getElementById('checkoutReservationId').value;
+            const checkoutModal = document.getElementById('checkoutModal');
+            const reservationId = checkoutModal.querySelector('#checkoutReservationId').value || checkoutModal.dataset.reprintId;
+
             if (!reservationId) {
                 showNotification('Error', 'Tidak ada data reservasi untuk diunduh.', 'error');
                 return;
@@ -2848,48 +2995,65 @@
             try {
                 const logoUrl = 'https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png';
                 const logoBase64 = await urlToBas64(logoUrl);
-                doc.addImage(logoBase64, 'PNG', 14, 15, 40, 13);
+                
+                const img = new Image();
+                img.src = logoBase64;
+                await new Promise(resolve => img.onload = resolve);
+                const imgWidth = 40; // Set desired width
+                const imgHeight = (img.height * imgWidth) / img.width; // Calculate height to maintain aspect ratio
+                doc.addImage(logoBase64, 'PNG', 14, 15, imgWidth, imgHeight);
+
             } catch (error) {
                 console.error("Gagal memuat logo:", error);
                 showNotification('Warning', 'Gagal memuat logo hotel, PDF akan dibuat tanpa logo.', 'warning');
             }
-            
-            doc.setFontSize(16);
-            doc.text(settings.hotelName || 'Hotel Management System', 14, 35);
-            doc.setFontSize(10);
-            doc.text(settings.hotelAddress || 'Alamat Hotel', 14, 40);
-            doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, 45);
 
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text(settings.hotelName || 'Hotel Management System', 14, 40);
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text(settings.hotelAddress || 'Alamat Hotel', 14, 45);
+            doc.text(`Telp: ${settings.hotelPhone || '-'}`, 14, 50);
+
+            doc.setFont('Helvetica', 'bold');
             doc.setFontSize(14);
             doc.text('INVOICE', 200, 20, { align: 'right' });
+            
+            doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
             doc.text(`No: INV-${reservation.id.slice(-6)}`, 200, 27, { align: 'right' });
             doc.text(`Tanggal: ${formatDate(reservation.actualCheckout || new Date().toISOString())}`, 200, 34, { align: 'right' });
 
             doc.setLineWidth(0.5);
-            doc.line(14, 55, 200, 55);
+            doc.line(14, 60, 200, 60);
 
+            doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
-            doc.text('Detail Tamu', 14, 65);
+            doc.text('Detail Tamu', 14, 70);
+            doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, 72);
-            doc.text(`Telepon: ${guest.phone || '-'}`, 14, 77);
-            doc.text(`Email: ${guest.email || '-'}`, 14, 82);
+            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, 77);
+            doc.text(`Telepon: ${guest.phone || '-'}`, 14, 82);
+            doc.text(`Email: ${guest.email || '-'}`, 14, 87);
 
+            doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
-            doc.text('Detail Reservasi', 200, 65, { align: 'right' });
+            doc.text('Detail Reservasi', 200, 70, { align: 'right' });
+            doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
             const checkinDate = new Date(reservation.checkinDate);
             const checkoutDate = new Date(reservation.checkoutDate);
             const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24)) || 1;
-            doc.text(`Kamar: ${room.number || '-'} (${room.type || '-'})`, 200, 72, { align: 'right' });
-            doc.text(`Check-In: ${formatDate(reservation.checkinDate)}`, 200, 77, { align: 'right' });
-            doc.text(`Check-Out: ${formatDate(reservation.checkoutDate)}`, 200, 82, { align: 'right' });
-            doc.text(`Lama Menginap: ${nights} malam`, 200, 87, { align: 'right' });
+            doc.text(`Kamar: ${room.number || '-'} (${room.type || '-'})`, 200, 77, { align: 'right' });
+            doc.text(`Check-In: ${formatDate(reservation.checkinDate)}`, 200, 82, { align: 'right' });
+            doc.text(`Check-Out: ${formatDate(reservation.checkoutDate)}`, 200, 87, { align: 'right' });
+            doc.text(`Lama Menginap: ${nights} malam`, 200, 92, { align: 'right' });
 
             const roomTotal = (room.price || 0) * nights;
             const taxAmount = roomTotal * ((settings.taxRate || 0) / 100);
-            const totalAmount = roomTotal + taxAmount;
+            const totalAmount = reservation.totalAmount || (roomTotal + taxAmount); // Use stored total if available
 
             const tableColumn = ["Deskripsi", "Jumlah", "Harga Satuan", "Subtotal"];
             const tableRows = [];
@@ -2904,24 +3068,26 @@
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
-                startY: 95,
+                startY: 100,
                 theme: 'grid',
                 headStyles: { fillColor: [13, 71, 161] }
             });
 
             const finalY = doc.autoTable.previous.finalY;
+            doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
             doc.text('Subtotal', 150, finalY + 10, { align: 'right' });
             doc.text(formatCurrency(roomTotal), 200, finalY + 10, { align: 'right' });
             doc.text(`Pajak (${settings.taxRate || 0}%)`, 150, finalY + 15, { align: 'right' });
             doc.text(formatCurrency(taxAmount), 200, finalY + 15, { align: 'right' });
+            
+            doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
 
+            doc.setFont('Helvetica', 'italic');
             doc.setFontSize(10);
-            doc.setFont(undefined, 'italic');
             doc.text('Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!', 105, finalY + 40, { align: 'center' });
 
             doc.save(`invoice-${reservation.id}.pdf`);
@@ -3007,9 +3173,12 @@
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             const index = rooms.findIndex(r => r.id === roomId);
             if (index !== -1) {
-                rooms[index].status = status;
-                rooms[index].updatedAt = new Date().toISOString();
-                localStorage.setItem('hotel_rooms', JSON.stringify(rooms));
+                // Only update status if the room is not under maintenance
+                if(rooms[index].status !== 'maintenance') {
+                    rooms[index].status = status;
+                    rooms[index].updatedAt = new Date().toISOString();
+                    localStorage.setItem('hotel_rooms', JSON.stringify(rooms));
+                }
             }
         }
         
