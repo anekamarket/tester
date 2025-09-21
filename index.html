@@ -508,7 +508,7 @@
             document.getElementById('processSaleBtn').addEventListener('click', () => new bootstrap.Modal(document.getElementById('paymentModal')).show());
             document.getElementById('confirmPaymentBtn').addEventListener('click', processSale);
             document.getElementById('validateTicketForm').addEventListener('submit', validateTicket);
-            document.getElementById('quickValidateForm').addEventListener('submit', quickValidateTicket); // Listener untuk validasi cepat
+            document.getElementById('quickValidateForm').addEventListener('submit', quickValidateTicket);
             document.getElementById('generalSettingsForm').addEventListener('submit', (e) => { e.preventDefault(); requestPassword(CONFIG.PASSWORD_PROMPT_ACTIONS.SAVE_SETTINGS); });
             document.getElementById('resetDataBtn').addEventListener('click', () => requestPassword(CONFIG.PASSWORD_PROMPT_ACTIONS.RESET_DATA));
             document.getElementById('backupDataBtn').addEventListener('click', backupAllData);
@@ -723,7 +723,6 @@
 
             localStorage.setItem('wisata_ticket_stock', JSON.stringify(stock));
             
-            // --- PERBAIKAN CETAK KARCIS ---
             const ticketHtmlChunks = newTickets.map(ticket => `
                 <div class="ticket-mini">
                     <div>
@@ -735,28 +734,12 @@
                 </div>`).join('');
 
             const printableContent = `<div class="ticket-print-container">${ticketHtmlChunks}</div>`;
-            document.getElementById('ticketPrintableArea').innerHTML = printableContent;
             
             bootstrap.Modal.getInstance(document.getElementById('generateTicketsModal')).hide();
             loadAllData();
             showToast('Berhasil', `${quantity} karcis baru telah dibuat.`, 'success');
             
-            // Logika pencetakan yang lebih andal
-            const printWindow = window.open('', '_blank', 'height=800,width=900');
-            printWindow.document.write('<html><head><title>Cetak Karcis</title>');
-            // Salin semua gaya dari dokumen utama untuk memastikan tampilan yang konsisten
-            printWindow.document.write('<style>' + document.querySelector('style').innerHTML + '</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printableContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            // Gunakan onload untuk memastikan konten dimuat sepenuhnya sebelum mencetak
-            printWindow.onload = function() {
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-            };
-            // --- AKHIR PERBAIKAN ---
+            printContent(printableContent, 'Cetak Karcis');
         }
 
         function addToCart(e) {
@@ -913,7 +896,6 @@
             localStorage.removeItem('wisata_ticket_stock');
             localStorage.removeItem('wisata_transactions');
             localStorage.removeItem('wisata_customers');
-            // Keep settings
             initStorage();
             loadAllData();
             showToast('Reset Berhasil', 'Semua data transaksi dan karcis telah dihapus.', 'success');
@@ -1000,7 +982,6 @@
                     break;
             }
 
-            // Render Report
             let tableHtml = '';
             if (reportData.headers.length > 0) {
                  tableHtml = `<table class="table data-table table-bordered"><thead><tr><th>${reportData.headers.join('</th><th>')}</th></tr></thead><tbody>
@@ -1019,7 +1000,6 @@
                     <div class="table-responsive">${tableHtml}</div>
                 </div></div>`;
 
-            // Store for export
             window.reportForExport = reportData;
         }
 
@@ -1031,11 +1011,7 @@
 
             doc.text(title, 14, 15);
             if (headers.length > 0) {
-                doc.autoTable({
-                    head: [headers],
-                    body: rows,
-                    startY: 25,
-                });
+                doc.autoTable({ head: [headers], body: rows, startY: 25 });
             } else {
                 doc.text(document.querySelector('#reportResult .alert').textContent, 14, 25);
             }
@@ -1044,7 +1020,7 @@
 
         window.app.exportReportToExcel = () => {
             if (!window.reportForExport) return;
-            const { title, headers, rows } = window.reportForExport;
+            const { headers, rows } = window.reportForExport;
             
             const ws_data = [headers, ...rows];
             const wb = XLSX.utils.book_new();
@@ -1058,8 +1034,37 @@
             XLSX.writeFile(wb, `laporan_${new Date().toISOString().split('T')[0]}.xlsx`);
         };
 
-
         // --- UI & HELPERS ---
+        // FUNGSI CETAK BARU YANG LEBIH ANDAL
+        function printContent(contentHTML, title) {
+            const externalStyles = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(link => link.outerHTML).join('');
+            const internalStyles = Array.from(document.querySelectorAll('style')).map(style => style.innerHTML).join('');
+
+            const printWindow = window.open('', '_blank', 'height=800,width=900');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${title}</title>
+                    ${externalStyles}
+                    <style>${internalStyles}</style>
+                </head>
+                <body>
+                    ${contentHTML}
+                </body>
+                </html>
+            `);
+
+            printWindow.document.close();
+            printWindow.onload = function() {
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            };
+        }
+
         window.app.viewReceipt = (transactionId, autoPrint = false) => {
             const transactions = JSON.parse(localStorage.getItem('wisata_transactions') || '[]');
             const transaction = transactions.find(t => t.id === transactionId);
@@ -1097,17 +1102,8 @@
         };
         
         window.app.printReceipt = () => {
-            const printContent = document.getElementById('receiptPrintableArea').innerHTML;
-            const printWindow = window.open('', 'PRINT', 'height=600,width=800');
-            printWindow.document.write('<html><head><title>Struk Pembayaran</title>');
-            printWindow.document.write('<style>' + document.querySelector('style').innerHTML + '</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
+            const contentToPrint = document.getElementById('receiptPrintableArea').innerHTML;
+            printContent(contentToPrint, 'Struk Pembayaran');
         }
 
         function updateDashboard() {
@@ -1158,7 +1154,7 @@
 
             toastTitle.textContent = title;
             toastBody.textContent = body;
-            toastIcon.className = 'fas rounded me-2'; // reset
+            toastIcon.className = 'fas rounded me-2';
             header.classList.remove('bg-success', 'bg-danger', 'bg-info', 'text-white');
             
             if (type === 'success') {
