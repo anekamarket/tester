@@ -558,8 +558,16 @@
                                 <button type="button" class="btn btn-sm btn-outline-secondary" id="exportStockBtn">
                                     <i class="fas fa-file-export me-1"></i>Export
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger restricted" id="clearStockBtn">
-                                    <i class="fas fa-trash me-1"></i>Hapus Stok
+                            </div>
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-warning restricted" id="deleteExpiredBtn" title="Hapus semua tiket yang sudah kedaluwarsa">
+                                    <i class="fas fa-calendar-times me-1"></i>Hapus Kedaluwarsa
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-info restricted" id="deleteSoldBtn" title="Hapus semua tiket yang sudah terjual">
+                                    <i class="fas fa-check-circle me-1"></i>Hapus Terjual
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger restricted" id="clearStockBtn" title="Hapus semua tiket dari sistem">
+                                    <i class="fas fa-trash me-1"></i>Hapus Semua
                                 </button>
                             </div>
                         </div>
@@ -861,6 +869,7 @@
                                         <option value="monthly">Bulanan</option>
                                         <option value="yearly">Tahunan</option>
                                         <option value="custom">Custom</option>
+                                        <option value="deleted">Laporan Tiket Dihapus</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4" id="reportDateContainer">
@@ -880,7 +889,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-3">
+                            <div class="row mt-3" id="standardReportFilters">
                                 <div class="col-md-4">
                                     <label for="reportTicketType" class="form-label">Jenis Tiket</label>
                                     <select class="form-select" id="reportTicketType">
@@ -996,7 +1005,21 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="venueDescription" class="form-label">Deskripsi</label>
-                                    <textarea class="form-control" id="venueDescription" rows="3"></textarea>
+                                    <textarea class="form-control" id="venueDescription" rows="2"></textarea>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="venueWhatsapp" class="form-label">Whatsapp</label>
+                                        <input type="text" class="form-control" id="venueWhatsapp" placeholder="08xx-xxxx-xxxx">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="venueWebsite" class="form-label">Website</label>
+                                        <input type="text" class="form-control" id="venueWebsite" placeholder="www.website.com">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="venueEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="venueEmail" placeholder="email@contoh.com">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Logo</label>
@@ -1461,6 +1484,9 @@
                             venueLocation: 'Jl. Contoh No. 123, Kota Contoh',
                             venueDescription: 'Tempat wisata keluarga dengan berbagai wahana menarik',
                             venueLogo: 'https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png',
+                            venueWhatsapp: '0878-6561-4222',
+                            venueWebsite: 'www.anekamarket.my.id',
+                            venueEmail: 'admin@anekamarket.my.id',
                             currency: 'IDR',
                             dateFormat: 'DD-MM-YYYY',
                             timeFormat: '24',
@@ -1484,7 +1510,8 @@
                         ],
                         tickets: [],
                         transactions: [],
-                        activities: []
+                        activities: [],
+                        deletedTicketsLog: []
                     };
                     
                     localStorage.setItem('ticketSalesData', JSON.stringify(initialData));
@@ -1500,6 +1527,7 @@
                 this.tickets = data.tickets || [];
                 this.transactions = data.transactions || [];
                 this.activities = data.activities || [];
+                this.deletedTicketsLog = data.deletedTicketsLog || [];
             }
             
             saveData() {
@@ -1509,7 +1537,8 @@
                     users: this.users,
                     tickets: this.tickets,
                     transactions: this.transactions,
-                    activities: this.activities
+                    activities: this.activities,
+                    deletedTicketsLog: this.deletedTicketsLog
                 };
                 
                 localStorage.setItem('ticketSalesData', JSON.stringify(data));
@@ -1533,6 +1562,9 @@
                 document.getElementById('venueLocation').value = this.settings.venueLocation || '';
                 document.getElementById('venueDescription').value = this.settings.venueDescription || '';
                 document.getElementById('venueLogo').value = this.settings.venueLogo || '';
+                document.getElementById('venueWhatsapp').value = this.settings.venueWhatsapp || '';
+                document.getElementById('venueWebsite').value = this.settings.venueWebsite || '';
+                document.getElementById('venueEmail').value = this.settings.venueEmail || '';
 
                 // Load system settings
                 document.getElementById('currency').value = this.settings.currency || 'IDR';
@@ -1727,12 +1759,22 @@
                 });
 
                 document.getElementById('reportType').addEventListener('change', (e) => {
-                    if (e.target.value === 'custom') {
-                        document.getElementById('reportDateContainer').classList.add('d-none');
-                        document.getElementById('reportDateRangeContainer').classList.remove('d-none');
-                    } else {
-                        document.getElementById('reportDateContainer').classList.remove('d-none');
-                        document.getElementById('reportDateRangeContainer').classList.add('d-none');
+                    const reportDateContainer = document.getElementById('reportDateContainer');
+                    const reportDateRangeContainer = document.getElementById('reportDateRangeContainer');
+                    const standardReportFilters = document.getElementById('standardReportFilters');
+
+                    // Reset visibility
+                    reportDateContainer.classList.remove('d-none');
+                    reportDateRangeContainer.classList.add('d-none');
+                    standardReportFilters.classList.remove('d-none');
+
+                    if (e.target.value === 'custom' || e.target.value === 'deleted') {
+                        reportDateContainer.classList.add('d-none');
+                        reportDateRangeContainer.classList.remove('d-none');
+                    }
+                    
+                    if (e.target.value === 'deleted') {
+                        standardReportFilters.classList.add('d-none');
                     }
                 });
                 document.getElementById('enableTax').addEventListener('change', (e) => {
@@ -1743,8 +1785,10 @@
                     document.getElementById('receiptFooterSettings').style.display = e.target.checked ? 'block' : 'none';
                 });
 
-                document.getElementById('clearStockBtn').addEventListener('click', () => this.clearStock());
+                document.getElementById('clearStockBtn').addEventListener('click', () => this.clearAllStock());
                 document.getElementById('clearTransactionsBtn').addEventListener('click', () => this.clearTransactions());
+                document.getElementById('deleteExpiredBtn').addEventListener('click', () => this.deleteExpiredTickets());
+                document.getElementById('deleteSoldBtn').addEventListener('click', () => this.deleteSoldTickets());
             }
 
             handleLogin() {
@@ -2156,6 +2200,12 @@
             }
             
             generateReceiptHTML(transaction) {
+                 const contactInfo = [
+                    this.settings.venueWhatsapp ? `WA: ${this.settings.venueWhatsapp}` : '',
+                    this.settings.venueWebsite ? `Web: ${this.settings.venueWebsite}` : '',
+                    this.settings.venueEmail ? `Email: ${this.settings.venueEmail}` : ''
+                ].filter(Boolean).join(' | ');
+
                  return `
                     <div class="receipt-container">
                         <div class="receipt-header">
@@ -2215,8 +2265,10 @@
                             </tr>
                         </table>
                         ${this.settings.enableReceiptFooter ? `
+                            <div class="receipt-divider"></div>
                             <div class="receipt-footer">
                                 <p>${this.settings.receiptFooterText || ''}</p>
+                                <p style="font-size: 0.7rem; margin-top: 5px;">${contactInfo}</p>
                             </div>
                         ` : ''}
                     </div>
@@ -2468,6 +2520,9 @@
                  this.settings.venueLocation = document.getElementById('venueLocation').value;
                  this.settings.venueDescription = document.getElementById('venueDescription').value;
                  this.settings.venueLogo = document.getElementById('venueLogo').value;
+                 this.settings.venueWhatsapp = document.getElementById('venueWhatsapp').value;
+                 this.settings.venueWebsite = document.getElementById('venueWebsite').value;
+                 this.settings.venueEmail = document.getElementById('venueEmail').value;
                  this.saveData();
                  this.addActivity('Updated venue information');
                  this.showToast('Sukses', 'Informasi tempat wisata disimpan.', 'success');
@@ -2543,9 +2598,49 @@
                 });
             }
 
-            clearStock() {
+            deleteExpiredTickets() {
                 if (this.currentUser.role !== 'admin') return;
-                 this.showConfirmation('Hapus Stok Tiket', 'Anda yakin ingin menghapus SEMUA tiket (tersedia, terjual, dll)?', () => {
+                this.deleteTicketsByStatus('expired');
+            }
+
+            deleteSoldTickets() {
+                if (this.currentUser.role !== 'admin') return;
+                this.deleteTicketsByStatus('sold');
+            }
+
+            deleteTicketsByStatus(status) {
+                const ticketsToDelete = this.tickets.filter(t => t.status === status);
+                if (ticketsToDelete.length === 0) {
+                    this.showToast('Info', `Tidak ada tiket dengan status '${status}' untuk dihapus.`, 'info');
+                    return;
+                }
+
+                this.showConfirmation(
+                    `Hapus Tiket ${status === 'sold' ? 'Terjual' : 'Kedaluwarsa'}`,
+                    `Anda yakin ingin menghapus dan mengarsipkan ${ticketsToDelete.length} tiket? Tindakan ini tidak dapat dibatalkan.`,
+                    () => {
+                        const now = new Date().toISOString();
+                        const logEntries = ticketsToDelete.map(ticket => ({
+                            ...ticket,
+                            deletedAt: now,
+                            deletedBy: this.currentUser.username,
+                            statusAtDeletion: ticket.status
+                        }));
+                        
+                        this.deletedTicketsLog.push(...logEntries);
+                        this.tickets = this.tickets.filter(t => t.status !== status);
+                        
+                        this.saveData();
+                        this.loadTicketStock();
+                        this.addActivity(`Deleted and archived ${ticketsToDelete.length} ${status} tickets`);
+                        this.showToast('Sukses', `${ticketsToDelete.length} tiket berhasil dihapus dan diarsipkan.`, 'success');
+                    }
+                );
+            }
+
+            clearAllStock() {
+                if (this.currentUser.role !== 'admin') return;
+                 this.showConfirmation('Hapus Semua Stok Tiket', 'Anda yakin ingin menghapus SEMUA tiket (tersedia, terjual, dll)? Tindakan ini tidak dapat dibatalkan dan tiket tidak diarsipkan.', () => {
                     this.tickets = [];
                     this.saveData();
                     this.loadTicketStock();
@@ -2662,6 +2757,7 @@
                             <div class="venue-info">
                                 <div class="venue-name">${this.settings.venueName}</div>
                                 <div class="venue-location">${this.settings.venueLocation}</div>
+                                <div class="venue-location" style="font-size: 6pt;">${this.settings.venueWebsite || ''}</div>
                             </div>
                         </div>
                         <div class="body">
@@ -2726,43 +2822,61 @@
                 this.showLoading();
                 
                 const reportType = document.getElementById('reportType').value;
-                const ticketType = document.getElementById('reportTicketType').value;
-                const user = document.getElementById('reportUser').value;
-                const paymentMethod = document.getElementById('reportPaymentMethod').value;
-
                 let startDate, endDate;
                 const now = new Date();
                 
-                switch (reportType) {
-                    case 'daily':
-                        startDate = new Date(document.getElementById('reportDate').value);
-                        startDate.setHours(0, 0, 0, 0);
-                        endDate = new Date(startDate);
-                        endDate.setHours(23, 59, 59, 999);
-                        break;
-                    case 'weekly':
-                         const day = now.getDay();
-                         startDate = new Date(now.setDate(now.getDate() - day));
-                         startDate.setHours(0,0,0,0);
-                         endDate = new Date(startDate);
-                         endDate.setDate(endDate.getDate() + 6);
-                         endDate.setHours(23,59,59,999);
-                         break;
-                    case 'monthly':
-                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-                        break;
-                    case 'yearly':
-                        startDate = new Date(now.getFullYear(), 0, 1);
-                        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
-                        break;
-                    case 'custom':
-                        startDate = new Date(document.getElementById('reportDateFrom').value);
-                        startDate.setHours(0, 0, 0, 0);
-                        endDate = new Date(document.getElementById('reportDateTo').value);
-                        endDate.setHours(23, 59, 59, 999);
-                        break;
+                if (reportType === 'custom' || reportType === 'deleted') {
+                    startDate = new Date(document.getElementById('reportDateFrom').value);
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date(document.getElementById('reportDateTo').value);
+                    endDate.setHours(23, 59, 59, 999);
+                } else {
+                    switch (reportType) {
+                        case 'daily':
+                            startDate = new Date(document.getElementById('reportDate').value);
+                            startDate.setHours(0, 0, 0, 0);
+                            endDate = new Date(startDate);
+                            endDate.setHours(23, 59, 59, 999);
+                            break;
+                        case 'weekly':
+                            const day = now.getDay();
+                            startDate = new Date(now.setDate(now.getDate() - day));
+                            startDate.setHours(0,0,0,0);
+                            endDate = new Date(startDate);
+                            endDate.setDate(endDate.getDate() + 6);
+                            endDate.setHours(23,59,59,999);
+                            break;
+                        case 'monthly':
+                            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+                            break;
+                        case 'yearly':
+                            startDate = new Date(now.getFullYear(), 0, 1);
+                            endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+                            break;
+                    }
                 }
+                
+                if (reportType === 'deleted') {
+                    const deletedTickets = this.deletedTicketsLog.filter(t => {
+                        const deletedDate = new Date(t.deletedAt);
+                        return deletedDate >= startDate && deletedDate <= endDate;
+                    });
+                    
+                    this.reportData = {
+                        title: `Laporan Tiket Dihapus (${this.formatDate(startDate)} - ${this.formatDate(endDate)})`,
+                        deletedTickets: deletedTickets.sort((a,b) => new Date(b.deletedAt) - new Date(a.deletedAt)),
+                        reportType: 'deleted'
+                    };
+
+                    this.renderDeletedTicketsReport(this.reportData);
+                    this.hideLoading();
+                    return;
+                }
+
+                const ticketType = document.getElementById('reportTicketType').value;
+                const user = document.getElementById('reportUser').value;
+                const paymentMethod = document.getElementById('reportPaymentMethod').value;
                 
                 let filteredTransactions = this.transactions.filter(t => {
                     const transactionDate = new Date(t.date);
@@ -2805,7 +2919,8 @@
                 this.reportData = {
                     title: `Laporan Penjualan (${this.formatDate(startDate)} - ${this.formatDate(endDate)})`,
                     transactions: finalTransactions,
-                    totalRevenue, totalTickets, ticketTypeCount
+                    totalRevenue, totalTickets, ticketTypeCount,
+                    reportType: reportType
                 };
                 
                 this.renderReport(this.reportData);
@@ -2866,52 +2981,103 @@
                 container.innerHTML = reportHTML;
             }
 
+            renderDeletedTicketsReport(data) {
+                const container = document.getElementById('reportResults');
+                if (!data.deletedTickets || data.deletedTickets.length === 0) {
+                    container.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-info-circle fa-3x mb-3"></i><p>Tidak ada data tiket yang dihapus ditemukan untuk filter yang dipilih.</p></div>`;
+                    return;
+                }
+
+                const reportHTML = `
+                    <div id="report-content">
+                        <h4 class="mb-3">${data.title}</h4>
+                        <div class="card p-3 mb-4 report-summary-card">
+                            <h5>Total Tiket Dihapus & Diarsipkan: ${data.deletedTickets.length}</h5>
+                        </div>
+                        <h5>Detail Tiket yang Dihapus</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr><th>Kode Tiket</th><th>Jenis</th><th>Harga</th><th>Status</th><th>Dihapus Pada</th><th>Dihapus Oleh</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.deletedTickets.map(t => `
+                                        <tr>
+                                            <td>${t.code}</td>
+                                            <td>${this.formatTicketType(t.type)}</td>
+                                            <td>${this.formatCurrency(t.price)}</td>
+                                            <td><span class="badge ${t.statusAtDeletion === 'sold' ? 'bg-danger' : 'bg-warning'}">${t.statusAtDeletion}</span></td>
+                                            <td>${this.formatDateTime(t.deletedAt)}</td>
+                                            <td>${t.deletedBy}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = reportHTML;
+            }
+
             exportReportPDF() {
-                if (!this.reportData || !this.reportData.transactions || this.reportData.transactions.length === 0) {
+                if (!this.reportData || (!this.reportData.transactions && !this.reportData.deletedTickets)) {
                     this.showToast('Peringatan', 'Generate laporan terlebih dahulu sebelum export.', 'warning');
                     return;
                 }
 
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-                
                 const data = this.reportData;
                 
                 doc.setFontSize(18);
-                doc.text(this.settings.venueName || 'Laporan Penjualan', 14, 22);
+                doc.text(this.settings.venueName || 'Laporan TourTicket Pro', 14, 22);
                 doc.setFontSize(12);
                 doc.text(data.title, 14, 30);
                 
-                doc.setFontSize(11);
-                doc.text(`Total Pendapatan: ${this.formatCurrency(data.totalRevenue)}`, 14, 45);
-                doc.text(`Total Tiket Terjual: ${data.totalTickets}`, 14, 52);
-                
-                const tableColumn = ["ID Transaksi", "Tanggal", "Kasir", "Jumlah Tiket", "Total"];
-                const tableRows = [];
+                if (data.reportType === 'deleted') {
+                    doc.setFontSize(11);
+                    doc.text(`Total Tiket Dihapus: ${data.deletedTickets.length}`, 14, 45);
+                    
+                    const tableColumn = ["Kode", "Jenis", "Harga", "Status", "Dihapus Pada", "Dihapus Oleh"];
+                    const tableRows = [];
 
-                data.transactions.forEach(t => {
-                    const ticketData = [
-                        t.transactionId,
-                        this.formatDateTime(t.date),
-                        t.cashier,
-                        t.items.length,
-                        this.formatCurrency(t.total)
-                    ];
-                    tableRows.push(ticketData);
-                });
+                    data.deletedTickets.forEach(t => {
+                        tableRows.push([
+                            t.code, this.formatTicketType(t.type), this.formatCurrency(t.price),
+                            t.statusAtDeletion, this.formatDateTime(t.deletedAt), t.deletedBy
+                        ]);
+                    });
+                    doc.autoTable(tableColumn, tableRows, { startY: 55 });
+                } else {
+                    doc.setFontSize(11);
+                    doc.text(`Total Pendapatan: ${this.formatCurrency(data.totalRevenue)}`, 14, 45);
+                    doc.text(`Total Tiket Terjual: ${data.totalTickets}`, 14, 52);
+                    
+                    const tableColumn = ["ID Transaksi", "Tanggal", "Kasir", "Jumlah Tiket", "Total"];
+                    const tableRows = [];
 
-                doc.autoTable(tableColumn, tableRows, { startY: 60 });
-                doc.save(`Laporan Penjualan - ${new Date().toISOString().split('T')[0]}.pdf`);
-                this.addActivity('Exported a sales report to PDF');
+                    data.transactions.forEach(t => {
+                        tableRows.push([
+                            t.transactionId, this.formatDateTime(t.date), t.cashier,
+                            t.items.length, this.formatCurrency(t.total)
+                        ]);
+                    });
+                    doc.autoTable(tableColumn, tableRows, { startY: 60 });
+                }
+
+                doc.save(`Laporan - ${new Date().toISOString().split('T')[0]}.pdf`);
+                this.addActivity('Exported a report to PDF');
             }
             
             printReport() {
-                 if (!this.reportData || !this.reportData.transactions || this.reportData.transactions.length === 0) {
+                 if (!this.reportData || (!this.reportData.transactions && !this.reportData.deletedTickets)) {
                     this.showToast('Peringatan', 'Generate laporan terlebih dahulu sebelum mencetak.', 'warning');
                     return;
                 }
-                const reportContent = document.getElementById('report-content').innerHTML;
-                this.printContent(reportContent, this.settings.venueName);
+                const reportContent = document.getElementById('report-content')?.innerHTML;
+                if(reportContent) {
+                    this.printContent(reportContent, this.settings.venueName);
+                }
             }
         }
     </script>
