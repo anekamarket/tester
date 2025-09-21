@@ -620,34 +620,90 @@
             }
         }
         
-        /* Print Styles */
+        /* --- IMPROVED PRINT STYLES START --- */
         @media print {
+            body, html {
+                background: #fff !important;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
             body * {
                 visibility: hidden;
             }
-            
             .printable-area, .printable-area * {
                 visibility: visible;
             }
-            
             .printable-area {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 0 !important;
+                padding: 4mm !important;
                 margin: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
+                font-size: 11pt;
+            }
+
+            .printable-area .row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+            }
+            .printable-area .col-md-6 {
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+            }
+            .printable-area .text-end {
+                text-align: right !important;
+            }
+            .printable-area .invoice-container {
+                width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+            }
+            .printable-area .invoice-logo-img {
+                max-width: 150px !important;
+                height: auto !important;
+            }
+            .printable-area .invoice-table {
+                width: 100%;
+                font-size: 9pt;
+            }
+            .printable-area .invoice-table th, .printable-area .invoice-table td {
+                border: 1px solid #dee2e6 !important;
+                padding: 4px 6px;
+            }
+            .printable-area .invoice-table th {
+                background-color: #0d47a1 !important;
+                color: white !important;
             }
             
-            .no-print {
-                display: none !important;
-            }
             .printable-area .invoice-watermark {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-35deg);
+                font-size: 8vw !important;
+                font-weight: 800;
+                z-index: -1;
+                pointer-events: none;
+                letter-spacing: 5px;
+            }
+            .printable-area.watermarked .invoice-watermark {
                 display: block !important;
             }
         }
+        /* --- IMPROVED PRINT STYLES END --- */
 
         /* Room status indicators */
         .room-status {
@@ -698,6 +754,9 @@
             letter-spacing: 5px;
         }
 
+        .invoice-container.watermarked {
+            /* This class will be added by JS to trigger the watermark */
+        }
         .invoice-container.watermarked .invoice-watermark {
             display: block;
         }
@@ -1970,73 +2029,75 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="invoice-container printable-area" id="checkoutInvoice">
-                        <div class="invoice-watermark"></div>
-                        <div class="invoice-header">
-                            <div class="row">
+                    <div id="printableInvoiceWrapper">
+                        <div class="invoice-container printable-area" id="checkoutInvoice">
+                            <div class="invoice-watermark"></div>
+                            <div class="invoice-header">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img id="invoiceLogoImg" src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
+                                        <div class="invoice-logo" id="invoiceHotelName" style="font-size: 1.5rem; line-height: 1.2;">HOTEL MANAGEMENT SYSTEM</div>
+                                        <p id="invoiceHotelAddress" class="mb-0">Jl. Contoh No. 123, Jakarta</p>
+                                        <p>Telp: <span id="invoiceHotelPhone">021-1234567</span></p>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <h4>INVOICE</h4>
+                                        <p>No: <span id="invoiceNumber">INV-20230001</span></p>
+                                        <p>Tanggal: <span id="invoiceDate">01/01/2023</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
                                 <div class="col-md-6">
-                                    <img id="invoiceLogoImg" src="https://raw.githubusercontent.com/LKS-88/hotel/refs/heads/main/logo-hotel.png" alt="Logo Hotel" class="invoice-logo-img">
-                                    <div class="invoice-logo" id="invoiceHotelName" style="font-size: 1.5rem; line-height: 1.2;">HOTEL MANAGEMENT SYSTEM</div>
-                                    <p id="invoiceHotelAddress" class="mb-0">Jl. Contoh No. 123, Jakarta</p>
-                                    <p>Telp: <span id="invoiceHotelPhone">021-1234567</span></p>
+                                    <h5>Detail Tamu</h5>
+                                    <p><strong id="invoiceGuestName">Nama Tamu</strong></p>
+                                    <p id="invoiceGuestPhone">Telepon: -</p>
+                                    <p id="invoiceGuestEmail">Email: -</p>
                                 </div>
                                 <div class="col-md-6 text-end">
-                                    <h4>INVOICE</h4>
-                                    <p>No: <span id="invoiceNumber">INV-20230001</span></p>
-                                    <p>Tanggal: <span id="invoiceDate">01/01/2023</span></p>
+                                    <h5>Detail Reservasi</h5>
+                                    <p>Kamar: <span id="invoiceRoom">-</span></p>
+                                    <p>Check-In: <span id="invoiceCheckin">-</span></p>
+                                    <p>Check-Out: <span id="invoiceCheckout">-</span></p>
+                                    <p>Lama Menginap: <span id="invoiceNights">0</span> malam</p>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <h5>Detail Tamu</h5>
-                                <p><strong id="invoiceGuestName">Nama Tamu</strong></p>
-                                <p id="invoiceGuestPhone">Telepon: -</p>
-                                <p id="invoiceGuestEmail">Email: -</p>
+                            
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <table class="table table-bordered invoice-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Deskripsi</th>
+                                                <th>Jumlah</th>
+                                                <th>Harga Satuan</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="invoiceItems">
+                                            </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th colspan="3" class="text-end">Subtotal</th>
+                                                <th id="invoiceSubtotal">0</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="3" class="text-end">Pajak (<span id="invoiceTaxRate">0</span>%)</th>
+                                                <th id="invoiceTax">0</th>
+                                            </tr>
+                                            <tr>
+                                                <th colspan="3" class="text-end">Total</th>
+                                                <th id="invoiceTotal" style="font-size: 1.2rem;">0</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="col-md-6 text-end">
-                                <h5>Detail Reservasi</h5>
-                                <p>Kamar: <span id="invoiceRoom">-</span></p>
-                                <p>Check-In: <span id="invoiceCheckin">-</span></p>
-                                <p>Check-Out: <span id="invoiceCheckout">-</span></p>
-                                <p>Lama Menginap: <span id="invoiceNights">0</span> malam</p>
+                            
+                            <div class="invoice-footer text-center">
+                                <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!</p>
                             </div>
-                        </div>
-                        
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <table class="table table-bordered invoice-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Deskripsi</th>
-                                            <th>Jumlah</th>
-                                            <th>Harga Satuan</th>
-                                            <th>Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="invoiceItems">
-                                        </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th colspan="3" class="text-end">Subtotal</th>
-                                            <th id="invoiceSubtotal">0</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="3" class="text-end">Pajak (<span id="invoiceTaxRate">0</span>%)</th>
-                                            <th id="invoiceTax">0</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="3" class="text-end">Total</th>
-                                            <th id="invoiceTotal" style="font-size: 1.2rem;">0</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="invoice-footer text-center">
-                            <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!</p>
                         </div>
                     </div>
                     
@@ -2991,22 +3052,21 @@
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
 
-            // --- Watermark Logic Start ---
+            // --- DYNAMIC WATERMARK LOGIC ---
             const watermarkEl = document.getElementById('checkoutInvoice').querySelector('.invoice-watermark');
             const invoiceContainer = document.getElementById('checkoutInvoice');
+            const currentPaymentStatus = reservation.paymentStatus || document.getElementById('checkoutPaymentStatus').value;
 
-            if (reservation.paymentStatus === 'paid') {
+            invoiceContainer.classList.remove('watermarked'); // Reset first
+            if (currentPaymentStatus === 'paid') {
                 watermarkEl.textContent = 'LUNAS';
                 watermarkEl.style.color = 'rgba(40, 167, 69, 0.15)'; // Green color
                 invoiceContainer.classList.add('watermarked');
-            } else if (reservation.paymentStatus === 'pending') {
+            } else if (currentPaymentStatus === 'pending') {
                 watermarkEl.textContent = 'BELUM LUNAS';
                 watermarkEl.style.color = 'rgba(220, 53, 69, 0.15)'; // Red color
                 invoiceContainer.classList.add('watermarked');
-            } else {
-                invoiceContainer.classList.remove('watermarked');
             }
-            // --- Watermark Logic End ---
             
             return totalAmount;
         }
@@ -3014,6 +3074,11 @@
         function openCheckoutModal(id) {
             const reservation = JSON.parse(localStorage.getItem('hotel_reservations') || '[]').find(r => r.id === id);
             if (!reservation) return;
+            
+            // Set default payment status for new checkouts
+            if (!reservation.paymentStatus) {
+                document.getElementById('checkoutPaymentStatus').value = 'pending';
+            }
 
             document.getElementById('checkoutModalTitle').textContent = 'Proses Check-Out & Invoice';
             document.getElementById('checkoutPaymentSection').style.display = 'block';
@@ -3030,7 +3095,8 @@
             document.getElementById('checkoutTotalBill').value = formatCurrency(totalAmount);
             document.getElementById('amountPaid').value = '';
             document.getElementById('changeDue').value = '';
-
+            
+            calculateChange(); // Initial calculation
             new bootstrap.Modal(checkoutModal).show();
         }
         
@@ -3232,9 +3298,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    // Decode the Base64 string first
-                    const decodedString = decodeURIComponent(escape(atob(e.target.result)));
-                    const data = JSON.parse(decodedString);
+                    const data = JSON.parse(e.target.result);
                     const overwrite = document.getElementById('importOverwrite').checked;
 
                     if (overwrite) {
@@ -3274,19 +3338,8 @@
             }
         }
         
-        async function printInvoice() {
-            const logoImg = document.getElementById('invoiceLogoImg');
-            try {
-                const logoBase64 = await urlToBas64(logoImg.src);
-                logoImg.src = logoBase64;
-                logoImg.onload = () => {
-                    setTimeout(() => window.print(), 100); // Small delay to ensure render
-                };
-            } catch (error) {
-                console.error("Gagal memuat logo untuk dicetak:", error);
-                showNotification('Warning', 'Gagal memuat logo, cetakan mungkin tidak menampilkan logo.', 'warning');
-                window.print();
-            }
+        function printInvoice() {
+            window.print();
         }
 
         function urlToBas64(url) {
@@ -3442,21 +3495,20 @@
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
             
-            // --- PDF Watermark Logic Start ---
+            // --- PDF WATERMARK LOGIC ---
             if (reservation.paymentStatus === 'paid') {
                 doc.setFontSize(72);
                 doc.setFont('Helvetica', 'bold');
-                doc.setTextColor(40, 167, 69, 0.2); // Greenish, semi-transparent
-                doc.text('LUNAS', 105, 160, { angle: -35, align: 'center' });
-                doc.setTextColor(0,0,0); // Reset text color
+                doc.setTextColor(40, 167, 69);
+                doc.text('LUNAS', 105, 160, { angle: -35, align: 'center', renderingMode: 'stroke' });
+                doc.setTextColor(0,0,0);
             } else if (reservation.paymentStatus === 'pending') {
                 doc.setFontSize(72);
                 doc.setFont('Helvetica', 'bold');
-                doc.setTextColor(220, 53, 69, 0.2); // Reddish, semi-transparent
-                doc.text('BELUM LUNAS', 105, 160, { angle: -35, align: 'center' });
-                doc.setTextColor(0,0,0); // Reset text color
+                doc.setTextColor(220, 53, 69);
+                doc.text('BELUM LUNAS', 105, 160, { angle: -35, align: 'center', renderingMode: 'stroke' });
+                doc.setTextColor(0,0,0);
             }
-            // --- PDF Watermark Logic End ---
 
             doc.setFont('Helvetica', 'italic');
             doc.setFontSize(10);
@@ -3550,11 +3602,8 @@
                     settings: JSON.parse(localStorage.getItem('hotel_settings') || '{}')
                 };
                 
-                // Stringify without pretty-printing, then encode to Base64
-                const jsonString = JSON.stringify(backupData);
-                // Handle unicode characters before encoding
-                const encodedData = btoa(unescape(encodeURIComponent(jsonString)));
-                const blob = new Blob([encodedData], { type: 'application/json' });
+                const jsonString = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 
                 const a = document.createElement('a');
@@ -3611,7 +3660,8 @@
         function calculateChange() {
             const checkoutModal = document.getElementById('checkoutModal');
             const totalAmount = parseFloat(checkoutModal.dataset.totalAmount) || 0;
-            const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+            const amountPaidInput = document.getElementById('amountPaid');
+            const amountPaid = parseFloat(amountPaidInput.value) || 0;
             const changeDueEl = document.getElementById('changeDue');
             const confirmBtn = document.getElementById('confirmCheckoutBtn');
             const paymentStatusSelect = document.getElementById('checkoutPaymentStatus');
@@ -3626,6 +3676,14 @@
                 confirmBtn.disabled = true;
                 paymentStatusSelect.value = 'pending';
             }
+
+            // Also update watermark in real-time if status changes
+             const reservationId = checkoutModal.dataset.reprintId;
+             const reservations = JSON.parse(localStorage.getItem('hotel_reservations') || '[]');
+             const reservation = reservations.find(r => r.id === reservationId);
+             if (reservation) {
+                populateInvoiceModal({ ...reservation, paymentStatus: paymentStatusSelect.value });
+             }
         }
         
         function updateDashboardStats() {
