@@ -481,6 +481,12 @@
         #printable-content {
             display: none;
         }
+        
+        /* Report Summary Card */
+        .report-summary-card {
+            border-left: 5px solid var(--primary-color);
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 <body>
@@ -507,6 +513,7 @@
                             <span id="currentUsername">Admin</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="https://wa.me/6287865614222" target="_blank"><i class="fab fa-whatsapp me-2"></i>Bantuan via WhatsApp</a></li>
                             <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal"><i class="fas fa-key me-2"></i>Ganti Password</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
@@ -991,7 +998,7 @@
                 <div class="section d-none" id="reportsSection">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Laporan</h1>
-                        <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-toolbar mb-2 mb-md-0 no-print">
                             <div class="btn-group me-2">
                                 <button type="button" class="btn btn-sm btn-outline-primary" id="printReportBtn">
                                     <i class="fas fa-print me-1"></i>Cetak
@@ -1003,7 +1010,7 @@
                         </div>
                     </div>
                     
-                    <div class="card mb-4">
+                    <div class="card mb-4 no-print">
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="fas fa-filter me-2"></i>Filter Laporan</h5>
                         </div>
@@ -1319,8 +1326,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-0">Hak Cipta &copy; 2025 <a href="https://www.anekamarket.my.id" target="_blank">Lentera Karya Situbondo</a>. Seluruh hak dilindungi.</p>
-                    <p class="mb-0">TourTicket Pro - Sistem Penjualan Tiket Wisata</p>
+                    <p class="mb-1">TourTicket Pro &copy; 2025 dikembangkan oleh <strong>Lentera Karya Situbondo</strong>.</p>
+                    <p class="mb-0">
+                        <a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe me-1"></i>www.anekamarket.my.id</a> | 
+                        <a href="https://wa.me/6287865614222" target="_blank"><i class="fab fa-whatsapp me-1"></i>0878-6561-4222</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -1513,8 +1523,11 @@
                         </button>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <small class="text-muted">Sistem Penjualan Tiket Wisata v1.1</small>
+                <div class="modal-footer justify-content-center text-center">
+                    <small class="text-muted d-block w-100">
+                        Dikembangkan oleh <strong>Lentera Karya Situbondo</strong><br>
+                        <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a> | <a href="https://wa.me/6287865614222" target="_blank">0878-6561-4222</a>
+                    </small>
                 </div>
             </div>
         </div>
@@ -1577,7 +1590,7 @@
                 this.currentUser = null;
                 this.cart = [];
                 this.salesChart = null; // To keep track of the sales chart instance
-                this.reportChart = null; // To keep track of the report chart instance
+                this.reportData = {}; // To store generated report data
 
                 // Initialize data if not exists
                 this.initData();
@@ -1822,7 +1835,7 @@
                 document.getElementById('systemSettingsForm').addEventListener('submit', (e) => { e.preventDefault(); this.saveSystemSettings(); });
 
                 // --- Buttons ---
-                document.getElementById('refreshDashboardBtn').addEventListener('click', () => this.loadDashboardData());
+                document.getElementById('refreshDashboardBtn').addEventListener('click', (e) => this.handleDashboardRefresh(e.currentTarget));
                 document.getElementById('refreshStockBtn').addEventListener('click', () => this.loadTicketStock());
                 document.getElementById('refreshTransactionsBtn').addEventListener('click', () => this.loadTransactions());
                 document.getElementById('refreshUsersBtn').addEventListener('click', () => this.loadUsers());
@@ -1834,6 +1847,8 @@
                 document.getElementById('resetSystemBtn').addEventListener('click', () => this.resetSystem());
                 document.getElementById('generateReportBtn').addEventListener('click', () => this.generateReport());
                 document.getElementById('clearStockFilterBtn').addEventListener('click', () => this.clearStockFilters());
+                document.getElementById('exportReportBtn').addEventListener('click', () => this.exportReportPDF());
+                document.getElementById('printReportBtn').addEventListener('click', () => this.printReport());
 
                 // --- Event Delegation for Dynamic Content ---
                 document.getElementById('stockTableBody').addEventListener('click', (e) => {
@@ -1892,7 +1907,7 @@
                     document.getElementById('receiptFooterSettings').style.display = e.target.checked ? 'block' : 'none';
                 });
 
-                // --- Unimplemented/Admin Buttons ---
+                // --- Admin Buttons ---
                 document.getElementById('clearStockBtn').addEventListener('click', () => this.clearStock());
                 document.getElementById('clearTransactionsBtn').addEventListener('click', () => this.clearTransactions());
             }
@@ -1914,7 +1929,6 @@
                     this.saveData();
                     this.currentUser = user;
 
-                    // Use sessionStorage for session-only login, localStorage for "remember me"
                     if (rememberMe) {
                         localStorage.setItem('loggedInUser', JSON.stringify(user));
                     } else {
@@ -1938,11 +1952,9 @@
                 sessionStorage.removeItem('loggedInUser');
                 localStorage.removeItem('loggedInUser');
 
-                // Show login modal
                 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                 loginModal.show();
                 
-                // Reset login form fields
                 document.getElementById('loginForm').reset();
                 this.showToast('Logout Berhasil', 'Anda telah berhasil keluar.', 'info');
             }
@@ -1964,7 +1976,7 @@
                 }
                 
                 this.showLoading();
-                await new Promise(resolve => setTimeout(resolve, 100)); // Allow UI to update
+                await new Promise(resolve => setTimeout(resolve, 100));
 
                 const generatedTickets = [];
                 const now = new Date().toISOString();
@@ -1973,7 +1985,6 @@
                 for (let i = 0; i < quantity; i++) {
                     let code;
                     do {
-                       // PERBAIKAN: Kode unik tiket diubah menjadi 3 karakter
                        code = prefix + this.generateRandomString(3);
                     } while (existingCodes.has(code));
                     existingCodes.add(code);
@@ -2088,7 +2099,6 @@
             }
 
             toggleSelectAllTickets(checked) {
-                // Hanya pilih checkbox yang tidak di-disable
                 document.querySelectorAll('#stockTableBody .ticket-checkbox:not(:disabled)').forEach(checkbox => checkbox.checked = checked);
                 document.getElementById('selectAllTickets').checked = checked;
                 document.getElementById('selectAllHeader').checked = checked;
@@ -2105,22 +2115,20 @@
                 
                 selectedCheckboxes.forEach(checkbox => {
                     const result = this.addToCart(checkbox.dataset.id, false);
-                    if (result === 'added') {
-                        addedCount++;
-                    } else if (result === 'in_cart') {
-                        alreadyInCartCount++;
-                    }
+                    if (result === 'added') addedCount++;
+                    else if (result === 'in_cart') alreadyInCartCount++;
                 });
 
-                if (addedCount > 0) {
-                    this.showToast('Sukses', `${addedCount} tiket berhasil ditambahkan ke keranjang.`, 'success');
-                }
-                if (alreadyInCartCount > 0) {
-                    this.showToast('Info', `${alreadyInCartCount} tiket sudah ada di keranjang.`, 'info');
-                }
+                if (addedCount > 0) this.showToast('Sukses', `${addedCount} tiket berhasil ditambahkan.`, 'success');
+                if (alreadyInCartCount > 0) this.showToast('Info', `${alreadyInCartCount} tiket sudah ada di keranjang.`, 'info');
                 
-                // PERBAIKAN: Langsung pindah ke menu penjualan setelah menambahkan
+                // Clear selections after adding
+                document.querySelectorAll('.ticket-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('selectAllTickets').checked = false;
+                document.getElementById('selectAllHeader').checked = false;
+
                 this.showSection('salesSection');
+                setTimeout(() => document.getElementById('amountPaid').focus(), 100);
             }
 
             addToCart(ticketId, showToast = true) {
@@ -2140,7 +2148,10 @@
 
                 this.cart.push({ id: ticket.id, code: ticket.code, type: ticket.type, price: ticket.price });
                 this.updateCart();
-                if (showToast) this.showToast('Sukses', `Tiket ${ticket.code} ditambahkan.`, 'success');
+                if (showToast) {
+                    this.showToast('Sukses', `Tiket ${ticket.code} ditambahkan.`, 'success');
+                    document.getElementById('salesTicketSearchInput').focus();
+                }
                 return 'added';
             }
 
@@ -2185,7 +2196,7 @@
             completePayment() {
                 const total = this.cart.reduce((sum, item) => sum + item.price, 0);
                 if (this.cart.length === 0) {
-                    this.showToast('Error', 'Keranjang kosong, tidak ada transaksi untuk diproses.', 'danger');
+                    this.showToast('Error', 'Keranjang kosong.', 'danger');
                     return;
                 }
                 const amountPaid = parseFloat(document.getElementById('amountPaid').value);
@@ -2225,7 +2236,7 @@
                 this.updateCart();
                 document.getElementById('paymentForm').reset();
                 this.addActivity(`Completed transaction ${transaction.transactionId}`);
-                this.showToast('Sukses', 'Pembayaran berhasil diselesaikan.', 'success');
+                this.showToast('Sukses', 'Pembayaran berhasil.', 'success');
                 this.viewTransaction(transaction.id);
             }
 
@@ -2285,12 +2296,10 @@
                 const modalEl = document.getElementById('viewTransactionModal');
                 const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
                 
-                // Setup print button for this specific transaction
                 const printBtn = document.getElementById('printTransactionBtn');
-                const newPrintBtn = printBtn.cloneNode(true); // Avoid multiple listeners
+                const newPrintBtn = printBtn.cloneNode(true);
                 printBtn.parentNode.replaceChild(newPrintBtn, printBtn);
                 newPrintBtn.addEventListener('click', () => {
-                    // PERBAIKAN: Sembunyikan modal sebelum mencetak untuk menghindari tumpang tindih
                     modal.hide();
                     this.printContent(receiptHTML, `Struk Transaksi ${transaction.transactionId}`);
                 });
@@ -2337,6 +2346,19 @@
 
                 this.loadRecentActivities();
                 this.loadSalesChart();
+            }
+            
+            handleDashboardRefresh(btn) {
+                const originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>Memuat...`;
+                
+                setTimeout(() => {
+                    this.loadDashboardData();
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
+                    this.showToast('Info', 'Dashboard telah diperbarui.', 'info');
+                }, 500);
             }
 
             loadRecentActivities() {
@@ -2476,9 +2498,7 @@
                 document.getElementById('editUserStatus').value = user.status;
                 document.getElementById('editUserPassword').value = '';
 
-                // Prevent changing role of default admin
                 document.getElementById('editUserRole').disabled = (user.username === 'admin');
-
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('editUserModal')).show();
             }
 
@@ -2542,7 +2562,6 @@
                 this.users[userIndex].password = this.hashPassword(newPassword);
                 this.currentUser.password = this.users[userIndex].password;
                 
-                // Update stored user session
                 if (sessionStorage.getItem('loggedInUser')) sessionStorage.setItem('loggedInUser', JSON.stringify(this.currentUser));
                 if (localStorage.getItem('loggedInUser')) localStorage.setItem('loggedInUser', JSON.stringify(this.currentUser));
 
@@ -2664,8 +2683,6 @@
                 this.loadTicketStock();
             }
 
-            // --- Utility and Formatting Functions ---
-            
             showLoading() { document.getElementById('loadingOverlay').classList.add('show'); }
             hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 
@@ -2679,7 +2696,7 @@
                 const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
                 document.getElementById('toastTitle').textContent = title;
                 document.getElementById('toastMessage').textContent = message;
-                toastEl.className = 'toast hide text-white'; // Reset classes
+                toastEl.className = 'toast hide text-white';
                 const typeMap = { success: 'bg-success', warning: 'bg-warning', danger: 'bg-danger', info: 'bg-info' };
                 toastEl.classList.add(typeMap[type] || 'bg-primary');
                 toast.show();
@@ -2716,8 +2733,6 @@
             printContent(contentHTML, title) {
                 const printable = document.getElementById('printable-content');
                 printable.innerHTML = `<h3 class="text-center mb-4">${title}</h3>${contentHTML}`;
-                
-                // Delay print command slightly to allow DOM to update
                 setTimeout(() => {
                     window.print();
                     printable.innerHTML = '';
@@ -2725,7 +2740,7 @@
             }
 
             formatCurrency(amount) {
-                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
             }
             formatDate(dateStr) { return dateStr ? new Date(dateStr).toLocaleDateString('id-ID') : '-'; }
             formatDateTime(dateStr) { return dateStr ? new Date(dateStr).toLocaleString('id-ID') : '-'; }
@@ -2812,9 +2827,195 @@
             }
             
             generateReport() {
-                // Dummy report generation for demonstration
-                this.showToast('Info', 'Fitur laporan sedang dalam pengembangan.', 'info');
-                document.getElementById('reportResults').innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-tools fa-3x mb-3"></i><p>Fitur laporan akan segera tersedia.</p></div>`;
+                this.showLoading();
+                
+                const reportType = document.getElementById('reportType').value;
+                const ticketType = document.getElementById('reportTicketType').value;
+                const user = document.getElementById('reportUser').value;
+                const paymentMethod = document.getElementById('reportPaymentMethod').value;
+
+                let startDate, endDate;
+                const now = new Date();
+                
+                switch (reportType) {
+                    case 'daily':
+                        startDate = new Date(document.getElementById('reportDate').value);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date(startDate);
+                        endDate.setHours(23, 59, 59, 999);
+                        break;
+                    case 'weekly':
+                         const day = now.getDay();
+                         startDate = new Date(now.setDate(now.getDate() - day));
+                         startDate.setHours(0,0,0,0);
+                         endDate = new Date(startDate);
+                         endDate.setDate(endDate.getDate() + 6);
+                         endDate.setHours(23,59,59,999);
+                         break;
+                    case 'monthly':
+                        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+                        break;
+                    case 'yearly':
+                        startDate = new Date(now.getFullYear(), 0, 1);
+                        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+                        break;
+                    case 'custom':
+                        startDate = new Date(document.getElementById('reportDateFrom').value);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date(document.getElementById('reportDateTo').value);
+                        endDate.setHours(23, 59, 59, 999);
+                        break;
+                }
+                
+                let filteredTransactions = this.transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= startDate && transactionDate <= endDate;
+                });
+
+                if (user !== 'all') {
+                    filteredTransactions = filteredTransactions.filter(t => t.cashier === user);
+                }
+                if (paymentMethod !== 'all') {
+                    filteredTransactions = filteredTransactions.filter(t => t.paymentMethod === paymentMethod);
+                }
+
+                let totalRevenue = 0;
+                let totalTickets = 0;
+                const ticketTypeCount = {};
+                
+                const finalTransactions = [];
+
+                filteredTransactions.forEach(t => {
+                    let transactionContainsFilteredTicket = false;
+                    if (ticketType === 'all') {
+                        transactionContainsFilteredTicket = true;
+                    } else {
+                        if (t.items.some(item => item.type === ticketType)) {
+                            transactionContainsFilteredTicket = true;
+                        }
+                    }
+
+                    if (transactionContainsFilteredTicket) {
+                        finalTransactions.push(t);
+                        totalRevenue += t.total;
+                        t.items.forEach(item => {
+                            totalTickets++;
+                            ticketTypeCount[item.type] = (ticketTypeCount[item.type] || 0) + 1;
+                        });
+                    }
+                });
+
+                this.reportData = {
+                    title: `Laporan Penjualan (${this.formatDate(startDate)} - ${this.formatDate(endDate)})`,
+                    transactions: finalTransactions,
+                    totalRevenue, totalTickets, ticketTypeCount
+                };
+                
+                this.renderReport(this.reportData);
+                this.hideLoading();
+            }
+
+            renderReport(data) {
+                const container = document.getElementById('reportResults');
+                if (data.transactions.length === 0) {
+                    container.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-info-circle fa-3x mb-3"></i><p>Tidak ada data ditemukan untuk filter yang dipilih.</p></div>`;
+                    return;
+                }
+
+                let ticketTypeSummary = Object.keys(data.ticketTypeCount).map(type => 
+                    `<li>${this.formatTicketType(type)}: <strong>${data.ticketTypeCount[type]} tiket</strong></li>`
+                ).join('');
+
+                const reportHTML = `
+                    <div id="report-content">
+                        <h4 class="mb-3">${data.title}</h4>
+                        <div class="card p-3 mb-4 report-summary-card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5>Total Pendapatan</h5>
+                                    <h3>${this.formatCurrency(data.totalRevenue)}</h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5>Total Tiket Terjual</h5>
+                                    <h3>${data.totalTickets}</h3>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5>Rincian Tipe Tiket</h5>
+                                    <ul class="list-unstyled">${ticketTypeSummary}</ul>
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Detail Transaksi</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr><th>ID Transaksi</th><th>Tanggal</th><th>Kasir</th><th>Jml Tiket</th><th>Total</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.transactions.map(t => `
+                                        <tr>
+                                            <td>${t.transactionId}</td>
+                                            <td>${this.formatDateTime(t.date)}</td>
+                                            <td>${t.cashier}</td>
+                                            <td>${t.items.length}</td>
+                                            <td>${this.formatCurrency(t.total)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = reportHTML;
+            }
+
+            exportReportPDF() {
+                if (!this.reportData || !this.reportData.transactions || this.reportData.transactions.length === 0) {
+                    this.showToast('Peringatan', 'Generate laporan terlebih dahulu sebelum export.', 'warning');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const data = this.reportData;
+                
+                doc.setFontSize(18);
+                doc.text(this.settings.venueName || 'Laporan Penjualan', 14, 22);
+                doc.setFontSize(12);
+                doc.text(data.title, 14, 30);
+                
+                doc.setFontSize(11);
+                doc.text(`Total Pendapatan: ${this.formatCurrency(data.totalRevenue)}`, 14, 45);
+                doc.text(`Total Tiket Terjual: ${data.totalTickets}`, 14, 52);
+                
+                const tableColumn = ["ID Transaksi", "Tanggal", "Kasir", "Jumlah Tiket", "Total"];
+                const tableRows = [];
+
+                data.transactions.forEach(t => {
+                    const ticketData = [
+                        t.transactionId,
+                        this.formatDateTime(t.date),
+                        t.cashier,
+                        t.items.length,
+                        this.formatCurrency(t.total)
+                    ];
+                    tableRows.push(ticketData);
+                });
+
+                doc.autoTable(tableColumn, tableRows, { startY: 60 });
+                doc.save(`Laporan Penjualan - ${new Date().toISOString().split('T')[0]}.pdf`);
+                this.addActivity('Exported a sales report to PDF');
+            }
+            
+            printReport() {
+                 if (!this.reportData || !this.reportData.transactions || this.reportData.transactions.length === 0) {
+                    this.showToast('Peringatan', 'Generate laporan terlebih dahulu sebelum mencetak.', 'warning');
+                    return;
+                }
+                const reportContent = document.getElementById('report-content').innerHTML;
+                this.printContent(reportContent, this.settings.venueName);
             }
         }
     </script>
