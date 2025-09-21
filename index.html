@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TourTicket Pro - Sistem Penjualan Tiket Wisata</title>
+    <title>Ventra Pass - Sistem Penjualan Tiket Wisata</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -137,7 +137,7 @@
         .receipt-footer { text-align: center; margin-top: 15px; font-size: 0.75rem; }
         /* --- END: Desain Struk Pembayaran Baru --- */
 
-        /* --- START: Desain Tiket Cetak Baru --- */
+        /* --- START: Desain Tiket Cetak Baru (REVISI TOTAL) --- */
         .printable-ticket-wrapper {
             display: flex;
             flex-wrap: wrap;
@@ -148,41 +148,123 @@
         .ticket-small-print {
             width: 95mm;
             height: 54mm;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 5mm;
             font-family: 'Segoe UI', sans-serif;
             display: flex;
-            flex-direction: column;
             position: relative;
-            overflow: hidden;
             background-color: #fff;
+            color: #212529;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
             page-break-inside: avoid;
-            color: #000;
         }
-        .ticket-small-print .header { display: flex; align-items: center; margin-bottom: 4mm; }
-        .ticket-small-print .logo { width: 20mm; height: auto; margin-right: 4mm; }
-        .ticket-small-print .venue-info { line-height: 1.2; }
-        .ticket-small-print .venue-name { font-size: 10pt; font-weight: 600; }
-        .ticket-small-print .venue-location { font-size: 7pt; color: #555; }
-        .ticket-small-print .body { flex-grow: 1; text-align: center; padding-top: 2mm; border-top: 1px dashed #999; border-bottom: 1px dashed #999; }
-        .ticket-small-print .ticket-type { font-size: 12pt; font-weight: 700; color: var(--primary-color); }
-        .ticket-small-print .ticket-code { font-family: 'Courier New', monospace; font-size: 14pt; font-weight: bold; letter-spacing: 1px; margin: 2mm 0; }
-        .ticket-small-print .footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 3mm; font-size: 8pt; }
-        .ticket-small-print .price { font-weight: bold; font-size: 10pt; }
-        .ticket-small-print .expiry { text-align: right; }
-        .ticket-small-print .watermark {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 3rem;
-            font-weight: 900;
+        .ticket-small-print .ticket-main {
+            flex-grow: 1;
+            padding: 4mm;
+            display: flex;
+            flex-direction: column;
+            background-image: linear-gradient(45deg, #f9f9f9 25%, transparent 25%), linear-gradient(-45deg, #f9f9f9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f9f9f9 75%), linear-gradient(-45deg, transparent 75%, #f9f9f9 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .ticket-small-print .ticket-stub {
+            width: 28mm;
+            background-color: #f8f9fa;
+            border-left: 2px dashed #cccccc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4mm 2mm;
+            text-align: center;
+        }
+        .ticket-small-print .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2mm;
+        }
+        .ticket-small-print .logo {
+            width: 12mm;
+            height: 12mm;
+            margin-right: 3mm;
+            object-fit: contain;
+        }
+        .ticket-small-print .venue-info {
+            line-height: 1.2;
+        }
+        .ticket-small-print .venue-name {
+            font-size: 9pt;
+            font-weight: 700;
+        }
+        .ticket-small-print .venue-location {
+            font-size: 6.5pt;
+            color: #555;
+        }
+        .ticket-small-print .ticket-body {
+            flex-grow: 1;
+            display: flex;
+            margin-top: 2mm;
+            border-top: 1px solid #eee;
+            padding-top: 2mm;
+        }
+        .ticket-small-print .ticket-details {
+            flex-grow: 1;
+            line-height: 1.4; /* Mengatur jarak antar baris agar lebih rapat */
+        }
+        .ticket-small-print .ticket-type {
+            font-size: 11pt;
+            font-weight: 700;
             color: var(--primary-color);
-            opacity: 0.08;
-            z-index: 0;
+            margin: 0; /* Menghapus margin bawaan */
         }
-        /* --- END: Desain Tiket Cetak Baru --- */
+        .ticket-small-print .ticket-code {
+            font-family: 'Courier New', monospace;
+            font-size: 14pt;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0; /* Menghapus margin bawaan */
+        }
+        .ticket-small-print .ticket-expiry {
+            font-size: 7.5pt;
+            color: #333;
+            margin: 0; /* Menghapus margin bawaan */
+        }
+        .ticket-small-print .ticket-qr {
+            width: 18mm;
+            height: 18mm;
+            margin-left: 3mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            color: #e0e0e0;
+        }
+        .ticket-small-print .ticket-footer {
+            margin-top: auto;
+            font-size: 6.5pt;
+            color: #777;
+        }
+        .ticket-stub .stub-venue {
+            font-weight: 700;
+            font-size: 8pt;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            opacity: 0.5;
+        }
+        .ticket-stub .stub-details {
+            font-size: 8pt;
+        }
+        .ticket-stub .stub-type { font-weight: 600; }
+        .ticket-stub .stub-code { 
+            font-family: 'Courier New', monospace;
+            font-weight: bold; 
+            font-size: 9pt;
+            margin: 4px 0;
+        }
+        .ticket-stub .stub-price { font-weight: bold; font-size: 9pt; }
+        /* --- END: Desain Tiket Cetak Baru (REVISI TOTAL) --- */
+
 
         /* == START: PERBAIKAN & PENYEMPURNAAN KODE CETAK == */
         #printable-content { 
@@ -349,7 +431,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 no-print">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-ticket-alt me-2"></i>TourTicket Pro
+                <i class="fas fa-gem me-2"></i>Ventra Pass
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -385,7 +467,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="generateTicketSection" id="generateTicketLink">
-                                <i class="fas fa-ticket-alt"></i> Generate Tiket
+                                <i class="fas fa-gem"></i> Generate Tiket
                             </a>
                         </li>
                         <li class="nav-item">
@@ -535,7 +617,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="ticketPrefix" class="form-label">Prefix Kode Tiket (Opsional)</label>
-                                        <input type="text" class="form-control" id="ticketPrefix" maxlength="4" placeholder="TT">
+                                        <input type="text" class="form-control" id="ticketPrefix" maxlength="4" placeholder="VT">
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -544,7 +626,7 @@
                                     <div class="form-text">Biarkan kosong jika tidak ada kedaluwarsa</div>
                                 </div>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-ticket-alt me-2"></i>Generate Tiket
+                                    <i class="fas fa-gem me-2"></i>Generate Tiket
                                 </button>
                             </form>
                         </div>
@@ -552,7 +634,7 @@
                     
                     <div class="card" id="generatedTicketsCard" style="display: none;">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0"><i class="fas fa-ticket-alt me-2"></i>Tiket yang Digenerate</h5>
+                            <h5 class="card-title mb-0"><i class="fas fa-gem me-2"></i>Tiket yang Digenerate</h5>
                             <button class="btn btn-sm btn-success" id="printAllGeneratedTicketsBtn">
                                 <i class="fas fa-print me-1"></i>Cetak Semua
                             </button>
@@ -1136,7 +1218,7 @@
                                     <p>Backup semua data sistem termasuk tiket, transaksi, pengguna, dan pengaturan.</p>
                                     <div class="mb-3">
                                         <label for="backupFileName" class="form-label">Nama File Backup</label>
-                                        <input type="text" class="form-control" id="backupFileName" value="TourTicketPro_Backup">
+                                        <input type="text" class="form-control" id="backupFileName" value="VentraPass_Backup">
                                     </div>
                                     <div class="mb-3">
                                         <label for="backupPassword" class="form-label">Password (Opsional)</label>
@@ -1198,7 +1280,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-1">TourTicket Pro &copy; 2025 dikembangkan oleh <strong>Lentera Karya Situbondo</strong>.</p>
+                    <p class="mb-1">Ventra Pass &copy; 2025 dikembangkan oleh <strong>Lentera Karya Situbondo</strong>.</p>
                     <p class="mb-0">
                         <a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe me-1"></i>www.anekamarket.my.id</a> | 
                         <a href="https://wa.me/6287865614222" target="_blank"><i class="fab fa-whatsapp me-1"></i>0878-6561-4222</a>
@@ -1433,7 +1515,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-ticket-alt me-2"></i>TourTicket Pro - Login
+                        <i class="fas fa-gem me-2"></i>Ventra Pass - Login
                     </h5>
                 </div>
                 <div class="modal-body">
@@ -1959,7 +2041,7 @@
                 const type = document.getElementById('ticketType').value;
                 const price = parseInt(document.getElementById('ticketPrice').value);
                 const quantity = parseInt(document.getElementById('ticketQuantity').value);
-                const prefix = document.getElementById('ticketPrefix').value.trim().toUpperCase() || 'TT';
+                const prefix = document.getElementById('ticketPrefix').value.trim().toUpperCase() || 'VT';
                 const expiry = document.getElementById('ticketExpiry').value;
 
                 if (quantity < 1 || quantity > 1000) {
@@ -2332,7 +2414,7 @@
                     <div class="receipt-container">
                         <div class="receipt-header">
                             <img src="${this.settings.venueLogo || ''}" class="receipt-logo" alt="Logo">
-                            <p class="receipt-title">${this.settings.venueName || 'TourTicket Pro'}</p>
+                            <p class="receipt-title">${this.settings.venueName || 'Ventra Pass'}</p>
                             <p class="receipt-subtitle">${this.settings.venueLocation || ''}</p>
                         </div>
                         <div class="receipt-divider"></div>
@@ -2695,7 +2777,7 @@
 
             createBackup() {
                 if (this.currentUser.role !== 'admin') return;
-                const fileName = document.getElementById('backupFileName').value || 'TourTicketPro_Backup';
+                const fileName = document.getElementById('backupFileName').value || 'VentraPass_Backup';
                 const dataStr = JSON.stringify(JSON.parse(localStorage.getItem('ticketSalesData')));
                 
                 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -2920,38 +3002,48 @@
             }
             // == END: Perbaikan Proteksi Password (Fungsi Baru) ==
             
-            // == START: FUNGSI DIPERBAIKI - Perbaikan Tampilan Tanggal di Tiket ==
+            // == START: FUNGSI DIPERBARUI - Perbaikan Tampilan Tiket Sesuai Desain Baru ==
             generateTicketHTML(ticket) {
-                const expiryInfo = ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya';
-                
+                const expiryInfo = ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku Selamanya';
+                const venueNameShort = this.settings.venueName.split(' ')[0];
+
                 return `
                     <div class="ticket-small-print">
-                        <div class="watermark">${this.settings.venueName.split(' ')[0]}</div>
-                        <div class="header">
-                            <img src="${this.settings.venueLogo}" alt="Logo" class="logo">
-                            <div class="venue-info">
-                                <div class="venue-name">${this.settings.venueName}</div>
-                                <div class="venue-location">${this.settings.venueLocation}</div>
-                                <div class="venue-location" style="font-size: 6pt;">${this.settings.venueWebsite || ''}</div>
-                            </div>
-                        </div>
-                        <div class="body">
-                            <div class="ticket-type">TIKET ${this.formatTicketType(ticket.type).toUpperCase()}</div>
-                            <div class="ticket-code">${ticket.code}</div>
-                            <div style="font-size: 8pt; color: #555; margin-top: 3mm; line-height: 1.4;">
-                                <div>${expiryInfo}</div>
-                                <div style="font-size: 7pt;">Cetak: ${this.formatDateTime(ticket.generatedAt)}</div>
-                            </div>
-                        </div>
-                        <div class="footer">
-                            <div class="price">${this.formatCurrency(ticket.price)}</div>
-                            <div class="expiry">
+                        <div class="ticket-main">
+                            <div class="header">
+                                <img src="${this.settings.venueLogo}" alt="Logo" class="logo">
+                                <div class="venue-info">
+                                    <div class="venue-name">${this.settings.venueName}</div>
+                                    <div class="venue-location">${this.settings.venueLocation}</div>
                                 </div>
+                            </div>
+                            <div class="ticket-body">
+                                <div class="ticket-details">
+                                    <p class="ticket-type">${this.formatTicketType(ticket.type).toUpperCase()}</p>
+                                    <p class="ticket-code">${ticket.code}</p>
+                                    <p class="ticket-expiry">${expiryInfo}</p>
+                                </div>
+                                <div class="ticket-qr">
+                                    <i class="fas fa-qrcode"></i>
+                                </div>
+                            </div>
+                            <div class="ticket-footer">
+                                Dicetak: ${this.formatDateTime(ticket.generatedAt)} oleh ${ticket.generatedBy}
+                            </div>
+                        </div>
+                        <div class="ticket-stub">
+                            <div class="stub-venue">${venueNameShort}</div>
+                            <div class="stub-details">
+                                <div class="stub-type">${this.formatTicketType(ticket.type)}</div>
+                                <div class="stub-code">${ticket.code}</div>
+                                <div class="stub-price">${this.formatCurrency(ticket.price)}</div>
+                            </div>
+                            <div></div>
                         </div>
                     </div>
                 `;
             }
-            // == END: FUNGSI DIPERBAIKI ==
+            // == END: FUNGSI DIPERBARUI ==
             
             viewTicket(ticketId) {
                 const ticket = this.tickets.find(t => t.id === ticketId);
@@ -3209,7 +3301,7 @@
                 const data = this.reportData;
                 
                 doc.setFontSize(18);
-                doc.text(this.settings.venueName || 'Laporan TourTicket Pro', 14, 22);
+                doc.text(this.settings.venueName || 'Laporan Ventra Pass', 14, 22);
                 doc.setFontSize(12);
                 doc.text(data.title, 14, 30);
                 
