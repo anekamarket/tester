@@ -10,20 +10,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --primary-color: #1a237e;
-            --secondary-color: #303f9f;
-            --accent-color: #ff5722;
-            --light-color: #f5f5f5;
-            --dark-color: #212121;
-            --success-color: #388e3c;
-            --warning-color: #ffa000;
-            --danger-color: #d32f2f;
-            --info-color: #1976d2;
+            --primary-color: #00796b; /* Dark Teal */
+            --secondary-color: #00897b; /* Teal */
+            --accent-color: #ffc107; /* Amber */
+            --light-color: #f4f4f4;
+            --dark-color: #333;
+            --success-color: #4caf50;
+            --warning-color: #fb8c00;
+            --danger-color: #e53935;
+            --info-color: #039be5;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--light-color);
+            background-image: linear-gradient(to right, #f9f9f9 1px, transparent 1px), linear-gradient(to bottom, #f9f9f9 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--dark-color);
         }
         
@@ -34,7 +36,7 @@
         
         .navbar {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .sidebar {
@@ -59,33 +61,37 @@
         
         .sidebar .nav-link.active {
             color: white;
-            background-color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+            background-color: rgba(0, 0, 0, 0.2);
             border-left: 4px solid var(--accent-color);
         }
         
         .sidebar .nav-link i {
-            margin-right: 10px;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
         }
         
         .card {
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s, box-shadow 0.3s;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             background-color: white;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            border-radius: 10px 10px 0 0 !important;
+            border-radius: 12px 12px 0 0 !important;
             padding: 15px 20px;
+            border-bottom: 0;
         }
         
         .btn-primary {
@@ -135,7 +141,7 @@
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
         
         .ticket-code {
@@ -148,7 +154,7 @@
         
         .ticket-watermark {
             position: absolute;
-            opacity: 0.1;
+            opacity: 0.08;
             font-size: 8rem;
             font-weight: bold;
             color: var(--primary-color);
@@ -168,6 +174,7 @@
             }
             body {
                 background-color: white !important;
+                background-image: none !important;
                 margin: 0;
             }
             #printable-content {
@@ -199,7 +206,6 @@
             }
         }
         
-        /* Role-based access styling */
         .restricted {
             opacity: 0.6;
             pointer-events: none;
@@ -228,7 +234,6 @@
             border-radius: 0 10px 0 5px;
         }
         
-        /* New styles for simplified transaction report */
         .receipt-logo {
             max-width: 150px;
             height: auto;
@@ -308,7 +313,6 @@
             padding-top: 10px;
         }
         
-        /* New styles for ticket search */
         .search-container {
             position: relative;
             margin-bottom: 15px;
@@ -344,7 +348,6 @@
             margin-left: 5px;
         }
         
-        /* New styles for batch selection */
         .batch-actions {
             margin-bottom: 15px;
         }
@@ -357,7 +360,6 @@
             margin-right: 5px;
         }
         
-        /* Footer styling */
         .app-footer {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
@@ -368,8 +370,9 @@
         }
         
         .app-footer a {
-            color: white;
+            color: var(--accent-color);
             text-decoration: none;
+            font-weight: 600;
         }
         
         .app-footer a:hover {
@@ -393,7 +396,6 @@
             color: white;
         }
         
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -412,7 +414,6 @@
             background: var(--primary-color);
         }
         
-        /* Loading spinner */
         .spinner-container {
             display: flex;
             justify-content: center;
@@ -433,7 +434,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Virtual scroll container */
         .virtual-scroll-container {
             position: relative;
             overflow-y: auto;
@@ -447,7 +447,6 @@
             width: 100%;
         }
 
-        /* Loading indicator */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -477,15 +476,13 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
-        /* Printable Area */
         #printable-content {
             display: none;
         }
         
-        /* Report Summary Card */
         .report-summary-card {
             border-left: 5px solid var(--primary-color);
-            background-color: #f8f9fa;
+            background-color: #e0f2f1; /* Light teal background */
         }
     </style>
 </head>
@@ -758,8 +755,8 @@
                                     <input type="date" class="form-control" id="filterDate">
                                 </div>
                                 <div class="col-md-3 d-flex align-items-end">
-                                     <button class="btn btn-secondary w-100" id="clearStockFilterBtn">
-                                        <i class="fas fa-times me-1"></i>Bersihkan Filter
+                                     <button class="btn btn-outline-secondary w-100" id="clearStockFilterBtn">
+                                        <i class="fas fa-eraser me-1"></i>Reset Filter
                                     </button>
                                 </div>
                             </div>
@@ -1099,7 +1096,7 @@
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Manajemen Pengguna</h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <button type="button" class="btn btn-sm btn-primary" id="addUserBtn">
                                 <i class="fas fa-user-plus me-1"></i>Tambah Pengguna
                             </button>
                         </div>
@@ -1749,7 +1746,6 @@
                         this.loadUsers();
                         break;
                     case 'salesSection':
-                        // Do not clear cart when just switching view
                         this.updateCart();
                         break;
                 }
@@ -1757,7 +1753,7 @@
 
             checkAuth() {
                 // Check if user is logged in
-                const loggedInUser = sessionStorage.getItem('loggedInUser');
+                const loggedInUser = sessionStorage.getItem('loggedInUser') || localStorage.getItem('loggedInUser');
                 if (loggedInUser) {
                     this.currentUser = JSON.parse(loggedInUser);
                     this.updateUIAfterLogin();
@@ -1770,7 +1766,7 @@
 
                 // Show/hide restricted sections based on role
                 const is_admin = this.currentUser.role === 'admin';
-                document.querySelectorAll('.restricted-link, .restricted').forEach(el => {
+                document.querySelectorAll('.restricted-link, .restricted, .restricted-section').forEach(el => {
                     if (is_admin) {
                         el.classList.remove('restricted');
                     } else {
@@ -1788,9 +1784,16 @@
                 // Populate user filters in dropdowns
                 this.populateUserFilters();
             }
+            
+            promptForAdminAction(callback) {
+                const password = prompt("Untuk melanjutkan, masukkan password admin:");
+                if (password === 'LKS.1945') {
+                    callback();
+                } else if (password !== null) { // User didn't click cancel
+                    this.showToast('Akses Ditolak', 'Password yang Anda masukkan salah.', 'danger');
+                }
+            }
 
-            // Simple hash function for demo purposes.
-            // WARNING: Do NOT use this in a real production application. It's not secure.
             hashPassword(password) {
                 let hash = 0;
                 for (let i = 0; i < password.length; i++) {
@@ -1804,37 +1807,26 @@
             setupEventListeners() {
                 // --- Event Delegation for main containers ---
                 document.body.addEventListener('click', (e) => {
-                    // Sidebar navigation
                     const navLink = e.target.closest('.sidebar .nav-link');
                     if (navLink && navLink.dataset.section) {
                         e.preventDefault();
                         this.showSection(navLink.dataset.section);
                     }
-                    
-                    // Logout
                     if (e.target.closest('#logoutBtn')) {
                         e.preventDefault();
                         this.handleLogout();
                     }
-
-                    // Save New User
                     if (e.target.closest('#saveNewUserBtn')) this.addUser();
-
-                    // Save Edited User
                     if (e.target.closest('#saveEditUserBtn')) this.editUser();
-                    
-                    // Save Password Change
                     if (e.target.closest('#savePasswordBtn')) this.changePassword();
                 });
 
-                // --- Form Submissions ---
                 document.getElementById('loginForm').addEventListener('submit', (e) => { e.preventDefault(); this.handleLogin(); });
                 document.getElementById('generateTicketForm').addEventListener('submit', (e) => { e.preventDefault(); this.generateTickets(); });
                 document.getElementById('paymentForm').addEventListener('submit', (e) => { e.preventDefault(); this.completePayment(); });
                 document.getElementById('venueInfoForm').addEventListener('submit', (e) => { e.preventDefault(); this.saveVenueInfo(); });
                 document.getElementById('systemSettingsForm').addEventListener('submit', (e) => { e.preventDefault(); this.saveSystemSettings(); });
 
-                // --- Buttons ---
                 document.getElementById('refreshDashboardBtn').addEventListener('click', (e) => this.handleDashboardRefresh(e.currentTarget));
                 document.getElementById('refreshStockBtn').addEventListener('click', () => this.loadTicketStock());
                 document.getElementById('refreshTransactionsBtn').addEventListener('click', () => this.loadTransactions());
@@ -1850,7 +1842,12 @@
                 document.getElementById('exportReportBtn').addEventListener('click', () => this.exportReportPDF());
                 document.getElementById('printReportBtn').addEventListener('click', () => this.printReport());
 
-                // --- Event Delegation for Dynamic Content ---
+                // Password protected buttons
+                document.getElementById('addUserBtn').addEventListener('click', () => this.promptForAdminAction(() => {
+                    const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+                    addUserModal.show();
+                }));
+
                 document.getElementById('stockTableBody').addEventListener('click', (e) => {
                     const viewBtn = e.target.closest('.view-ticket-btn');
                     const addBtn = e.target.closest('.add-to-cart-btn');
@@ -1875,7 +1872,6 @@
                     if(deleteBtn) this.deleteUser(deleteBtn.dataset.id);
                 });
 
-                // --- Inputs and Filters ---
                 document.getElementById('amountPaid').addEventListener('input', () => this.calculateChange());
                 document.getElementById('salesTicketSearchInput').addEventListener('input', (e) => this.searchAvailableTickets(e.target.value));
                 document.getElementById('searchTicketInput').addEventListener('input', (e) => this.loadTicketStock({ query: e.target.value }));
@@ -1890,7 +1886,6 @@
                      document.getElementById(id).addEventListener('change', (e) => this.toggleSelectAllTickets(e.target.checked));
                 });
 
-                // --- Toggles in Settings ---
                 document.getElementById('reportType').addEventListener('change', (e) => {
                     if (e.target.value === 'custom') {
                         document.getElementById('reportDateContainer').classList.add('d-none');
@@ -1902,12 +1897,12 @@
                 });
                 document.getElementById('enableTax').addEventListener('change', (e) => {
                     document.getElementById('taxSettings').style.display = e.target.checked ? 'block' : 'none';
+                    this.updateCart(); // Recalculate cart total when tax is toggled
                 });
                 document.getElementById('enableReceiptFooter').addEventListener('change', (e) => {
                     document.getElementById('receiptFooterSettings').style.display = e.target.checked ? 'block' : 'none';
                 });
 
-                // --- Admin Buttons ---
                 document.getElementById('clearStockBtn').addEventListener('click', () => this.clearStock());
                 document.getElementById('clearTransactionsBtn').addEventListener('click', () => this.clearTransactions());
             }
@@ -1985,7 +1980,7 @@
                 for (let i = 0; i < quantity; i++) {
                     let code;
                     do {
-                       code = prefix + this.generateRandomString(3);
+                       code = prefix + this.generateRandomString(6);
                     } while (existingCodes.has(code));
                     existingCodes.add(code);
                     
@@ -2122,10 +2117,7 @@
                 if (addedCount > 0) this.showToast('Sukses', `${addedCount} tiket berhasil ditambahkan.`, 'success');
                 if (alreadyInCartCount > 0) this.showToast('Info', `${alreadyInCartCount} tiket sudah ada di keranjang.`, 'info');
                 
-                // Clear selections after adding
-                document.querySelectorAll('.ticket-checkbox').forEach(cb => cb.checked = false);
-                document.getElementById('selectAllTickets').checked = false;
-                document.getElementById('selectAllHeader').checked = false;
+                this.toggleSelectAllTickets(false);
 
                 this.showSection('salesSection');
                 setTimeout(() => document.getElementById('amountPaid').focus(), 100);
@@ -2158,12 +2150,11 @@
             updateCart() {
                 const tableBody = document.getElementById('cartTableBody');
                 tableBody.innerHTML = '';
-                let total = 0;
+                
                 if(this.cart.length === 0) {
                     tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Keranjang kosong</td></tr>`;
                 } else {
                     this.cart.forEach(item => {
-                        total += item.price;
                         tableBody.insertAdjacentHTML('beforeend', `
                             <tr>
                                 <td>${item.code}</td>
@@ -2174,7 +2165,16 @@
                         `);
                     });
                 }
-                const formattedTotal = this.formatCurrency(total);
+                
+                const subtotal = this.cart.reduce((sum, item) => sum + item.price, 0);
+                let finalTotal = subtotal;
+
+                if (this.settings.enableTax && this.settings.taxRate > 0) {
+                    const taxAmount = subtotal * (this.settings.taxRate / 100);
+                    finalTotal = subtotal + taxAmount;
+                }
+
+                const formattedTotal = this.formatCurrency(finalTotal);
                 document.getElementById('totalAmount').value = formattedTotal;
                 document.getElementById('cartTotal').textContent = formattedTotal;
                 this.calculateChange();
@@ -2187,20 +2187,36 @@
             }
 
             calculateChange() {
-                const total = this.cart.reduce((sum, item) => sum + item.price, 0);
+                const subtotal = this.cart.reduce((sum, item) => sum + item.price, 0);
+                let finalTotal = subtotal;
+
+                if (this.settings.enableTax && this.settings.taxRate > 0) {
+                    const taxAmount = subtotal * (this.settings.taxRate / 100);
+                    finalTotal = subtotal + taxAmount;
+                }
+
                 const paid = parseFloat(document.getElementById('amountPaid').value) || 0;
-                const change = paid - total;
+                const change = paid - finalTotal;
                 document.getElementById('changeAmount').value = this.formatCurrency(change >= 0 ? change : 0);
             }
 
             completePayment() {
-                const total = this.cart.reduce((sum, item) => sum + item.price, 0);
                 if (this.cart.length === 0) {
                     this.showToast('Error', 'Keranjang kosong.', 'danger');
                     return;
                 }
+
+                const subtotal = this.cart.reduce((sum, item) => sum + item.price, 0);
+                let taxAmount = 0;
+                let finalTotal = subtotal;
+
+                if (this.settings.enableTax && this.settings.taxRate > 0) {
+                    taxAmount = subtotal * (this.settings.taxRate / 100);
+                    finalTotal = subtotal + taxAmount;
+                }
+
                 const amountPaid = parseFloat(document.getElementById('amountPaid').value);
-                if (isNaN(amountPaid) || amountPaid < total) {
+                if (isNaN(amountPaid) || amountPaid < finalTotal) {
                     this.showToast('Error', 'Jumlah pembayaran tidak mencukupi.', 'danger');
                     return;
                 }
@@ -2213,12 +2229,13 @@
                     cashier: this.currentUser.username,
                     customerName: document.getElementById('customerName').value || 'Pelanggan',
                     items: [...this.cart],
-                    subtotal: total,
-                    tax: 0,
-                    total: total,
+                    subtotal: subtotal,
+                    tax: taxAmount,
+                    taxInfo: { name: this.settings.taxName, rate: this.settings.taxRate },
+                    total: finalTotal,
                     paymentMethod: document.getElementById('paymentMethod').value,
                     amountPaid: amountPaid,
-                    change: amountPaid - total
+                    change: amountPaid - finalTotal
                 };
                 
                 this.cart.forEach(item => {
@@ -2324,6 +2341,7 @@
                     </table>
                     <table class="receipt-totals">
                         <tr><td>Subtotal:</td><td class="text-right">${this.formatCurrency(transaction.subtotal)}</td></tr>
+                        ${(transaction.tax > 0 && transaction.taxInfo) ? `<tr><td>${transaction.taxInfo.name} (${transaction.taxInfo.rate}%):</td><td class="text-right">${this.formatCurrency(transaction.tax)}</td></tr>` : ''}
                         <tr class="total-row"><td>Total:</td><td class="text-right">${this.formatCurrency(transaction.total)}</td></tr>
                         <tr><td>Dibayar (${this.formatPaymentMethod(transaction.paymentMethod)}):</td><td class="text-right">${this.formatCurrency(transaction.amountPaid)}</td></tr>
                         <tr><td>Kembalian:</td><td class="text-right">${this.formatCurrency(transaction.change)}</td></tr>
@@ -2400,8 +2418,8 @@
                     data: { labels, datasets: [{
                         label: 'Pendapatan Harian',
                         data,
-                        backgroundColor: 'rgba(26, 35, 126, 0.1)',
-                        borderColor: 'rgba(26, 35, 126, 1)',
+                        backgroundColor: 'rgba(0, 121, 107, 0.1)',
+                        borderColor: 'rgba(0, 121, 107, 1)',
                         borderWidth: 2, tension: 0.3, fill: true
                     }]},
                     options: { responsive: true, scales: { y: { beginAtZero: true } } }
@@ -2488,18 +2506,21 @@
 
             openEditUserModal(userId) {
                 if (this.currentUser.role !== 'admin') return;
-                const user = this.users.find(u => u.id === userId);
-                if (!user) return;
+                
+                this.promptForAdminAction(() => {
+                    const user = this.users.find(u => u.id === userId);
+                    if (!user) return;
 
-                document.getElementById('editUserId').value = user.id;
-                document.getElementById('editUsername').value = user.username;
-                document.getElementById('editFullName').value = user.fullName;
-                document.getElementById('editUserRole').value = user.role;
-                document.getElementById('editUserStatus').value = user.status;
-                document.getElementById('editUserPassword').value = '';
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('editUsername').value = user.username;
+                    document.getElementById('editFullName').value = user.fullName;
+                    document.getElementById('editUserRole').value = user.role;
+                    document.getElementById('editUserStatus').value = user.status;
+                    document.getElementById('editUserPassword').value = '';
 
-                document.getElementById('editUserRole').disabled = (user.username === 'admin');
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('editUserModal')).show();
+                    document.getElementById('editUserRole').disabled = (user.username === 'admin');
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('editUserModal')).show();
+                });
             }
 
             editUser() {
