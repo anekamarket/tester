@@ -10,16 +10,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --primary-color: #00796b;   /* Dark Teal */
-            --secondary-color: #009688; /* Medium Teal */
-            --tertiary-color: #4db6ac;  /* Light Teal */
-            --accent-color: #ffc107;   /* Amber */
-            --light-color: #f5f7fa;
-            --dark-color: #333;
-            --success-color: #4caf50;
-            --warning-color: #fb8c00;
-            --danger-color: #e53935;
-            --info-color: #039be5;
+            /* == START: Perubahan Skema Warna == */
+            --primary-color: #4c6ef5;   /* Modern Blue */
+            --secondary-color: #7950f2; /* Violet */
+            --tertiary-color: #be4bdb;  /* Magenta */
+            --accent-color: #f06595;   /* Soft Pink */
+            /* == END: Perubahan Skema Warna == */
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #28a745;
+            --warning-color: #fd7e14;
+            --danger-color: #dc3545;
+            --info-color: #0dcaf0;
         }
         
         body {
@@ -101,8 +103,8 @@
         }
         
         .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            background-color: #364fc7;
+            border-color: #364fc7;
         }
         
         /* --- START: Desain Struk Pembayaran Baru --- */
@@ -176,7 +178,7 @@
             transform: translate(-50%, -50%) rotate(-30deg);
             font-size: 3rem;
             font-weight: 900;
-            color: #00796b;
+            color: var(--primary-color);
             opacity: 0.08;
             z-index: 0;
         }
@@ -290,7 +292,7 @@
         
         .badge.bg-primary { background-color: var(--primary-color) !important; }
         .border-bottom { border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
-        .table-striped tbody tr:nth-of-type(odd) { background-color: #f9f9f9; }
+        .table-striped tbody tr:nth-of-type(odd) { background-color: rgba(0,0,0,0.03); }
         
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -323,7 +325,15 @@
             text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
-        .report-summary-card { border-left: 5px solid var(--primary-color); background-color: #e0f2f1; }
+        .report-summary-card { border-left: 5px solid var(--primary-color); background-color: #f1f3f5; }
+        
+        /* == START: Fitur Hak Akses == */
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        /* == END: Fitur Hak Akses == */
     </style>
 </head>
 <body>
@@ -945,7 +955,7 @@
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Manajemen Pengguna</h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <button type="button" class="btn btn-sm btn-primary" id="addUserBtn">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                                 <i class="fas fa-user-plus me-1"></i>Tambah Pengguna
                             </button>
                         </div>
@@ -1021,7 +1031,7 @@
                                         <input type="email" class="form-control" id="venueEmail" placeholder="email@contoh.com">
                                     </div>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-3 d-none">
                                     <label class="form-label">Logo</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="venueLogo" placeholder="URL Logo" value="https://raw.githubusercontent.com/LKS-88/anekamarket/refs/heads/main/Logo-Anekamarketku.png">
@@ -1229,7 +1239,37 @@
                             <label for="confirmUserPassword" class="form-label">Konfirmasi Password</label>
                             <input type="password" class="form-control" id="confirmUserPassword" required>
                         </div>
-                    </form>
+                        <div id="newUserPermissionsContainer">
+                            <hr>
+                            <label class="form-label fw-bold">Hak Akses Menu</label>
+                            <div class="permissions-grid">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="dashboardSection" id="newPerm-dashboardSection">
+                                    <label class="form-check-label" for="newPerm-dashboardSection">Dashboard</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="generateTicketSection" id="newPerm-generateTicketSection">
+                                    <label class="form-check-label" for="newPerm-generateTicketSection">Generate Tiket</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="stockTicketSection" id="newPerm-stockTicketSection">
+                                    <label class="form-check-label" for="newPerm-stockTicketSection">Stok Tiket</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="salesSection" id="newPerm-salesSection">
+                                    <label class="form-check-label" for="newPerm-salesSection">Penjualan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="transactionsSection" id="newPerm-transactionsSection">
+                                    <label class="form-check-label" for="newPerm-transactionsSection">Transaksi</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="reportsSection" id="newPerm-reportsSection">
+                                    <label class="form-check-label" for="newPerm-reportsSection">Laporan</label>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -1277,7 +1317,37 @@
                             <input type="password" class="form-control" id="editUserPassword">
                             <div class="form-text">Biarkan kosong jika tidak ingin mengubah password</div>
                         </div>
-                    </form>
+                        <div id="editUserPermissionsContainer">
+                             <hr>
+                            <label class="form-label fw-bold">Hak Akses Menu</label>
+                            <div class="permissions-grid">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="dashboardSection" id="editPerm-dashboardSection">
+                                    <label class="form-check-label" for="editPerm-dashboardSection">Dashboard</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="generateTicketSection" id="editPerm-generateTicketSection">
+                                    <label class="form-check-label" for="editPerm-generateTicketSection">Generate Tiket</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="stockTicketSection" id="editPerm-stockTicketSection">
+                                    <label class="form-check-label" for="editPerm-stockTicketSection">Stok Tiket</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="salesSection" id="editPerm-salesSection">
+                                    <label class="form-check-label" for="editPerm-salesSection">Penjualan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="transactionsSection" id="editPerm-transactionsSection">
+                                    <label class="form-check-label" for="editPerm-transactionsSection">Transaksi</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="reportsSection" id="editPerm-reportsSection">
+                                    <label class="form-check-label" for="editPerm-reportsSection">Laporan</label>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -1505,7 +1575,8 @@
                                 role: 'admin',
                                 status: 'active',
                                 lastLogin: null,
-                                createdAt: new Date().toISOString()
+                                createdAt: new Date().toISOString(),
+                                permissions: {} // Permissions for admin are always true
                             }
                         ],
                         tickets: [],
@@ -1582,6 +1653,13 @@
             }
 
             showSection(sectionId) {
+                // == START: Cek Hak Akses ==
+                if (this.currentUser.role !== 'admin' && this.currentUser.permissions && !this.currentUser.permissions[sectionId]) {
+                    this.showToast('Akses Ditolak', 'Anda tidak memiliki izin untuk mengakses menu ini.', 'danger');
+                    return;
+                }
+                // == END: Cek Hak Akses ==
+
                 // Hide all sections
                 document.querySelectorAll('.section').forEach(section => {
                     section.classList.add('d-none');
@@ -1645,6 +1723,31 @@
                         el.classList.add('restricted');
                     }
                 });
+                
+                // == START: Terapkan Hak Akses Menu ==
+                const userPermissions = this.currentUser.permissions;
+                document.querySelectorAll('.sidebar .nav-item').forEach(navItem => {
+                    const link = navItem.querySelector('.nav-link');
+                    if(link && link.dataset.section) {
+                        const sectionId = link.dataset.section;
+                        const isRestrictedForAdmin = navItem.classList.contains('restricted-link');
+
+                        if (is_admin) {
+                             navItem.style.display = 'block';
+                        } else {
+                            if (isRestrictedForAdmin) {
+                                navItem.style.display = 'none';
+                            } else {
+                                if (userPermissions && userPermissions[sectionId]) {
+                                     navItem.style.display = 'block';
+                                } else {
+                                     navItem.style.display = 'none';
+                                }
+                            }
+                        }
+                    }
+                });
+                // == END: Terapkan Hak Akses Menu ==
 
                 // Hide login modal
                 const loginModalEl = document.getElementById('loginModal');
@@ -1655,15 +1758,6 @@
 
                 // Populate user filters in dropdowns
                 this.populateUserFilters();
-            }
-            
-            promptForAdminAction(callback) {
-                const password = prompt("Untuk melanjutkan, masukkan password admin:");
-                if (password === 'LKS.1945') {
-                    callback();
-                } else if (password !== null) { // User didn't click cancel
-                    this.showToast('Akses Ditolak', 'Password yang Anda masukkan salah.', 'danger');
-                }
             }
 
             hashPassword(password) {
@@ -1713,12 +1807,18 @@
                 document.getElementById('clearStockFilterBtn').addEventListener('click', () => this.clearStockFilters());
                 document.getElementById('exportReportBtn').addEventListener('click', () => this.exportReportPDF());
                 document.getElementById('printReportBtn').addEventListener('click', () => this.printReport());
-
-                // Password protected buttons
-                document.getElementById('addUserBtn').addEventListener('click', () => this.promptForAdminAction(() => {
-                    const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
-                    addUserModal.show();
-                }));
+                
+                // == START: Event Listener untuk Hak Akses ==
+                document.getElementById('newUserRole').addEventListener('change', (e) => {
+                    const permissionsContainer = document.getElementById('newUserPermissionsContainer');
+                    permissionsContainer.style.display = e.target.value === 'admin' ? 'none' : 'block';
+                });
+                
+                document.getElementById('editUserRole').addEventListener('change', (e) => {
+                    const permissionsContainer = document.getElementById('editUserPermissionsContainer');
+                    permissionsContainer.style.display = e.target.value === 'admin' ? 'none' : 'block';
+                });
+                // == END: Event Listener untuk Hak Akses ==
 
                 document.getElementById('stockTableBody').addEventListener('click', (e) => {
                     const viewBtn = e.target.closest('.view-ticket-btn');
@@ -2339,8 +2439,8 @@
                     data: { labels, datasets: [{
                         label: 'Pendapatan Harian',
                         data,
-                        backgroundColor: 'rgba(0, 121, 107, 0.1)',
-                        borderColor: 'rgba(0, 121, 107, 1)',
+                        backgroundColor: 'rgba(76, 110, 245, 0.1)',
+                        borderColor: 'rgba(76, 110, 245, 1)',
                         borderWidth: 2, tension: 0.3, fill: true
                     }]},
                     options: { responsive: true, scales: { y: { beginAtZero: true } } }
@@ -2411,10 +2511,20 @@
                     this.showToast('Error', 'Username sudah digunakan.', 'danger'); return;
                 }
 
+                // == START: Simpan Hak Akses ==
+                const permissions = {};
+                if (role !== 'admin') {
+                    document.querySelectorAll('#newUserPermissionsContainer .form-check-input').forEach(checkbox => {
+                        permissions[checkbox.value] = checkbox.checked;
+                    });
+                }
+                // == END: Simpan Hak Akses ==
+
                 const newUser = {
                     id: this.generateId(),
                     username, password: this.hashPassword(password), fullName, role,
-                    status: 'active', lastLogin: null, createdAt: new Date().toISOString()
+                    status: 'active', lastLogin: null, createdAt: new Date().toISOString(),
+                    permissions // Add permissions object
                 };
                 this.users.push(newUser);
                 this.saveData();
@@ -2428,20 +2538,27 @@
             openEditUserModal(userId) {
                 if (this.currentUser.role !== 'admin') return;
                 
-                this.promptForAdminAction(() => {
-                    const user = this.users.find(u => u.id === userId);
-                    if (!user) return;
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
 
-                    document.getElementById('editUserId').value = user.id;
-                    document.getElementById('editUsername').value = user.username;
-                    document.getElementById('editFullName').value = user.fullName;
-                    document.getElementById('editUserRole').value = user.role;
-                    document.getElementById('editUserStatus').value = user.status;
-                    document.getElementById('editUserPassword').value = '';
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editUsername').value = user.username;
+                document.getElementById('editFullName').value = user.fullName;
+                document.getElementById('editUserRole').value = user.role;
+                document.getElementById('editUserStatus').value = user.status;
+                document.getElementById('editUserPassword').value = '';
 
-                    document.getElementById('editUserRole').disabled = (user.username === 'admin');
-                    bootstrap.Modal.getOrCreateInstance(document.getElementById('editUserModal')).show();
+                // == START: Muat dan Tampilkan Hak Akses ==
+                const permissionsContainer = document.getElementById('editUserPermissionsContainer');
+                permissionsContainer.style.display = user.role === 'admin' ? 'none' : 'block';
+                
+                document.querySelectorAll('#editUserPermissionsContainer .form-check-input').forEach(checkbox => {
+                    checkbox.checked = user.permissions && user.permissions[checkbox.value];
                 });
+                // == END: Muat dan Tampilkan Hak Akses ==
+
+                document.getElementById('editUserRole').disabled = (user.username === 'admin');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('editUserModal')).show();
             }
 
             editUser() {
@@ -2452,11 +2569,22 @@
                 const userId = document.getElementById('editUserId').value;
                 const userIndex = this.users.findIndex(u => u.id === userId);
                 if (userIndex === -1) return;
-
+                
+                const newRole = document.getElementById('editUserRole').value;
                 this.users[userIndex].fullName = document.getElementById('editFullName').value;
-                this.users[userIndex].role = document.getElementById('editUserRole').value;
+                this.users[userIndex].role = newRole;
                 this.users[userIndex].status = document.getElementById('editUserStatus').value;
                 
+                // == START: Update Hak Akses ==
+                const permissions = {};
+                if (newRole !== 'admin') {
+                    document.querySelectorAll('#editUserPermissionsContainer .form-check-input').forEach(checkbox => {
+                        permissions[checkbox.value] = checkbox.checked;
+                    });
+                }
+                this.users[userIndex].permissions = permissions;
+                // == END: Update Hak Akses ==
+
                 const newPassword = document.getElementById('editUserPassword').value;
                 if (newPassword) {
                     this.users[userIndex].password = this.hashPassword(newPassword);
@@ -2727,7 +2855,13 @@
             formatCurrency(amount) {
                 return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
             }
-            formatDate(dateStr) { return dateStr ? new Date(dateStr).toLocaleDateString('id-ID') : '-'; }
+            formatDate(dateStr) { 
+                // Adding one day because javascript date parsing from YYYY-MM-DD is weird
+                if (!dateStr) return '-';
+                const date = new Date(dateStr);
+                date.setDate(date.getDate() + 1);
+                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric'});
+            }
             formatDateTime(dateStr) { return dateStr ? new Date(dateStr).toLocaleString('id-ID') : '-'; }
             timeSince(dateStr) {
                 const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
