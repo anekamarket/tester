@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             /* == START: Perubahan Skema Warna == */
@@ -227,7 +228,7 @@
         }
         .ticket-small-print .ticket-expiry {
             font-size: 7.5pt;
-            color: #333;
+            color: red; /* PERBAIKAN: Warna diubah menjadi merah */
             margin: 0; /* Menghapus margin bawaan */
         }
         .ticket-small-print .ticket-qr {
@@ -237,9 +238,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
-            color: #e0e0e0;
         }
+        /* START: Penambahan style untuk QR Code */
+        .ticket-small-print .ticket-qr img,
+        .ticket-small-print .ticket-qr canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        /* END: Penambahan style untuk QR Code */
         .ticket-small-print .ticket-footer {
             margin-top: auto;
             font-size: 6.5pt;
@@ -262,7 +268,11 @@
             font-size: 9pt;
             margin: 4px 0;
         }
-        .ticket-stub .stub-price { font-weight: bold; font-size: 9pt; }
+        .ticket-stub .stub-price { 
+            font-weight: bold; 
+            font-size: 9pt;
+            color: red; /* PERBAIKAN: Warna diubah menjadi merah */
+        }
         /* --- END: Desain Tiket Cetak Baru (REVISI TOTAL) --- */
 
 
@@ -2104,6 +2114,13 @@
                 });
 
                 container.appendChild(wrapper);
+                
+                // START: Generate QR Codes after HTML is in DOM
+                tickets.forEach(ticket => {
+                    this.generateQRCodeForTicket(ticket);
+                });
+                // END: Generate QR Codes
+                
                 document.getElementById('generatedTicketsCard').style.display = 'block';
             }
             
@@ -3002,6 +3019,24 @@
             }
             // == END: Perbaikan Proteksi Password (Fungsi Baru) ==
             
+            // START: Fungsi baru untuk generate QR Code
+            generateQRCodeForTicket(ticket) {
+                // Timeout untuk memastikan elemen sudah ada di dalam DOM
+                setTimeout(() => {
+                    const qrElement = document.getElementById(`qr-${ticket.id}`);
+                    if (qrElement) {
+                        qrElement.innerHTML = ''; // Hapus QR code sebelumnya jika ada
+                        new QRCode(qrElement, {
+                            text: ticket.code,
+                            width: 72, // Sekitar 18mm
+                            height: 72,
+                            correctLevel: QRCode.CorrectLevel.H // Toleransi error yang tinggi
+                        });
+                    }
+                }, 0);
+            }
+            // END: Fungsi baru untuk generate QR Code
+            
             // == START: FUNGSI DIPERBARUI - Perbaikan Tampilan Tiket Sesuai Desain Baru ==
             generateTicketHTML(ticket) {
                 const expiryInfo = ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku Selamanya';
@@ -3023,10 +3058,9 @@
                                     <p class="ticket-code">${ticket.code}</p>
                                     <p class="ticket-expiry">${expiryInfo}</p>
                                 </div>
-                                <div class="ticket-qr">
-                                    <i class="fas fa-qrcode"></i>
+                                <div class="ticket-qr" id="qr-${ticket.id}">
+                                    </div>
                                 </div>
-                            </div>
                             <div class="ticket-footer">
                                 Dicetak: ${this.formatDateTime(ticket.generatedAt)} oleh ${ticket.generatedBy}
                             </div>
@@ -3051,6 +3085,10 @@
 
                 const ticketHTML = this.generateTicketHTML(ticket);
                 document.getElementById('ticketModalContent').innerHTML = ticketHTML;
+                
+                // START: Generate QR Code untuk modal view
+                this.generateQRCodeForTicket(ticket);
+                // END: Generate QR Code
                 
                 const printBtn = document.getElementById('printTicketBtn');
                 const newPrintBtn = printBtn.cloneNode(true);
