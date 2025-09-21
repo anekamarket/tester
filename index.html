@@ -10,10 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --primary-color: #00796b; /* Dark Teal */
-            --secondary-color: #00897b; /* Teal */
-            --accent-color: #ffc107; /* Amber */
-            --light-color: #f4f4f4;
+            --primary-color: #00796b;   /* Dark Teal */
+            --secondary-color: #009688; /* Medium Teal */
+            --tertiary-color: #4db6ac;  /* Light Teal */
+            --accent-color: #ffc107;   /* Amber */
+            --light-color: #f5f7fa;
             --dark-color: #333;
             --success-color: #4caf50;
             --warning-color: #fb8c00;
@@ -24,8 +25,6 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-color);
-            background-image: linear-gradient(to right, #f9f9f9 1px, transparent 1px), linear-gradient(to bottom, #f9f9f9 1px, transparent 1px);
-            background-size: 20px 20px;
             color: var(--dark-color);
         }
         
@@ -34,13 +33,16 @@
             color: white !important;
         }
         
+        .navbar, .app-footer, .card-header, .toast-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--tertiary-color) 100%) !important;
+        }
+
         .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .sidebar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--tertiary-color) 100%);
             color: white;
             min-height: calc(100vh - 56px);
             padding: 0;
@@ -87,7 +89,6 @@
         }
         
         .card-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             border-radius: 12px 12px 0 0 !important;
             padding: 15px 20px;
@@ -104,73 +105,89 @@
             border-color: var(--secondary-color);
         }
         
-        .btn-success {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
-        }
-        
-        .btn-warning {
-            background-color: var(--warning-color);
-            border-color: var(--warning-color);
-        }
-        
-        .btn-danger {
-            background-color: var(--danger-color);
-            border-color: var(--danger-color);
-        }
-        
-        .btn-info {
-            background-color: var(--info-color);
-            border-color: var(--info-color);
-        }
-        
-        .ticket-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
+        /* --- START: Desain Struk Pembayaran Baru --- */
+        .receipt-container {
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
             padding: 20px;
-            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            background-color: #fff;
+            color: #000;
+        }
+        .receipt-header { text-align: center; margin-bottom: 15px; }
+        .receipt-logo { max-width: 100px; height: auto; margin-bottom: 10px; }
+        .receipt-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .receipt-subtitle { font-size: 0.8rem; margin: 0; }
+        .receipt-divider { border-top: 1px dashed #000; margin: 10px 0; }
+        .receipt-details p { margin: 2px 0; font-size: 0.8rem; }
+        .receipt-items { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.8rem; }
+        .receipt-items th, .receipt-items td { padding: 4px 0; }
+        .receipt-items th { text-align: left; border-bottom: 1px dashed #000; }
+        .receipt-items .col-item { width: 45%; }
+        .receipt-items .col-qty { width: 15%; text-align: center; }
+        .receipt-items .col-price { width: 40%; text-align: right; }
+        .receipt-totals { width: 100%; font-size: 0.8rem; }
+        .receipt-totals td { padding: 2px 0; }
+        .receipt-totals .label { text-align: left; }
+        .receipt-totals .value { text-align: right; }
+        .receipt-totals .total-row td { font-weight: bold; padding-top: 8px; border-top: 1px dashed #000; }
+        .receipt-footer { text-align: center; margin-top: 15px; font-size: 0.75rem; }
+        /* --- END: Desain Struk Pembayaran Baru --- */
+
+        /* --- START: Desain Tiket Cetak Baru --- */
+        .printable-ticket-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-content: flex-start;
+            gap: 5mm;
+        }
+        .ticket-small-print {
+            width: 95mm;
+            height: 54mm;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5mm;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
+            background-color: #fff;
+            page-break-inside: avoid;
+            color: #000;
         }
-        
-        .ticket-card::before {
-            content: "";
+        .ticket-small-print .header { display: flex; align-items: center; margin-bottom: 4mm; }
+        .ticket-small-print .logo { width: 20mm; height: auto; margin-right: 4mm; }
+        .ticket-small-print .venue-info { line-height: 1.2; }
+        .ticket-small-print .venue-name { font-size: 10pt; font-weight: 600; }
+        .ticket-small-print .venue-location { font-size: 7pt; color: #555; }
+        .ticket-small-print .body { flex-grow: 1; text-align: center; padding-top: 2mm; border-top: 1px dashed #999; border-bottom: 1px dashed #999; }
+        .ticket-small-print .ticket-type { font-size: 12pt; font-weight: 700; color: var(--primary-color); }
+        .ticket-small-print .ticket-code { font-family: 'Courier New', monospace; font-size: 14pt; font-weight: bold; letter-spacing: 1px; margin: 2mm 0; }
+        .ticket-small-print .footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 3mm; font-size: 8pt; }
+        .ticket-small-print .price { font-weight: bold; font-size: 10pt; }
+        .ticket-small-print .expiry { text-align: right; }
+        .ticket-small-print .watermark {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-        
-        .ticket-code {
-            font-family: 'Courier New', monospace;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            letter-spacing: 2px;
-        }
-        
-        .ticket-watermark {
-            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00796b;
             opacity: 0.08;
-            font-size: 8rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            transform: rotate(-30deg);
-            top: 30%;
-            left: 10%;
             z-index: 0;
         }
-        
+        /* --- END: Desain Tiket Cetak Baru --- */
+
         @media print {
             body > *:not(#printable-content) {
                 display: none !important;
             }
             #printable-content, #printable-content * {
                 visibility: visible !important;
-                display: block !important;
             }
             body {
                 background-color: white !important;
@@ -182,28 +199,20 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 20px;
+                padding: 10mm; /* Margin halaman cetak */
             }
-            .ticket-card {
-                page-break-inside: avoid;
-                margin: 10px 0;
+            .card {
                 box-shadow: none;
                 border: 1px solid #ccc;
             }
             @page {
-                size: A4;
-                margin: 10mm;
+                size: A4; /* Ukuran kertas F4/Letter/Legal dapat disesuaikan di dialog print */
+                margin: 0;
             }
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                min-height: auto;
-            }
-            
-            .ticket-watermark {
-                font-size: 5rem;
-            }
+            .sidebar { min-height: auto; }
         }
         
         .restricted {
@@ -221,96 +230,6 @@
             font-size: 2rem;
             color: var(--danger-color);
             z-index: 100;
-        }
-        
-        .access-info {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: var(--danger-color);
-            color: white;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            border-radius: 0 10px 0 5px;
-        }
-        
-        .receipt-logo {
-            max-width: 150px;
-            height: auto;
-            margin: 0 auto;
-            display: block;
-        }
-        
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        
-        .receipt-title {
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-        
-        .receipt-subtitle {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .receipt-transaction-id {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            text-align: center;
-            color: var(--secondary-color);
-        }
-        
-        .receipt-items {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        
-        .receipt-items th {
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            padding: 5px;
-            background-color: #f5f5f5;
-        }
-        
-        .receipt-items td {
-            padding: 5px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .receipt-items .text-right {
-            text-align: right;
-        }
-        
-        .receipt-totals {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        
-        .receipt-totals td {
-            padding: 5px;
-        }
-        
-        .receipt-totals .total-row {
-            font-weight: bold;
-            border-top: 1px solid #ddd;
-            background-color: #f5f5f5;
-        }
-        
-        .receipt-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #666;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
         }
         
         .search-container {
@@ -340,87 +259,33 @@
             transition: background-color 0.2s;
         }
         
-        .search-result-item:hover {
-            background-color: #f5f5f5;
-        }
+        .search-result-item:hover { background-color: #f5f5f5; }
+        .search-result-item .badge { margin-left: 5px; }
         
-        .search-result-item .badge {
-            margin-left: 5px;
-        }
-        
-        .batch-actions {
-            margin-bottom: 15px;
-        }
-        
-        .select-all-checkbox {
-            margin-right: 10px;
-        }
-        
-        .ticket-checkbox {
-            margin-right: 5px;
-        }
+        .batch-actions { margin-bottom: 15px; }
+        .select-all-checkbox { margin-right: 10px; }
+        .ticket-checkbox { margin-right: 5px; }
         
         .app-footer {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             padding: 15px 0;
             text-align: center;
             font-size: 0.9rem;
             margin-top: 20px;
         }
+        .app-footer a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+        .app-footer a:hover { text-decoration: underline; }
         
-        .app-footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
+        .badge.bg-primary { background-color: var(--primary-color) !important; }
+        .border-bottom { border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
+        .table-striped tbody tr:nth-of-type(odd) { background-color: #f9f9f9; }
         
-        .app-footer a:hover {
-            text-decoration: underline;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--secondary-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
         
-        .badge.bg-primary {
-            background-color: var(--primary-color) !important;
-        }
-        
-        .border-bottom {
-            border-bottom: 1px solid rgba(0,0,0,0.1) !important;
-        }
-        
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #f9f9f9;
-        }
-        
-        .toast-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-        
-        .spinner-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-        }
-        
+        .spinner-container { display: flex; justify-content: center; align-items: center; height: 100px; }
         .spinner {
             width: 3rem;
             height: 3rem;
@@ -434,56 +299,20 @@
             to { transform: rotate(360deg); }
         }
 
-        .virtual-scroll-container {
-            position: relative;
-            overflow-y: auto;
-            height: 400px;
-        }
-
-        .virtual-scroll-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-        }
-
         .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.7); display: flex;
+            justify-content: center; align-items: center; z-index: 9999;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
         }
-        
-        .loading-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .loading-overlay.show { opacity: 1; visibility: visible; }
         .loading-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            background-color: white; padding: 30px; border-radius: 10px;
+            text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
-        #printable-content {
-            display: none;
-        }
-        
-        .report-summary-card {
-            border-left: 5px solid var(--primary-color);
-            background-color: #e0f2f1; /* Light teal background */
-        }
+        #printable-content { display: none; }
+        .report-summary-card { border-left: 5px solid var(--primary-color); background-color: #e0f2f1; }
     </style>
 </head>
 <body>
@@ -2008,42 +1837,35 @@
                 document.getElementById('generateTicketForm').reset();
             }
 
+            // REVISED: showGeneratedTickets to use the new ticket design
             showGeneratedTickets(tickets) {
                 const container = document.getElementById('generatedTicketsContainer');
-                container.innerHTML = '';
+                container.innerHTML = ''; // Clear previous content
+
+                // Create a wrapper for flex layout
+                const wrapper = document.createElement('div');
+                wrapper.className = 'printable-ticket-wrapper';
 
                 tickets.forEach(ticket => {
-                    container.insertAdjacentHTML('beforeend', `
-                        <div class="ticket-card mb-3">
-                            <div class="ticket-watermark">${ticket.type.toUpperCase()}</div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="ticket-code">${ticket.code}</span>
-                                <span class="badge bg-primary">${this.formatTicketType(ticket.type)}</span>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p class="mb-1"><strong>Harga:</strong> ${this.formatCurrency(ticket.price)}</p>
-                                    <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">Tersedia</span></p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="mb-1"><strong>Generate Pada:</strong> ${this.formatDateTime(ticket.generatedAt)}</p>
-                                    ${ticket.expiryDate ? `<p class="mb-1"><strong>Kedaluwarsa:</strong> ${this.formatDate(ticket.expiryDate)}</p>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `);
+                    wrapper.innerHTML += this.generateTicketHTML(ticket);
                 });
 
+                container.appendChild(wrapper);
                 document.getElementById('generatedTicketsCard').style.display = 'block';
             }
-
+            
+            // REVISED: printAllGeneratedTickets to use the new layout
             printAllGeneratedTickets() {
-                const content = document.getElementById('generatedTicketsContainer').innerHTML;
-                if (!content) {
+                const container = document.getElementById('generatedTicketsContainer');
+                const ticketsHTML = container.querySelector('.printable-ticket-wrapper')?.innerHTML;
+                
+                if (!ticketsHTML || ticketsHTML.trim() === '') {
                     this.showToast('Info', 'Tidak ada tiket untuk dicetak.', 'info');
                     return;
                 }
-                this.printContent(content, 'Cetak Tiket');
+
+                const printableContent = `<div class="printable-ticket-wrapper">${ticketsHTML}</div>`;
+                this.printContent(printableContent, 'Tiket Masuk');
             }
 
             loadTicketStock(options = {}) {
@@ -2070,8 +1892,8 @@
                 filteredTickets.forEach(ticket => {
                     const statusConfig = {
                         available: { badge: 'bg-success', text: 'Tersedia' },
-                        sold: { badge: 'bg-primary', text: 'Terjual' },
-                        expired: { badge: 'bg-danger', text: 'Kedaluwarsa' }
+                        sold: { badge: 'bg-danger', text: 'Terjual' },
+                        expired: { badge: 'bg-warning', text: 'Kedaluwarsa' }
                     };
                     const {badge, text} = statusConfig[ticket.status] || {badge: 'bg-secondary', text: ticket.status};
 
@@ -2324,32 +2146,71 @@
                 modal.show();
             }
             
+            // REVISED: generateReceiptHTML for a better design
             generateReceiptHTML(transaction) {
                  return `
-                    <div class="receipt-header">
-                        ${this.settings.venueLogo ? `<img src="${this.settings.venueLogo}" class="receipt-logo mb-2" alt="Logo">` : ''}
-                        <div class="receipt-title">${this.settings.venueName || 'TourTicket Pro'}</div>
-                        <div class="receipt-subtitle">${this.settings.venueLocation || ''}</div>
-                        <hr>
-                        <div class="receipt-transaction-id">${transaction.transactionId}</div>
-                    </div>
-                    <table class="receipt-items">
-                        <thead><tr><th>Tiket</th><th>Jenis</th><th class="text-right">Harga</th></tr></thead>
-                        <tbody>
-                            ${transaction.items.map(item => `<tr><td>${item.code}</td><td>${this.formatTicketType(item.type)}</td><td class="text-right">${this.formatCurrency(item.price)}</td></tr>`).join('')}
-                        </tbody>
-                    </table>
-                    <table class="receipt-totals">
-                        <tr><td>Subtotal:</td><td class="text-right">${this.formatCurrency(transaction.subtotal)}</td></tr>
-                        ${(transaction.tax > 0 && transaction.taxInfo) ? `<tr><td>${transaction.taxInfo.name} (${transaction.taxInfo.rate}%):</td><td class="text-right">${this.formatCurrency(transaction.tax)}</td></tr>` : ''}
-                        <tr class="total-row"><td>Total:</td><td class="text-right">${this.formatCurrency(transaction.total)}</td></tr>
-                        <tr><td>Dibayar (${this.formatPaymentMethod(transaction.paymentMethod)}):</td><td class="text-right">${this.formatCurrency(transaction.amountPaid)}</td></tr>
-                        <tr><td>Kembalian:</td><td class="text-right">${this.formatCurrency(transaction.change)}</td></tr>
-                    </table>
-                    <div class="receipt-footer">
-                        <p>Tanggal: ${this.formatDateTime(transaction.date)}</p>
-                        <p>Kasir: ${transaction.cashier}</p>
-                        ${this.settings.enableReceiptFooter ? `<p>${this.settings.receiptFooterText || ''}</p>` : ''}
+                    <div class="receipt-container">
+                        <div class="receipt-header">
+                            <img src="${this.settings.venueLogo || ''}" class="receipt-logo" alt="Logo">
+                            <p class="receipt-title">${this.settings.venueName || 'TourTicket Pro'}</p>
+                            <p class="receipt-subtitle">${this.settings.venueLocation || ''}</p>
+                        </div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-details">
+                            <p>No: ${transaction.transactionId}</p>
+                            <p>Kasir: ${transaction.cashier}</p>
+                            <p>Tanggal: ${this.formatDateTime(transaction.date)}</p>
+                            <p>Pelanggan: ${transaction.customerName}</p>
+                        </div>
+                        <div class="receipt-divider"></div>
+                        <table class="receipt-items">
+                            <thead>
+                                <tr>
+                                    <th class="col-item">Item</th>
+                                    <th class="col-qty">Jml</th>
+                                    <th class="col-price">Harga</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transaction.items.map(item => `
+                                    <tr>
+                                        <td class="col-item">${this.formatTicketType(item.type)} (${item.code})</td>
+                                        <td class="col-qty">1</td>
+                                        <td class="col-price">${this.formatCurrency(item.price)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <div class="receipt-divider"></div>
+                        <table class="receipt-totals">
+                            <tr>
+                                <td class="label">Subtotal</td>
+                                <td class="value">${this.formatCurrency(transaction.subtotal)}</td>
+                            </tr>
+                            ${(transaction.tax > 0 && transaction.taxInfo) ? `
+                                <tr>
+                                    <td class="label">${transaction.taxInfo.name} (${transaction.taxInfo.rate}%)</td>
+                                    <td class="value">${this.formatCurrency(transaction.tax)}</td>
+                                </tr>
+                            ` : ''}
+                            <tr class="total-row">
+                                <td class="label">Total</td>
+                                <td class="value">${this.formatCurrency(transaction.total)}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Bayar (${this.formatPaymentMethod(transaction.paymentMethod)})</td>
+                                <td class="value">${this.formatCurrency(transaction.amountPaid)}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Kembali</td>
+                                <td class="value">${this.formatCurrency(transaction.change)}</td>
+                            </tr>
+                        </table>
+                        ${this.settings.enableReceiptFooter ? `
+                            <div class="receipt-footer">
+                                <p>${this.settings.receiptFooterText || ''}</p>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             }
@@ -2753,7 +2614,7 @@
 
             printContent(contentHTML, title) {
                 const printable = document.getElementById('printable-content');
-                printable.innerHTML = `<h3 class="text-center mb-4">${title}</h3>${contentHTML}`;
+                printable.innerHTML = `<h3 class="text-center mb-4 no-print">${title}</h3>${contentHTML}`;
                 setTimeout(() => {
                     window.print();
                     printable.innerHTML = '';
@@ -2784,30 +2645,38 @@
             formatPaymentMethod(method) { return { cash: 'Tunai', debit: 'Kartu Debit', credit: 'Kartu Kredit', transfer: 'Transfer Bank', ewallet: 'E-Wallet' }[method] || method; }
             formatUserRole(role) { return { admin: 'Admin', cashier: 'Kasir', manager: 'Manager' }[role] || role; }
 
+            // NEW: generateTicketHTML to create the new ticket design
+            generateTicketHTML(ticket) {
+                return `
+                    <div class="ticket-small-print">
+                        <div class="watermark">${this.settings.venueName.split(' ')[0]}</div>
+                        <div class="header">
+                            <img src="${this.settings.venueLogo}" alt="Logo" class="logo">
+                            <div class="venue-info">
+                                <div class="venue-name">${this.settings.venueName}</div>
+                                <div class="venue-location">${this.settings.venueLocation}</div>
+                            </div>
+                        </div>
+                        <div class="body">
+                            <div class="ticket-type">TIKET ${this.formatTicketType(ticket.type).toUpperCase()}</div>
+                            <div class="ticket-code">${ticket.code}</div>
+                        </div>
+                        <div class="footer">
+                            <div class="price">${this.formatCurrency(ticket.price)}</div>
+                            <div class="expiry">
+                                ${ticket.expiryDate ? `Berlaku s/d:<br><strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // REVISED: viewTicket to use the new ticket design
             viewTicket(ticketId) {
                 const ticket = this.tickets.find(t => t.id === ticketId);
                 if (!ticket) return;
 
-                const ticketHTML = `
-                    <div class="ticket-card">
-                        <div class="ticket-watermark">${ticket.type.toUpperCase()}</div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="ticket-code">${ticket.code}</span>
-                            <span class="badge bg-primary">${this.formatTicketType(ticket.type)}</span>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Harga:</strong> ${this.formatCurrency(ticket.price)}</p>
-                                <p class="mb-1"><strong>Status:</strong> ${ticket.status}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Generate:</strong> ${this.formatDateTime(ticket.generatedAt)} oleh ${ticket.generatedBy}</p>
-                                ${ticket.expiryDate ? `<p class="mb-1"><strong>Kedaluwarsa:</strong> ${this.formatDate(ticket.expiryDate)}</p>` : ''}
-                            </div>
-                        </div>
-                        ${ticket.status === 'sold' ? `<div class="alert alert-info p-2">Terjual pada ${this.formatDateTime(ticket.soldAt)}</div>` : ''}
-                    </div>
-                `;
+                const ticketHTML = this.generateTicketHTML(ticket);
                 document.getElementById('ticketModalContent').innerHTML = ticketHTML;
                 
                 const printBtn = document.getElementById('printTicketBtn');
@@ -2815,7 +2684,7 @@
                 printBtn.parentNode.replaceChild(newPrintBtn, printBtn);
                 newPrintBtn.addEventListener('click', () => {
                     bootstrap.Modal.getInstance(document.getElementById('viewTicketModal')).hide();
-                    this.printContent(ticketHTML, `Tiket ${ticket.code}`)
+                    this.printContent(`<div class="printable-ticket-wrapper">${ticketHTML}</div>`, `Tiket ${ticket.code}`);
                 });
 
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('viewTicketModal')).show();
