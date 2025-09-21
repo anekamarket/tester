@@ -2317,6 +2317,11 @@
             }
             
             generateReceiptHTML(transaction) {
+                 // == START: PENYEMPURNAAN NAMA KASIR DI STRUK ==
+                 const cashierUser = this.users.find(u => u.username === transaction.cashier);
+                 const cashierName = cashierUser ? cashierUser.fullName : transaction.cashier;
+                 // == END: PENYEMPURNAAN NAMA KASIR DI STRUK ==
+
                  const contactInfo = [
                     this.settings.venueWhatsapp ? `WA: ${this.settings.venueWhatsapp}` : '',
                     this.settings.venueWebsite ? `Web: ${this.settings.venueWebsite}` : '',
@@ -2333,7 +2338,7 @@
                         <div class="receipt-divider"></div>
                         <div class="receipt-details">
                             <p>No: ${transaction.transactionId}</p>
-                            <p>Kasir: ${transaction.cashier}</p>
+                            <p>Kasir: ${cashierName} (${transaction.cashier})</p>
                             <p>Tanggal: ${this.formatDateTime(transaction.date)}</p>
                             <p>Pelanggan: ${transaction.customerName}</p>
                         </div>
@@ -2915,8 +2920,10 @@
             }
             // == END: Perbaikan Proteksi Password (Fungsi Baru) ==
             
-            // == START: Perbaikan Tampilan Tanggal di Tiket ==
+            // == START: FUNGSI DIPERBAIKI - Perbaikan Tampilan Tanggal di Tiket ==
             generateTicketHTML(ticket) {
+                const expiryInfo = ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya';
+                
                 return `
                     <div class="ticket-small-print">
                         <div class="watermark">${this.settings.venueName.split(' ')[0]}</div>
@@ -2931,19 +2938,20 @@
                         <div class="body">
                             <div class="ticket-type">TIKET ${this.formatTicketType(ticket.type).toUpperCase()}</div>
                             <div class="ticket-code">${ticket.code}</div>
+                            <div style="font-size: 8pt; color: #555; margin-top: 3mm; line-height: 1.4;">
+                                <div>${expiryInfo}</div>
+                                <div style="font-size: 7pt;">Cetak: ${this.formatDateTime(ticket.generatedAt)}</div>
+                            </div>
                         </div>
                         <div class="footer">
                             <div class="price">${this.formatCurrency(ticket.price)}</div>
                             <div class="expiry">
-                                ${ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya'}
-                                <br>
-                                <span style="font-size: 7pt; color: #555;">Cetak: ${this.formatDateTime(ticket.generatedAt)}</span>
-                            </div>
+                                </div>
                         </div>
                     </div>
                 `;
             }
-            // == END: Perbaikan Tampilan Tanggal di Tiket ==
+            // == END: FUNGSI DIPERBAIKI ==
             
             viewTicket(ticketId) {
                 const ticket = this.tickets.find(t => t.id === ticketId);
