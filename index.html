@@ -818,6 +818,10 @@
             <h2>Hotel Management System Login</h2>
             <form id="loginForm">
                 <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="frontOfficeName" placeholder="Nama Front Office" required>
+                    <label for="frontOfficeName">Nama Front Office</label>
+                </div>
+                <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="username" placeholder="Username" required>
                     <label for="username">Username</label>
                 </div>
@@ -826,7 +830,7 @@
                     <label for="password">Password</label>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 btn-lg">Login</button>
-                <div id="loginError" class="error-message mt-3" style="display: none;">Username atau password salah.</div>
+                <div id="loginError" class="error-message mt-3" style="display: none;"></div>
             </form>
             <div class="developer-info">
                 Developed by <strong>Lentera Karya Situbondo</strong><br>
@@ -2094,6 +2098,20 @@
                                     </table>
                                 </div>
                             </div>
+
+                            <div class="row mt-5">
+                                <div class="col-6">
+                                    <p>Hormat Tamu,</p>
+                                    <br><br><br>
+                                    <p class="mb-0">( <span id="signatureGuestName"></span> )</p>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <p>Hormat kami,</p>
+                                    <br><br><br>
+                                    <p class="mb-0">( <span id="invoiceFrontOfficeName"></span> )</p>
+                                    <p>Front Office</p>
+                                </div>
+                            </div>
                             
                             <div class="invoice-footer text-center">
                                 <p>Terima kasih atas kunjungan Anda. Kami berharap dapat melayani Anda lagi!</p>
@@ -2260,19 +2278,29 @@
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
+            const frontOfficeName = document.getElementById('frontOfficeName').value;
             const errorEl = document.getElementById('loginError');
+
+            if (!frontOfficeName) {
+                errorEl.textContent = 'Nama Front Office wajib diisi.';
+                errorEl.style.display = 'block';
+                return;
+            }
 
             if (user === 'Admin' && pass === 'Hotelku.1945') {
                 sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('frontOfficeName', frontOfficeName);
                 errorEl.style.display = 'none';
                 checkLoginState();
             } else {
+                errorEl.textContent = 'Username atau password salah.';
                 errorEl.style.display = 'block';
             }
         }
 
         function handleLogout() {
             sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('frontOfficeName');
             window.location.reload();
         }
         
@@ -2282,7 +2310,8 @@
             setupEventListeners();
             initDashboardCharts();
             updateDashboardStats();
-            showNotification('Selamat Datang', 'Sistem Manajemen Hotel berhasil dimuat.', 'success');
+            const frontOfficeName = sessionStorage.getItem('frontOfficeName');
+            showNotification(`Selamat Datang, ${frontOfficeName}`, 'Sistem Manajemen Hotel berhasil dimuat.', 'success');
         }
         
         function initStorage() {
@@ -2986,6 +3015,7 @@
             const guests = JSON.parse(localStorage.getItem('hotel_guests') || '[]');
             const rooms = JSON.parse(localStorage.getItem('hotel_rooms') || '[]');
             const settings = JSON.parse(localStorage.getItem('hotel_settings') || '{}');
+            const frontOfficeName = sessionStorage.getItem('frontOfficeName') || 'Staff';
             
             const guest = guests.find(g => g.id === reservation.guestId) || {};
             const room = rooms.find(r => r.id === reservation.roomId) || {};
@@ -3029,9 +3059,13 @@
             document.getElementById('invoiceHotelPhone').textContent = settings.hotelPhone;
             document.getElementById('invoiceNumber').textContent = `INV-${reservation.id.slice(-6)}`;
             document.getElementById('invoiceDate').textContent = formatDate(reservation.actualCheckout || new Date().toISOString());
-            document.getElementById('invoiceGuestName').textContent = `${guest.firstName} ${guest.lastName}`;
+            
+            const guestName = `${guest.firstName} ${guest.lastName}`;
+            document.getElementById('invoiceGuestName').textContent = guestName;
+            document.getElementById('signatureGuestName').textContent = guestName;
             document.getElementById('invoiceGuestPhone').textContent = `Telepon: ${guest.phone || '-'}`;
             document.getElementById('invoiceGuestEmail').textContent = `Email: ${guest.email || '-'}`;
+            
             document.getElementById('invoiceRoom').textContent = `${room.number} (${room.type})`;
             document.getElementById('invoiceCheckin').textContent = formatDate(reservation.checkinDate);
             document.getElementById('invoiceCheckout').textContent = formatDate(reservation.checkoutDate);
@@ -3051,6 +3085,7 @@
             document.getElementById('invoiceTaxRate').textContent = settings.taxRate;
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
+            document.getElementById('invoiceFrontOfficeName').textContent = frontOfficeName;
 
             // --- DYNAMIC WATERMARK LOGIC ---
             const watermarkEl = document.getElementById('checkoutInvoice').querySelector('.invoice-watermark');
@@ -3356,6 +3391,7 @@
         async function downloadInvoicePdf() {
             const checkoutModal = document.getElementById('checkoutModal');
             const reservationId = checkoutModal.dataset.reprintId;
+            const frontOfficeName = sessionStorage.getItem('frontOfficeName') || 'Staff';
 
             if (!reservationId) {
                 showNotification('Error', 'Tidak ada data reservasi untuk diunduh.', 'error');
@@ -3419,12 +3455,13 @@
             currentY += 10;
 
             const guestDetailsY = currentY;
+            const guestName = guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu';
             doc.setFont('Helvetica', 'bold');
             doc.setFontSize(12);
             doc.text('Detail Tamu', 14, guestDetailsY);
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
-            doc.text(guest ? `${guest.firstName} ${guest.lastName}` : 'Nama Tamu', 14, guestDetailsY + 7);
+            doc.text(guestName, 14, guestDetailsY + 7);
             doc.text(`Telepon: ${guest.phone || '-'}`, 14, guestDetailsY + 12);
             doc.text(`Email: ${guest.email || '-'}`, 14, guestDetailsY + 17);
 
@@ -3482,7 +3519,7 @@
                 headStyles: { fillColor: [13, 71, 161] }
             });
 
-            const finalY = doc.autoTable.previous.finalY;
+            let finalY = doc.autoTable.previous.finalY;
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(10);
             doc.text('Subtotal', 150, finalY + 10, { align: 'right' });
@@ -3495,6 +3532,18 @@
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
             
+            finalY += 35;
+            
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.text('Hormat Tamu,', 14, finalY);
+            doc.text(`( ${guestName} )`, 14, finalY + 20);
+
+            doc.text('Hormat kami,', 200, finalY, { align: 'right' });
+            doc.text(`( ${frontOfficeName} )`, 200, finalY + 20, { align: 'right' });
+            doc.text('Front Office', 200, finalY + 25, { align: 'right' });
+
+
             // --- PDF WATERMARK LOGIC ---
             if (reservation.paymentStatus === 'paid') {
                 doc.setFontSize(72);
