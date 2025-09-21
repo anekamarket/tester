@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ventra Pass - Sistem Penjualan Tiket Wisata</title>
+    <title>Ventra App - Sistem Penjualan Tiket Wisata</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -428,6 +428,86 @@
             gap: 10px;
         }
         /* == END: Fitur Hak Akses == */
+
+        /* == START: Gaya Notifikasi Premium == */
+        #premiumNotificationModal .modal-content {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #434343 100%);
+            color: white;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #premiumNotificationModal .modal-body {
+            padding: 40px;
+            text-align: center;
+        }
+        #premiumNotificationModal .icon {
+            font-size: 50px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px var(--accent-color);
+        }
+        #premiumNotificationModal h3 {
+            font-weight: 700;
+            color: #fff;
+        }
+        #premiumNotificationModal p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+        #premiumNotificationModal .btn {
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #premiumNotificationModal .btn-premium {
+            background: linear-gradient(45deg, var(--accent-color), var(--tertiary-color));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(240, 101, 149, 0.4);
+        }
+        #premiumNotificationModal .btn-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(240, 101, 149, 0.6);
+        }
+        #premiumNotificationModal .btn-outline-light {
+             border-width: 2px;
+        }
+        #premiumNotificationModal .btn-outline-light:hover {
+            background-color: white;
+            color: var(--dark-color);
+        }
+        /* == END: Gaya Notifikasi Premium == */
+
+        /* == START: Gaya Captcha == */
+        #captcha-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        #captcha-display {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-decoration: line-through;
+            text-decoration-color: var(--secondary-color);
+            user-select: none;
+            color: var(--dark-color);
+            border: 2px dashed #ccc;
+        }
+        #refreshCaptchaBtn {
+            font-size: 1.5rem;
+        }
+        /* == END: Gaya Captcha == */
     </style>
 </head>
 <body>
@@ -441,7 +521,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark mb-4 no-print">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <i class="fas fa-gem me-2"></i>Ventra Pass
+                <i class="fas fa-gem me-2"></i>Ventra App
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -1228,7 +1308,7 @@
                                     <p>Backup semua data sistem termasuk tiket, transaksi, pengguna, dan pengaturan.</p>
                                     <div class="mb-3">
                                         <label for="backupFileName" class="form-label">Nama File Backup</label>
-                                        <input type="text" class="form-control" id="backupFileName" value="VentraPass_Backup">
+                                        <input type="text" class="form-control" id="backupFileName" value="VentraApp_Backup">
                                     </div>
                                     <div class="mb-3">
                                         <label for="backupPassword" class="form-label">Password (Opsional)</label>
@@ -1290,7 +1370,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-1">Ventra Pass &copy; 2025 dikembangkan oleh <strong>Lentera Karya Situbondo</strong>.</p>
+                    <p class="mb-1">Ventra App &copy; 2025 dikembangkan oleh <strong>Lentera Karya Situbondo</strong>.</p>
                     <p class="mb-0">
                         <a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe me-1"></i>www.anekamarket.my.id</a> | 
                         <a href="https://wa.me/6287865614222" target="_blank"><i class="fab fa-whatsapp me-1"></i>0878-6561-4222</a>
@@ -1525,7 +1605,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-gem me-2"></i>Ventra Pass - Login
+                        <i class="fas fa-gem me-2"></i>Ventra App - Login
                     </h5>
                 </div>
                 <div class="modal-body">
@@ -1556,6 +1636,61 @@
             </div>
         </div>
     </div>
+
+    <!-- START: MODAL NOTIFIKASI PREMIUM BARU -->
+    <div class="modal fade" id="premiumNotificationModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="icon"><i class="fas fa-crown"></i></div>
+                    <h3>Tingkatkan ke Versi Premium!</h3>
+                    <p>Buka semua fitur canggih dan dapatkan dukungan penuh dari developer untuk pengalaman terbaik menggunakan Ventra App.</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-premium" id="getPremiumBtn">
+                            <i class="fab fa-whatsapp me-2"></i>Hubungi Developer Sekarang
+                        </button>
+                        <button class="btn btn-outline-light" id="otherAppsBtn">
+                            <i class="fas fa-shopping-bag me-2"></i>Cek Aplikasi Lainnya
+                        </button>
+                    </div>
+                    <hr class="my-4" style="border-color: rgba(255,255,255,0.2);">
+                    <button class="btn btn-link text-white-50" id="tryFreeBtn">
+                        Lanjutkan dengan Versi Gratis
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: MODAL NOTIFIKASI PREMIUM BARU -->
+
+    <!-- START: MODAL CAPTCHA BARU -->
+    <div class="modal fade" id="captchaModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verifikasi Keamanan</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="text-muted">Untuk melanjutkan, masukkan kode captcha di bawah ini dengan benar.</p>
+                    <form id="captchaForm">
+                        <div id="captcha-container">
+                            <div id="captcha-display"></div>
+                            <button type="button" class="btn btn-link text-secondary" id="refreshCaptchaBtn" title="Ganti Kode">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-lg text-center" id="captchaInput" placeholder="Masukkan kode di sini" required autocomplete="off" maxlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                           Verifikasi & Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: MODAL CAPTCHA BARU -->
     
     <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -1575,7 +1710,7 @@
         </div>
     </div>
     
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1150">
         <div id="alertToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto" id="toastTitle">Notifikasi</strong>
@@ -1615,6 +1750,8 @@
                 this.cart = [];
                 this.salesChart = null; // To keep track of the sales chart instance
                 this.reportData = {}; // To store generated report data
+                this.pendingLogin = null; // To hold user data during captcha verification
+                this.currentCaptcha = ''; // To hold the current captcha string
 
                 // Initialize data if not exists
                 this.initData();
@@ -1998,6 +2135,33 @@
                 document.getElementById('clearTransactionsBtn').addEventListener('click', () => this.clearTransactions());
                 document.getElementById('deleteExpiredBtn').addEventListener('click', () => this.deleteExpiredTickets());
                 document.getElementById('deleteSoldBtn').addEventListener('click', () => this.deleteSoldTickets());
+
+                // == START: Event Listener untuk Notifikasi & Captcha ==
+                document.getElementById('getPremiumBtn').addEventListener('click', this.handleGetPremium);
+                document.getElementById('otherAppsBtn').addEventListener('click', () => window.open('https://www.anekamarket.my.id', '_blank'));
+                document.getElementById('tryFreeBtn').addEventListener('click', () => this.showCaptchaModal());
+                document.getElementById('captchaForm').addEventListener('submit', (e) => { e.preventDefault(); this.verifyCaptcha(); });
+                document.getElementById('refreshCaptchaBtn').addEventListener('click', () => this.generateCaptcha());
+                // == END: Event Listener untuk Notifikasi & Captcha ==
+            }
+
+            // --- FUNGSI BARU UNTUK ALUR LOGIN ---
+
+            proceedToApp(user, rememberMe) {
+                user.lastLogin = new Date().toISOString();
+                this.saveData();
+                this.currentUser = user;
+
+                if (rememberMe) {
+                    localStorage.setItem('loggedInUser', JSON.stringify(user));
+                } else {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                }
+
+                this.updateUIAfterLogin();
+                this.addActivity(`User ${user.username} logged in`);
+                this.showToast('Login Berhasil', `Selamat datang, ${user.fullName || user.username}!`, 'success');
+                this.showSection('dashboardSection');
             }
 
             handleLogin() {
@@ -2013,30 +2177,84 @@
                         return;
                     }
 
-                    user.lastLogin = new Date().toISOString();
-                    this.saveData();
-                    this.currentUser = user;
+                    // Simpan data login sementara untuk digunakan setelah verifikasi captcha
+                    this.pendingLogin = { user, rememberMe }; 
 
-                    if (rememberMe) {
-                        localStorage.setItem('loggedInUser', JSON.stringify(user));
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    if (loginModal) loginModal.hide();
+
+                    // Cek apakah notifikasi sudah pernah ditampilkan
+                    if (!localStorage.getItem('hasSeenVentraAppNotice')) {
+                        const premiumModal = new bootstrap.Modal(document.getElementById('premiumNotificationModal'));
+                        premiumModal.show();
                     } else {
-                        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                        // Jika sudah, langsung masuk ke aplikasi
+                        this.proceedToApp(user, rememberMe);
                     }
-
-                    this.updateUIAfterLogin();
-                    this.addActivity(`User ${user.username} logged in`);
-                    this.showToast('Login Berhasil', `Selamat datang, ${user.fullName || user.username}!`, 'success');
-                    this.showSection('dashboardSection');
                 } else {
                     this.showToast('Login Gagal', 'Username atau password salah.', 'danger');
                 }
             }
+
+            handleGetPremium() {
+                const phoneNumber = '6287865614222';
+                const message = `Halo Admin, saya tertarik dengan Ventra App. Mohon informasinya mengenai cara untuk mendapatkan dan menikmati fitur versi premiumnya. Terima kasih.`;
+                const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+            }
+
+            showCaptchaModal() {
+                const premiumModal = bootstrap.Modal.getInstance(document.getElementById('premiumNotificationModal'));
+                if (premiumModal) premiumModal.hide();
+
+                const captchaModal = new bootstrap.Modal(document.getElementById('captchaModal'));
+                captchaModal.show();
+                this.generateCaptcha();
+                // Fokus pada input setelah modal muncul
+                document.getElementById('captchaModal').addEventListener('shown.bs.modal', () => {
+                     document.getElementById('captchaInput').focus();
+                });
+            }
+
+            generateCaptcha() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let captcha = '';
+                for (let i = 0; i < 6; i++) {
+                    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                this.currentCaptcha = captcha;
+                document.getElementById('captcha-display').textContent = this.currentCaptcha;
+            }
+
+            verifyCaptcha() {
+                const userInput = document.getElementById('captchaInput').value;
+                if (userInput && userInput.toLowerCase() === this.currentCaptcha.toLowerCase()) {
+                    // Tandai bahwa pengguna telah melihat notifikasi dan menyelesaikan captcha
+                    localStorage.setItem('hasSeenVentraAppNotice', 'true');
+                    
+                    const captchaModal = bootstrap.Modal.getInstance(document.getElementById('captchaModal'));
+                    if(captchaModal) captchaModal.hide();
+
+                    // Lanjutkan ke aplikasi dengan data login yang tersimpan
+                    if (this.pendingLogin) {
+                        this.proceedToApp(this.pendingLogin.user, this.pendingLogin.rememberMe);
+                        this.pendingLogin = null; // Hapus data sementara
+                    }
+                } else {
+                    this.showToast('Error', 'Kode Captcha salah. Coba lagi.', 'danger');
+                    document.getElementById('captchaInput').value = '';
+                    this.generateCaptcha();
+                }
+            }
+            
+            // --- AKHIR FUNGSI BARU UNTUK ALUR LOGIN ---
 
             handleLogout() {
                 const user = this.currentUser;
                 this.addActivity(`User ${user.username} logged out`);
 
                 this.currentUser = null;
+                this.pendingLogin = null;
                 sessionStorage.removeItem('loggedInUser');
                 localStorage.removeItem('loggedInUser');
 
@@ -2431,7 +2649,7 @@
                     <div class="receipt-container">
                         <div class="receipt-header">
                             <img src="${this.settings.venueLogo || ''}" class="receipt-logo" alt="Logo">
-                            <p class="receipt-title">${this.settings.venueName || 'Ventra Pass'}</p>
+                            <p class="receipt-title">${this.settings.venueName || 'Ventra App'}</p>
                             <p class="receipt-subtitle">${this.settings.venueLocation || ''}</p>
                         </div>
                         <div class="receipt-divider"></div>
@@ -2794,7 +3012,7 @@
 
             createBackup() {
                 if (this.currentUser.role !== 'admin') return;
-                const fileName = document.getElementById('backupFileName').value || 'VentraPass_Backup';
+                const fileName = document.getElementById('backupFileName').value || 'VentraApp_Backup';
                 const dataStr = JSON.stringify(JSON.parse(localStorage.getItem('ticketSalesData')));
                 
                 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -3339,7 +3557,7 @@
                 const data = this.reportData;
                 
                 doc.setFontSize(18);
-                doc.text(this.settings.venueName || 'Laporan Ventra Pass', 14, 22);
+                doc.text(this.settings.venueName || 'Laporan Ventra App', 14, 22);
                 doc.setFontSize(12);
                 doc.text(data.title, 14, 30);
                 
