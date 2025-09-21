@@ -287,8 +287,10 @@
             font-size: 0.9rem;
             margin-top: 20px;
         }
-        .app-footer a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
-        .app-footer a:hover { text-decoration: underline; }
+        /* == START: Perbaikan Warna Font Footer == */
+        .app-footer a { color: var(--light-color); text-decoration: none; font-weight: 600; }
+        .app-footer a:hover { text-decoration: underline; color: #fff; }
+        /* == END: Perbaikan Warna Font Footer == */
         
         .badge.bg-primary { background-color: var(--primary-color) !important; }
         .border-bottom { border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
@@ -955,10 +957,10 @@
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Manajemen Pengguna</h1>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                            <button type="button" class="btn btn-sm btn-primary" id="addUserBtn">
                                 <i class="fas fa-user-plus me-1"></i>Tambah Pengguna
                             </button>
-                        </div>
+                            </div>
                     </div>
                     
                     <div class="card">
@@ -1808,6 +1810,15 @@
                 document.getElementById('exportReportBtn').addEventListener('click', () => this.exportReportPDF());
                 document.getElementById('printReportBtn').addEventListener('click', () => this.printReport());
                 
+                // == START: Event Listener untuk Proteksi Password Tambah Pengguna ==
+                document.getElementById('addUserBtn').addEventListener('click', () => {
+                    this.promptForAdminPassword(() => {
+                        const addUserModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addUserModal'));
+                        addUserModal.show();
+                    });
+                });
+                // == END: Event Listener untuk Proteksi Password Tambah Pengguna ==
+
                 // == START: Event Listener untuk Hak Akses ==
                 document.getElementById('newUserRole').addEventListener('change', (e) => {
                     const permissionsContainer = document.getElementById('newUserPermissionsContainer');
@@ -1840,7 +1851,13 @@
                 document.getElementById('usersTableBody').addEventListener('click', (e) => {
                     const editBtn = e.target.closest('.edit-user-btn');
                     const deleteBtn = e.target.closest('.delete-user-btn');
-                    if(editBtn) this.openEditUserModal(editBtn.dataset.id);
+                    // == START: Perbaikan Proteksi Password Edit Pengguna ==
+                    if(editBtn) {
+                        this.promptForAdminPassword(() => {
+                            this.openEditUserModal(editBtn.dataset.id);
+                        });
+                    }
+                    // == END: Perbaikan Proteksi Password Edit Pengguna ==
                     if(deleteBtn) this.deleteUser(deleteBtn.dataset.id);
                 });
 
@@ -2856,13 +2873,14 @@
                 return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
             }
             formatDate(dateStr) { 
-                // Adding one day because javascript date parsing from YYYY-MM-DD is weird
                 if (!dateStr) return '-';
                 const date = new Date(dateStr);
-                date.setDate(date.getDate() + 1);
-                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric'});
+                // Adjust for timezone offset to prevent date from shifting
+                const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+                const correctedDate = new Date(date.getTime() + userTimezoneOffset);
+                return correctedDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric'});
             }
-            formatDateTime(dateStr) { return dateStr ? new Date(dateStr).toLocaleString('id-ID') : '-'; }
+            formatDateTime(dateStr) { return dateStr ? new Date(dateStr).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-'; }
             timeSince(dateStr) {
                 const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
                 let interval = seconds / 31536000;
@@ -2882,6 +2900,22 @@
             formatPaymentMethod(method) { return { cash: 'Tunai', debit: 'Kartu Debit', credit: 'Kartu Kredit', transfer: 'Transfer Bank', ewallet: 'E-Wallet' }[method] || method; }
             formatUserRole(role) { return { admin: 'Admin', cashier: 'Kasir', manager: 'Manager' }[role] || role; }
 
+            // == START: Perbaikan Proteksi Password (Fungsi Baru) ==
+            promptForAdminPassword(onSuccess) {
+                if (this.currentUser.role !== 'admin') {
+                    this.showToast('Akses Ditolak', 'Fitur ini hanya untuk Administrator.', 'danger');
+                    return;
+                }
+                const password = prompt("Masukkan password admin untuk melanjutkan:");
+                if (password === "LKS.1945") {
+                    onSuccess();
+                } else if (password !== null) { // Hanya tampilkan error jika user salah input, bukan saat klik cancel
+                    this.showToast('Akses Ditolak', 'Password yang Anda masukkan salah.', 'danger');
+                }
+            }
+            // == END: Perbaikan Proteksi Password (Fungsi Baru) ==
+            
+            // == START: Perbaikan Tampilan Tanggal di Tiket ==
             generateTicketHTML(ticket) {
                 return `
                     <div class="ticket-small-print">
@@ -2901,12 +2935,15 @@
                         <div class="footer">
                             <div class="price">${this.formatCurrency(ticket.price)}</div>
                             <div class="expiry">
-                                ${ticket.expiryDate ? `Berlaku s/d:<br><strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya'}
+                                ${ticket.expiryDate ? `Berlaku s/d: <strong>${this.formatDate(ticket.expiryDate)}</strong>` : 'Berlaku selamanya'}
+                                <br>
+                                <span style="font-size: 7pt; color: #555;">Cetak: ${this.formatDateTime(ticket.generatedAt)}</span>
                             </div>
                         </div>
                     </div>
                 `;
             }
+            // == END: Perbaikan Tampilan Tanggal di Tiket ==
             
             viewTicket(ticketId) {
                 const ticket = this.tickets.find(t => t.id === ticketId);
