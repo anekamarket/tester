@@ -182,34 +182,46 @@
         }
         /* --- END: Desain Tiket Cetak Baru --- */
 
+        /* == START: PERBAIKAN & PENYEMPURNAAN KODE CETAK == */
+        #printable-content { 
+            display: none; 
+        }
+
         @media print {
+            body, .container-fluid {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            /* Sembunyikan semua elemen kecuali area cetak */
             body > *:not(#printable-content) {
                 display: none !important;
             }
-            #printable-content, #printable-content * {
-                visibility: visible !important;
-            }
-            body {
-                background-color: white !important;
-                background-image: none !important;
-                margin: 0;
-            }
+
+            /* Pastikan area cetak dan semua isinya terlihat */
             #printable-content {
+                display: block !important;
+                visibility: visible !important;
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
                 padding: 10mm; /* Margin halaman cetak */
             }
+
             .card {
-                box-shadow: none;
-                border: 1px solid #ccc;
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
             }
+
+            /* Pengaturan halaman cetak */
             @page {
-                size: A4; /* Ukuran kertas F4/Letter/Legal dapat disesuaikan di dialog print */
+                size: A4; /* Ukuran kertas dapat disesuaikan di dialog print */
                 margin: 0;
             }
         }
+        /* == END: PERBAIKAN & PENYEMPURNAAN KODE CETAK == */
         
         @media (max-width: 768px) {
             .sidebar { min-height: auto; }
@@ -311,7 +323,6 @@
             text-align: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         
-        #printable-content { display: none; }
         .report-summary-card { border-left: 5px solid var(--primary-color); background-color: #e0f2f1; }
     </style>
 </head>
@@ -1837,7 +1848,6 @@
                 document.getElementById('generateTicketForm').reset();
             }
 
-            // REVISED: showGeneratedTickets to use the new ticket design
             showGeneratedTickets(tickets) {
                 const container = document.getElementById('generatedTicketsContainer');
                 container.innerHTML = ''; // Clear previous content
@@ -1854,7 +1864,6 @@
                 document.getElementById('generatedTicketsCard').style.display = 'block';
             }
             
-            // REVISED: printAllGeneratedTickets to use the new layout
             printAllGeneratedTickets() {
                 const container = document.getElementById('generatedTicketsContainer');
                 const ticketsHTML = container.querySelector('.printable-ticket-wrapper')?.innerHTML;
@@ -2146,7 +2155,6 @@
                 modal.show();
             }
             
-            // REVISED: generateReceiptHTML for a better design
             generateReceiptHTML(transaction) {
                  return `
                     <div class="receipt-container">
@@ -2645,7 +2653,6 @@
             formatPaymentMethod(method) { return { cash: 'Tunai', debit: 'Kartu Debit', credit: 'Kartu Kredit', transfer: 'Transfer Bank', ewallet: 'E-Wallet' }[method] || method; }
             formatUserRole(role) { return { admin: 'Admin', cashier: 'Kasir', manager: 'Manager' }[role] || role; }
 
-            // NEW: generateTicketHTML to create the new ticket design
             generateTicketHTML(ticket) {
                 return `
                     <div class="ticket-small-print">
@@ -2671,7 +2678,6 @@
                 `;
             }
             
-            // REVISED: viewTicket to use the new ticket design
             viewTicket(ticketId) {
                 const ticket = this.tickets.find(t => t.id === ticketId);
                 if (!ticket) return;
