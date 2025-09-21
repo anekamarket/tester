@@ -159,38 +159,32 @@
         }
         
         @media print {
-            .no-print {
+            body > *:not(#printable-content) {
                 display: none !important;
             }
-            
+            #printable-content, #printable-content * {
+                visibility: visible !important;
+                display: block !important;
+            }
             body {
                 background-color: white !important;
+                margin: 0;
             }
-            
+            #printable-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+            }
             .ticket-card {
                 page-break-inside: avoid;
                 margin: 10px 0;
-                width: 48%;
-                display: inline-block;
-                box-sizing: border-box;
+                box-shadow: none;
+                border: 1px solid #ccc;
             }
-
-            .modal-backdrop {
-                display: none !important;
-            }
-
-            main {
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            #printable-content {
-                display: block !important;
-            }
-            
             @page {
-                size: F4;
+                size: A4;
                 margin: 10mm;
             }
         }
@@ -1457,15 +1451,15 @@
     <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header no-print">
                     <h5 class="modal-title">Detail Tiket</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="ticketModalContent">
                     </div>
-                <div class="modal-footer">
+                <div class="modal-footer no-print">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary no-print" id="printTicketBtn">
+                    <button type="button" class="btn btn-primary" id="printTicketBtn">
                         <i class="fas fa-print me-1"></i>Cetak
                     </button>
                 </div>
@@ -1476,15 +1470,15 @@
     <div class="modal fade" id="viewTransactionModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header no-print">
                     <h5 class="modal-title">Detail Transaksi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="transactionModalContent">
                     </div>
-                <div class="modal-footer">
+                <div class="modal-footer no-print">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary no-print" id="printTransactionBtn">
+                    <button type="button" class="btn btn-primary" id="printTransactionBtn">
                         <i class="fas fa-print me-1"></i>Cetak Struk
                     </button>
                 </div>
@@ -1742,9 +1736,8 @@
                         this.loadUsers();
                         break;
                     case 'salesSection':
-                        this.cart = [];
+                        // Do not clear cart when just switching view
                         this.updateCart();
-                        document.getElementById('paymentForm').reset();
                         break;
                 }
             }
@@ -1980,7 +1973,8 @@
                 for (let i = 0; i < quantity; i++) {
                     let code;
                     do {
-                       code = prefix + this.generateRandomString(8);
+                       // PERBAIKAN: Kode unik tiket diubah menjadi 3 karakter
+                       code = prefix + this.generateRandomString(3);
                     } while (existingCodes.has(code));
                     existingCodes.add(code);
                     
@@ -2077,7 +2071,7 @@
 
                     tableBody.insertAdjacentHTML('beforeend', `
                         <tr>
-                            <td><input type="checkbox" class="ticket-checkbox form-check-input" data-id="${ticket.id}"></td>
+                            <td><input type="checkbox" class="ticket-checkbox form-check-input" data-id="${ticket.id}" ${ticket.status !== 'available' ? 'disabled' : ''}></td>
                             <td>${ticket.code}</td>
                             <td>${this.formatTicketType(ticket.type)}</td>
                             <td>${this.formatCurrency(ticket.price)}</td>
@@ -2094,7 +2088,8 @@
             }
 
             toggleSelectAllTickets(checked) {
-                document.querySelectorAll('#stockTableBody .ticket-checkbox').forEach(checkbox => checkbox.checked = checked);
+                // Hanya pilih checkbox yang tidak di-disable
+                document.querySelectorAll('#stockTableBody .ticket-checkbox:not(:disabled)').forEach(checkbox => checkbox.checked = checked);
                 document.getElementById('selectAllTickets').checked = checked;
                 document.getElementById('selectAllHeader').checked = checked;
             }
@@ -2106,12 +2101,25 @@
                     return;
                 }
                 let addedCount = 0;
+                let alreadyInCartCount = 0;
+                
                 selectedCheckboxes.forEach(checkbox => {
-                    if (this.addToCart(checkbox.dataset.id, false)) {
+                    const result = this.addToCart(checkbox.dataset.id, false);
+                    if (result === 'added') {
                         addedCount++;
+                    } else if (result === 'in_cart') {
+                        alreadyInCartCount++;
                     }
                 });
-                this.showToast('Sukses', `${addedCount} tiket berhasil ditambahkan ke keranjang.`, 'success');
+
+                if (addedCount > 0) {
+                    this.showToast('Sukses', `${addedCount} tiket berhasil ditambahkan ke keranjang.`, 'success');
+                }
+                if (alreadyInCartCount > 0) {
+                    this.showToast('Info', `${alreadyInCartCount} tiket sudah ada di keranjang.`, 'info');
+                }
+                
+                // PERBAIKAN: Langsung pindah ke menu penjualan setelah menambahkan
                 this.showSection('salesSection');
             }
 
@@ -2119,21 +2127,21 @@
                 const ticket = this.tickets.find(t => t.id === ticketId);
                 if (!ticket) {
                     if (showToast) this.showToast('Error', 'Tiket tidak ditemukan.', 'danger');
-                    return false;
+                    return 'not_found';
                 }
                 if (ticket.status !== 'available') {
                     if (showToast) this.showToast('Error', `Tiket ${ticket.code} tidak tersedia.`, 'danger');
-                    return false;
+                    return 'unavailable';
                 }
                 if (this.cart.some(item => item.id === ticket.id)) {
                     if (showToast) this.showToast('Info', `Tiket ${ticket.code} sudah ada di keranjang.`, 'info');
-                    return false;
+                    return 'in_cart';
                 }
 
                 this.cart.push({ id: ticket.id, code: ticket.code, type: ticket.type, price: ticket.price });
                 this.updateCart();
                 if (showToast) this.showToast('Sukses', `Tiket ${ticket.code} ditambahkan.`, 'success');
-                return true;
+                return 'added';
             }
 
             updateCart() {
@@ -2281,7 +2289,11 @@
                 const printBtn = document.getElementById('printTransactionBtn');
                 const newPrintBtn = printBtn.cloneNode(true); // Avoid multiple listeners
                 printBtn.parentNode.replaceChild(newPrintBtn, printBtn);
-                newPrintBtn.addEventListener('click', () => this.printContent(receiptHTML, `Struk Transaksi ${transaction.transactionId}`));
+                newPrintBtn.addEventListener('click', () => {
+                    // PERBAIKAN: Sembunyikan modal sebelum mencetak untuk menghindari tumpang tindih
+                    modal.hide();
+                    this.printContent(receiptHTML, `Struk Transaksi ${transaction.transactionId}`);
+                });
                 
                 modal.show();
             }
@@ -2704,8 +2716,12 @@
             printContent(contentHTML, title) {
                 const printable = document.getElementById('printable-content');
                 printable.innerHTML = `<h3 class="text-center mb-4">${title}</h3>${contentHTML}`;
-                window.print();
-                printable.innerHTML = '';
+                
+                // Delay print command slightly to allow DOM to update
+                setTimeout(() => {
+                    window.print();
+                    printable.innerHTML = '';
+                }, 100);
             }
 
             formatCurrency(amount) {
@@ -2761,7 +2777,10 @@
                 const printBtn = document.getElementById('printTicketBtn');
                 const newPrintBtn = printBtn.cloneNode(true);
                 printBtn.parentNode.replaceChild(newPrintBtn, printBtn);
-                newPrintBtn.addEventListener('click', () => this.printContent(ticketHTML, `Tiket ${ticket.code}`));
+                newPrintBtn.addEventListener('click', () => {
+                    bootstrap.Modal.getInstance(document.getElementById('viewTicketModal')).hide();
+                    this.printContent(ticketHTML, `Tiket ${ticket.code}`)
+                });
 
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('viewTicketModal')).show();
             }
