@@ -1259,11 +1259,11 @@
                                 </div>
                             </div>
                             
-                            <div class="row">
+                            <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="card">
                                         <div class="card-header d-flex justify-content-between align-items-center">
-                                            <div><i class="fas fa-chart-bar me-2"></i>Grafik Laporan</div>
+                                            <div><i class="fas fa-table me-2"></i>Data Laporan</div>
                                             <div id="reportActions" style="display: none;">
                                                 <button class="btn btn-sm btn-info" id="printReportBtn"><i class="fas fa-print me-2"></i>Cetak Laporan</button>
                                                 <button class="btn btn-sm btn-danger" id="downloadReportPdfBtn"><i class="fas fa-file-pdf me-2"></i>Unduh PDF</button>
@@ -1271,19 +1271,6 @@
                                         </div>
                                         <div class="card-body">
                                             <div id="reportSummary" class="mb-3" style="display: none;"></div>
-                                            <canvas id="reportChart" height="300"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <i class="fas fa-table me-2"></i>Data Laporan
-                                        </div>
-                                        <div class="card-body">
                                             <div class="table-responsive">
                                                 <table class="table table-hover data-table">
                                                     <thead id="reportTableHeader">
@@ -1984,7 +1971,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="invoice-container printable-area" id="checkoutInvoice">
-                        <div class="invoice-watermark">BELUM LUNAS</div>
+                        <div class="invoice-watermark"></div>
                         <div class="invoice-header">
                             <div class="row">
                                 <div class="col-md-6">
@@ -2232,7 +2219,7 @@
             initStorage();
             loadInitialData();
             setupEventListeners();
-            initCharts();
+            initDashboardCharts();
             updateDashboardStats();
             showNotification('Selamat Datang', 'Sistem Manajemen Hotel berhasil dimuat.', 'success');
         }
@@ -3004,12 +2991,22 @@
             document.getElementById('invoiceTax').textContent = formatCurrency(taxAmount);
             document.getElementById('invoiceTotal').textContent = formatCurrency(totalAmount);
 
-            // Watermark logic
-            if (reservation.paymentStatus === 'pending') {
-                document.getElementById('checkoutInvoice').classList.add('watermarked');
+            // --- Watermark Logic Start ---
+            const watermarkEl = document.getElementById('checkoutInvoice').querySelector('.invoice-watermark');
+            const invoiceContainer = document.getElementById('checkoutInvoice');
+
+            if (reservation.paymentStatus === 'paid') {
+                watermarkEl.textContent = 'LUNAS';
+                watermarkEl.style.color = 'rgba(40, 167, 69, 0.15)'; // Green color
+                invoiceContainer.classList.add('watermarked');
+            } else if (reservation.paymentStatus === 'pending') {
+                watermarkEl.textContent = 'BELUM LUNAS';
+                watermarkEl.style.color = 'rgba(220, 53, 69, 0.15)'; // Red color
+                invoiceContainer.classList.add('watermarked');
             } else {
-                document.getElementById('checkoutInvoice').classList.remove('watermarked');
+                invoiceContainer.classList.remove('watermarked');
             }
+            // --- Watermark Logic End ---
             
             return totalAmount;
         }
@@ -3445,14 +3442,21 @@
             doc.text('Total', 150, finalY + 22, { align: 'right' });
             doc.text(formatCurrency(totalAmount), 200, finalY + 22, { align: 'right' });
             
-            // Add watermark to PDF if status is pending
-            if (reservation.paymentStatus === 'pending') {
+            // --- PDF Watermark Logic Start ---
+            if (reservation.paymentStatus === 'paid') {
                 doc.setFontSize(72);
                 doc.setFont('Helvetica', 'bold');
-                doc.setTextColor(220, 53, 69, 0.2);
+                doc.setTextColor(40, 167, 69, 0.2); // Greenish, semi-transparent
+                doc.text('LUNAS', 105, 160, { angle: -35, align: 'center' });
+                doc.setTextColor(0,0,0); // Reset text color
+            } else if (reservation.paymentStatus === 'pending') {
+                doc.setFontSize(72);
+                doc.setFont('Helvetica', 'bold');
+                doc.setTextColor(220, 53, 69, 0.2); // Reddish, semi-transparent
                 doc.text('BELUM LUNAS', 105, 160, { angle: -35, align: 'center' });
-                doc.setTextColor(0,0,0);
+                doc.setTextColor(0,0,0); // Reset text color
             }
+            // --- PDF Watermark Logic End ---
 
             doc.setFont('Helvetica', 'italic');
             doc.setFontSize(10);
@@ -3637,7 +3641,7 @@
             document.getElementById('todayCheckouts').textContent = reservations.filter(r => r.status === 'checked-out' && r.actualCheckout && r.actualCheckout.startsWith(today)).length;
             
             updateRecentActivities(reservations, guests, rooms);
-            initCharts();
+            initDashboardCharts();
         }
         
         function updateRecentActivities(reservations, guests, rooms) {
@@ -3659,8 +3663,8 @@
             });
         }
         
-        let monthlyStatsChart, roomStatusChart, reportChart;
-        function initCharts() {
+        let monthlyStatsChart, roomStatusChart;
+        function initDashboardCharts() {
             const monthlyCtx = document.getElementById('monthlyStatsChart').getContext('2d');
             if(monthlyStatsChart) monthlyStatsChart.destroy();
             
@@ -3711,9 +3715,6 @@
             });
         }
         
-        // =================================================================
-        // == PERBAIKAN DAN PENYEDERHANAAN FUNGSI LAPORAN DIMULAI DI SINI ==
-        // =================================================================
         function generateReport() {
             const reportType = document.getElementById('reportType').value;
             const startDateStr = document.getElementById('reportStartDate').value;
@@ -3743,15 +3744,11 @@
             
             let tableHeaders = [];
             let tableRows = [];
-            let chartLabel = '';
             let totalValue = 0;
             let summaryText = '';
-            let dataUnit = ''; // For table display (e.g., 'Tamu', 'Reservasi')
 
             switch(reportType) {
                 case 'revenue':
-                    chartLabel = 'Total Pendapatan';
-                    dataUnit = 'Pendapatan';
                     reservations.filter(r => r.status === 'checked-out' && r.actualCheckout && new Date(r.actualCheckout) >= startDate && new Date(r.actualCheckout) <= endDate)
                         .forEach(r => {
                             const month = new Date(r.actualCheckout).getMonth();
@@ -3763,11 +3760,12 @@
                     break;
                 
                 case 'occupancy':
-                    chartLabel = 'Rata-rata Okupansi (%)';
-                    dataUnit = 'Okupansi';
                     const totalRooms = rooms.length;
                     if (totalRooms === 0) {
                         showNotification('Warning', 'Tidak ada kamar terdaftar. Okupansi selalu 0%.', 'warning');
+                        tableHeaders = ['Bulan', 'Rata-rata Okupansi'];
+                        summaryText = `Rata-rata Okupansi Keseluruhan: 0.00%`;
+                        updateReportView(tableHeaders, [], summaryText);
                         return;
                     }
                     const monthlyOccupancyDays = Array(12).fill(0);
@@ -3794,14 +3792,13 @@
                     }
 
                     tableHeaders = ['Bulan', 'Rata-rata Okupansi'];
-                    const totalMonths = daysInMonth.filter(d => d > 0).length || 1;
-                    totalValue = monthlyData.reduce((sum, val) => sum + val, 0) / totalMonths;
+                    const totalDaysInRange = ((endDate - startDate) / (1000 * 3600 * 24)) + 1;
+                    const totalOccupiedDays = monthlyOccupancyDays.reduce((a, b) => a + b, 0);
+                    totalValue = (totalOccupiedDays / (totalDaysInRange * totalRooms)) * 100;
                     summaryText = `Rata-rata Okupansi Keseluruhan: ${totalValue.toFixed(2)}%`;
                     break;
 
                 case 'guests':
-                    chartLabel = 'Tamu Baru';
-                    dataUnit = 'Tamu Baru';
                     guests.filter(g => g.createdAt && new Date(g.createdAt) >= startDate && new Date(g.createdAt) <= endDate)
                         .forEach(g => {
                             const month = new Date(g.createdAt).getMonth();
@@ -3813,8 +3810,6 @@
                     break;
 
                 case 'reservations':
-                    chartLabel = 'Reservasi Baru';
-                    dataUnit = 'Reservasi Baru';
                     reservations.filter(r => r.createdAt && new Date(r.createdAt) >= startDate && new Date(r.createdAt) <= endDate)
                         .forEach(r => {
                             const month = new Date(r.createdAt).getMonth();
@@ -3826,7 +3821,6 @@
                     break;
             }
             
-            // Populate table rows from monthly data
             monthLabels.forEach((month, index) => {
                 if(monthlyData[index] > 0 || (reportType === 'occupancy' && monthlyData[index] >= 0 && new Date(startDate).getMonth() <= index && new Date(endDate).getMonth() >= index)) {
                     let value = monthlyData[index];
@@ -3835,17 +3829,6 @@
                     tableRows.push([monthLabels[index], value]);
                 }
             });
-
-            const chartData = {
-                labels: monthLabels,
-                datasets: [{
-                    label: chartLabel,
-                    data: monthlyData,
-                    backgroundColor: 'rgba(13, 71, 161, 0.7)',
-                    borderColor: 'var(--hotel-primary)',
-                    borderWidth: 1
-                }]
-            };
 
             currentReportData = {
                 title: `Laporan ${document.getElementById('reportType').options[document.getElementById('reportType').selectedIndex].text}`,
@@ -3856,30 +3839,11 @@
                 type: reportType
             };
 
-            updateReportView(chartData, tableHeaders, tableRows, summaryText);
+            updateReportView(tableHeaders, tableRows, summaryText);
             showNotification('Sukses', `Laporan ${reportType} berhasil dibuat.`, 'success');
         }
 
-        function updateReportView(chartData, tableHeaders, tableRows, summaryText) {
-            const ctx = document.getElementById('reportChart').getContext('2d');
-            if (reportChart) {
-                reportChart.destroy();
-            }
-            // Use 'bar' chart for a simpler, clearer view
-            reportChart = new Chart(ctx, { 
-                type: 'bar', 
-                data: chartData, 
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    } 
-                } 
-            });
-
+        function updateReportView(tableHeaders, tableRows, summaryText) {
             const header = document.getElementById('reportTableHeader');
             const body = document.getElementById('reportTableBody');
             header.innerHTML = `<tr>${tableHeaders.map(h => `<th>${h}</th>`).join('')}</tr>`;
@@ -3893,10 +3857,6 @@
             document.getElementById('reportActions').style.display = 'block';
         }
 
-        // ===============================================================
-        // == AKHIR BAGIAN PERBAIKAN FUNGSI LAPORAN                     ==
-        // ===============================================================
-        
         function printReport() {
             if (!currentReportData.title) {
                 showNotification('Error', 'Generate laporan terlebih dahulu sebelum mencetak.', 'error');
@@ -3957,7 +3917,6 @@
             doc.save(`laporan_${currentReportData.type}_${new Date().toISOString().split('T')[0]}.pdf`);
             showNotification('Sukses', 'PDF Laporan berhasil dibuat.', 'success');
         }
-
 
         function handleGuestSearch(e) {
             const searchTerm = e.target.value.toLowerCase();
