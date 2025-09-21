@@ -137,6 +137,7 @@
                 justify-content: space-between;
                 text-align: center;
                 height: 53.4mm; /* (297mm - 20mm padding) / 5 rows - 5mm gap */
+                overflow: hidden;
             }
             .ticket-mini h5 { font-size: 10pt; font-weight: bold; margin-bottom: 4px; }
             .ticket-mini p { font-size: 8pt; margin: 2px 0; }
@@ -250,6 +251,16 @@
                                         </div>
                                     </form>
                                     <hr>
+                                    <div class="card bg-light mb-4">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-muted"><i class="fas fa-search me-2"></i>Validasi Cepat Karcis</h6>
+                                            <form id="quickValidateForm" class="d-flex gap-2">
+                                                <input type="text" class="form-control text-uppercase" id="quickTicketCodeInput" placeholder="Masukkan Kode Karcis" required>
+                                                <button type="submit" class="btn btn-secondary">Cek</button>
+                                            </form>
+                                            <div id="quickValidationResult" class="mt-2" style="min-height: 25px;"></div>
+                                        </div>
+                                    </div>
                                     <h5><i class="fas fa-shopping-cart me-2"></i>Keranjang Penjualan</h5>
                                     <div class="table-responsive">
                                         <table class="table data-table">
@@ -497,6 +508,7 @@
             document.getElementById('processSaleBtn').addEventListener('click', () => new bootstrap.Modal(document.getElementById('paymentModal')).show());
             document.getElementById('confirmPaymentBtn').addEventListener('click', processSale);
             document.getElementById('validateTicketForm').addEventListener('submit', validateTicket);
+            document.getElementById('quickValidateForm').addEventListener('submit', quickValidateTicket); // Listener untuk validasi cepat
             document.getElementById('generalSettingsForm').addEventListener('submit', (e) => { e.preventDefault(); requestPassword(CONFIG.PASSWORD_PROMPT_ACTIONS.SAVE_SETTINGS); });
             document.getElementById('resetDataBtn').addEventListener('click', () => requestPassword(CONFIG.PASSWORD_PROMPT_ACTIONS.RESET_DATA));
             document.getElementById('backupDataBtn').addEventListener('click', backupAllData);
@@ -711,34 +723,40 @@
 
             localStorage.setItem('wisata_ticket_stock', JSON.stringify(stock));
             
+            // --- PERBAIKAN CETAK KARCIS ---
             const ticketHtmlChunks = newTickets.map(ticket => `
                 <div class="ticket-mini">
                     <div>
-                        <h5>${settings.wisataName}</h5>
+                        <h5>${settings.wisataName || 'Tempat Wisata'}</h5>
                         <p>KARCIS MASUK RESMI</p>
                         <p><strong>${selectedType.name}</strong> - ${formatCurrency(selectedType.price)}</p>
                     </div>
                     <div><p class="ticket-code">${ticket.code}</p><p class="ticket-footer">Berlaku untuk 1 kali masuk. Simpan baik-baik.</p></div>
                 </div>`).join('');
 
-            document.getElementById('ticketPrintableArea').innerHTML = `<div class="ticket-print-container">${ticketHtmlChunks}</div>`;
+            const printableContent = `<div class="ticket-print-container">${ticketHtmlChunks}</div>`;
+            document.getElementById('ticketPrintableArea').innerHTML = printableContent;
             
             bootstrap.Modal.getInstance(document.getElementById('generateTicketsModal')).hide();
             loadAllData();
             showToast('Berhasil', `${quantity} karcis baru telah dibuat.`, 'success');
             
-            setTimeout(() => {
-                const printWindow = window.open('', 'PRINT', 'height=800,width=900');
-                printWindow.document.write('<html><head><title>Cetak Karcis</title>');
-                printWindow.document.write('<style>' + document.querySelector('style').innerHTML + '</style>'); // copy styles
-                printWindow.document.write('</head><body>');
-                printWindow.document.write(document.getElementById('ticketPrintableArea').innerHTML);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
+            // Logika pencetakan yang lebih andal
+            const printWindow = window.open('', '_blank', 'height=800,width=900');
+            printWindow.document.write('<html><head><title>Cetak Karcis</title>');
+            // Salin semua gaya dari dokumen utama untuk memastikan tampilan yang konsisten
+            printWindow.document.write('<style>' + document.querySelector('style').innerHTML + '</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printableContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            // Gunakan onload untuk memastikan konten dimuat sepenuhnya sebelum mencetak
+            printWindow.onload = function() {
                 printWindow.focus();
                 printWindow.print();
                 printWindow.close();
-            }, 500);
+            };
+            // --- AKHIR PERBAIKAN ---
         }
 
         function addToCart(e) {
@@ -830,37 +848,51 @@
             showToast('Transaksi Berhasil', `Transaksi ${transactionId} berhasil diproses.`, 'success');
             viewReceipt(transaction.id, true);
         }
-
-        function validateTicket(e) {
-            e.preventDefault();
-            const code = document.getElementById('ticketCodeInput').value.trim().toUpperCase();
-            const resultDiv = document.getElementById('validationResult');
+        
+        function performTicketValidation(code, resultDiv) {
             resultDiv.innerHTML = '';
             if (!code) return;
             
             let stock = JSON.parse(localStorage.getItem('wisata_ticket_stock') || '[]');
             const ticketIndex = stock.findIndex(t => t.code === code);
             
-            let alertClass, title, message;
+            let alertClass, title, message, smallText = resultDiv.id.includes('quick');
 
             if (ticketIndex === -1) {
-                alertClass = 'alert-danger'; title = 'GAGAL!'; message = 'Kode karcis tidak ditemukan.';
+                alertClass = 'alert-danger'; title = 'Gagal!'; message = 'Kode karcis tidak ditemukan.';
             } else if (stock[ticketIndex].status === 'used') {
-                alertClass = 'alert-warning'; title = 'PERINGATAN!'; message = `Karcis ini sudah digunakan pada ${new Date(stock[ticketIndex].usedAt).toLocaleString('id-ID')}.`;
+                alertClass = 'alert-warning'; title = 'Peringatan!'; message = `Sudah digunakan pada ${new Date(stock[ticketIndex].usedAt).toLocaleString('id-ID')}.`;
             } else if (stock[ticketIndex].status === 'available') {
                 stock[ticketIndex].status = 'used';
                 stock[ticketIndex].usedAt = new Date().toISOString();
                 localStorage.setItem('wisata_ticket_stock', JSON.stringify(stock));
-                alertClass = 'alert-success'; title = 'BERHASIL!'; message = 'Selamat datang. Karcis valid.';
+                alertClass = 'alert-success'; title = 'Berhasil!'; message = 'Karcis valid, selamat datang.';
                 loadAllData(); // Update dashboard etc.
             } else {
-                alertClass = 'alert-secondary'; title = 'INFO:'; message = `Status karcis: ${stock[ticketIndex].status}.`;
+                alertClass = 'alert-secondary'; title = 'Info:'; message = `Status karcis: ${stock[ticketIndex].status}.`;
             }
-            resultDiv.innerHTML = `<div class="alert ${alertClass}"><strong>${title}</strong> ${message}</div>`;
+
+            const alertSize = smallText ? 'alert-sm p-2 small' : '';
+            resultDiv.innerHTML = `<div class="alert ${alertClass} ${alertSize}"><strong>${title}</strong> ${message}</div>`;
+
+            setTimeout(() => resultDiv.innerHTML = '', 7000); // Clear message after 7 seconds
+        }
+
+        function validateTicket(e) {
+            e.preventDefault();
+            const code = document.getElementById('ticketCodeInput').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('validationResult');
+            performTicketValidation(code, resultDiv);
             document.getElementById('ticketCodeInput').value = '';
             document.getElementById('ticketCodeInput').focus();
+        }
 
-            setTimeout(() => resultDiv.innerHTML = '', 5000); // Clear message after 5 seconds
+        function quickValidateTicket(e) {
+            e.preventDefault();
+            const code = document.getElementById('quickTicketCodeInput').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('quickValidationResult');
+            performTicketValidation(code, resultDiv);
+            document.getElementById('quickTicketCodeInput').value = '';
         }
 
         // --- SETTINGS & DATA MANAGEMENT ---
