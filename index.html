@@ -300,7 +300,7 @@
                 <h2 class="panel-title"><i class="fas fa-book-open"></i>Daftar Menu (<span id="productCount">0</span>)</h2>
                 <div class="search-container">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="productSearch" class="search-input" placeholder="Cari menu...">
+                    <input type="text" id="productSearch" class="search-input" placeholder="Cari menu... (F2)">
                 </div>
                 <div class="filter-row">
                     <div class="filter-chip active" data-category="all">Semua</div>
@@ -1224,7 +1224,7 @@
             $('#receiptModal').css('display', 'flex');
         }
 
-        /* === PENYEMPURNAAN FUNGSI (Sesuai Permintaan): Stabilitas Cetak/Unduh Struk Ditingkatkan === */
+        /* === PENYEMPURNAAN & PERBAIKAN FUNGSI (Sesuai Permintaan): Stabilitas Cetak/Unduh Struk Ditingkatkan === */
         function generatePdfReceipt(trx) {
             // Validasi awal: Pastikan data transaksi ada sebelum diproses.
             if (!trx || !trx.id) {
@@ -1424,7 +1424,84 @@
             reader.readAsText(file);
         });
 
-        // --- 9. APP START ---
+        // --- 9. PENAMBAHAN FITUR: TOMBOL PINTAS (KEYBOARD SHORTCUTS) ---
+        $(document).on('keydown', function(e) {
+            // Abaikan shortcut jika pengguna sedang mengetik di input, textarea, dll.
+            if ($(e.target).is('input, textarea, select')) {
+                // Pengecualian: Izinkan 'Escape' untuk menutup modal
+                if (e.key === 'Escape') {
+                    $('.modal:visible').last().hide();
+                }
+                // Pengecualian: Izinkan 'Enter' pada input tertentu untuk memicu aksi
+                if (e.key === 'Enter') {
+                    // Selesaikan pembayaran dari kolom jumlah bayar
+                    if ($('#checkoutModal').is(':visible') && $(e.target).is('#paymentAmount')) {
+                        e.preventDefault();
+                        $('#completePaymentBtn').click();
+                    }
+                    // Lakukan login dari form login
+                    if ($('#loginPage').is(':visible') && ($(e.target).is('#username') || $(e.target).is('#password'))) {
+                        e.preventDefault();
+                        $('#loginForm').submit();
+                    }
+                }
+                return; // Hentikan eksekusi lebih lanjut
+            }
+
+            // --- Pintasan Global (Hanya aktif saat aplikasi utama terlihat) ---
+            if ($('#mainApp').is(':visible')) {
+                switch(e.key) {
+                    case 'F1':
+                        e.preventDefault();
+                        $('#dashboardBtn').click();
+                        break;
+                    case 'F2':
+                        e.preventDefault();
+                        $('#productSearch').focus();
+                        break;
+                    case 'F4':
+                        e.preventDefault();
+                        if (!$('#checkoutBtn').is(':disabled')) {
+                            $('#checkoutBtn').click();
+                        }
+                        break;
+                    case 'F6':
+                        e.preventDefault();
+                        if (!$('#holdOrderBtn').is(':disabled')) {
+                            $('#holdOrderBtn').click();
+                        }
+                        break;
+                    case 'F7':
+                        e.preventDefault();
+                        $('#viewHeldOrdersBtn').click();
+                        break;
+                }
+
+                // Kombinasi tombol Ctrl
+                if (e.ctrlKey) {
+                    if (e.key.toLowerCase() === 'q') {
+                        e.preventDefault();
+                        $('#logoutBtn').click();
+                    }
+                    if (e.key === 'Delete') { // Ctrl + Delete untuk mengosongkan keranjang
+                        e.preventDefault();
+                        $('#clearCartBtn').click();
+                    }
+                }
+            }
+
+            // --- Pintasan Modal (berlaku jika ada modal yang terbuka) ---
+            if ($('.modal').is(':visible')) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    // Cari modal paling atas yang terlihat dan tutup
+                    $('.modal:visible').last().hide();
+                }
+            }
+        });
+
+
+        // --- 10. APP START ---
         initializeData();
         loadDataFromStorage();
         applyInitialTheme();
