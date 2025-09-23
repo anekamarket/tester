@@ -100,7 +100,7 @@
         .product-stock.low { color: var(--danger); }
         .product-barcode { font-size: 0.75rem; color: var(--secondary); margin-top: 4px; font-weight: 500;}
 
-        .search-container { position: relative; margin-bottom: 16px; }
+        .search-container { position: relative; margin-bottom: 16px; width:100%; }
         .search-container i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray); }
         .search-input { width: 100%; padding: 12px 16px 12px 40px; border: 1px solid #ddd; border-radius: var(--rounded-sm); font-size: 1rem; }
         .filter-row { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
@@ -145,11 +145,13 @@
         .form-label { display: block; margin-bottom: 8px; font-weight: 500; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--rounded-sm); font-size: 1rem; }
         textarea.form-control { min-height: 100px; resize: vertical; }
+        .form-hint { font-size: 0.8rem; color: var(--gray); margin-top: 4px;}
 
         .login-container { max-width: 400px; margin: 20px auto; background: var(--white); border-radius: var(--rounded-lg); padding: 24px; box-shadow: var(--shadow); }
         .login-header { text-align: center; margin-bottom: 24px; }
         .login-logo { font-size: 3rem; color: var(--primary); margin-bottom: 12px; }
         .login-title { font-size: 1.8rem; color: var(--primary); font-weight: 600; }
+        .login-hint { font-size: 0.8rem; color: var(--gray); margin-top: 10px; }
 
         .toast { position: fixed; top: 20px; right: 20px; padding: 12px 16px; background-color: var(--dark); color: var(--white); border-radius: var(--rounded-sm); box-shadow: var(--shadow); z-index: 1100; display: flex; align-items: center; transform: translateX(200%); transition: transform 0.3s; }
         .toast.show { transform: translateX(0); }
@@ -220,6 +222,33 @@
 
         .data-management-buttons { display: flex; gap: 8px; margin-top: 16px; }
         .reset-warning { color: var(--danger); font-weight: bold; margin-bottom: 10px; }
+        
+        /* --- [NEW] Smart Search Dropdown Styles --- */
+        .searchable-dropdown { position: relative; }
+        .search-results {
+            display: none;
+            position: absolute;
+            width: 100%;
+            background: var(--white);
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 var(--rounded-sm) var(--rounded-sm);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .result-item { padding: 10px; cursor: pointer; }
+        .result-item:hover { background-color: var(--primary-light); }
+        .result-item-name { font-weight: 500; }
+        .result-item-info { font-size: 0.8rem; color: var(--gray); }
+        .selected-member-info {
+            background-color: var(--primary-light);
+            padding: 8px 12px;
+            border-radius: var(--rounded-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -235,7 +264,8 @@
             <div class="login-header">
                 <div class="login-logo"><i class="fas fa-utensils"></i></div>
                 <h1 class="login-title">SISTEM KASIR KAFE</h1>
-                <p>Hubungi Admin Untuk Mendapatkan Password</p> 
+                <p>Hubungi Admin Untuk Mendapatkan Password</p>
+                <p class="login-hint">(Default: user: admin, pass: 12345 | user: kasir, pass: kasir123)</p>
             </div>
             <form id="loginForm">
                 <div class="form-group">
@@ -288,15 +318,9 @@
                     <span id="productCount">(0 menu)</span>
                 </h2>
                 
-                <div class="d-flex gap-2 mb-3">
-                    <div class="search-container" style="flex: 2;">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="productSearch" class="search-input" placeholder="Cari menu...">
-                    </div>
-                    <div class="search-container" style="flex: 1;">
-                        <i class="fas fa-barcode"></i>
-                        <input type="text" id="barcodeSearch" class="search-input" placeholder="Scan Kode Menu...">
-                    </div>
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="productSearch" class="search-input" placeholder="Cari menu (nama, harga, atau kode)...">
                 </div>
                 
                 <div class="filter-row">
@@ -328,7 +352,10 @@
             <section class="panel cart-panel">
                 <h2 class="panel-title">
                     <span>Pesanan</span>
-                    <span id="cartCount">(0 item)</span>
+                    <div>
+                        <span id="cartCount">(0 item)</span>
+                        <button id="clearCartBtn" class="btn btn-danger btn-sm" style="margin-left: 8px; padding: 4px 8px; font-size: 0.8rem;">Kosongkan</button>
+                    </div>
                 </h2>
                 
                 <div class="form-group">
@@ -342,7 +369,11 @@
                 <div id="memberSelectContainer" style="display: none;">
                     <div class="form-group">
                         <label class="form-label">Pilih Member</label>
-                        <select id="memberSelect" class="form-control"></select>
+                        <div id="memberSearchWrapper" class="searchable-dropdown">
+                             <input type="text" id="memberSearchInput" class="form-control" placeholder="Cari nama atau no. telepon member...">
+                             <div id="memberSearchResults" class="search-results"></div>
+                        </div>
+                        <div id="selectedMemberInfo" class="mt-2" style="display: none;"></div>
                     </div>
                 </div>
                 
@@ -472,6 +503,7 @@
                     <div class="form-group">
                         <label class="form-label">Harga Pokok (HPP)</label>
                         <input type="number" id="productCost" class="form-control" placeholder="Opsional">
+                        <p class="form-hint">Digunakan untuk menghitung laporan laba rugi.</p>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Stok</label>
@@ -858,7 +890,6 @@
             loadCategories();
             loadProducts();
             updateCart();
-            loadMembersForSelect();
             displayMemos();
         }
         
@@ -900,21 +931,6 @@
             $(this).addClass('active');
             loadProducts($('#productSearch').val(), $(this).data('category'));
         });
-        
-        $('#barcodeSearch').on('keypress', function(e) {
-            if (e.which === 13) { // Tombol Enter
-                const barcode = $(this).val().trim();
-                if (!barcode) return;
-                
-                const product = products.find(p => p.barcode === barcode);
-                if (product) {
-                    addProductToCart(product.id);
-                    $(this).val('').focus(); // Kosongkan dan fokus kembali
-                } else {
-                    showToast('Kode Menu tidak ditemukan!', 'error');
-                }
-            }
-        });
 
         function addProductToCart(productId) {
             const product = products.find(p => p.id === productId);
@@ -953,13 +969,15 @@
             return result;
         }
 
+        // --- [IMPROVED] Smart Product Search ---
         function loadProducts(searchTerm = '', category = 'all') {
             let filteredProducts = products;
             if (searchTerm) {
                 const lowerTerm = searchTerm.toLowerCase();
                 filteredProducts = filteredProducts.filter(p => 
                     p.name.toLowerCase().includes(lowerTerm) ||
-                    (p.barcode && p.barcode.toLowerCase().includes(lowerTerm))
+                    (p.barcode && p.barcode.toLowerCase().includes(lowerTerm)) ||
+                    p.price.toString().includes(lowerTerm) // Search by price
                 );
             }
             if (category !== 'all') {
@@ -1064,6 +1082,17 @@
         // --- MANAJEMEN KERANJANG & CHECKOUT ---
         $('#cartDiscountInput, #additionalCostInput, #additionalCostNote').on('input', updateCart);
         
+        $('#clearCartBtn').click(function(){
+            if (currentCart.items.length > 0) {
+                if (confirm('Anda yakin ingin mengosongkan keranjang?')) {
+                    resetCart();
+                    showToast('Keranjang telah dikosongkan.', 'info');
+                }
+            } else {
+                showToast('Keranjang sudah kosong.', 'warning');
+            }
+        });
+
         function updateCart() {
             currentCart.subtotal = currentCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
             
@@ -1506,7 +1535,6 @@
             
             saveDataToStorage(STORAGE_KEYS.MEMBERS, members);
             loadMembers();
-            loadMembersForSelect();
             $('#memberModal').hide();
             showToast('Data member disimpan.', 'success');
         });
@@ -1528,40 +1556,90 @@
                 members = members.filter(m => m.id !== id);
                 saveDataToStorage(STORAGE_KEYS.MEMBERS, members);
                 loadMembers();
-                loadMembersForSelect();
                 showToast('Member dihapus.', 'success');
             }
         };
         
-        function loadMembersForSelect() {
-            const select = $('#memberSelect').empty().append('<option value="">Pilih Member</option>');
-            members.forEach(m => select.append(`<option value="${m.id}">${m.name} - ${m.phone}</option>`));
-        }
-
+        // --- [IMPROVED] Smart Member Selection Logic ---
         $('#customerType').change(function() {
             if ($(this).val() === 'member') {
                 $('#memberSelectContainer').show();
             } else {
                 $('#memberSelectContainer').hide();
-                $('#memberSelect').val('');
-                currentCart.memberId = null;
-                $('#cartDiscountInput').val(0).prop('readonly', false);
+                resetMemberSelection();
+            }
+        });
+        
+        function resetMemberSelection() {
+             currentCart.memberId = null;
+             $('#cartDiscountInput').val(0).prop('readonly', false);
+             $('#selectedMemberInfo').hide();
+             $('#memberSearchWrapper').show();
+             $('#memberSearchInput').val('');
+             updateCart();
+        }
+
+        $('#memberSearchInput').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase();
+            const resultsContainer = $('#memberSearchResults').empty().hide();
+
+            if (searchTerm.length < 1) return;
+
+            const filteredMembers = members.filter(m => 
+                m.name.toLowerCase().includes(searchTerm) ||
+                m.phone.includes(searchTerm)
+            );
+
+            if (filteredMembers.length > 0) {
+                filteredMembers.forEach(m => {
+                    resultsContainer.append(`
+                        <div class="result-item" data-id="${m.id}">
+                            <div class="result-item-name">${m.name}</div>
+                            <div class="result-item-info">${m.phone}</div>
+                        </div>
+                    `);
+                });
+                resultsContainer.show();
+            }
+        });
+
+        // Click handler for member search result
+        $('#memberSearchResults').on('click', '.result-item', function() {
+            const memberId = $(this).data('id');
+            const member = members.find(m => m.id === memberId);
+            
+            if(member) {
+                currentCart.memberId = member.id;
+
+                // Set discount based on user role
+                const userRole = roles.find(r => r.code === currentUser.role);
+                const discount = (userRole && userRole.memberDiscount) ? userRole.memberDiscount : 0;
+                $('#cartDiscountInput').val(discount);
+                
+                // Allow admin to override discount, but not other roles
+                if (!hasPermission('manageProducts')) { // Using a proxy permission for 'is admin-like'
+                    $('#cartDiscountInput').prop('readonly', true);
+                }
+
+                // Update UI to show selected member
+                $('#selectedMemberInfo').html(`
+                    <div class="selected-member-info">
+                        <span><i class="fas fa-user"></i> ${member.name}</span>
+                        <button class="btn btn-warning btn-sm" id="changeMemberBtn" style="padding: 2px 6px; font-size: 0.7rem;">Ganti</button>
+                    </div>
+                `).show();
+                
+                $('#memberSearchWrapper').hide();
+                $('#memberSearchResults').hide();
                 updateCart();
             }
         });
 
-        $('#memberSelect').change(function() {
-            const memberId = $(this).val();
-            currentCart.memberId = memberId;
-            if (memberId) {
-                const role = roles.find(r => r.code === currentUser.role);
-                const discount = (role && role.memberDiscount) ? role.memberDiscount : 0;
-                $('#cartDiscountInput').val(discount).prop('readonly', true);
-            } else {
-                $('#cartDiscountInput').val(0).prop('readonly', false);
-            }
-            updateCart();
+        // Click handler to change selected member
+        $('#selectedMemberInfo').on('click', '#changeMemberBtn', function(){
+            resetMemberSelection();
         });
+
 
         // --- MANAJEMEN ROLES ---
         $('#manageRolesBtn').click(() => {
