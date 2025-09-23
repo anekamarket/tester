@@ -34,7 +34,7 @@
             --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
             --rounded: 0.75rem;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --header-height: 85px; /* Added for calculation */
+            --header-height: 85px;
         }
 
         html.dark {
@@ -65,8 +65,23 @@
         }
 
         .container { max-width: 100%; margin: 0 auto; padding: 1rem; }
-        /* === PERBAIKAN UI: Header dibuat sticky ke bagian atas viewport untuk tampilan yang lebih bersih === */
-        .app-header { background: var(--light); color: var(--text-light); padding: 1rem 1.5rem; border-radius: var(--rounded); margin-bottom: 1.5rem; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border: 1px solid var(--border-light); min-height: var(--header-height); }
+
+        /* === PERBAIKAN UI (Sesuai Permintaan): Layout diubah menjadi scrollable penuh === */
+        /* Properti 'position: sticky' dihapus dari header agar menyatu dengan scroll halaman */
+        .app-header { 
+            background: var(--light); 
+            color: var(--text-light); 
+            padding: 1rem 1.5rem; 
+            border-radius: var(--rounded); 
+            margin-bottom: 1.5rem; 
+            box-shadow: var(--shadow); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid var(--border-light); 
+            min-height: var(--header-height); 
+        }
+
         .app-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
         .header-info { text-align: right; display: flex; align-items: center; gap: 1.5rem; }
         .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--secondary); }
@@ -216,11 +231,11 @@
         .member-search-item small { display: block; opacity: 0.7; }
         .clear-member-btn { background: none; border: none; cursor: pointer; color: var(--danger); font-size: 1.2rem; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
 
-        /* === PERBAIKAN UI: Penyesuaian posisi panel keranjang agar selaras dengan header sticky baru === */
+        /* === PERBAIKAN UI (Sesuai Permintaan): Layout diubah menjadi scrollable penuh === */
+        /* Properti 'position: sticky' dan 'height' terkait dihapus dari panel keranjang */
         .cart-panel { 
-            position: sticky; 
-            top: calc(var(--header-height) + 1.5rem); 
-            height: calc(100vh - var(--header-height) - 3rem);
+            /* Styling sebelumnya yang membuat panel 'sticky' telah dihapus */
+            /* Ini memungkinkan panel untuk scroll bersama sisa halaman */
         }
     </style>
 </head>
@@ -311,8 +326,7 @@
 
             <section class="panel cart-panel">
                  <h2 class="panel-title"><i class="fas fa-shopping-cart"></i>Pesanan (<span id="cartCount">0</span> item)</h2>
-                 <div id="cartItems" style="height: calc(100% - 250px); overflow-y: auto;"></div>
-                 <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
+                 <div id="cartItems"></div> <div>
                     <div class="summary-container">
                         <div class="summary-row">
                             <span>Subtotal:</span>
@@ -1210,13 +1224,15 @@
             $('#receiptModal').css('display', 'flex');
         }
 
-        // === PERBAIKAN FUNGSI: Fungsi cetak dan unduh struk PDF diperbaiki dan disempurnakan ===
+        /* === PENYEMPURNAAN FUNGSI (Sesuai Permintaan): Stabilitas Cetak/Unduh Struk Ditingkatkan === */
         function generatePdfReceipt(trx) {
-            if (!trx) {
-                console.error("generatePdfReceipt dipanggil dengan transaksi null.");
+            // Validasi awal: Pastikan data transaksi ada sebelum diproses.
+            if (!trx || !trx.id) {
+                console.error("Fungsi generatePdfReceipt dipanggil dengan data transaksi yang tidak valid.");
                 showToast("Data transaksi tidak ditemukan untuk membuat struk.", "error");
                 return null;
             }
+            
             try {
                 const doc = new jsPDF({ unit: 'pt', format: [226, 'auto'] }); // lebar 80mm
                 const pageWidth = doc.internal.pageSize.getWidth();
@@ -1279,21 +1295,24 @@
                 doc.setFontSize(8).text('Terima Kasih!', pageWidth / 2, lastY + 20, { align: 'center' });
                 return doc;
             } catch (error) {
+                // Menangkap error jika terjadi saat pembuatan PDF dan memberi notifikasi
                 console.error("Gagal membuat struk PDF:", error);
                 showToast("Terjadi kesalahan saat membuat struk PDF.", "error");
                 return null;
             }
         }
+        
         $('#downloadReceiptBtn').on('click', function(){ 
             const doc = generatePdfReceipt(lastTransaction);
             if(doc) {
                 doc.save(`Struk-${lastTransaction.id}.pdf`); 
             }
         });
+        
         $('#printReceiptBtn').on('click', function(){
             const doc = generatePdfReceipt(lastTransaction);
             if (doc) {
-                // Menggunakan iframe untuk menghindari pemblokir pop-up
+                // Menggunakan iframe untuk menghindari pemblokir pop-up dan memastikan proses cetak lebih lancar
                 doc.autoPrint();
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -1301,6 +1320,7 @@
                 document.body.appendChild(iframe);
             }
         });
+
 
         // Hold Orders Feature
         function updateHeldOrdersCount() {
