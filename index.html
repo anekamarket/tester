@@ -34,6 +34,7 @@
             --shadow-lg: 0 10px 30px rgba(0,0,0,0.1);
             --rounded: 0.75rem;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --header-height: 85px; /* Added for calculation */
         }
 
         html.dark {
@@ -64,7 +65,7 @@
         }
 
         .container { max-width: 100%; margin: 0 auto; padding: 1rem; }
-        .app-header { background: var(--light); color: var(--text-light); padding: 1rem 1.5rem; border-radius: var(--rounded); margin-bottom: 1.5rem; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 1rem; z-index: 100; border: 1px solid var(--border-light); }
+        .app-header { background: var(--light); color: var(--text-light); padding: 1rem 1.5rem; border-radius: var(--rounded); margin-bottom: 1.5rem; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 1rem; z-index: 100; border: 1px solid var(--border-light); min-height: var(--header-height); }
         .app-title { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
         .header-info { text-align: right; display: flex; align-items: center; gap: 1.5rem; }
         .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--secondary); }
@@ -119,11 +120,12 @@
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem; }
         .total-row { font-weight: 700; font-size: 1.2rem; color: var(--primary); margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-light); }
         
-        .btn { display: inline-block; padding: 0.8rem 1.5rem; background-color: var(--primary); color: white; border: none; border-radius: var(--rounded); cursor: pointer; font-size: 1rem; font-weight: 600; text-align: center; transition: var(--transition); width: 100%; text-decoration: none;}
+        .btn { position: relative; display: inline-block; padding: 0.8rem 1.5rem; background-color: var(--primary); color: white; border: none; border-radius: var(--rounded); cursor: pointer; font-size: 1rem; font-weight: 600; text-align: center; transition: var(--transition); width: 100%; text-decoration: none;}
         .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); opacity: 0.9; }
         .btn:disabled { background-color: var(--secondary); cursor: not-allowed; opacity: 0.7; }
         .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; }
         .btn i { margin-right: 0.5rem; }
+        .btn .badge { position: absolute; top: -8px; right: -8px; background-color: var(--danger); color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 0.8rem; font-weight: bold; display: flex; justify-content: center; align-items: center; border: 2px solid var(--light); }
         .btn-success { background-color: var(--success); }
         .btn-danger { background-color: var(--danger); }
         .btn-warning { background-color: var(--warning); color: white; }
@@ -204,6 +206,14 @@
         .app-footer { text-align: center; margin-top: 2rem; padding: 1rem; font-size: 0.9rem; color: var(--secondary); }
         .dev-info a { color: var(--primary); text-decoration: none; }
         .dev-info a:hover { text-decoration: underline; }
+
+        /* Member search styles */
+        .member-search-container { position: relative; }
+        #memberSearchResults { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--light); border: 1px solid var(--border-light); border-radius: var(--rounded); max-height: 200px; overflow-y: auto; z-index: 1010; box-shadow: var(--shadow); }
+        .member-search-item { padding: 0.75rem 1rem; cursor: pointer; }
+        .member-search-item:hover { background: var(--primary-light); }
+        .member-search-item small { display: block; opacity: 0.7; }
+        .clear-member-btn { background: none; border: none; cursor: pointer; color: var(--danger); font-size: 1.2rem; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
     </style>
 </head>
 <body>
@@ -291,22 +301,14 @@
                 </div>
             </section>
 
-            <section class="panel cart-panel" style="position: sticky; top: 120px; height: calc(100vh - 135px);">
+            <section class="panel cart-panel" style="position: sticky; top: calc(var(--header-height) + 2.5rem); height: calc(100vh - var(--header-height) - 4rem);">
                  <h2 class="panel-title"><i class="fas fa-shopping-cart"></i>Pesanan (<span id="cartCount">0</span> item)</h2>
-                 <div id="cartItems" style="height: calc(100% - 300px); overflow-y: auto;"></div>
+                 <div id="cartItems" style="height: calc(100% - 250px); overflow-y: auto;"></div>
                  <div style="position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;">
-                    <div class="form-group">
-                        <label for="memberSelection" class="form-label" style="font-size:0.9rem">Pilih Member (Opsional)</label>
-                        <select id="memberSelection" class="form-control"><option value="">-- Tanpa Member --</option></select>
-                    </div>
                     <div class="summary-container">
                         <div class="summary-row">
                             <span>Subtotal:</span>
                             <span id="cartSubtotal">Rp 0</span>
-                        </div>
-                        <div class="summary-row" id="discountRow" style="display:none;">
-                            <span>Diskon:</span>
-                            <span id="cartDiscount">Rp 0</span>
                         </div>
                          <div class="summary-row" id="taxRow" style="display:none;">
                             <span>Pajak:</span>
@@ -319,7 +321,10 @@
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
                         <button id="holdOrderBtn" class="btn btn-info"><i class="fas fa-pause-circle"></i> Tahan</button>
-                        <button id="viewHeldOrdersBtn" class="btn btn-warning"><i class="fas fa-list-alt"></i> Lanjutkan</button>
+                        <button id="viewHeldOrdersBtn" class="btn btn-warning">
+                            <i class="fas fa-list-alt"></i> Lanjutkan
+                            <span id="heldOrdersCountBadge" class="badge" style="display: none;">0</span>
+                        </button>
                     </div>
                     <button id="checkoutBtn" class="btn btn-success" style="margin-top: 0.5rem;"><i class="fas fa-cash-register"></i> Proses Pembayaran</button>
                     <button id="clearCartBtn" class="btn btn-danger btn-sm" style="margin-top: 0.5rem;">Kosongkan</button>
@@ -336,7 +341,25 @@
     </div>
     
     <div id="dashboardModal" class="modal"><div class="modal-content dashboard-modal"><div class="modal-header"><h3 class="modal-title"><i class="fas fa-chart-line"></i> Dashboard Analitik</h3><button class="modal-close">&times;</button></div><div class="modal-body"><div class="dashboard-grid"><div class="stat-card"><div class="stat-card-title">Pendapatan Hari Ini</div><div class="stat-card-value" id="dailyRevenue">Rp 0</div></div><div class="stat-card"><div class="stat-card-title">Transaksi Hari Ini</div><div class="stat-card-value" id="dailyTransactions">0</div></div><div class="stat-card"><div class="stat-card-title">Stok Menipis (&le;5)</div><div class="stat-card-value" id="lowStockItems">0</div></div><div class="stat-card"><div class="stat-card-title">Produk Terlaris</div><div class="stat-card-value" id="topProduct" style="font-size: 1.5rem;">-</div></div></div><div class="chart-container"><canvas id="salesChart"></canvas></div></div></div></div>
-    <div id="checkoutModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Proses Pembayaran</h3><button class="modal-close">&times;</button></div><div class="modal-body"><div class="summary-row total-row" style="font-size: 1.5rem; margin-bottom: 1rem;"><span>Total Tagihan:</span><span id="paymentTotal">Rp 0</span></div><div class="form-group"><label class="form-label">Metode Pembayaran</label><select id="paymentMethod" class="form-control"><option value="cash">Tunai</option><option value="qris">QRIS</option><option value="debit">Debit/Kredit</option></select></div><div class="form-group"><label class="form-label">Jumlah Pembayaran</label><input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah bayar"></div><div id="changeContainer" style="display: none;"><div class="summary-row"><span>Kembalian:</span><span id="paymentChange">Rp 0</span></div></div></div><div class="modal-footer"><button class="btn btn-warning modal-close-btn">Kembali</button><button class="btn btn-success" id="completePaymentBtn">Selesaikan Transaksi</button></div></div></div>
+    <div id="checkoutModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Proses Pembayaran</h3><button class="modal-close">&times;</button></div><div class="modal-body">
+        <div class="form-group">
+            <label class="form-label">Cari Member (Opsional)</label>
+            <div class="member-search-container">
+                <input type="text" id="memberSearchInput" class="form-control" placeholder="Ketik Nama / ID / Telepon Member...">
+                <button id="clearMemberBtn" class="clear-member-btn" style="display:none;">&times;</button>
+                <div id="memberSearchResults"></div>
+            </div>
+        </div>
+        <div id="checkoutSummary">
+            <div class="summary-row"><span>Subtotal:</span><span id="paymentSubtotal">Rp 0</span></div>
+            <div class="summary-row" id="paymentDiscountRow" style="display:none;"><span>Diskon Member:</span><span id="paymentDiscount">Rp 0</span></div>
+            <div class="summary-row" id="paymentTaxRow" style="display:none;"><span>Pajak:</span><span id="paymentTax">Rp 0</span></div>
+        </div>
+        <div class="summary-row total-row" style="font-size: 1.5rem; margin-bottom: 1rem; margin-top: 1rem;"><span>Total Tagihan:</span><span id="paymentTotal">Rp 0</span></div>
+        <div class="form-group"><label class="form-label">Metode Pembayaran</label><select id="paymentMethod" class="form-control"><option value="cash">Tunai</option><option value="qris">QRIS</option><option value="debit">Debit/Kredit</option></select></div>
+        <div class="form-group"><label class="form-label">Jumlah Pembayaran</label><input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah bayar"></div>
+        <div id="changeContainer" style="display: none;"><div class="summary-row"><span>Kembalian:</span><span id="paymentChange">Rp 0</span></div></div>
+    </div><div class="modal-footer"><button class="btn btn-warning modal-close-btn">Kembali</button><button class="btn btn-success" id="completePaymentBtn">Selesaikan Transaksi</button></div></div></div>
     <div id="productModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Tambah Menu Baru</h3><button class="modal-close">&times;</button></div><div class="modal-body"><form id="productForm"><input type="hidden" id="productId"><div class="form-group"><label class="form-label">Nama Menu</label><input type="text" id="productName" class="form-control" required></div><div class="form-group"><label class="form-label">URL Gambar</label><input type="text" id="productImageUrl" class="form-control" placeholder="https://example.com/image.jpg"></div><div class="form-group"><label class="form-label">Kategori</label><select id="productCategory" class="form-control" required></select></div><div class="form-group"><label class="form-label">Harga Jual</label><input type="number" id="productPrice" class="form-control" required></div><div class="form-group"><label class="form-label">Stok</label><input type="number" id="productStock" class="form-control" required><div class="form-check"><input type="checkbox" id="unlimitedStock"><label for="unlimitedStock">Stok tersedia (tidak terbatas)</label></div></div></form></div><div class="modal-footer"><button class="btn btn-warning modal-close-btn">Batal</button><button class="btn btn-success" id="saveProductBtn">Simpan</button></div></div></div>
     <div id="manageCategoriesModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Kelola Kategori</h3><button class="modal-close">&times;</button></div><div class="modal-body"><table class="data-table"><thead><tr><th>Nama Kategori</th><th>Aksi</th></tr></thead><tbody id="categoriesList"></tbody></table><div class="form-group" style="margin-top: 1rem;"><label class="form-label">Tambah Kategori Baru</label><div style="display:flex; gap: 0.5rem;"><input type="text" id="newCategoryName" class="form-control"><button class="btn btn-success" id="addCategoryBtn">Tambah</button></div></div></div><div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div></div></div>
     <div id="reportsModal" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3 class="modal-title">Laporan Penjualan</h3><button class="modal-close">&times;</button></div><div class="modal-body"><div style="display: flex; gap: 1rem; margin-bottom: 1rem;"><div class="form-group" style="flex:1;"><label class="form-label">Dari Tanggal</label><input type="date" id="reportStartDate" class="form-control"></div><div class="form-group" style="flex:1;"><label class="form-label">Sampai Tanggal</label><input type="date" id="reportEndDate" class="form-control"></div></div><div id="reportSummary"></div><div style="max-height: 40vh; overflow-y: auto;"><table class="data-table"><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Kasir</th><th>Total</th></tr></thead><tbody id="reportTableBody"></tbody></table></div></div><div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button><button class="btn btn-success" id="generateReportBtn">Generate</button><button class="btn btn-info" id="printReportBtn">Cetak PDF</button></div></div></div>
@@ -384,7 +407,8 @@
 
         let products = [], categories = [], transactions = [], settings = {}, users = [], members = [], heldOrders = [],
             currentUser = null,
-            currentCart = { items: [], subtotal: 0, discount: 0, tax: 0, total: 0, memberId: null },
+            currentCart = { items: [], subtotal: 0, tax: 0, total: 0 },
+            checkoutState = { memberId: null, discount: 0, finalTotal: 0 },
             lastTransaction = null;
         let salesChartInstance = null;
         
@@ -404,7 +428,7 @@
             if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
                 localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({ 
                     storeName: 'Kafe Anda', storeAddress: 'Jalan Kopi No. 1, Jakarta', storePhone: '081234567890',
-                    staffAccessPass: 'LKS.1945', deleteSecurityCode: '1945', taxRate: 0, memberDiscountRate: 0 
+                    staffAccessPass: 'LKS.1945', deleteSecurityCode: '1945', taxRate: 0, memberDiscountRate: 10
                 }));
             }
             if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) localStorage.setItem(STORAGE_KEYS.PRODUCTS, '[]');
@@ -421,7 +445,7 @@
             members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
             heldOrders = JSON.parse(localStorage.getItem(STORAGE_KEYS.HELD_ORDERS)) || [];
             currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
-            currentCart = JSON.parse(localStorage.getItem(STORAGE_KEYS.CART)) || { items: [], subtotal: 0, discount: 0, tax: 0, total: 0, memberId: null };
+            currentCart = JSON.parse(localStorage.getItem(STORAGE_KEYS.CART)) || { items: [], subtotal: 0, tax: 0, total: 0 };
         }
 
         function saveDataToStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
@@ -450,8 +474,8 @@
             updateStoreInfo();
             loadCategories();
             loadProducts();
-            loadMembersForSelection();
             updateCart();
+            updateHeldOrdersCount();
         }
 
         // --- 2. UI & THEME ---
@@ -473,6 +497,7 @@
         $('.user-menu-toggle').on('click', function() { $('.user-menu-dropdown').slideToggle(200); });
         $(document).on('click', function(event) {
             if (!$(event.target).closest('.user-menu').length) { $('.user-menu-dropdown').slideUp(200); }
+            if (!$(event.target).closest('.member-search-container').length) { $('#memberSearchResults').hide(); }
         });
 
         function updateCurrentDate() { $('#currentDate').text(moment().format('LLLL')); }
@@ -638,24 +663,19 @@
             updateCart();
             showToast(`${product.name} ditambahkan.`, 'success');
         }
+
         function updateCart() {
             currentCart.subtotal = currentCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
             
-            const memberDiscountRate = parseFloat(settings.memberDiscountRate) || 0;
-            currentCart.discount = (currentCart.memberId && memberDiscountRate > 0) ? (currentCart.subtotal * memberDiscountRate / 100) : 0;
-            
             const taxRate = parseFloat(settings.taxRate) || 0;
-            const taxableAmount = currentCart.subtotal - currentCart.discount;
-            currentCart.tax = (taxRate > 0) ? (taxableAmount * taxRate / 100) : 0;
+            currentCart.tax = (taxRate > 0) ? (currentCart.subtotal * taxRate / 100) : 0;
             
-            currentCart.total = taxableAmount + currentCart.tax;
+            currentCart.total = currentCart.subtotal + currentCart.tax;
 
             $('#cartSubtotal').text(formatCurrency(currentCart.subtotal));
-            $('#cartDiscount').text(formatCurrency(-currentCart.discount));
             $('#cartTax').text(formatCurrency(currentCart.tax));
             $('#cartTotal').text(formatCurrency(currentCart.total));
 
-            $('#discountRow').toggle(currentCart.discount > 0);
             $('#taxRow').toggle(currentCart.tax > 0);
 
             const cartItemsDiv = $('#cartItems').empty();
@@ -683,10 +703,10 @@
             $('#cartCount').text(totalItems);
             $('#checkoutBtn').prop('disabled', totalItems === 0);
             $('#holdOrderBtn').prop('disabled', totalItems === 0);
-            $('#memberSelection').val(currentCart.memberId || '');
-
+           
             saveDataToStorage(STORAGE_KEYS.CART, currentCart);
         }
+
         window.app = {
             updateItemQuantity: (productId, change) => {
                 const item = currentCart.items.find(i => i.product.id === productId);
@@ -743,7 +763,6 @@
                     members = members.filter(m => m.id !== id);
                     saveDataToStorage(STORAGE_KEYS.MEMBERS, members);
                     renderMembers();
-                    loadMembersForSelection();
                     showToast('Member berhasil dihapus.', 'success');
                 }
             },
@@ -777,39 +796,67 @@
                 showToast('Keranjang dikosongkan.', 'info');
             }
         });
+        
+        function updateCheckoutModalTotal() {
+            const memberDiscountRate = parseFloat(settings.memberDiscountRate) || 0;
+            checkoutState.discount = (checkoutState.memberId && memberDiscountRate > 0) ? (currentCart.subtotal * memberDiscountRate / 100) : 0;
+            
+            const taxableAmount = currentCart.subtotal - checkoutState.discount;
+            const tax = currentCart.tax > 0 ? (taxableAmount * (parseFloat(settings.taxRate) / 100)) : 0;
+            
+            checkoutState.finalTotal = taxableAmount + tax;
+
+            $('#paymentSubtotal').text(formatCurrency(currentCart.subtotal));
+            $('#paymentDiscount').text(formatCurrency(-checkoutState.discount));
+            $('#paymentTax').text(formatCurrency(tax));
+            $('#paymentTotal').text(formatCurrency(checkoutState.finalTotal));
+            
+            $('#paymentDiscountRow').toggle(checkoutState.discount > 0);
+            $('#paymentTaxRow').toggle(currentCart.tax > 0);
+
+            $('#paymentAmount').trigger('input');
+        }
+
         $('#checkoutBtn').click(() => {
             if (currentCart.items.length === 0) { showToast('Keranjang kosong.', 'warning'); return; }
-            $('#paymentTotal').text(formatCurrency(currentCart.total));
+            
+            checkoutState = { memberId: null, discount: 0, finalTotal: 0 };
+            $('#memberSearchInput').val('');
+            $('#clearMemberBtn').hide();
+            
+            updateCheckoutModalTotal();
             $('#paymentAmount').val('').focus();
             $('#changeContainer').hide();
             $('#checkoutModal').css('display', 'flex');
         });
+
         $('#paymentAmount').on('input', function() {
             const paid = parseFloat($(this).val()) || 0;
-            const change = paid - currentCart.total;
+            const change = paid - checkoutState.finalTotal;
             $('#changeContainer').toggle(change >= 0).find('#paymentChange').text(formatCurrency(change));
         });
+
         $('#completePaymentBtn').click(function() {
             const paid = parseFloat($('#paymentAmount').val()) || 0;
             const method = $('#paymentMethod').val();
 
-            if (method === 'cash' && paid < currentCart.total) { showToast('Jumlah pembayaran tunai kurang.', 'error'); return; }
+            if (method === 'cash' && paid < checkoutState.finalTotal) { showToast('Jumlah pembayaran tunai kurang.', 'error'); return; }
             
-            const amountPaidFinal = method === 'cash' ? paid : currentCart.total;
+            const amountPaidFinal = (method === 'cash' || method === 'debit') ? paid : checkoutState.finalTotal;
 
             lastTransaction = {
                 id: 'TRX' + Date.now(),
                 date: new Date().toISOString(),
                 items: JSON.parse(JSON.stringify(currentCart.items)),
                 subtotal: currentCart.subtotal,
-                discount: currentCart.discount,
-                tax: currentCart.tax,
-                total: currentCart.total,
+                discount: checkoutState.discount,
+                tax: checkoutState.finalTotal - (currentCart.subtotal - checkoutState.discount),
+                total: checkoutState.finalTotal,
                 paymentMethod: method,
                 amountPaid: amountPaidFinal,
-                change: amountPaidFinal - currentCart.total,
+                change: amountPaidFinal - checkoutState.finalTotal,
                 cashier: { id: currentUser.id, name: currentUser.name },
-                memberId: currentCart.memberId
+                memberId: checkoutState.memberId
             };
 
             transactions.unshift(lastTransaction);
@@ -828,8 +875,9 @@
             resetCart();
             loadProducts();
         });
+
         function resetCart() {
-            currentCart = { items: [], subtotal: 0, discount: 0, tax: 0, total: 0, memberId: null };
+            currentCart = { items: [], subtotal: 0, tax: 0, total: 0 };
             updateCart();
         }
 
@@ -1033,14 +1081,47 @@
         });
 
         // --- 7. MEMBER FEATURES ---
-        function loadMembersForSelection() {
-            const select = $('#memberSelection').empty().append('<option value="">-- Tanpa Member --</option>');
-            members.forEach(m => select.append(`<option value="${m.id}">${m.name} - ${m.phone}</option>`));
-        }
-        $('#memberSelection').on('change', function() {
-            currentCart.memberId = $(this).val() || null;
-            updateCart();
+        $('#memberSearchInput').on('input', function() {
+            const query = $(this).val().toLowerCase();
+            const resultsContainer = $('#memberSearchResults').empty().show();
+            if (!query) { resultsContainer.hide(); return; }
+
+            const filteredMembers = members.filter(m => 
+                m.name.toLowerCase().includes(query) || 
+                m.phone.includes(query) || 
+                m.id.toLowerCase().includes(query)
+            );
+            
+            if (filteredMembers.length > 0) {
+                filteredMembers.forEach(m => {
+                    resultsContainer.append(`<div class="member-search-item" data-id="${m.id}">
+                        ${m.name} <small>${m.phone} - ${m.id}</small>
+                    </div>`);
+                });
+            } else {
+                resultsContainer.append('<div class="member-search-item">Member tidak ditemukan.</div>');
+            }
         });
+
+        $(document).on('click', '.member-search-item', function() {
+            const memberId = $(this).data('id');
+            if (!memberId) return;
+
+            const member = members.find(m => m.id === memberId);
+            checkoutState.memberId = member.id;
+            $('#memberSearchInput').val(member.name);
+            $('#memberSearchResults').hide();
+            $('#clearMemberBtn').show();
+            updateCheckoutModalTotal();
+        });
+        
+        $('#clearMemberBtn').on('click', function() {
+            checkoutState.memberId = null;
+            $('#memberSearchInput').val('');
+            $(this).hide();
+            updateCheckoutModalTotal();
+        });
+
         function renderMembers() {
             const list = $('#membersList').empty();
             members.forEach(m => {
@@ -1064,7 +1145,6 @@
             members.unshift(memberData);
             saveDataToStorage(STORAGE_KEYS.MEMBERS, members);
             renderMembers();
-            loadMembersForSelection();
             $('#memberFormModal').hide();
             showToast('Member baru berhasil ditambahkan.', 'success');
         });
@@ -1142,7 +1222,7 @@
             if(trx.discount > 0) summaryBody.push(['Diskon', {content: formatCurrency(-trx.discount), styles: {halign: 'right'}}]);
             if(trx.tax > 0) summaryBody.push(['Pajak', {content: formatCurrency(trx.tax), styles: {halign: 'right'}}]);
             summaryBody.push([{content: 'Total', styles:{fontStyle: 'bold'}}, {content: formatCurrency(trx.total), styles: {halign: 'right', fontStyle: 'bold'}}]);
-            summaryBody.push([trx.paymentMethod, {content: formatCurrency(trx.amountPaid), styles: {halign: 'right'}}]);
+            summaryBody.push([trx.paymentMethod.charAt(0).toUpperCase() + trx.paymentMethod.slice(1), {content: formatCurrency(trx.amountPaid), styles: {halign: 'right'}}]);
             summaryBody.push(['Kembali', {content: formatCurrency(trx.change), styles: {halign: 'right'}}]);
             
             doc.autoTable({ body: summaryBody, startY: lastY + 6, theme: 'plain', styles: { fontSize: 9, cellPadding: 2 } });
@@ -1157,6 +1237,15 @@
         });
 
         // Hold Orders Feature
+        function updateHeldOrdersCount() {
+            const count = heldOrders.length;
+            const badge = $('#heldOrdersCountBadge');
+            if (count > 0) {
+                badge.text(count).show();
+            } else {
+                badge.hide();
+            }
+        }
         $('#holdOrderBtn').click(function(){
             if(currentCart.items.length > 0) {
                 const orderName = prompt("Masukkan nama untuk pesanan ini:", `Pesanan ${heldOrders.length + 1}`);
@@ -1164,6 +1253,7 @@
                     heldOrders.push({ id: 'H' + Date.now(), name: orderName, cart: currentCart });
                     saveDataToStorage(STORAGE_KEYS.HELD_ORDERS, heldOrders);
                     resetCart();
+                    updateHeldOrdersCount();
                     showToast(`Pesanan "${orderName}" telah ditahan.`, 'success');
                 }
             }
@@ -1192,6 +1282,7 @@
                 heldOrders = heldOrders.filter(o => o.id !== id);
                 saveDataToStorage(STORAGE_KEYS.HELD_ORDERS, heldOrders);
                 updateCart();
+                updateHeldOrdersCount();
                 $('#heldOrdersModal').hide();
                 showToast(`Pesanan "${order.name}" dilanjutkan.`, 'info');
             }
@@ -1200,7 +1291,8 @@
             if(await verifyDeleteAction() && confirm('Yakin ingin menghapus pesanan yang ditahan ini?')) {
                  heldOrders = heldOrders.filter(o => o.id !== id);
                  saveDataToStorage(STORAGE_KEYS.HELD_ORDERS, heldOrders);
-                 $('#viewHeldOrdersBtn').click();
+                 updateHeldOrdersCount();
+                 $('#viewHeldOrdersBtn').click(); // Refresh list in modal
                  showToast('Pesanan ditahan telah dihapus.', 'success');
             }
         };
