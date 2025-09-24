@@ -78,6 +78,13 @@
             padding: 5px;
             box-shadow: var(--shadow-sm);
         }
+        /* PERBAIKAN: Menambahkan object-fit untuk mencegah logo gepeng */
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
 
         .app-title {
             font-size: 1.4rem;
@@ -258,6 +265,16 @@
         .order-item-price {
             color: var(--gray);
             font-size: 0.9rem;
+        }
+
+        /* PENAMBAHAN: Style untuk link WhatsApp */
+        .whatsapp-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .whatsapp-link:hover {
+            text-decoration: underline;
         }
 
         .order-item-qty {
@@ -901,31 +918,22 @@
 
         /* Print Styles */
         @media print {
-            body, .container, .modal, .app-header, .app-content, .app-footer, .modal-footer {
-                visibility: hidden !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                display: none !important;
-            }
-
-            .print-area, .print-area * {
-                visibility: visible !important;
-                display: block !important;
+            body * {
+                visibility: hidden;
             }
             
-            .print-area {
+            #print-container, #print-container * {
+                visibility: visible;
+            }
+
+            #print-container {
                 position: absolute;
                 left: 0;
                 top: 0;
                 width: 100%;
-                max-width: 100%;
-                margin: 0;
-                padding: 0;
-                font-size: 14px;
             }
-            
-            .modal-footer.no-print {
+
+            .no-print {
                 display: none !important;
             }
             
@@ -964,6 +972,7 @@
             font-size: 12px;
             line-height: 1.4;
             color: #000;
+            background: white; /* PERBAIKAN: Pastikan background putih untuk pdf */
         }
 
         .receipt-header {
@@ -975,6 +984,8 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 5px auto;
+            /* PERBAIKAN: Mencegah logo gepeng */
+            object-fit: cover;
         }
 
         .receipt-title {
@@ -1111,6 +1122,8 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
+            /* PERBAIKAN: Mencegah logo gepeng */
+            object-fit: cover;
         }
         .kta-store-info h3 {
             font-size: 16px;
@@ -1150,11 +1163,13 @@
             background: white;
             padding: 10px;
             border-radius: 5px;
+            min-height: 50px; /* PERBAIKAN: Beri ruang untuk barcode */
         }
 
         .kta-barcode img {
             display: block;
             width: 180px;
+            max-width: 100%;
         }
 
         .kta-footer {
@@ -1200,7 +1215,9 @@
     <div class="container" id="mainApp" style="display: none;">
         <header class="app-header">
             <div class="header-title-container">
-                <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="header-logo">
+                <div class="header-logo">
+                    <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo">
+                </div>
                 <div>
                     <h1 class="app-title" id="storeNameHeader">CAFE & RESTO</h1>
                     <p id="currentDate">Senin, 1 Januari 2023</p>
@@ -1513,6 +1530,12 @@
             </div>
             <div class="modal-body">
                 <button id="showAddMemberFormBtn" class="btn btn-sm mb-3">Tambah Member Baru</button>
+                
+                <div class="search-container mb-3">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="manageMemberSearchInput" class="search-input" placeholder="Cari member (nama, ID, No. HP)...">
+                </div>
+
                 <div class="member-form" id="memberFormContainer" style="display:none;">
                     <h4 id="memberFormTitle">Tambah Member Baru</h4>
                     <form id="memberForm">
@@ -1721,7 +1744,7 @@
                 <h3 class="modal-title">Struk Pembayaran</h3>
                 <button class="modal-close">&times;</button>
             </div>
-            <div class="modal-body" id="receiptModalBody">
+            <div class="modal-body" id="receiptModalBody" style="background: #eee;">
                 </div>
             <div class="modal-footer no-print">
                 <button class="btn btn-warning modal-close-btn">Tutup</button>
@@ -1740,7 +1763,7 @@
             <div class="modal-body" id="ktaModalBody">
                 <div id="ktaCard">
                     <div class="kta-header">
-                        <img id="ktaLogo" src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="kta-logo">
+                        <img id="ktaLogo" src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="kta-logo" crossorigin="anonymous">
                         <div class="kta-store-info">
                             <h3 id="ktaStoreName">NAMA RESTO</h3>
                             <p id="ktaStoreContact">Alamat, No. WA, Email</p>
@@ -1750,7 +1773,7 @@
                         <h2 id="ktaMemberName">Nama Member</h2>
                         <p id="ktaMemberId">ID: M250924103000</p>
                         <div class="kta-barcode">
-                            <img id="ktaBarcodeImg" src="" alt="Barcode">
+                            <img id="ktaBarcodeImg" src="" alt="Barcode" crossorigin="anonymous">
                         </div>
                     </div>
                     <div class="kta-footer">
@@ -2092,6 +2115,12 @@
             $('#viewReportsBtn').click(() => { if (currentUser.role === 'admin') { $('#reportPeriod').val('today').trigger('change'); $('#reportResults').empty(); $('#printReportBtn').hide(); $('#reportsModal').css('display', 'flex'); } });
             $('#kitchenDisplayBtn').click(() => { loadKitchenOrders(); kitchenInterval = setInterval(loadKitchenOrders, 30000); $('#kitchenDisplayModal').css('display', 'flex'); });
             $('#manageMembersBtn').click(() => { if (currentUser.role === 'admin') { resetMemberForm(); loadMembersForManagement(); $('#memberAdminFields').toggle(currentUser.role === 'admin'); $('#manageMembersModal').css('display', 'flex'); } });
+            
+            // PENAMBAHAN: Event listener untuk pencarian member di halaman kelola member
+            $('#manageMemberSearchInput').on('input', function() {
+                loadMembersForManagement($(this).val());
+            });
+
             $('#manageStoreInfoBtn').click(() => { if (currentUser.role === 'admin') { loadStoreInfo(); $('#manageStoreInfoModal').css('display', 'flex'); } });
             
             $('#controlPanelBtn').click(() => {
@@ -2467,17 +2496,41 @@
             let id = 'M' + moment().format('YYMMDDHHmmss');
             return members.some(m => m.id === id) ? generateMemberId() : id;
         }
-
-        function loadMembersForManagement() {
+        
+        // PENAMBAHAN: Fungsi untuk memformat nomor HP ke format WhatsApp
+        function formatPhoneNumberForWhatsApp(phone) {
+            let formattedPhone = phone.replace(/[^0-9]/g, ''); // Hapus semua karakter non-numerik
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '62' + formattedPhone.substring(1);
+            } else if (!formattedPhone.startsWith('62')) {
+                formattedPhone = '62' + formattedPhone;
+            }
+            return `https://wa.me/${formattedPhone}`;
+        }
+        
+        // PERBAIKAN: Fungsi loadMembersForManagement sekarang menerima searchTerm
+        function loadMembersForManagement(searchTerm = '') {
             const $list = $('#membersList').empty();
-            if (members.length === 0) $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada member</p></div>');
-            else {
-                members.forEach(member => {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+
+            const filteredMembers = members.filter(member => 
+                !searchTerm ||
+                member.name.toLowerCase().includes(lowerSearchTerm) ||
+                member.id.toLowerCase().includes(lowerSearchTerm) ||
+                member.phone.includes(lowerSearchTerm)
+            );
+
+            if (filteredMembers.length === 0) {
+                $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Member tidak ditemukan</p></div>');
+            } else {
+                filteredMembers.forEach(member => {
+                    const whatsappUrl = formatPhoneNumberForWhatsApp(member.phone);
                     $list.append(`
                         <div class="order-item">
                             <div class="order-item-info">
                                 <div class="order-item-name">${member.name}</div>
-                                <div class="order-item-price">${member.phone}
+                                <div class="order-item-price">
+                                    <a href="${whatsappUrl}" target="_blank" class="whatsapp-link">${member.phone} <i class="fab fa-whatsapp"></i></a>
                                     <span class="member-badge">${member.id}</span>
                                 </div>
                             </div>
@@ -2597,7 +2650,7 @@
             return `
             <div id="receiptContent">
                 <div class="receipt-header">
-                    <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="receipt-logo">
+                    <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="receipt-logo" crossorigin="anonymous">
                     <div class="receipt-title">${settings.storeName}</div>
                     <div>${settings.storeAddress}</div>
                     <div>Telp: ${settings.storePhone}</div>
@@ -2634,17 +2687,24 @@
             $('#receiptModal').css('display', 'flex');
         }
 
+        // PERBAIKAN: Fungsi download PDF untuk struk
         function downloadReceiptAsPdf() {
             const order = $('#downloadReceiptPdfBtn').data('order');
             if (!order) return;
             const element = document.getElementById('receiptContent');
             const filename = `Struk-${order.id}-${moment(order.date).format('DD-MM-YYYY_HH-mm')}.pdf`;
             
-            html2canvas(element, { scale: 2 }).then(canvas => {
+            html2canvas(element, { 
+                scale: 2, 
+                useCORS: true // Penting untuk memuat gambar eksternal
+            }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
                 pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
                 pdf.save(filename);
+            }).catch(err => {
+                showToast('Gagal mengunduh PDF', 'error');
+                console.error("html2canvas error:", err);
             });
         }
         
@@ -2659,32 +2719,70 @@
             $('#ktaMemberId').text(`ID: ${member.id}`);
             
             const barcodeData = `ID: ${member.id}\nNama: ${member.name}\nTelp: ${member.phone}`;
-            const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true`;
-            $('#ktaBarcodeImg').attr('src', barcodeUrl);
+            const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true&imagetype=png`;
+            $('#ktaBarcodeImg').attr('src', barcodeUrl); // Set source barcode
 
             $('#downloadKtaPdfBtn').data('member', member);
             $('#ktaModal').css('display', 'flex');
         }
-
+        
+        // PERBAIKAN: Fungsi unduh PDF KTA yang lebih andal
         function downloadKtaAsPdf() {
             const member = $('#downloadKtaPdfBtn').data('member');
             if (!member) return;
             const element = document.getElementById('ktaCard');
             const filename = `KTA-${member.name.replace(/\s/g, '_')}-${member.id}.pdf`;
 
-            html2canvas(element, { scale: 2 }).then(canvas => {
+            showToast('Mempersiapkan PDF...', 'info');
+
+            html2canvas(element, { 
+                scale: 2,
+                useCORS: true, // Penting untuk memuat gambar logo & barcode
+                allowTaint: true,
+                logging: false
+            }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
                 pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
                 pdf.save(filename);
+            }).catch(err => {
+                showToast('Gagal mengunduh PDF KTA', 'error');
+                console.error("html2canvas error on KTA:", err);
             });
         }
         
+        // PERBAIKAN: Fungsi cetak yang lebih andal
         function printElement(selector) {
-            const elementToPrint = $(selector).clone().prop('id', 'tempPrintElement').addClass('print-area').get(0);
-            $('#print-container').html(elementToPrint);
-            window.print();
-            $('#print-container').empty();
+            const elementToPrint = $(selector).clone();
+            const printContainer = $('#print-container');
+            
+            printContainer.html(elementToPrint);
+
+            // Menunggu gambar dimuat sebelum mencetak
+            const images = printContainer.find('img');
+            let loadedImages = 0;
+
+            const onImageLoad = () => {
+                loadedImages++;
+                if (loadedImages === images.length) {
+                    window.print();
+                    printContainer.empty();
+                }
+            };
+            
+            if (images.length > 0) {
+                images.each(function() {
+                    if (this.complete) {
+                        onImageLoad();
+                    } else {
+                        $(this).on('load', onImageLoad).on('error', onImageLoad); // Tetap lanjut jika gambar error
+                    }
+                });
+            } else {
+                // Jika tidak ada gambar, langsung cetak
+                window.print();
+                printContainer.empty();
+            }
         }
 
         // --- KITCHEN FUNCTIONS ---
