@@ -1763,7 +1763,7 @@
             <div class="modal-body" id="ktaModalBody">
                 <div id="ktaCard">
                     <div class="kta-header">
-                        <img id="ktaLogo" src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="kta-logo" crossorigin="anonymous">
+                        <img id="ktaLogo" src="" alt="Logo" class="kta-logo">
                         <div class="kta-store-info">
                             <h3 id="ktaStoreName">NAMA RESTO</h3>
                             <p id="ktaStoreContact">Alamat, No. WA, Email</p>
@@ -1773,7 +1773,7 @@
                         <h2 id="ktaMemberName">Nama Member</h2>
                         <p id="ktaMemberId">ID: M250924103000</p>
                         <div class="kta-barcode">
-                            <img id="ktaBarcodeImg" src="" alt="Barcode" crossorigin="anonymous">
+                            <img id="ktaBarcodeImg" src="" alt="Barcode">
                         </div>
                     </div>
                     <div class="kta-footer">
@@ -2497,9 +2497,8 @@
             return members.some(m => m.id === id) ? generateMemberId() : id;
         }
         
-        // PENAMBAHAN: Fungsi untuk memformat nomor HP ke format WhatsApp
         function formatPhoneNumberForWhatsApp(phone) {
-            let formattedPhone = phone.replace(/[^0-9]/g, ''); // Hapus semua karakter non-numerik
+            let formattedPhone = phone.replace(/[^0-9]/g, ''); 
             if (formattedPhone.startsWith('0')) {
                 formattedPhone = '62' + formattedPhone.substring(1);
             } else if (!formattedPhone.startsWith('62')) {
@@ -2508,7 +2507,6 @@
             return `https://wa.me/${formattedPhone}`;
         }
         
-        // PERBAIKAN: Fungsi loadMembersForManagement sekarang menerima searchTerm
         function loadMembersForManagement(searchTerm = '') {
             const $list = $('#membersList').empty();
             const lowerSearchTerm = searchTerm.toLowerCase();
@@ -2633,7 +2631,7 @@
         }
 
         // --- RECEIPT & PRINTING ---
-        function generateReceiptHTML(order) {
+        function generateReceiptHTML(order, logoBase64, barcodeBase64) {
             const member = members.find(m => m.id === order.memberId);
             let itemsHTML = '';
             order.items.forEach(item => {
@@ -2650,7 +2648,7 @@
             return `
             <div id="receiptContent">
                 <div class="receipt-header">
-                    <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png" alt="Logo" class="receipt-logo" crossorigin="anonymous">
+                    <img src="${logoBase64}" alt="Logo" class="receipt-logo">
                     <div class="receipt-title">${settings.storeName}</div>
                     <div>${settings.storeAddress}</div>
                     <div>Telp: ${settings.storePhone}</div>
@@ -2675,28 +2673,51 @@
                 </div>
                 <div class="receipt-footer">
                     <p>Terima kasih telah berkunjung</p>
+                     <div class="receipt-barcode" style="text-align: center; margin: 10px 0;">
+                        <img src="${barcodeBase64}" alt="Transaction Barcode" style="height: 40px; max-width: 100%;">
+                    </div>
                     <p>&copy; ${new Date().getFullYear()} ${settings.storeName}</p>
                 </div>
             </div>`;
         }
         
-        function showReceiptModal(order) {
-            const receiptHTML = generateReceiptHTML(order);
-            $('#receiptModalBody').html(receiptHTML);
-            $('#downloadReceiptPdfBtn').data('order', order);
-            $('#receiptModal').css('display', 'flex');
-        }
+        async function showReceiptModal(order) {
+            const barcodeData = `TrxID:${order.id}|Store:${settings.storeName.substring(0, 15)}|Type:${order.type}|Date:${moment(order.date).format('YYYYMMDDHHmm')}`;
+            const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true&imagetype=png&hidehrt=true`;
+            const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
+            
+            showToast('Membuat struk...', 'info');
 
-        // PERBAIKAN: Fungsi download PDF untuk struk
+            try {
+                const [logoBase64, barcodeBase64] = await Promise.all([
+                    imageToBase64(logoUrl),
+                    imageToBase64(barcodeUrl)
+                ]);
+
+                const receiptHTML = generateReceiptHTML(order, logoBase64, barcodeBase64);
+                $('#receiptModalBody').html(receiptHTML);
+                $('#downloadReceiptPdfBtn').data('order', order);
+                $('#receiptModal').css('display', 'flex');
+            } catch (error) {
+                showToast('Gagal membuat struk.', 'error');
+                const receiptHTML = generateReceiptHTML(order, '', '');
+                $('#receiptModalBody').html(receiptHTML);
+                $('#downloadReceiptPdfBtn').data('order', order);
+                $('#receiptModal').css('display', 'flex');
+            }
+        }
+        
         function downloadReceiptAsPdf() {
             const order = $('#downloadReceiptPdfBtn').data('order');
             if (!order) return;
             const element = document.getElementById('receiptContent');
             const filename = `Struk-${order.id}-${moment(order.date).format('DD-MM-YYYY_HH-mm')}.pdf`;
             
+            showToast('Mengunduh PDF...', 'info');
+            
             html2canvas(element, { 
                 scale: 2, 
-                useCORS: true // Penting untuk memuat gambar eksternal
+                useCORS: true 
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
@@ -2709,7 +2730,7 @@
         }
         
         // --- KTA FUNCTIONS ---
-        function openKtaModal(memberId) {
+        async function openKtaModal(memberId) {
             const member = members.find(m => m.id === memberId);
             if (!member) return;
 
@@ -2717,16 +2738,31 @@
             $('#ktaStoreContact').text(`${settings.storeAddress} • ${settings.storePhone}`);
             $('#ktaMemberName').text(member.name);
             $('#ktaMemberId').text(`ID: ${member.id}`);
+
+            $('#ktaLogo').attr('src', '');
+            $('#ktaBarcodeImg').attr('src', '');
+            $('#ktaModal').css('display', 'flex');
+            showToast('Membuat kartu...', 'info');
             
             const barcodeData = `ID: ${member.id}\nNama: ${member.name}\nTelp: ${member.phone}`;
             const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true&imagetype=png`;
-            $('#ktaBarcodeImg').attr('src', barcodeUrl); // Set source barcode
+            const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
 
+            try {
+                const [logoBase64, barcodeBase64] = await Promise.all([
+                    imageToBase64(logoUrl),
+                    imageToBase64(barcodeUrl)
+                ]);
+
+                $('#ktaLogo').attr('src', logoBase64);
+                $('#ktaBarcodeImg').attr('src', barcodeBase64);
+            } catch (error) {
+                showToast('Gagal memuat gambar kartu.', 'error');
+            }
+            
             $('#downloadKtaPdfBtn').data('member', member);
-            $('#ktaModal').css('display', 'flex');
         }
         
-        // PERBAIKAN: Fungsi unduh PDF KTA yang lebih andal
         function downloadKtaAsPdf() {
             const member = $('#downloadKtaPdfBtn').data('member');
             if (!member) return;
@@ -2737,9 +2773,8 @@
 
             html2canvas(element, { 
                 scale: 2,
-                useCORS: true, // Penting untuk memuat gambar logo & barcode
-                allowTaint: true,
-                logging: false
+                useCORS: true,
+                allowTaint: true
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
@@ -2751,37 +2786,51 @@
             });
         }
         
-        // PERBAIKAN: Fungsi cetak yang lebih andal
         function printElement(selector) {
             const elementToPrint = $(selector).clone();
             const printContainer = $('#print-container');
             
             printContainer.html(elementToPrint);
 
-            // Menunggu gambar dimuat sebelum mencetak
             const images = printContainer.find('img');
             let loadedImages = 0;
 
-            const onImageLoad = () => {
-                loadedImages++;
-                if (loadedImages === images.length) {
-                    window.print();
+            const triggerPrint = () => {
+                window.print();
+                setTimeout(() => {
                     printContainer.empty();
-                }
+                }, 100);
             };
             
             if (images.length > 0) {
+                 let allImagesLoaded = false;
+                
+                const checkCompletion = () => {
+                    if (allImagesLoaded) return;
+                    loadedImages++;
+                    if (loadedImages >= images.length) {
+                        allImagesLoaded = true;
+                        triggerPrint();
+                    }
+                };
+
                 images.each(function() {
                     if (this.complete) {
-                        onImageLoad();
+                        checkCompletion();
                     } else {
-                        $(this).on('load', onImageLoad).on('error', onImageLoad); // Tetap lanjut jika gambar error
+                        $(this).on('load', checkCompletion).on('error', checkCompletion); 
                     }
                 });
+
+                setTimeout(() => {
+                     if (!allImagesLoaded) {
+                         console.warn("Print timed out waiting for images.");
+                         triggerPrint();
+                     }
+                }, 3000);
+
             } else {
-                // Jika tidak ada gambar, langsung cetak
-                window.print();
-                printContainer.empty();
+                triggerPrint();
             }
         }
 
@@ -2852,6 +2901,23 @@
         }
 
         // --- UTILITY & UI ---
+        async function imageToBase64(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (error) {
+                console.error('Failed to convert image to Base64:', url, error);
+                return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // transparent pixel
+            }
+        }
+
         function saveStoreInfo() {
             settings = { ...settings,
                 storeName: $('#storeName').val().trim(),
