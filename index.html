@@ -929,6 +929,7 @@
                 left: 0;
                 top: 0;
                 width: 100%;
+                display: block !important;
             }
 
             .no-print {
@@ -1155,7 +1156,7 @@
             margin-bottom: 15px;
         }
         
-        .kta-barcode {
+        .kta-qrcode {
             background: white;
             padding: 10px;
             border-radius: 5px;
@@ -1165,7 +1166,7 @@
             justify-content: center;
         }
 
-        .kta-barcode svg {
+        .kta-qrcode img {
             width: 180px;
             height: auto;
             display: block;
@@ -1771,8 +1772,7 @@
                     <div class="kta-body">
                         <h2 id="ktaMemberName">Nama Member</h2>
                         <p id="ktaMemberId">ID: M250924103000</p>
-                        <div class="kta-barcode">
-                            <svg id="ktaBarcodeImg"></svg>
+                        <div class="kta-qrcode" id="ktaQrcodeImg">
                         </div>
                     </div>
                     <div class="kta-footer">
@@ -1796,7 +1796,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script>
         // Set locale to Indonesian
         moment.locale('id');
@@ -2630,7 +2630,6 @@
         }
 
         // --- RECEIPT & PRINTING ---
-        // PERBAIKAN: Fungsi generate HTML struk tidak lagi memerlukan barcode, karena akan digenerate setelahnya
         function generateReceiptHTML(order, logoBase64) {
             const member = members.find(m => m.id === order.memberId);
             let itemsHTML = '';
@@ -2673,15 +2672,12 @@
                 </div>
                 <div class="receipt-footer">
                     <p>Terima kasih telah berkunjung</p>
-                     <div class="receipt-barcode" style="text-align: center; margin: 10px 0;">
-                        <svg id="receiptBarcode"></svg>
-                    </div>
+                    <div id="receiptQrcode" style="display: flex; justify-content: center; margin: 10px 0;"></div>
                     <p>&copy; ${new Date().getFullYear()} ${settings.storeName}</p>
                 </div>
             </div>`;
         }
         
-        // PERBAIKAN: Fungsi menampilkan struk kini menggunakan JsBarcode
         async function showReceiptModal(order) {
             const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
             showToast('Membuat struk...', 'info');
@@ -2691,24 +2687,24 @@
                 const receiptHTML = generateReceiptHTML(order, logoBase64);
                 $('#receiptModalBody').html(receiptHTML);
                 
-                // Generate barcode setelah elemen SVG ada di dalam DOM
-                JsBarcode("#receiptBarcode", order.id, {
-                    format: "CODE128",
-                    height: 40,
-                    displayValue: false,
-                    margin: 0
+                // Generate QR Code setelah elemen ada di dalam DOM
+                $('#receiptQrcode').empty(); // Hapus QR code sebelumnya jika ada
+                new QRCode(document.getElementById("receiptQrcode"), {
+                    text: order.id,
+                    width: 80,
+                    height: 80
                 });
 
             } catch (error) {
                 showToast('Gagal memuat logo struk.', 'error');
                 const receiptHTML = generateReceiptHTML(order, ''); // Tetap tampilkan struk tanpa logo
                 $('#receiptModalBody').html(receiptHTML);
-                // Coba generate barcode meskipun logo gagal
-                JsBarcode("#receiptBarcode", order.id, {
-                    format: "CODE128",
-                    height: 40,
-                    displayValue: false,
-                    margin: 0
+                // Coba generate QR code meskipun logo gagal
+                $('#receiptQrcode').empty();
+                 new QRCode(document.getElementById("receiptQrcode"), {
+                    text: order.id,
+                    width: 80,
+                    height: 80
                 });
             } finally {
                 $('#downloadReceiptPdfBtn').data('order', order);
@@ -2739,7 +2735,6 @@
         }
         
         // --- KTA FUNCTIONS ---
-        // PERBAIKAN: Fungsi KTA kini menggunakan JsBarcode dan memisahkan logic logo
         async function openKtaModal(memberId) {
             const member = members.find(m => m.id === memberId);
             if (!member) return;
@@ -2748,24 +2743,30 @@
             $('#ktaStoreContact').text(`${settings.storeAddress} • ${settings.storePhone}`);
             $('#ktaMemberName').text(member.name);
             $('#ktaMemberId').text(`ID: ${member.id}`);
-            $('#ktaModal').css('display', 'flex');
             
             showToast('Membuat kartu...', 'info');
             
-            // Generate barcode langsung ke elemen SVG
-            try {
-                JsBarcode("#ktaBarcodeImg", member.id, {
-                    format: "CODE128",
-                    displayValue: false,
-                    height: 40,
-                    margin: 0
-                });
-            } catch(e) {
-                console.error("Gagal membuat barcode KTA", e);
-                showToast('Gagal membuat barcode KTA.', 'error');
-            }
+            // Siapkan data untuk QR Code
+            const memberData = JSON.stringify({
+                id: member.id,
+                name: member.name,
+                phone: member.phone,
+                address: member.address || '',
+                joinDate: member.joinDate
+            });
 
-            // Load logo secara terpisah
+            const qrContainer = document.getElementById("ktaQrcodeImg");
+            $(qrContainer).empty(); // Hapus QR code lama
+            new QRCode(qrContainer, {
+                text: memberData,
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            
+            $('#ktaModal').css('display', 'flex');
+
+            // Load logo secara terpisah dan aman
             const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
             try {
                 const logoBase64 = await imageToBase64(logoUrl);
@@ -2800,19 +2801,18 @@
             });
         }
         
-        // PERBAIKAN: Fungsi cetak disederhanakan dan dibuat lebih andal
         function printElement(selector) {
             const elementToPrint = $(selector)[0].outerHTML;
             const printContainer = $('#print-container');
             
-            printContainer.html(elementToPrint);
+            printContainer.html(elementToPrint).show();
 
             // Beri browser jeda untuk me-render konten sebelum memanggil dialog cetak
             setTimeout(() => {
                 window.print();
-                // Bersihkan container setelah selesai
-                printContainer.empty();
-            }, 250);
+                // Bersihkan dan sembunyikan container setelah selesai
+                printContainer.empty().hide();
+            }, 300);
         }
 
         // --- KITCHEN FUNCTIONS ---
@@ -2896,6 +2896,7 @@
                 });
             } catch (error) {
                 console.error('Failed to convert image to Base64:', url, error);
+                showToast('Gagal memuat beberapa gambar eksternal.', 'warning');
                 // Return pixel transparan jika gagal
                 return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             }
