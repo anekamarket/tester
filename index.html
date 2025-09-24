@@ -373,6 +373,17 @@
         .btn-info:hover {
             background-color: #138496;
         }
+        
+        .btn-outline-primary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
 
         .btn-donation {
             background-color: var(--donation);
@@ -395,12 +406,14 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             white-space: nowrap;
+            text-align: center;
+            flex: 1;
         }
 
         .tab.active {
             border-bottom: 3px solid var(--primary);
             color: var(--primary);
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .tab-content {
@@ -478,6 +491,12 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .form-control {
@@ -578,6 +597,12 @@
             padding: 16px;
             background-color: var(--light);
             border-radius: var(--rounded);
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
         /* Table Styles */
@@ -748,6 +773,34 @@
             color: var(--gray);
             cursor: default;
         }
+        
+        /* Payment Modal Enhancements */
+        .payment-total-display {
+            background: var(--primary-light);
+            border-radius: var(--rounded);
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .payment-total-display p {
+            font-size: 1rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+        
+        .payment-total-display h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .quick-cash-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
 
         /* Member Badge */
         .member-badge {
@@ -786,8 +839,12 @@
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content {
+            animation: fadeIn 0.3s;
         }
 
         /* Utility Classes */
@@ -1016,12 +1073,15 @@
 
                 <div id="adminPanel" class="admin-panel">
                     <h3 class="panel-title">Admin Panel</h3>
-                    <button id="addMenuBtn" class="btn btn-sm mb-2">Tambah Menu</button>
-                    <button id="manageCategoriesBtn" class="btn btn-sm mb-2">Kelola Kategori</button>
-                    <button id="viewReportsBtn" class="btn btn-sm mb-2">Laporan Penjualan</button>
-                    <button id="kitchenDisplayBtn" class="btn btn-sm mb-2">Info Pesanan</button>
-                    <button id="manageMembersBtn" class="btn btn-sm mb-2">Kelola Member</button>
-                    <button id="manageStoreInfoBtn" class="btn btn-sm">Kelola Info Restoran</button>
+                    <div class="admin-grid">
+                        <button id="addMenuBtn" class="btn btn-sm">Tambah Menu</button>
+                        <button id="manageCategoriesBtn" class="btn btn-sm">Kelola Kategori</button>
+                        <button id="viewReportsBtn" class="btn btn-sm">Laporan</button>
+                        <button id="kitchenDisplayBtn" class="btn btn-sm">Info Pesanan</button>
+                        <button id="manageMembersBtn" class="btn btn-sm">Kelola Member</button>
+                        <button id="manageStoreInfoBtn" class="btn btn-sm">Info Restoran</button>
+                        <button id="controlPanelBtn" class="btn btn-sm btn-warning">Kontrol Panel</button>
+                    </div>
                     
                     <div class="mt-3">
                         <h4 class="panel-title">Backup & Restore</h4>
@@ -1114,42 +1174,18 @@
                 <h3 class="modal-title">Proses Pembayaran</h3>
                 <button class="modal-close">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 0 16px 16px 16px;">
                 <div class="tabs">
-                    <div class="tab active" data-tab="customer">Pelanggan</div>
-                    <div class="tab" data-tab="payment">Pembayaran</div>
+                    <div class="tab active" data-tab="payment"><i class="fas fa-receipt"></i> Pembayaran</div>
+                    <div class="tab" data-tab="details"><i class="fas fa-list-alt"></i> Detail Pesanan</div>
                 </div>
-                
-                <div class="tab-content active" id="customerTab">
-                    <div class="form-group">
-                        <label class="form-label">Nama Pelanggan</label>
-                        <input type="text" id="customerName" class="form-control" placeholder="Masukkan nama pelanggan">
+
+                <div class="tab-content active" id="paymentTab">
+                    <div class="payment-total-display">
+                        <p>Total Tagihan</p>
+                        <h3 id="paymentTotal">Rp 0</h3>
                     </div>
-                    
-                    <div id="orderSummary">
-                        </div>
-                </div>
-                
-                <div class="tab-content" id="paymentTab">
-                    <div class="summary-container mb-3">
-                        <div class="summary-row">
-                            <span>Subtotal:</span>
-                            <span id="paymentSubtotal">Rp 0</span>
-                        </div>
-                        <div id="paymentDonationRow" class="summary-row">
-                            <span>Donasi LAZISNU:</span>
-                            <span id="paymentDonation">Rp 0</span>
-                        </div>
-                        <div id="paymentDiscountRow" class="summary-row" style="display: none;">
-                            <span>Diskon Member:</span>
-                            <span id="paymentDiscount">-Rp 0</span>
-                        </div>
-                        <div class="summary-row total-row">
-                            <span>Total:</span>
-                            <span id="paymentTotal">Rp 0</span>
-                        </div>
-                    </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Metode Pembayaran</label>
                         <select id="paymentMethod" class="form-control">
@@ -1158,26 +1194,36 @@
                             <option value="ewallet">E-Wallet</option>
                         </select>
                     </div>
-                    
+
+                    <div class="quick-cash-buttons" id="quickCashButtons">
+                        </div>
+
                     <div class="form-group">
                         <label class="form-label">Jumlah Pembayaran</label>
                         <input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah" min="0">
                     </div>
-                    
+
                     <div id="changeContainer" style="display: none;">
-                        <div class="summary-row">
+                        <div class="summary-row total-row" style="border-top: 1px solid #ddd;">
                             <span>Kembalian:</span>
                             <span id="paymentChange">Rp 0</span>
                         </div>
                     </div>
                 </div>
+                
+                <div class="tab-content" id="detailsTab">
+                    <div class="form-group">
+                        <label class="form-label">Nama Pelanggan</label>
+                        <input type="text" id="customerName" class="form-control" placeholder="Masukkan nama pelanggan">
+                    </div>
+                    <div id="orderSummary">
+                        </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button id="backToOrderBtn" class="btn btn-warning">Kembali</button>
-                <button id="prevTabBtn" class="btn btn-info" style="display: none;">Sebelumnya</button>
-                <button id="nextTabBtn" class="btn">Lanjut</button>
-                <button id="completePaymentBtn" class="btn btn-success" style="display: none;">
-                    <span>Selesaikan</span>
+                <button class="btn btn-warning modal-close-btn">Batal</button>
+                <button id="completePaymentBtn" class="btn btn-success">
+                    <i class="fas fa-check-circle"></i> Selesaikan Pembayaran
                 </button>
             </div>
         </div>
@@ -1383,6 +1429,112 @@
         </div>
     </div>
 
+    <div id="controlPanelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Kontrol Panel</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0 16px 16px 16px;">
+                <div class="tabs">
+                    <div class="tab active" data-tab="users"><i class="fas fa-users-cog"></i> Pengguna</div>
+                    <div class="tab" data-tab="security"><i class="fas fa-shield-alt"></i> Keamanan</div>
+                </div>
+
+                <div class="tab-content active" id="usersTab">
+                    <h4 class="mt-3">Manajemen Pengguna</h4>
+                    <button id="showAddUserFormBtn" class="btn btn-sm mt-2 mb-3">Tambah Pengguna Baru</button>
+                    <div id="userFormContainer" style="display:none; background: #f9f9f9; padding: 12px; border-radius: var(--rounded-sm); margin-bottom: 16px;">
+                        <h5 id="userFormTitle">Tambah Pengguna</h5>
+                        <form id="userForm">
+                            <input type="hidden" id="userIdInput">
+                            <div class="form-group">
+                                <label class="form-label">Nama Lengkap</label>
+                                <input type="text" id="userName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" id="userUsername" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="userPassword" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Hak Akses (Role)</label>
+                                <select id="userRole" class="form-control">
+                                    <option value="cashier">Kasir</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-warning" id="cancelUserFormBtn">Batal</button>
+                                <button type="submit" class="btn btn-success" id="saveUserBtn">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="usersList"></div>
+                </div>
+
+                <div class="tab-content" id="securityTab">
+                    <h4 class="mt-3">Pengaturan Keamanan</h4>
+                    <form id="itemSecurityForm" class="mt-2">
+                        <div class="form-group">
+                            <label class="form-label">Password Keamanan Edit/Hapus Item</label>
+                            <input type="password" id="itemSecurityCode" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-info">Ubah Password</button>
+                    </form>
+                    <hr class="mt-3 mb-3">
+                    <form id="panelSecurityForm" class="mt-2">
+                        <div class="form-group">
+                            <label class="form-label">Password Keamanan Kontrol Panel</label>
+                            <input type="password" id="panelSecurityCode" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-info">Ubah Password</button>
+                    </form>
+                     <hr class="mt-3 mb-3">
+                    <h4 class="mt-3">Ubah Password Login Anda</h4>
+                    <form id="changeOwnPasswordForm" class="mt-2">
+                        <div class="form-group">
+                            <label class="form-label">Password Saat Ini</label>
+                            <input type="password" id="currentPassword" class="form-control" required>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" id="newPassword" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-success">Simpan Password Baru</button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="passwordPromptModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="passwordPromptTitle">Masukkan Password Keamanan</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="passwordPromptForm">
+                    <div class="form-group">
+                         <label class="form-label" id="passwordPromptMessage">Untuk melanjutkan, masukkan password.</label>
+                         <input type="password" id="passwordPromptInput" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Batal</button>
+                <button class="btn btn-success" id="passwordPromptSubmit">Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
     <div id="confirmationModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
@@ -1487,11 +1639,11 @@
             MEMBERS: 'warungmakan_members'
         };
         
-        // Default admin user (username: admin, password: Admin.123)
+        // Default admin user (username: Admin, password: Admin.1945)
         const DEFAULT_ADMIN = {
             id: 'U001',
-            username: 'admin',
-            password: CryptoJS.SHA256('Admin.123').toString(),
+            username: 'Admin',
+            password: CryptoJS.SHA256('Admin.1945').toString(),
             name: 'Administrator',
             role: 'admin'
         };
@@ -1520,10 +1672,9 @@
         
         // Initialize data
         function initializeData() {
-            // Check if users exist, if not create default users
             let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
             
-            if (!users.find(u => u.username === 'admin')) {
+            if (!users.find(u => u.username === 'Admin')) {
                 users.push(DEFAULT_ADMIN);
             }
             
@@ -1533,68 +1684,27 @@
             
             localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
             
-            // Initialize members if not exists
             if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
                 localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify([]));
             }
             
-            // Initialize other data if not exists
             if (!localStorage.getItem(STORAGE_KEYS.MENUS)) {
-                // Sample menu data for warung makan with default images
                 const sampleMenus = [
-                    {
-                        id: 'M001',
-                        name: 'Nasi Goreng',
-                        category: 'Makanan',
-                        price: 15000,
-                        image: DEFAULT_MENU_IMAGES['Makanan']['Nasi Goreng'],
-                        description: 'Nasi goreng spesial dengan telur dan ayam'
-                    },
-                    {
-                        id: 'M002',
-                        name: 'Mie Goreng',
-                        category: 'Makanan',
-                        price: 12000,
-                        image: DEFAULT_MENU_IMAGES['Makanan']['Mie Goreng'],
-                        description: 'Mie goreng dengan sayuran dan telur'
-                    },
-                    {
-                        id: 'M003',
-                        name: 'Ayam Goreng',
-                        category: 'Makanan',
-                        price: 18000,
-                        image: DEFAULT_MENU_IMAGES['Makanan']['Ayam Goreng'],
-                        description: 'Ayam goreng krispi dengan sambal'
-                    },
-                    {
-                        id: 'M004',
-                        name: 'Es Teh',
-                        category: 'Minuman',
-                        price: 5000,
-                        image: DEFAULT_MENU_IMAGES['Minuman']['Es Teh'],
-                        description: 'Es teh manis segar'
-                    },
-                    {
-                        id: 'M005',
-                        name: 'Es Jeruk',
-                        category: 'Minuman',
-                        price: 7000,
-                        image: DEFAULT_MENU_IMAGES['Minuman']['Es Jeruk'],
-                        description: 'Es jeruk asli'
-                    }
+                    { id: 'M001', name: 'Nasi Goreng', category: 'Makanan', price: 15000, image: DEFAULT_MENU_IMAGES['Makanan']['Nasi Goreng'], description: 'Nasi goreng spesial dengan telur dan ayam' },
+                    { id: 'M002', name: 'Mie Goreng', category: 'Makanan', price: 12000, image: DEFAULT_MENU_IMAGES['Makanan']['Mie Goreng'], description: 'Mie goreng dengan sayuran dan telur' },
+                    { id: 'M003', name: 'Ayam Goreng', category: 'Makanan', price: 18000, image: DEFAULT_MENU_IMAGES['Makanan']['Ayam Goreng'], description: 'Ayam goreng krispi dengan sambal' },
+                    { id: 'M004', name: 'Es Teh', category: 'Minuman', price: 5000, image: DEFAULT_MENU_IMAGES['Minuman']['Es Teh'], description: 'Es teh manis segar' },
+                    { id: 'M005', name: 'Es Jeruk', category: 'Minuman', price: 7000, image: DEFAULT_MENU_IMAGES['Minuman']['Es Jeruk'], description: 'Es jeruk asli' }
                 ];
-                
                 localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(sampleMenus));
             }
             
             if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
-                // Sample categories for warung makan
                 const sampleCategories = [
                     { id: 'C001', name: 'Makanan' },
                     { id: 'C002', name: 'Minuman' },
                     { id: 'C003', name: 'Snack' }
                 ];
-                
                 localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(sampleCategories));
             }
             
@@ -1607,7 +1717,9 @@
                     storeName: 'WARUNG MAKAN SEDERHANA',
                     storeAddress: 'Jl. Contoh No. 123, Kota',
                     storePhone: '081234567890',
-                    tableCount: 5
+                    tableCount: 5,
+                    itemSecurityCode: CryptoJS.SHA256('17081945').toString(),
+                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString()
                 }));
             }
         }
@@ -1621,27 +1733,18 @@
         let members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
         let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
         let currentOrder = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_ORDER)) || {
-            items: [],
-            subtotal: 0,
-            total: 0,
-            discount: 0,
-            donation: 0,
-            type: 'dinein',
-            tableNumber: '1',
-            note: '',
-            memberId: null
+            items: [], subtotal: 0, total: 0, discount: 0, donation: 0,
+            type: 'dinein', tableNumber: '1', note: '', memberId: null
         };
         let kitchenInterval;
+        let passwordPromptCallback = null;
 
         // Initialize the app
         $(document).ready(function() {
-            // Initialize data
             initializeData();
             
-            // Set current year in footer
             $('#currentYear, #receiptYear').text(new Date().getFullYear());
             
-            // Check if user is logged in
             if (currentUser) {
                 $('#loggedInUser').text(currentUser.name);
                 $('#loginModal').hide();
@@ -1649,7 +1752,6 @@
                 initializeApp();
             }
             
-            // Update date every minute
             setInterval(updateCurrentDate, 60000);
             
             // Login form handler
@@ -1657,42 +1759,28 @@
                 e.preventDefault();
                 const $loginBtn = $(this).find('button[type="submit"]');
                 const originalText = $loginBtn.html();
-                
                 setButtonLoading($loginBtn, true);
-
-                setTimeout(() => { // Simulate network delay
+                setTimeout(() => {
                     try {
                         const username = $('#username').val().trim();
                         const password = $('#password').val().trim();
-                        
                         if (!username || !password) {
-                            showToast('Username dan password harus diisi', 'error');
-                            return;
+                            showToast('Username dan password harus diisi', 'error'); return;
                         }
-                        
-                        const user = users.find(u => u.username === username);
-                        
+                        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
                         if (!user) {
-                            showToast('Username tidak ditemukan', 'error');
-                            return;
+                            showToast('Username tidak ditemukan', 'error'); return;
                         }
-                        
-                        const hashedPassword = CryptoJS.SHA256(password).toString();
-                        if (hashedPassword !== user.password) {
-                            showToast('Password salah', 'error');
-                            return;
+                        if (CryptoJS.SHA256(password).toString() !== user.password) {
+                            showToast('Password salah', 'error'); return;
                         }
-                        
-                        // Login successful
                         currentUser = user;
                         localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
                         $('#loggedInUser').text(currentUser.name);
                         $('#loginModal').hide();
                         $('#mainApp').fadeIn();
-                        
                         initializeApp();
                         showToast(`Selamat datang, ${currentUser.name}!`, 'success');
-
                     } finally {
                         setButtonLoading($loginBtn, false, originalText);
                     }
@@ -1721,17 +1809,13 @@
             $(document).on('click', '.menu-card', function() {
                 const menuId = $(this).data('id');
                 const menu = menus.find(m => m.id === menuId);
-                
                 if (!menu) return;
-                
                 const existingItem = currentOrder.items.find(item => item.menu.id === menuId);
-                
                 if (existingItem) {
                     existingItem.quantity += 1;
                 } else {
                     currentOrder.items.push({ menu: menu, quantity: 1, status: 'pending' });
                 }
-                
                 updateOrder();
                 showToast(`${menu.name} ditambahkan ke pesanan`, 'success');
             });
@@ -1750,11 +1834,13 @@
                 e.stopPropagation();
                 if (currentUser.role !== 'admin') return;
                 const menuId = $(this).data('id');
-                showConfirmation('Hapus Menu', 'Apakah Anda yakin ingin menghapus menu ini?', () => {
-                    menus = menus.filter(m => m.id !== menuId);
-                    saveMenus();
-                    loadMenus();
-                    showToast('Menu berhasil dihapus', 'success');
+                promptForPassword('item', () => {
+                    showConfirmation('Hapus Menu', 'Apakah Anda yakin ingin menghapus menu ini?', () => {
+                        menus = menus.filter(m => m.id !== menuId);
+                        saveMenus();
+                        loadMenus();
+                        showToast('Menu berhasil dihapus', 'success');
+                    });
                 });
             });
             
@@ -1773,7 +1859,6 @@
                 let quantity = parseInt($(this).val()) || 1;
                 if (quantity < 1) quantity = 1;
                 $(this).val(quantity);
-                
                 const item = currentOrder.items.find(item => item.menu.id === menuId);
                 if (item) {
                     item.quantity = quantity;
@@ -1790,45 +1875,28 @@
                 updateOrder();
             });
             
-            // Table number change
             $('#tableNumber').change(function() { currentOrder.tableNumber = $(this).val(); });
+            $('#donationAmount').on('input', function() { currentOrder.donation = parseFloat($(this).val()) || 0; updateOrder(); });
+            $('#orderNote').on('input', function() { currentOrder.note = $(this).val(); });
             
-            // Donation amount change
-            $('#donationAmount').on('input', function() {
-                currentOrder.donation = parseFloat($(this).val()) || 0;
-                updateOrder();
-            });
-            
-            // Member search functionality
+            // Member search
             $('#memberSearchInput').on('input', function() {
                 const searchTerm = $(this).val().trim().toLowerCase();
                 const $results = $('#memberSearchResults');
-                
                 if (searchTerm.length === 0) {
                     $results.hide();
-                    if (currentOrder.memberId) { // Only update if member was selected
-                        currentOrder.memberId = null;
-                        updateOrder();
-                    }
+                    if (currentOrder.memberId) { currentOrder.memberId = null; updateOrder(); }
                     return;
                 }
-                
-                const filteredMembers = members.filter(member => 
-                    member.name.toLowerCase().includes(searchTerm) || 
-                    member.id.toLowerCase().includes(searchTerm)
-                );
-                
+                const filteredMembers = members.filter(member => member.name.toLowerCase().includes(searchTerm) || member.id.toLowerCase().includes(searchTerm));
                 $results.empty().show();
                 if (filteredMembers.length > 0) {
-                    filteredMembers.forEach(member => {
-                        $results.append(`<div class="member-search-item" data-id="${member.id}">${member.name} (${member.id})</div>`);
-                    });
+                    filteredMembers.forEach(member => $results.append(`<div class="member-search-item" data-id="${member.id}">${member.name} (${member.id})</div>`));
                 } else {
                     $results.append('<div class="member-search-item disabled">Member tidak ditemukan</div>');
                 }
             });
             
-            // Member search item click
             $(document).on('click', '.member-search-item:not(.disabled)', function() {
                 const memberId = $(this).data('id');
                 const member = members.find(m => m.id === memberId);
@@ -1839,104 +1907,45 @@
                 }
                 $('#memberSearchResults').hide();
             });
+
+            $(document).on('click', function(e) { if (!$(e.target).closest('.member-search-container').length) $('#memberSearchResults').hide(); });
             
-            // Clear member search when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.member-search-container').length) {
-                    $('#memberSearchResults').hide();
-                }
-            });
-            
-            // Order note change
-            $('#orderNote').on('input', function() { currentOrder.note = $(this).val(); });
-            
-            // Process order button
+            // Process Order Button
             $('#processOrderBtn').click(function() {
-                if (currentOrder.items.length === 0) {
-                    showToast('Pesanan kosong', 'warning');
-                    return;
-                }
-                if (currentOrder.type === 'dinein' && !currentOrder.tableNumber) {
-                    showToast('Pilih nomor meja terlebih dahulu', 'warning');
-                    return;
-                }
+                if (currentOrder.items.length === 0) { showToast('Pesanan kosong', 'warning'); return; }
+                if (currentOrder.type === 'dinein' && !currentOrder.tableNumber) { showToast('Pilih nomor meja', 'warning'); return; }
                 
                 const member = members.find(m => m.id === currentOrder.memberId);
-                $('#customerName').val(member ? member.name : '');
-                updateOrderSummary();
-                $('#paymentAmount').val('');
-                $('#paymentChange').text('Rp 0');
-                $('#changeContainer').hide();
+                currentOrder.customerName = $('#customerName').val() || (member ? member.name : '');
+                $('#customerName').val(currentOrder.customerName);
                 
-                // Reset tabs
-                $('.tab').removeClass('active');
-                $('[data-tab="customer"]').addClass('active');
-                $('.tab-content').removeClass('active');
-                $('#customerTab').addClass('active');
-                $('#prevTabBtn').hide();
-                $('#nextTabBtn').show();
-                $('#completePaymentBtn').hide();
+                updateOrderSummary();
+                updatePaymentTab();
+                switchPaymentModalTab('payment');
                 $('#processOrderModal').css('display', 'flex');
             });
             
-            // Modal navigation
-            $('#backToOrderBtn').click(() => $('#processOrderModal').hide());
-            $('#prevTabBtn').click(() => switchTab('customer'));
-            $('#nextTabBtn').click(() => {
-                const customerName = $('#customerName').val().trim();
-                if (!customerName) {
-                    showToast('Nama pelanggan harus diisi', 'warning');
-                    return;
-                }
-                currentOrder.customerName = customerName;
-                updatePaymentTab();
-                switchTab('payment');
-            });
-
-            function switchTab(tabName) {
-                $('.tab').removeClass('active');
-                $(`[data-tab="${tabName}"]`).addClass('active');
-                $('.tab-content').removeClass('active');
-                $(`#${tabName}Tab`).addClass('active');
-
-                $('#prevTabBtn').toggle(tabName === 'payment');
-                $('#nextTabBtn').toggle(tabName === 'customer');
-                $('#completePaymentBtn').toggle(tabName === 'payment');
-            }
+            // Payment Modal Logic
+            $('.modal-body .tabs .tab').click(function() { switchPaymentModalTab($(this).data('tab')); });
+            $('#paymentAmount').on('input', calculateChange);
+            $(document).on('click', '.quick-cash-btn', function() { $('#paymentAmount').val($(this).data('amount')).trigger('input'); });
             
-            // Payment amount change
-            $('#paymentAmount').on('input', function() {
-                const amount = parseFloat($(this).val()) || 0;
-                const change = amount - currentOrder.total;
-                $('#changeContainer').toggle(change >= 0);
-                $('#paymentChange').text(formatCurrency(change));
-            });
-            
-            // Complete payment
             $('#completePaymentBtn').click(function() {
                 const paymentAmount = parseFloat($('#paymentAmount').val()) || 0;
-                
-                if (paymentAmount < currentOrder.total) {
-                    showToast('Jumlah pembayaran kurang', 'error');
-                    return;
-                }
+                if (paymentAmount < currentOrder.total) { showToast('Jumlah pembayaran kurang', 'error'); return; }
+                currentOrder.customerName = $('#customerName').val().trim() || 'Pelanggan';
 
                 const $btn = $(this);
                 const originalText = $btn.html();
                 setButtonLoading($btn, true);
 
-                setTimeout(() => { // Simulate processing
+                setTimeout(() => {
                     try {
                         const order = {
-                            id: 'ORD' + moment().format('YYYYMMDDHHmmss'),
-                            date: new Date(),
-                            ...currentOrder,
-                            paymentMethod: $('#paymentMethod').val(),
-                            paymentAmount: paymentAmount,
-                            change: paymentAmount - currentOrder.total,
-                            cashier: currentUser,
-                            status: currentOrder.type === 'dinein' ? 'preparing' : 'completed',
-                            statusLocked: false
+                            id: 'ORD' + moment().format('YYYYMMDDHHmmss'), date: new Date(), ...currentOrder,
+                            paymentMethod: $('#paymentMethod').val(), paymentAmount: paymentAmount,
+                            change: paymentAmount - currentOrder.total, cashier: currentUser,
+                            status: currentOrder.type === 'dinein' ? 'preparing' : 'completed', statusLocked: false
                         };
                         
                         orders.unshift(order);
@@ -1970,390 +1979,336 @@
             });
             
             // Admin panel buttons
-            $('#addMenuBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                $('#menuModal .modal-title').text('Tambah Menu Baru');
-                $('#menuForm')[0].reset();
-                $('#menuId').val('');
-                loadCategoriesForSelect();
-                $('#menuModal').css('display', 'flex');
-            });
+            $('#addMenuBtn').click(() => { if (currentUser.role !== 'admin') return; openEditMenuModal(null); });
+            $('#manageCategoriesBtn').click(() => { if (currentUser.role !== 'admin') return; loadCategoriesForManagement(); $('#manageCategoriesModal').css('display', 'flex'); });
+            $('#viewReportsBtn').click(() => { if (currentUser.role !== 'admin') return; $('#reportPeriod').val('today').trigger('change'); $('#reportResults').empty(); $('#printReportBtn').hide(); $('#reportsModal').css('display', 'flex'); });
+            $('#kitchenDisplayBtn').click(() => { loadKitchenOrders(); kitchenInterval = setInterval(loadKitchenOrders, 30000); $('#kitchenDisplayModal').css('display', 'flex'); });
+            $('#manageMembersBtn').click(() => { if (currentUser.role !== 'admin') return; resetMemberForm(); loadMembersForManagement(); $('#memberAdminFields').toggle(currentUser.role === 'admin'); $('#manageMembersModal').css('display', 'flex'); });
+            $('#manageStoreInfoBtn').click(() => { if (currentUser.role !== 'admin') return; loadStoreInfo(); $('#manageStoreInfoModal').css('display', 'flex'); });
             
-            $('#manageCategoriesBtn').click(() => {
+            $('#controlPanelBtn').click(() => {
                 if (currentUser.role !== 'admin') return;
-                loadCategoriesForManagement();
-                $('#manageCategoriesModal').css('display', 'flex');
-            });
-            
-            $('#viewReportsBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                $('#reportPeriod').val('today').trigger('change');
-                $('#reportResults').empty();
-                $('#printReportBtn').hide();
-                $('#reportsModal').css('display', 'flex');
-            });
-            
-            $('#kitchenDisplayBtn').click(() => {
-                loadKitchenOrders();
-                kitchenInterval = setInterval(loadKitchenOrders, 30000); // Auto-refresh
-                $('#kitchenDisplayModal').css('display', 'flex');
+                promptForPassword('panel', () => {
+                    $('#controlPanelModal .tabs .tab').removeClass('active');
+                    $('#controlPanelModal .tab-content').removeClass('active');
+                    $('#controlPanelModal [data-tab="users"]').addClass('active');
+                    $('#usersTab').addClass('active');
+                    loadUsersForManagement();
+                    $('#controlPanelModal').css('display', 'flex');
+                });
             });
 
-            $('#manageMembersBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                resetMemberForm();
-                loadMembersForManagement();
-                $('#memberAdminFields').toggle(currentUser.role === 'admin');
-                $('#manageMembersModal').css('display', 'flex');
-            });
-            
-            $('#manageStoreInfoBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                loadStoreInfo();
-                $('#manageStoreInfoModal').css('display', 'flex');
-            });
-            
             // Backup, Restore, Reset
-            $('#backupDataBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                showConfirmation('Backup Data', 'Data akan di-backup ke file JSON. Lanjutkan?', backupData);
-            });
-
-            $('#restoreFile').change(function() {
-                if (currentUser.role !== 'admin') return;
-                const file = this.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        if (!data.menus || !data.categories || !data.orders || !data.settings || !data.users || !data.members) {
-                            showToast('File backup tidak valid', 'error');
-                            return;
-                        }
-                        showConfirmation('Restore Data', 'Semua data saat ini akan diganti dengan data dari file backup. Lanjutkan?', () => restoreData(data));
-                    } catch (err) {
-                        showToast('Gagal membaca file backup', 'error');
-                    }
-                };
-                reader.readAsText(file);
-                $(this).val(''); // Reset file input
-            });
-
-            $('#resetDataBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                showConfirmation('Reset Data', 'Semua data akan dihapus dan dikembalikan ke pengaturan awal. Lanjutkan?', resetAllData, 'danger');
-            });
+            $('#backupDataBtn').click(() => { if (currentUser.role !== 'admin') return; showConfirmation('Backup Data', 'Data akan di-backup ke file JSON. Lanjutkan?', backupData); });
+            $('#restoreFile').change(function() { if (currentUser.role !== 'admin') return; restoreFromFile(this.files[0]); $(this).val(''); });
+            $('#resetDataBtn').click(() => { if (currentUser.role !== 'admin') return; promptForPassword('item', () => showConfirmation('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', resetAllData, 'danger')); });
             
             // Save menu
             $('#saveMenuBtn').click(function() {
-                const id = $('#menuId').val();
-                const name = $('#menuName').val().trim();
-                const category = $('#menuCategory').val();
-                const price = parseFloat($('#menuPrice').val()) || 0;
-                const image = $('#menuImage').val().trim();
-                const description = $('#menuDescription').val().trim();
-                
-                if (!name || !category || price <= 0) {
-                    showToast('Nama, kategori, dan harga harus diisi dengan benar', 'error');
-                    return;
-                }
+                const id = $('#menuId').val(), name = $('#menuName').val().trim(), category = $('#menuCategory').val(), price = parseFloat($('#menuPrice').val()) || 0, image = $('#menuImage').val().trim(), description = $('#menuDescription').val().trim();
+                if (!name || !category || price <= 0) { showToast('Nama, kategori, dan harga harus valid', 'error'); return; }
                 
                 let finalImage = image || (DEFAULT_MENU_IMAGES[category] && DEFAULT_MENU_IMAGES[category][name]) || '';
                 
-                if (id) {
-                    const menuIndex = menus.findIndex(m => m.id === id);
-                    if (menuIndex !== -1) {
-                        menus[menuIndex] = { ...menus[menuIndex], name, category, price, image: finalImage, description };
+                const action = () => {
+                    if (id) {
+                        const menuIndex = menus.findIndex(m => m.id === id);
+                        if (menuIndex !== -1) menus[menuIndex] = { ...menus[menuIndex], name, category, price, image: finalImage, description };
+                    } else {
+                        menus.unshift({ id: 'M' + moment().format('YYYYMMDDHHmmssSSS'), name, category, price, image: finalImage, description });
                     }
-                } else {
-                    menus.unshift({ id: 'M' + moment().format('YYYYMMDDHHmmssSSS'), name, category, price, image: finalImage, description });
+                    saveMenus(); loadMenus(); $('#menuModal').hide(); showToast(`Menu berhasil ${id ? 'diperbarui' : 'disimpan'}`, 'success');
+                };
+
+                if (currentUser.role === 'admin') {
+                   if (id) promptForPassword('item', action); else action();
                 }
-                
-                saveMenus();
-                loadMenus();
-                $('#menuModal').hide();
-                showToast(`Menu berhasil ${id ? 'diperbarui' : 'disimpan'}`, 'success');
             });
             
             // Category Management
             $('#addCategoryBtn').click(function() {
                 const name = $('#newCategoryName').val().trim();
-                if (!name) {
-                    showToast('Nama kategori harus diisi', 'error');
-                    return;
-                }
-                if (categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
-                    showToast('Kategori sudah ada', 'error');
-                    return;
-                }
-                
+                if (!name) { showToast('Nama kategori harus diisi', 'error'); return; }
+                if (categories.find(c => c.name.toLowerCase() === name.toLowerCase())) { showToast('Kategori sudah ada', 'error'); return; }
                 categories.unshift({ id: 'C' + moment().format('YYYYMMDDHHmmssSSS'), name });
-                saveCategories();
-                loadCategories();
-                loadCategoriesForManagement();
-                $('#newCategoryName').val('');
-                showToast('Kategori berhasil ditambahkan', 'success');
+                saveCategories(); loadCategories(); loadCategoriesForManagement(); $('#newCategoryName').val(''); showToast('Kategori ditambahkan', 'success');
             });
             
             $(document).on('click', '.remove-category', function() {
                 const categoryId = $(this).data('id');
                 const category = categories.find(c => c.id === categoryId);
-                if (menus.some(m => m.category === category.name)) {
-                    showToast('Tidak bisa menghapus kategori yang sudah digunakan oleh menu', 'error');
-                    return;
-                }
-                
-                categories = categories.filter(c => c.id !== categoryId);
-                saveCategories();
-                loadCategories();
-                loadCategoriesForManagement();
-                showToast('Kategori berhasil dihapus', 'success');
+                if (menus.some(m => m.category === category.name)) { showToast('Kategori sedang digunakan oleh menu', 'error'); return; }
+                promptForPassword('item', () => {
+                    categories = categories.filter(c => c.id !== categoryId);
+                    saveCategories(); loadCategories(); loadCategoriesForManagement(); showToast('Kategori dihapus', 'success');
+                });
             });
             
             // Member Management
-            $('#showAddMemberFormBtn').click(function() {
-                resetMemberForm();
-                $('#memberFormContainer').slideDown();
-            });
-
-            $('#cancelMemberFormBtn').click(() => {
-                $('#memberFormContainer').slideUp(() => resetMemberForm());
-            });
-
+            $('#showAddMemberFormBtn').click(() => { resetMemberForm(); $('#memberFormContainer').slideDown(); });
+            $('#cancelMemberFormBtn').click(() => $('#memberFormContainer').slideUp(() => resetMemberForm()));
             $('#memberForm').submit(function(e) {
                 e.preventDefault();
-                const id = $('#memberIdInput').val();
-                const name = $('#memberName').val().trim();
-                const phone = $('#memberPhone').val().trim();
-                const address = $('#memberAddress').val().trim();
-
-                if (!name || !phone) {
-                    showToast('Nama dan nomor telepon harus diisi', 'error');
-                    return;
-                }
-
-                if (id) { // Update
+                const id = $('#memberIdInput').val(), name = $('#memberName').val().trim(), phone = $('#memberPhone').val().trim(), address = $('#memberAddress').val().trim();
+                if (!name || !phone) { showToast('Nama dan nomor telepon harus diisi', 'error'); return; }
+                if (id) {
                     const memberIndex = members.findIndex(m => m.id === id);
-                    if (memberIndex !== -1) {
-                        members[memberIndex] = { ...members[memberIndex], name, phone, address };
-                    }
-                } else { // Create
-                    const newMember = {
-                        id: generateMemberId(),
-                        name, phone, address,
-                        joinDate: new Date(), transactions: 0, totalSpent: 0
-                    };
-                    members.unshift(newMember);
+                    if (memberIndex !== -1) members[memberIndex] = { ...members[memberIndex], name, phone, address };
+                } else {
+                    members.unshift({ id: generateMemberId(), name, phone, address, joinDate: new Date(), transactions: 0, totalSpent: 0 });
                 }
-                
-                saveMembers();
-                loadMembersForManagement();
-                $('#memberFormContainer').slideUp(() => resetMemberForm());
-                showToast(`Member berhasil ${id ? 'diperbarui' : 'ditambahkan'}`, 'success');
+                saveMembers(); loadMembersForManagement(); $('#memberFormContainer').slideUp(() => resetMemberForm()); showToast(`Member ${id ? 'diperbarui' : 'ditambahkan'}`, 'success');
             });
             
             $(document).on('click', '.edit-member', function() {
                 const memberId = $(this).data('id');
                 const member = members.find(m => m.id === memberId);
                 if (!member) return;
-
-                $('#memberFormTitle').text('Edit Member');
-                $('#memberIdInput').val(member.id);
-                $('#memberName').val(member.name);
-                $('#memberPhone').val(member.phone);
-                $('#memberAddress').val(member.address || '');
-                $('#memberTransactions').val(member.transactions || 0);
-                $('#memberTotalSpent').val(formatCurrency(member.totalSpent || 0));
-                $('#saveMemberBtn').text('Simpan Perubahan');
-                $('#deleteMemberBtn').show().data('id', memberId);
-                $('#memberFormContainer').slideDown();
+                $('#memberFormTitle').text('Edit Member'); $('#memberIdInput').val(member.id); $('#memberName').val(member.name); $('#memberPhone').val(member.phone); $('#memberAddress').val(member.address || ''); $('#memberTransactions').val(member.transactions || 0); $('#memberTotalSpent').val(formatCurrency(member.totalSpent || 0)); $('#saveMemberBtn').text('Simpan Perubahan'); $('#deleteMemberBtn').show().data('id', memberId); $('#memberFormContainer').slideDown();
             });
             
             $('#deleteMemberBtn').click(function() {
                 const memberId = $(this).data('id');
-                showConfirmation('Hapus Member', 'Apakah Anda yakin ingin menghapus member ini?', () => {
+                promptForPassword('item', () => showConfirmation('Hapus Member', 'Yakin ingin menghapus member ini?', () => {
                     members = members.filter(m => m.id !== memberId);
-                    saveMembers();
-                    loadMembersForManagement();
-                    $('#memberFormContainer').slideUp(() => resetMemberForm());
-                    showToast('Member berhasil dihapus', 'success');
-                }, 'danger');
+                    saveMembers(); loadMembersForManagement(); $('#memberFormContainer').slideUp(() => resetMemberForm()); showToast('Member dihapus', 'success');
+                }, 'danger'));
             });
 
             // Report Generation
-            $('#generateReportBtn').click(function() {
-                const period = $('#reportPeriod').val();
-                let startDate, endDate;
-                
-                if (period === 'today') {
-                    startDate = moment().startOf('day');
-                    endDate = moment().endOf('day');
-                } else if (period === 'week') {
-                    startDate = moment().startOf('week');
-                    endDate = moment().endOf('week');
-                } else if (period === 'month') {
-                    startDate = moment().startOf('month');
-                    endDate = moment().endOf('month');
-                } else if (period === 'custom') {
-                    startDate = moment($('#reportStartDate').val());
-                    endDate = moment($('#reportEndDate').val()).endOf('day');
-                    if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) {
-                        showToast('Rentang tanggal tidak valid', 'error');
-                        return;
-                    }
-                }
-                
-                const filteredOrders = orders.filter(o => moment(o.date).isBetween(startDate, endDate));
-                generateReportHTML(filteredOrders, startDate, endDate);
-            });
-            
+            $('#generateReportBtn').click(generateReport);
             $('#printReportBtn').click(printReport);
             
             // Kitchen Display
             $(document).on('click', '.status-item', function() {
-                if (currentUser.role !== 'admin' && currentUser.role !== 'cashier') return;
-                
                 const orderId = $(this).data('id');
                 const order = orders.find(o => o.id === orderId);
                 if (!order || order.statusLocked) return;
-
                 order.status = order.status === 'preparing' ? 'ready' : 'preparing';
                 if (order.status === 'ready') order.statusLocked = true;
-                
-                saveOrders();
-                loadKitchenOrders();
-                showToast(`Status pesanan ${orderId} diperbarui`, 'success');
+                saveOrders(); loadKitchenOrders(); showToast(`Status pesanan ${orderId} diperbarui`, 'success');
             });
             
             $('#refreshKitchenBtn').click(loadKitchenOrders);
+            $('#saveStoreInfoBtn').click(saveStoreInfo);
             
-            // Store Info Management
-            $('#saveStoreInfoBtn').click(function() {
-                const storeName = $('#storeName').val().trim();
-                const storeAddress = $('#storeAddress').val().trim();
-                const storePhone = $('#storePhone').val().trim();
-                const tableCount = parseInt($('#tableCount').val()) || 5;
-                
-                if (!storeName || !storeAddress || !storePhone) {
-                    showToast('Semua info restoran harus diisi', 'error');
-                    return;
-                }
-                
-                settings = { storeName, storeAddress, storePhone, tableCount };
-                saveSettings();
-                updateStoreInfo();
-                updateTableNumbers();
-                $('#manageStoreInfoModal').hide();
-                showToast('Info restoran berhasil diperbarui', 'success');
+            // Control Panel
+            $('#controlPanelModal .tabs .tab').click(function() { switchControlPanelTab($(this).data('tab')); });
+            $('#showAddUserFormBtn').click(() => { resetUserForm(); $('#userFormContainer').slideDown(); });
+            $('#cancelUserFormBtn').click(() => $('#userFormContainer').slideUp(() => resetUserForm()));
+            $('#userForm').submit(saveUser);
+            $(document).on('click', '.edit-user', function() {
+                const user = users.find(u => u.id === $(this).data('id'));
+                if (user) { populateUserForm(user); $('#userFormContainer').slideDown(); }
+            });
+            $(document).on('click', '.delete-user', function() {
+                const userId = $(this).data('id');
+                if (users.length <= 1) { showToast('Tidak dapat menghapus satu-satunya pengguna.', 'error'); return; }
+                if (userId === currentUser.id) { showToast('Anda tidak dapat menghapus akun Anda sendiri.', 'error'); return; }
+                showConfirmation('Hapus Pengguna', 'Yakin ingin menghapus pengguna ini?', () => {
+                    users = users.filter(u => u.id !== userId);
+                    saveUsers(); loadUsersForManagement(); showToast('Pengguna dihapus', 'success');
+                }, 'danger');
             });
             
-            // Generic modal close handlers
+            $('#itemSecurityForm').submit(changeSecurityCode);
+            $('#panelSecurityForm').submit(changeSecurityCode);
+            $('#changeOwnPasswordForm').submit(changeOwnPassword);
+
+            // Password Prompt
+            $('#passwordPromptForm').submit(e => e.preventDefault());
+            $('#passwordPromptSubmit').click(submitPasswordPrompt);
+            
+            // Generic modal close
             $('.modal-close, .modal-close-btn').click(function() {
                 $(this).closest('.modal').hide();
-                 if ($(this).closest('.modal').attr('id') === 'kitchenDisplayModal' && kitchenInterval) {
-                    clearInterval(kitchenInterval);
-                }
+                if ($(this).closest('.modal').attr('id') === 'kitchenDisplayModal' && kitchenInterval) clearInterval(kitchenInterval);
             });
-
-            $('#reportPeriod').change(function() {
-                $('#customDateRange').toggle($(this).val() === 'custom');
-            });
+            $('#reportPeriod').change(() => $('#customDateRange').toggle($('#reportPeriod').val() === 'custom'));
         });
 
         // --- CORE FUNCTIONS ---
-
         function initializeApp() {
-            loadMenus();
-            updateOrder();
-            loadCategories();
-            updateCurrentDate();
-            updateStoreInfo();
-            updateTableNumbers();
-            
-            if (currentUser.role === 'admin') {
-                $('#adminPanel').show();
+            loadMenus(); updateOrder(); loadCategories(); updateCurrentDate();
+            updateStoreInfo(); updateTableNumbers();
+            $('#adminPanel').toggle(currentUser.role === 'admin');
+        }
+
+        // --- SECURITY & PASSWORD FUNCTIONS ---
+        function promptForPassword(type, callback) {
+            const title = type === 'item' ? 'Password Edit/Hapus' : 'Password Kontrol Panel';
+            $('#passwordPromptTitle').text(title);
+            $('#passwordPromptMessage').text(`Masukkan ${title} untuk melanjutkan.`);
+            passwordPromptCallback = callback;
+            $('#passwordPromptInput').val('');
+            $('#passwordPromptModal').css('display', 'flex').find('input').focus();
+        }
+
+        function submitPasswordPrompt() {
+            const password = $('#passwordPromptInput').val();
+            const type = $('#passwordPromptTitle').text().includes('Kontrol Panel') ? 'panel' : 'item';
+            const correctHash = type === 'panel' ? settings.panelSecurityCode : settings.itemSecurityCode;
+            if (CryptoJS.SHA256(password).toString() === correctHash) {
+                $('#passwordPromptModal').hide();
+                if (passwordPromptCallback) passwordPromptCallback();
+                passwordPromptCallback = null;
             } else {
-                $('#adminPanel').hide();
+                showToast('Password keamanan salah.', 'error');
             }
         }
 
-        // Backup, Restore, Reset Functions
+        function changeSecurityCode(e) {
+            e.preventDefault();
+            const formId = $(this).attr('id');
+            const newPassword = formId === 'itemSecurityForm' ? $('#itemSecurityCode').val() : $('#panelSecurityCode').val();
+            if (newPassword.length < 4) { showToast('Password minimal 4 karakter', 'error'); return; }
+            
+            if (formId === 'itemSecurityForm') {
+                settings.itemSecurityCode = CryptoJS.SHA256(newPassword).toString();
+                showToast('Password keamanan item berhasil diubah.', 'success');
+            } else {
+                settings.panelSecurityCode = CryptoJS.SHA256(newPassword).toString();
+                showToast('Password keamanan kontrol panel berhasil diubah.', 'success');
+            }
+            saveSettings();
+            $(this)[0].reset();
+        }
+
+        function changeOwnPassword(e) {
+            e.preventDefault();
+            const currentPass = $('#currentPassword').val();
+            const newPass = $('#newPassword').val();
+            if (CryptoJS.SHA256(currentPass).toString() !== currentUser.password) {
+                showToast('Password saat ini salah.', 'error'); return;
+            }
+            if (newPass.length < 6) { showToast('Password baru minimal 6 karakter', 'error'); return; }
+
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].password = CryptoJS.SHA256(newPass).toString();
+                currentUser.password = users[userIndex].password;
+                saveUsers();
+                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+                showToast('Password login Anda berhasil diubah.', 'success');
+                $(this)[0].reset();
+            }
+        }
+
+        // --- USER MANAGEMENT ---
+        function loadUsersForManagement() {
+            const $list = $('#usersList').empty();
+            if (users.length === 0) {
+                $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></div>');
+            } else {
+                users.forEach(user => {
+                    $list.append(`
+                        <div class="order-item">
+                            <div class="order-item-info">
+                                <div class="order-item-name">${user.name} <span class="member-badge">${user.role}</span></div>
+                                <div class="order-item-price">${user.username}</div>
+                            </div>
+                            <div class="order-item-qty gap-2">
+                                <i class="fas fa-edit edit-user" data-id="${user.id}" style="cursor:pointer; color: var(--info);"></i>
+                                <i class="fas fa-trash delete-user" data-id="${user.id}" style="cursor:pointer; color: var(--danger);"></i>
+                            </div>
+                        </div>`);
+                });
+            }
+        }
+
+        function resetUserForm() {
+            $('#userForm')[0].reset(); $('#userIdInput').val('');
+            $('#userFormTitle').text('Tambah Pengguna'); $('#userUsername').prop('disabled', false);
+        }
+
+        function populateUserForm(user) {
+            $('#userFormTitle').text('Edit Pengguna'); $('#userIdInput').val(user.id);
+            $('#userName').val(user.name); $('#userUsername').val(user.username).prop('disabled', true);
+            $('#userRole').val(user.role);
+        }
+
+        function saveUser(e) {
+            e.preventDefault();
+            const id = $('#userIdInput').val(), name = $('#userName').val().trim(), username = $('#userUsername').val().trim(), password = $('#userPassword').val(), role = $('#userRole').val();
+            if (!name || !username) { showToast('Nama dan username harus diisi.', 'error'); return; }
+            
+            if (id) { // Edit
+                const userIndex = users.findIndex(u => u.id === id);
+                if (userIndex !== -1) {
+                    users[userIndex].name = name;
+                    users[userIndex].role = role;
+                    if (password) users[userIndex].password = CryptoJS.SHA256(password).toString();
+                }
+            } else { // Add
+                if (!password) { showToast('Password harus diisi untuk pengguna baru.', 'error'); return; }
+                if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('Username sudah digunakan.', 'error'); return; }
+                users.push({ id: 'U' + moment().format('x'), name, username, password: CryptoJS.SHA256(password).toString(), role });
+            }
+            saveUsers(); loadUsersForManagement(); $('#userFormContainer').slideUp(resetUserForm);
+            showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`, 'success');
+        }
+
+        // --- BACKUP, RESTORE, RESET ---
         function backupData() {
             const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
             const dataStr = JSON.stringify(backup, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-            const exportFileName = `backup_cafe_resto_${moment().format('YYYYMMDD_HHmmss')}.json`;
-            
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileName);
+            linkElement.setAttribute('download', `backup_cafe_resto_${moment().format('YYYYMMDD_HHmmss')}.json`);
             linkElement.click();
-            
             showToast('Backup data berhasil', 'success');
         }
+
+        function restoreFromFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.menus || !data.categories || !data.orders || !data.settings || !data.users || !data.members) {
+                        showToast('File backup tidak valid', 'error'); return;
+                    }
+                    showConfirmation('Restore Data', 'Data saat ini akan diganti. Lanjutkan?', () => restoreData(data));
+                } catch (err) { showToast('Gagal membaca file backup', 'error'); }
+            };
+            reader.readAsText(file);
+        }
         
-        function restoreData(backupData) {
+        function restoreData(data) {
             try {
-                menus = backupData.menus;
-                categories = backupData.categories;
-                orders = backupData.orders;
-                settings = backupData.settings;
-                users = backupData.users;
-                members = backupData.members;
-                
+                menus = data.menus; categories = data.categories; orders = data.orders; settings = data.settings; users = data.users; members = data.members;
                 saveMenus(); saveCategories(); saveOrders(); saveSettings(); saveUsers(); saveMembers();
-                
-                initializeApp();
-                showToast('Restore data berhasil', 'success');
-            } catch (e) {
-                console.error('Restore error:', e);
-                showToast('Gagal melakukan restore data', 'error');
-            }
+                initializeApp(); showToast('Restore data berhasil', 'success');
+            } catch (e) { showToast('Gagal melakukan restore data', 'error'); }
         }
         
         function resetAllData() {
-            Object.values(STORAGE_KEYS).forEach(key => {
-                if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key);
-            });
-            
+            Object.values(STORAGE_KEYS).forEach(key => { if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key); });
             initializeData();
-            // Reload all data from fresh initialization
-            menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || [];
-            categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
-            orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || [];
-            settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
-            users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
-            members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
-            resetOrder();
-            initializeApp();
-            showToast('Data berhasil direset ke pengaturan awal', 'success');
+            menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || []; categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || []; orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || []; settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {}; users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || []; members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
+            resetOrder(); initializeApp(); showToast('Data berhasil direset', 'success');
         }
         
-        // Menu & Category Functions
+        // --- MENU & CATEGORY ---
         function openEditMenuModal(menu) {
-            $('#menuModal .modal-title').text('Edit Menu');
-            $('#menuId').val(menu.id);
-            $('#menuName').val(menu.name);
-            $('#menuPrice').val(menu.price);
-            $('#menuImage').val(menu.image || '');
-            $('#menuDescription').val(menu.description || '');
+            $('#menuModal .modal-title').text(menu ? 'Edit Menu' : 'Tambah Menu Baru');
+            $('#menuForm')[0].reset();
+            $('#menuId').val(menu ? menu.id : '');
+            if (menu) {
+                $('#menuName').val(menu.name); $('#menuPrice').val(menu.price);
+                $('#menuImage').val(menu.image || ''); $('#menuDescription').val(menu.description || '');
+                $('#menuCategory').val(menu.category);
+            }
             loadCategoriesForSelect();
-            $('#menuCategory').val(menu.category);
             $('#menuModal').css('display', 'flex');
         }
         
         function loadMenus(searchTerm = '', category = 'all') {
             const lowerSearchTerm = searchTerm.toLowerCase();
-            let filteredMenus = menus.filter(m => 
-                (category === 'all' || m.category === category) &&
-                (!searchTerm || m.name.toLowerCase().includes(lowerSearchTerm))
-            );
-            
+            let filteredMenus = menus.filter(m => (category === 'all' || m.category === category) && (!searchTerm || m.name.toLowerCase().includes(lowerSearchTerm)));
             $('#menuCount').text(`(${filteredMenus.length} menu)`);
             const $menuGrid = $('#menuGrid').empty();
-            
             if (filteredMenus.length === 0) {
                 $menuGrid.html('<div class="empty-state"><i class="fas fa-utensils"></i><p>Tidak ada menu ditemukan</p></div>');
             } else {
@@ -2364,43 +2319,32 @@
                             <div class="action-btn edit-btn edit-menu" data-id="${menu.id}"><i class="fas fa-edit"></i></div>
                             <div class="action-btn delete-btn delete-menu" data-id="${menu.id}"><i class="fas fa-trash"></i></div>
                         </div>` : '';
-                    
                     $menuGrid.append(`
-                        <div class="menu-card" data-id="${menu.id}">
-                            ${adminActions}
-                            <div class="menu-image">
-                                ${menuImage ? `<img src="${menuImage}" alt="${menu.name}">` : `<i class="fas fa-utensils"></i>`}
-                            </div>
+                        <div class="menu-card" data-id="${menu.id}">${adminActions}
+                            <div class="menu-image">${menuImage ? `<img src="${menuImage}" alt="${menu.name}">` : `<i class="fas fa-utensils"></i>`}</div>
                             <div class="menu-name">${menu.name}</div>
                             <div class="menu-price">${formatCurrency(menu.price)}</div>
                             <div class="menu-category">${menu.category}</div>
-                        </div>
-                    `);
+                        </div>`);
                 });
             }
         }
         
         function loadCategories() {
             const $filterRow = $('.filter-row').html('<div class="filter-chip active" data-category="all">Semua</div>');
-            categories.forEach(category => {
-                $filterRow.append(`<div class="filter-chip" data-category="${category.name}">${category.name}</div>`);
-            });
+            categories.forEach(category => $filterRow.append(`<div class="filter-chip" data-category="${category.name}">${category.name}</div>`));
         }
         
         function loadCategoriesForSelect() {
             const $select = $('#menuCategory').empty();
-            if (categories.length === 0) {
-                $select.append('<option value="" disabled selected>Tidak ada kategori</option>');
-            } else {
-                categories.forEach(category => $select.append(`<option value="${category.name}">${category.name}</option>`));
-            }
+            if (categories.length === 0) $select.append('<option value="" disabled selected>Tidak ada kategori</option>');
+            else categories.forEach(category => $select.append(`<option value="${category.name}">${category.name}</option>`));
         }
         
         function loadCategoriesForManagement() {
             const $list = $('#categoriesList').empty();
-            if (categories.length === 0) {
-                $list.html('<div class="empty-state"><i class="fas fa-tags"></i><p>Tidak ada kategori</p></div>');
-            } else {
+            if (categories.length === 0) $list.html('<div class="empty-state"><i class="fas fa-tags"></i><p>Tidak ada kategori</p></div>');
+            else {
                 categories.forEach(category => {
                     const menuCount = menus.filter(m => m.category === category.name).length;
                     $list.append(`
@@ -2410,72 +2354,59 @@
                                 <div class="order-item-price">${menuCount} menu</div>
                             </div>
                             <div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}"></i></div>
-                        </div>
-                    `);
+                        </div>`);
                 });
             }
         }
 
-        // Member Functions
+        // --- MEMBER FUNCTIONS ---
         function resetMemberForm() {
-            $('#memberForm')[0].reset();
-            $('#memberIdInput').val('');
+            $('#memberForm')[0].reset(); $('#memberIdInput').val('');
             $('#memberFormTitle').text('Tambah Member Baru');
-            $('#saveMemberBtn').text('Tambah Member');
-            $('#deleteMemberBtn').hide();
+            $('#saveMemberBtn').text('Tambah Member'); $('#deleteMemberBtn').hide();
         }
 
         function generateMemberId() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const numbers = '0123456789';
-            let id = Array(3).fill(0).map(() => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
-            id += Array(3).fill(0).map(() => numbers.charAt(Math.floor(Math.random() * numbers.length))).join('');
-            return members.some(m => m.id === id) ? generateMemberId() : id; // Ensure uniqueness
+            let id = 'M' + moment().format('YYMMDDHHmmss');
+            return members.some(m => m.id === id) ? generateMemberId() : id;
         }
 
         function loadMembersForManagement() {
             const $list = $('#membersList').empty();
-            if (members.length === 0) {
-                $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada member</p></div>');
-            } else {
+            if (members.length === 0) $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada member</p></div>');
+            else {
                 members.forEach(member => {
                     $list.append(`
                         <div class="order-item">
                             <div class="order-item-info">
                                 <div class="order-item-name">${member.name}</div>
-                                <div class="order-item-price">
-                                    ${member.phone}
+                                <div class="order-item-price">${member.phone}
                                     <span class="member-badge">${member.id}</span>
                                     <span class="member-badge">${member.transactions || 0} transaksi</span>
                                 </div>
                             </div>
                             <div class="order-item-qty"><i class="fas fa-edit edit-member" data-id="${member.id}" style="cursor:pointer;"></i></div>
-                        </div>
-                    `);
+                        </div>`);
                 });
             }
         }
         
-        // Order & Payment Functions
+        // --- ORDER & PAYMENT ---
         function updateOrder() {
             currentOrder.subtotal = currentOrder.items.reduce((total, item) => total + (item.menu.price * item.quantity), 0);
             currentOrder.donation = parseFloat($('#donationAmount').val()) || 0;
-            currentOrder.discount = (currentOrder.memberId && currentOrder.items.length > 5) ? currentOrder.subtotal * 0.02 : 0;
+            currentOrder.discount = (currentOrder.memberId) ? currentOrder.subtotal * 0.02 : 0; // Discount 2% for any member
             currentOrder.total = currentOrder.subtotal - currentOrder.discount + currentOrder.donation;
             
             localStorage.setItem(STORAGE_KEYS.CURRENT_ORDER, JSON.stringify(currentOrder));
             
             const $orderItems = $('#orderItems').empty();
             $('#orderCount').text(`(${currentOrder.items.length} item)`);
+            $('#donationRow').show(); $('#orderDonation').text(formatCurrency(currentOrder.donation));
+            $('#discountRow').toggle(currentOrder.discount > 0); $('#orderDiscount').text(`-${formatCurrency(currentOrder.discount)}`);
             
-            $('#donationRow').show();
-            $('#orderDonation').text(formatCurrency(currentOrder.donation));
-            $('#discountRow').toggle(currentOrder.discount > 0);
-            $('#orderDiscount').text(`-${formatCurrency(currentOrder.discount)}`);
-            
-            if (currentOrder.items.length === 0) {
-                $orderItems.html('<div class="empty-state"><i class="fas fa-shopping-basket"></i><p>Pesanan kosong</p></div>');
-            } else {
+            if (currentOrder.items.length === 0) $orderItems.html('<div class="empty-state"><i class="fas fa-shopping-basket"></i><p>Pesanan kosong</p></div>');
+            else {
                 currentOrder.items.forEach(item => {
                     $orderItems.append(`
                         <div class="order-item">
@@ -2487,75 +2418,89 @@
                                 <input type="number" value="${item.quantity}" min="1" class="item-qty" data-id="${item.menu.id}">
                                 <i class="fas fa-trash remove-item" data-id="${item.menu.id}" style="cursor:pointer;"></i>
                             </div>
-                        </div>
-                    `);
+                        </div>`);
                 });
             }
-            
             $('#orderSubtotal').text(formatCurrency(currentOrder.subtotal));
             $('#orderTotal').text(formatCurrency(currentOrder.total));
         }
         
         function updateOrderSummary() {
-            const summaryHTML = currentOrder.items.map(item => `
-                <div class="summary-row">
-                    <span>${item.menu.name} (${item.quantity}x)</span>
-                    <span>${formatCurrency(item.menu.price * item.quantity)}</span>
-                </div>`).join('') +
-                `<div class="summary-row total-row" style="border:none; margin-top:0; padding-top:0;"></div>
-                 <div class="summary-row"><span>Subtotal:</span><span>${formatCurrency(currentOrder.subtotal)}</span></div>` +
-                (currentOrder.donation > 0 ? `<div class="summary-row"><span>Donasi LAZISNU:</span><span>${formatCurrency(currentOrder.donation)}</span></div>` : '') +
-                (currentOrder.discount > 0 ? `<div class="summary-row"><span>Diskon Member:</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') +
+            const summaryHTML = currentOrder.items.map(item => `<div class="summary-row"><span>${item.menu.name} (${item.quantity}x)</span><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join('') +
+                `<div class="summary-row" style="border-top: 1px dashed #ddd; margin-top: 8px; padding-top: 8px;"><span>Subtotal:</span><span>${formatCurrency(currentOrder.subtotal)}</span></div>` +
+                (currentOrder.donation > 0 ? `<div class="summary-row"><span>Donasi:</span><span>${formatCurrency(currentOrder.donation)}</span></div>` : '') +
+                (currentOrder.discount > 0 ? `<div class="summary-row"><span>Diskon:</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') +
                 `<div class="summary-row total-row"><span>Total:</span><span>${formatCurrency(currentOrder.total)}</span></div>`;
             $('#orderSummary').html(summaryHTML);
         }
         
         function updatePaymentTab() {
-            $('#paymentSubtotal').text(formatCurrency(currentOrder.subtotal));
-            $('#paymentDonationRow').toggle(currentOrder.donation > 0).find('span:last').text(formatCurrency(currentOrder.donation));
-            $('#paymentDiscountRow').toggle(currentOrder.discount > 0).find('span:last').text(`-${formatCurrency(currentOrder.discount)}`);
             $('#paymentTotal').text(formatCurrency(currentOrder.total));
-            $('#paymentAmount').val(currentOrder.total).trigger('input'); // Pre-fill payment amount
+            $('#paymentAmount').val('').trigger('input');
+            
+            const $quickCash = $('#quickCashButtons').empty();
+            const total = currentOrder.total;
+            if (total > 0) {
+                const denominations = [total];
+                const roundedUp = Math.ceil(total / 10000) * 10000;
+                if (roundedUp > total) denominations.push(roundedUp);
+                if (total < 50000) denominations.push(50000);
+                if (total < 100000) denominations.push(100000);
+                
+                const uniqueDenominations = [...new Set(denominations)].sort((a,b) => a-b).slice(0,3);
+                
+                uniqueDenominations.forEach(amount => {
+                    const text = amount === total ? 'Uang Pas' : formatCurrency(amount);
+                    $quickCash.append(`<button class="btn btn-sm btn-outline-primary quick-cash-btn" data-amount="${amount}">${text}</button>`);
+                });
+            }
+        }
+
+        function calculateChange() {
+            const amount = parseFloat($('#paymentAmount').val()) || 0;
+            const change = amount - currentOrder.total;
+            $('#changeContainer').toggle(change >= 0);
+            $('#paymentChange').text(formatCurrency(change));
         }
         
+        function switchPaymentModalTab(tabName) {
+            $('#processOrderModal .tabs .tab').removeClass('active');
+            $('#processOrderModal .tab-content').removeClass('active');
+            $(`[data-tab="${tabName}"]`).addClass('active');
+            $(`#${tabName}Tab`).addClass('active');
+        }
+        
+        function switchControlPanelTab(tabName) {
+            $('#controlPanelModal .tabs .tab').removeClass('active');
+            $('#controlPanelModal .tab-content').removeClass('active');
+            $(`#controlPanelModal [data-tab="${tabName}"]`).addClass('active');
+            $(`#${tabName}Tab`).addClass('active');
+        }
+
         function resetOrder() {
             currentOrder = { items: [], subtotal: 0, total: 0, discount: 0, donation: 0, type: 'dinein', tableNumber: '1', note: '', memberId: null };
             localStorage.setItem(STORAGE_KEYS.CURRENT_ORDER, JSON.stringify(currentOrder));
-            
             updateOrder();
-            $('.order-type-btn').removeClass('active');
-            $('[data-type="dinein"]').addClass('active');
-            $('#orderNote').val('');
-            $('#tableNumberContainer').show();
-            $('#memberSearchInput').val('');
-            $('#donationAmount').val('0');
+            $('.order-type-btn').removeClass('active'); $('[data-type="dinein"]').addClass('active');
+            $('#orderNote, #memberSearchInput').val('');
+            $('#donationAmount').val('0'); $('#tableNumberContainer').show();
         }
 
-        // Receipt & Printing
+        // --- RECEIPT & PRINTING ---
         function generateReceipt(order) {
             const member = members.find(m => m.id === order.memberId);
             $('#receiptDate').text(moment(order.date).format('DD/MM/YYYY HH:mm'));
-            $('#receiptId').text(order.id);
-            $('#receiptCashier').text(order.cashier.name);
-            $('#receiptCustomer').text(order.customerName || 'Pelanggan Biasa');
+            $('#receiptId').text(order.id); $('#receiptCashier').text(order.cashier.name);
+            $('#receiptCustomer').text(order.customerName || 'Pelanggan');
             $('#receiptOrderType').text(order.type === 'dinein' ? 'Makan di Tempat' : 'Bungkus');
-            
             $('#receiptTableInfo').toggle(order.type === 'dinein').find('#receiptTableNumber').text(order.tableNumber);
             $('#receiptMemberInfo').toggle(!!member).find('#receiptMemberName').text(member ? member.name : '');
-            
-            $('#receiptItems').html(order.items.map(item => `
-                <div class="receipt-item">
-                    <span>${item.menu.name} (${item.quantity}x)</span>
-                    <span>${formatCurrency(item.menu.price * item.quantity)}</span>
-                </div>`).join(''));
-            
+            $('#receiptItems').html(order.items.map(item => `<div class="receipt-item"><span>${item.menu.name} (${item.quantity}x)</span><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join(''));
             $('#receiptNote').toggle(!!order.note).find('#receiptNoteText').text(order.note);
-            
             $('#receiptSubtotal').text(formatCurrency(order.subtotal));
             $('#receiptDonationRow').toggle(order.donation > 0).find('#receiptDonation').text(formatCurrency(order.donation));
             $('#receiptDiscountRow').toggle(order.discount > 0).find('#receiptDiscount').text(`-${formatCurrency(order.discount)}`);
             $('#receiptTotal').text(formatCurrency(order.total));
-            
             const paymentMethodText = { cash: 'Tunai', transfer: 'Transfer Bank', ewallet: 'E-Wallet' }[order.paymentMethod];
             $('#receiptPaymentMethod').text(paymentMethodText + ':');
             $('#receiptPaymentAmount').text(formatCurrency(order.paymentAmount));
@@ -2565,51 +2510,53 @@
         function printReceipt() {
             const printContent = $('#receiptTemplate').html();
             const printWindow = window.open('', '', 'width=320,height=600');
-            printWindow.document.write('<html><head><title>Struk</title>');
-            printWindow.document.write('<style>body{font-family:monospace;font-size:10px;}.receipt-item{display:flex;justify-content:space-between;}.receipt-total{font-weight:bold;margin-top:5px;padding-top:5px;border-top:1px dashed #000;}</style>');
-            printWindow.document.write('</head><body>' + printContent + '</body></html>');
+            printWindow.document.write('<html><head><title>Struk</title><style>body{font-family:monospace;font-size:10px;}.receipt-item{display:flex;justify-content:space-between;}.receipt-total{font-weight:bold;margin-top:5px;padding-top:5px;border-top:1px dashed #000;}</style></head><body>' + printContent + '</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // Kitchen Functions
+        // --- KITCHEN FUNCTIONS ---
         function loadKitchenOrders() {
             const kitchenOrders = orders.filter(o => o.type === 'dinein' && o.status !== 'completed');
             const $kitchenOrders = $('#kitchenOrders').empty();
-            
-            if (kitchenOrders.length === 0) {
-                $kitchenOrders.html('<div class="empty-state"><i class="fas fa-check-circle"></i><p>Tidak ada pesanan aktif</p></div>');
-            } else {
+            if (kitchenOrders.length === 0) $kitchenOrders.html('<div class="empty-state"><i class="fas fa-check-circle"></i><p>Tidak ada pesanan aktif</p></div>');
+            else {
                 kitchenOrders.forEach(order => {
                     const statusClass = order.status === 'ready' ? (order.statusLocked ? 'status-locked' : 'status-ready') : 'status-preparing';
-                    const itemsSummary = order.items.slice(0, 2).map(item => `${item.menu.name} (${item.quantity}x)`).join(', ') + 
-                                       (order.items.length > 2 ? ` + ${order.items.length - 2} lainnya` : '');
-
+                    const itemsSummary = order.items.slice(0, 2).map(item => `${item.menu.name} (${item.quantity}x)`).join(', ') + (order.items.length > 2 ? ` + ${order.items.length - 2} lainnya` : '');
                     $kitchenOrders.append(`
                         <div class="status-item ${statusClass}" data-id="${order.id}">
-                            <div>
-                                <strong>${order.id} (Meja ${order.tableNumber})</strong>
-                                <div style="font-size:0.8rem;">${itemsSummary}</div>
-                            </div>
+                            <div><strong>${order.id} (Meja ${order.tableNumber})</strong><div style="font-size:0.8rem;">${itemsSummary}</div></div>
                             <div style="font-weight:600;">${order.status === 'ready' ? 'Siap' : 'Proses'}</div>
-                        </div>
-                    `);
+                        </div>`);
                 });
             }
         }
         
-        // Report Functions
+        // --- REPORT FUNCTIONS ---
+        function generateReport() {
+            const period = $('#reportPeriod').val();
+            let startDate, endDate;
+            if (period === 'today') { startDate = moment().startOf('day'); endDate = moment().endOf('day'); }
+            else if (period === 'week') { startDate = moment().startOf('week'); endDate = moment().endOf('week'); }
+            else if (period === 'month') { startDate = moment().startOf('month'); endDate = moment().endOf('month'); }
+            else if (period === 'custom') {
+                startDate = moment($('#reportStartDate').val());
+                endDate = moment($('#reportEndDate').val()).endOf('day');
+                if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) { showToast('Rentang tanggal tidak valid', 'error'); return; }
+            }
+            const filteredOrders = orders.filter(o => moment(o.date).isBetween(startDate, endDate));
+            generateReportHTML(filteredOrders, startDate, endDate);
+        }
+
         function generateReportHTML(filteredOrders, startDate, endDate) {
             if (filteredOrders.length === 0) {
-                $('#reportResults').html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data untuk periode ini</p></div>');
-                $('#printReportBtn').hide();
-                return;
+                $('#reportResults').html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data</p></div>');
+                $('#printReportBtn').hide(); return;
             }
-
             const totalRevenue = filteredOrders.reduce((sum, o) => sum + o.total, 0);
             const totalItemsSold = filteredOrders.reduce((sum, o) => sum + o.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
-            
             const menuSales = {};
             filteredOrders.forEach(o => o.items.forEach(item => {
                 menuSales[item.menu.id] = menuSales[item.menu.id] || { name: item.menu.name, quantity: 0, total: 0 };
@@ -2617,54 +2564,48 @@
                 menuSales[item.menu.id].total += item.quantity * item.menu.price;
             }));
             const topMenus = Object.values(menuSales).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
-
             const reportHTML = `
-                <div class="panel">
-                    <h4>Ringkasan Laporan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
+                <div class="panel"><h4>Ringkasan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
                     <div class="summary-row"><span>Total Pesanan:</span> <span>${filteredOrders.length}</span></div>
                     <div class="summary-row"><span>Total Pendapatan:</span> <span>${formatCurrency(totalRevenue)}</span></div>
                     <div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div>
                 </div>
-                <div class="panel mt-3">
-                    <h4>Menu Terlaris</h4>
+                <div class="panel mt-3"><h4>Menu Terlaris</h4>
                     ${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${menu.quantity} terjual</span></div>`).join('')}
                 </div>`;
-            
-            $('#reportResults').html(reportHTML);
-            $('#printReportBtn').show();
+            $('#reportResults').html(reportHTML); $('#printReportBtn').show();
         }
 
         function printReport() {
             const printContent = $('#reportResults').html();
             const printWindow = window.open('', '', 'width=800,height=600');
-            printWindow.document.write('<html><head><title>Laporan Penjualan</title>');
-            printWindow.document.write('<style>body{font-family:Arial,sans-serif}.panel{border:1px solid #eee;padding:15px;margin-bottom:15px;}.summary-row{display:flex;justify-content:space-between;margin-bottom:5px;}</style>');
-            printWindow.document.write('</head><body>' + printContent + '</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
+            printWindow.document.write('<html><head><title>Laporan Penjualan</title><style>body{font-family:Arial,sans-serif}.panel{border:1px solid #eee;padding:15px;margin-bottom:15px;}.summary-row{display:flex;justify-content:space-between;margin-bottom:5px;}</style></head><body>' + printContent + '</body></html>');
+            printWindow.document.close(); printWindow.focus();
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // UI & Utility Functions
+        // --- UTILITY & UI ---
+        function saveStoreInfo() {
+            const storeName = $('#storeName').val().trim(), storeAddress = $('#storeAddress').val().trim(), storePhone = $('#storePhone').val().trim(), tableCount = parseInt($('#tableCount').val()) || 5;
+            if (!storeName || !storeAddress || !storePhone) { showToast('Semua info harus diisi', 'error'); return; }
+            settings = { ...settings, storeName, storeAddress, storePhone, tableCount };
+            saveSettings(); updateStoreInfo(); updateTableNumbers();
+            $('#manageStoreInfoModal').hide(); showToast('Info restoran diperbarui', 'success');
+        }
+
         function loadStoreInfo() {
-            $('#storeName').val(settings.storeName);
-            $('#storeAddress').val(settings.storeAddress);
-            $('#storePhone').val(settings.storePhone);
-            $('#tableCount').val(settings.tableCount || 5);
+            $('#storeName').val(settings.storeName); $('#storeAddress').val(settings.storeAddress);
+            $('#storePhone').val(settings.storePhone); $('#tableCount').val(settings.tableCount || 5);
         }
         
         function updateStoreInfo() {
-            $('#storeNameHeader').text(settings.storeName);
-            $('#receiptStoreName').text(settings.storeName);
-            $('#receiptStoreAddress').text(settings.storeAddress);
-            $('#receiptStorePhone').text('Telp: ' + settings.storePhone);
+            $('#storeNameHeader').text(settings.storeName); $('#receiptStoreName').text(settings.storeName);
+            $('#receiptStoreAddress').text(settings.storeAddress); $('#receiptStorePhone').text('Telp: ' + settings.storePhone);
         }
         
         function updateTableNumbers() {
             const $tableSelect = $('#tableNumber').empty();
-            for (let i = 1; i <= settings.tableCount; i++) {
-                $tableSelect.append(`<option value="${i}">Meja ${i}</option>`);
-            }
+            for (let i = 1; i <= settings.tableCount; i++) $tableSelect.append(`<option value="${i}">Meja ${i}</option>`);
             if (currentOrder.tableNumber) $tableSelect.val(currentOrder.tableNumber);
         }
         
@@ -2673,41 +2614,32 @@
         function showToast(message, type = 'info', duration = 3000) {
             const $toast = $('#toast');
             $toast.removeClass('success error warning info').addClass(type);
-            $('#toast-message').text(message);
-            $toast.addClass('show');
+            $('#toast-message').text(message); $toast.addClass('show');
             setTimeout(() => $toast.removeClass('show'), duration);
         }
 
         function setButtonLoading($button, isLoading, originalText = 'Login') {
-            if (isLoading) {
-                $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
-            } else {
-                $button.prop('disabled', false).html(originalText);
-            }
+            if (isLoading) $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+            else $button.prop('disabled', false).html(originalText);
         }
         
         function showConfirmation(title, message, onConfirm, type = 'success') {
-            $('#confirmTitle').text(title);
-            $('#confirmMessage').text(message);
+            $('#confirmTitle').text(title); $('#confirmMessage').text(message);
             const $confirmBtn = $('#confirmAction');
-            $confirmBtn.off('click').on('click', () => {
-                onConfirm();
-                $('#confirmationModal').hide();
-            });
+            $confirmBtn.off('click').on('click', () => { onConfirm(); $('#confirmationModal').hide(); });
             $confirmBtn.removeClass('btn-success btn-danger').addClass(type === 'danger' ? 'btn-danger' : 'btn-success');
             $('#confirmationModal').css('display', 'flex');
         }
 
         function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY, HH:mm')); }
 
-        // Data saving functions
+        // --- DATA SAVING ---
         function saveMenus() { localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(menus)); }
         function saveCategories() { localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
         function saveOrders() { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders)); }
         function saveSettings() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); }
         function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
         function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
-
     </script>
 </body>
 </html>
