@@ -1033,9 +1033,7 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
                 </div>
-                <button type="submit" class="btn mt-3">
-                    <span id="loginBtnText">Login</span>
-                </button>
+                <button type="submit" class="btn mt-3">Login</button>
             </form>
         </div>
     </div>
@@ -1669,20 +1667,27 @@
                 'Es Jeruk': 'https://raw.githubusercontent.com/LKS-88/aplikasi-transaksi-cafe-resto/refs/heads/main/minuman%20segar.jpeg'
             }
         };
+
+        // --- PERBAIKAN: Deklarasi variabel global dipisahkan dari inisialisasi ---
+        // Variabel-variabel ini akan diisi setelah dokumen siap dan data diinisialisasi.
+        let menus, categories, orders, settings, users, members, currentUser, currentOrder;
+        let kitchenInterval;
+        let passwordPromptCallback = null;
         
         // Initialize data
         function initializeData() {
-            let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
+            // Fungsi ini memastikan data default ada di localStorage jika belum ada.
+            let users_init = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
             
-            if (!users.find(u => u.username === 'Admin')) {
-                users.push(DEFAULT_ADMIN);
+            if (!users_init.find(u => u.username === 'Admin')) {
+                users_init.push(DEFAULT_ADMIN);
             }
             
-            if (!users.find(u => u.username === 'kasir')) {
-                users.push(DEFAULT_CASHIER);
+            if (!users_init.find(u => u.username === 'kasir')) {
+                users_init.push(DEFAULT_CASHIER);
             }
             
-            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users_init));
             
             if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
                 localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify([]));
@@ -1724,25 +1729,27 @@
             }
         }
         
-        // Load data
-        let menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || [];
-        let categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
-        let orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || [];
-        let settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
-        let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
-        let members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
-        let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
-        let currentOrder = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_ORDER)) || {
-            items: [], subtotal: 0, total: 0, discount: 0, donation: 0,
-            type: 'dinein', tableNumber: '1', note: '', memberId: null
-        };
-        let kitchenInterval;
-        let passwordPromptCallback = null;
-
         // Initialize the app
         $(document).ready(function() {
+            // 1. Pastikan data default ada di localStorage
             initializeData();
             
+            // 2. --- PERBAIKAN: Muat data dari localStorage SETELAH inisialisasi ---
+            // Ini adalah perbaikan kunci. Data dimuat di sini untuk memastikan variabel
+            // 'users' dan lainnya berisi data yang benar sebelum digunakan oleh fungsi login.
+            menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || [];
+            categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
+            orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || [];
+            settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+            users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
+            members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
+            currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
+            currentOrder = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_ORDER)) || {
+                items: [], subtotal: 0, total: 0, discount: 0, donation: 0,
+                type: 'dinein', tableNumber: '1', note: '', memberId: null
+            };
+
+            // 3. Lanjutkan alur aplikasi seperti biasa
             $('#currentYear, #receiptYear').text(new Date().getFullYear());
             
             if (currentUser) {
@@ -1767,6 +1774,7 @@
                         if (!username || !password) {
                             showToast('Username dan password harus diisi', 'error'); return;
                         }
+                        // Sekarang variabel 'users' di sini sudah pasti berisi data yang benar
                         const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
                         if (!user) {
                             showToast('Username tidak ditemukan', 'error'); return;
@@ -2285,9 +2293,19 @@
         
         function resetAllData() {
             Object.values(STORAGE_KEYS).forEach(key => { if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key); });
+            
+            // Re-initialize and reload data into variables after reset
             initializeData();
-            menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || []; categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || []; orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || []; settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {}; users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || []; members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
-            resetOrder(); initializeApp(); showToast('Data berhasil direset', 'success');
+            menus = JSON.parse(localStorage.getItem(STORAGE_KEYS.MENUS)) || []; 
+            categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || []; 
+            orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS)) || []; 
+            settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {}; 
+            users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || []; 
+            members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
+            
+            resetOrder(); 
+            initializeApp(); 
+            showToast('Data berhasil direset', 'success');
         }
         
         // --- MENU & CATEGORY ---
@@ -2353,7 +2371,7 @@
                                 <div class="order-item-name">${category.name}</div>
                                 <div class="order-item-price">${menuCount} menu</div>
                             </div>
-                            <div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}"></i></div>
+                            <div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}" style="cursor:pointer; color: var(--danger);"></i></div>
                         </div>`);
                 });
             }
@@ -2385,7 +2403,7 @@
                                     <span class="member-badge">${member.transactions || 0} transaksi</span>
                                 </div>
                             </div>
-                            <div class="order-item-qty"><i class="fas fa-edit edit-member" data-id="${member.id}" style="cursor:pointer;"></i></div>
+                            <div class="order-item-qty"><i class="fas fa-edit edit-member" data-id="${member.id}" style="cursor:pointer; color: var(--info);"></i></div>
                         </div>`);
                 });
             }
@@ -2415,8 +2433,8 @@
                                 <div class="order-item-price">${formatCurrency(item.menu.price)} x ${item.quantity}</div>
                             </div>
                             <div class="order-item-qty">
-                                <input type="number" value="${item.quantity}" min="1" class="item-qty" data-id="${item.menu.id}">
-                                <i class="fas fa-trash remove-item" data-id="${item.menu.id}" style="cursor:pointer;"></i>
+                                <input type="number" value="${item.quantity}" min="1" class="item-qty qty-input" data-id="${item.menu.id}">
+                                <i class="fas fa-trash remove-item" data-id="${item.menu.id}" style="cursor:pointer; color: var(--danger); margin-left: 8px;"></i>
                             </div>
                         </div>`);
                 });
@@ -2508,12 +2526,7 @@
         }
         
         function printReceipt() {
-            const printContent = $('#receiptTemplate').html();
-            const printWindow = window.open('', '', 'width=320,height=600');
-            printWindow.document.write('<html><head><title>Struk</title><style>body{font-family:monospace;font-size:10px;}.receipt-item{display:flex;justify-content:space-between;}.receipt-total{font-weight:bold;margin-top:5px;padding-top:5px;border-top:1px dashed #000;}</style></head><body>' + printContent + '</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+            window.print();
         }
 
         // --- KITCHEN FUNCTIONS ---
