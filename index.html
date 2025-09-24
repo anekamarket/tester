@@ -913,35 +913,7 @@
         .gap-2 {
             gap: 8px;
         }
-
-        /* Print Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            
-            #print-container, #print-container * {
-                visibility: visible;
-            }
-
-            #print-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: block !important;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-            
-            @page {
-                size: auto;
-                margin: 0mm;
-            }
-        }
-
+        
         /* Footer */
         .app-footer {
             text-align: center;
@@ -961,6 +933,8 @@
             display: inline-block;
             cursor: pointer;
         }
+        
+        /* === PERBAIKAN & PENYEMPURNAAN KODE CETAK === */
 
         /* Print Styles for Receipt */
         #receiptContent {
@@ -983,7 +957,7 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 5px auto;
-            object-fit: cover;
+            object-fit: contain; /* Mengganti dari cover ke contain agar logo utuh */
         }
 
         .receipt-title {
@@ -1039,6 +1013,57 @@
             font-size: 10px;
             text-align: center;
         }
+        
+        /* Print Styles */
+        @media print {
+            body, html {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100%;
+                height: 100%;
+            }
+            body * {
+                visibility: hidden;
+            }
+            
+            #print-container, #print-container * {
+                visibility: visible;
+            }
+
+            #print-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+                margin: 0;
+                padding: 0;
+            }
+            
+            /* Menargetkan struk dan KTA saat dicetak */
+            #print-container #receiptContent,
+            #print-container #ktaCard {
+                margin: 0 auto;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            
+            #print-container #receiptContent {
+                width: 72mm !important; /* Ukuran standar kertas thermal */
+                font-size: 10pt !important;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            @page {
+                size: auto;
+                margin: 0mm; /* Menghilangkan margin halaman cetak */
+            }
+        }
+        /* === AKHIR DARI PERBAIKAN KODE CETAK === */
+
 
         /* Backup Restore Styles */
         .backup-actions {
@@ -1070,66 +1095,76 @@
             background-color: #138496;
         }
         
-        /* KTA Card Styles */
+        
+        /* === PERBAIKAN & PENYEMPURNAAN DESAIN KTA === */
         #ktaCard {
             width: 320px;
             height: 500px;
             margin: 0 auto;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-radius: 20px;
+            /* Desain gradien baru yang lebih mewah */
+            background: radial-gradient(circle at top left, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
             color: white;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         #ktaCard::before {
             content: '';
             position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 150px;
-            height: 150px;
-            background: rgba(255,255,255,0.05);
+            top: -80px;
+            left: -80px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
             border-radius: 50%;
+            filter: blur(10px);
         }
         
         #ktaCard::after {
             content: '';
             position: absolute;
-            bottom: -70px;
-            right: -30px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
+            bottom: -100px;
+            right: -60px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 45%;
+            filter: blur(15px);
         }
 
         .kta-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            z-index: 1;
         }
         .kta-logo {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid white;
+            background-color: white; /* Fallback jika gambar tidak muncul */
         }
         .kta-store-info h3 {
-            font-size: 16px;
+            font-size: 18px;
             margin: 0;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
         .kta-store-info p {
-            font-size: 10px;
+            font-size: 11px;
             margin: 0;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .kta-body {
@@ -1139,47 +1174,55 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            z-index: 1;
         }
 
         #ktaMemberName {
-            font-size: 22px;
+            font-size: 26px;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
         }
         
         #ktaMemberId {
+            font-family: 'Courier New', monospace;
             font-size: 14px;
-            background-color: rgba(0,0,0,0.2);
-            padding: 3px 8px;
-            border-radius: 10px;
+            background-color: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
         }
         
         .kta-qrcode {
             background: white;
             padding: 10px;
-            border-radius: 5px;
-            min-height: 50px;
+            border-radius: 8px;
+            min-height: 160px; /* Menyesuaikan ukuran QR Code */
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .kta-qrcode img {
-            width: 180px;
+            width: 160px; /* Ukuran QR Code lebih besar */
             height: auto;
             display: block;
         }
 
         .kta-footer {
             text-align: center;
-            font-size: 10px;
-            opacity: 0.7;
-            padding-top: 10px;
-            margin-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 11px;
+            opacity: 0.8;
+            padding-top: 15px;
+            margin-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            z-index: 1;
         }
+        /* === AKHIR DARI PERBAIKAN KTA === */
+
 
     </style>
 </head>
@@ -2647,7 +2690,7 @@
             return `
             <div id="receiptContent">
                 <div class="receipt-header">
-                    <img src="${logoBase64}" alt="Logo" class="receipt-logo">
+                    ${logoBase64 ? `<img src="${logoBase64}" alt="Logo" class="receipt-logo">` : ''}
                     <div class="receipt-title">${settings.storeName}</div>
                     <div>${settings.storeAddress}</div>
                     <div>Telp: ${settings.storePhone}</div>
@@ -2687,25 +2730,27 @@
                 const receiptHTML = generateReceiptHTML(order, logoBase64);
                 $('#receiptModalBody').html(receiptHTML);
                 
-                // Generate QR Code setelah elemen ada di dalam DOM
-                $('#receiptQrcode').empty(); // Hapus QR code sebelumnya jika ada
+                // === PERBAIKAN: Menambahkan detail pada QR Code Struk ===
+                const qrCodeData = JSON.stringify({
+                    trxId: order.id,
+                    store: settings.storeName,
+                    date: moment(order.date).toISOString(),
+                    total: order.total
+                });
+                
+                $('#receiptQrcode').empty();
                 new QRCode(document.getElementById("receiptQrcode"), {
-                    text: order.id,
+                    text: qrCodeData,
                     width: 80,
-                    height: 80
+                    height: 80,
+                    correctLevel: QRCode.CorrectLevel.M
                 });
 
             } catch (error) {
                 showToast('Gagal memuat logo struk.', 'error');
-                const receiptHTML = generateReceiptHTML(order, ''); // Tetap tampilkan struk tanpa logo
+                const receiptHTML = generateReceiptHTML(order, null); // Tetap tampilkan struk tanpa logo jika gagal
                 $('#receiptModalBody').html(receiptHTML);
-                // Coba generate QR code meskipun logo gagal
-                $('#receiptQrcode').empty();
-                 new QRCode(document.getElementById("receiptQrcode"), {
-                    text: order.id,
-                    width: 80,
-                    height: 80
-                });
+                $('#receiptQrcode').empty(); // Pastikan container QR kosong
             } finally {
                 $('#downloadReceiptPdfBtn').data('order', order);
                 $('#receiptModal').css('display', 'flex');
@@ -2746,33 +2791,25 @@
             
             showToast('Membuat kartu...', 'info');
             
-            // Siapkan data untuk QR Code
-            const memberData = JSON.stringify({
-                id: member.id,
-                name: member.name,
-                phone: member.phone,
-                address: member.address || '',
-                joinDate: member.joinDate
-            });
-
             const qrContainer = document.getElementById("ktaQrcodeImg");
-            $(qrContainer).empty(); // Hapus QR code lama
+            $(qrContainer).empty();
             new QRCode(qrContainer, {
-                text: memberData,
-                width: 150,
-                height: 150,
+                text: member.id,
+                width: 160,
+                height: 160,
                 correctLevel : QRCode.CorrectLevel.H
             });
             
             $('#ktaModal').css('display', 'flex');
-
-            // Load logo secara terpisah dan aman
+            
+            // === PERBAIKAN: Memastikan Logo KTA Muncul ===
             const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
             try {
                 const logoBase64 = await imageToBase64(logoUrl);
                 $('#ktaLogo').attr('src', logoBase64);
             } catch (error) {
-                showToast('Gagal memuat gambar kartu.', 'error');
+                showToast('Gagal memuat logo kartu.', 'error');
+                $('#ktaLogo').attr('src', ''); // Kosongkan jika gagal
             }
             
             $('#downloadKtaPdfBtn').data('member', member);
@@ -2802,15 +2839,13 @@
         }
         
         function printElement(selector) {
-            const elementToPrint = $(selector)[0].outerHTML;
+            const elementToPrint = $(selector)[0].cloneNode(true); // Mengkloning elemen
             const printContainer = $('#print-container');
             
-            printContainer.html(elementToPrint).show();
+            printContainer.empty().append(elementToPrint).show(); // Menambahkan elemen yang dikloning
 
-            // Beri browser jeda untuk me-render konten sebelum memanggil dialog cetak
             setTimeout(() => {
                 window.print();
-                // Bersihkan dan sembunyikan container setelah selesai
                 printContainer.empty().hide();
             }, 300);
         }
@@ -2895,9 +2930,9 @@
                     reader.readAsDataURL(blob);
                 });
             } catch (error) {
-                console.error('Failed to convert image to Base64:', url, error);
+                console.error('Gagal mengubah gambar ke Base64:', url, error);
                 showToast('Gagal memuat beberapa gambar eksternal.', 'warning');
-                // Return pixel transparan jika gagal
+                // Mengembalikan pixel transparan jika gagal, logo tidak akan rusak
                 return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             }
         }
