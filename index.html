@@ -78,7 +78,6 @@
             padding: 5px;
             box-shadow: var(--shadow-sm);
         }
-        /* PERBAIKAN: Menambahkan object-fit untuk mencegah logo gepeng */
         .header-logo img {
             width: 100%;
             height: 100%;
@@ -267,7 +266,6 @@
             font-size: 0.9rem;
         }
 
-        /* PENAMBAHAN: Style untuk link WhatsApp */
         .whatsapp-link {
             color: var(--primary);
             text-decoration: none;
@@ -972,7 +970,7 @@
             font-size: 12px;
             line-height: 1.4;
             color: #000;
-            background: white; /* PERBAIKAN: Pastikan background putih untuk pdf */
+            background: white;
         }
 
         .receipt-header {
@@ -984,7 +982,6 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 5px auto;
-            /* PERBAIKAN: Mencegah logo gepeng */
             object-fit: cover;
         }
 
@@ -1122,7 +1119,6 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            /* PERBAIKAN: Mencegah logo gepeng */
             object-fit: cover;
         }
         .kta-store-info h3 {
@@ -1163,13 +1159,16 @@
             background: white;
             padding: 10px;
             border-radius: 5px;
-            min-height: 50px; /* PERBAIKAN: Beri ruang untuk barcode */
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .kta-barcode img {
-            display: block;
+        .kta-barcode svg {
             width: 180px;
-            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
         .kta-footer {
@@ -1773,7 +1772,7 @@
                         <h2 id="ktaMemberName">Nama Member</h2>
                         <p id="ktaMemberId">ID: M250924103000</p>
                         <div class="kta-barcode">
-                            <img id="ktaBarcodeImg" src="" alt="Barcode">
+                            <svg id="ktaBarcodeImg"></svg>
                         </div>
                     </div>
                     <div class="kta-footer">
@@ -1797,6 +1796,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script>
         // Set locale to Indonesian
         moment.locale('id');
@@ -2116,7 +2116,6 @@
             $('#kitchenDisplayBtn').click(() => { loadKitchenOrders(); kitchenInterval = setInterval(loadKitchenOrders, 30000); $('#kitchenDisplayModal').css('display', 'flex'); });
             $('#manageMembersBtn').click(() => { if (currentUser.role === 'admin') { resetMemberForm(); loadMembersForManagement(); $('#memberAdminFields').toggle(currentUser.role === 'admin'); $('#manageMembersModal').css('display', 'flex'); } });
             
-            // PENAMBAHAN: Event listener untuk pencarian member di halaman kelola member
             $('#manageMemberSearchInput').on('input', function() {
                 loadMembersForManagement($(this).val());
             });
@@ -2631,7 +2630,8 @@
         }
 
         // --- RECEIPT & PRINTING ---
-        function generateReceiptHTML(order, logoBase64, barcodeBase64) {
+        // PERBAIKAN: Fungsi generate HTML struk tidak lagi memerlukan barcode, karena akan digenerate setelahnya
+        function generateReceiptHTML(order, logoBase64) {
             const member = members.find(m => m.id === order.memberId);
             let itemsHTML = '';
             order.items.forEach(item => {
@@ -2674,34 +2674,43 @@
                 <div class="receipt-footer">
                     <p>Terima kasih telah berkunjung</p>
                      <div class="receipt-barcode" style="text-align: center; margin: 10px 0;">
-                        <img src="${barcodeBase64}" alt="Transaction Barcode" style="height: 40px; max-width: 100%;">
+                        <svg id="receiptBarcode"></svg>
                     </div>
                     <p>&copy; ${new Date().getFullYear()} ${settings.storeName}</p>
                 </div>
             </div>`;
         }
         
+        // PERBAIKAN: Fungsi menampilkan struk kini menggunakan JsBarcode
         async function showReceiptModal(order) {
-            const barcodeData = `TrxID:${order.id}|Store:${settings.storeName.substring(0, 15)}|Type:${order.type}|Date:${moment(order.date).format('YYYYMMDDHHmm')}`;
-            const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true&imagetype=png&hidehrt=true`;
             const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
-            
             showToast('Membuat struk...', 'info');
 
             try {
-                const [logoBase64, barcodeBase64] = await Promise.all([
-                    imageToBase64(logoUrl),
-                    imageToBase64(barcodeUrl)
-                ]);
+                const logoBase64 = await imageToBase64(logoUrl);
+                const receiptHTML = generateReceiptHTML(order, logoBase64);
+                $('#receiptModalBody').html(receiptHTML);
+                
+                // Generate barcode setelah elemen SVG ada di dalam DOM
+                JsBarcode("#receiptBarcode", order.id, {
+                    format: "CODE128",
+                    height: 40,
+                    displayValue: false,
+                    margin: 0
+                });
 
-                const receiptHTML = generateReceiptHTML(order, logoBase64, barcodeBase64);
-                $('#receiptModalBody').html(receiptHTML);
-                $('#downloadReceiptPdfBtn').data('order', order);
-                $('#receiptModal').css('display', 'flex');
             } catch (error) {
-                showToast('Gagal membuat struk.', 'error');
-                const receiptHTML = generateReceiptHTML(order, '', '');
+                showToast('Gagal memuat logo struk.', 'error');
+                const receiptHTML = generateReceiptHTML(order, ''); // Tetap tampilkan struk tanpa logo
                 $('#receiptModalBody').html(receiptHTML);
+                // Coba generate barcode meskipun logo gagal
+                JsBarcode("#receiptBarcode", order.id, {
+                    format: "CODE128",
+                    height: 40,
+                    displayValue: false,
+                    margin: 0
+                });
+            } finally {
                 $('#downloadReceiptPdfBtn').data('order', order);
                 $('#receiptModal').css('display', 'flex');
             }
@@ -2730,6 +2739,7 @@
         }
         
         // --- KTA FUNCTIONS ---
+        // PERBAIKAN: Fungsi KTA kini menggunakan JsBarcode dan memisahkan logic logo
         async function openKtaModal(memberId) {
             const member = members.find(m => m.id === memberId);
             if (!member) return;
@@ -2738,24 +2748,28 @@
             $('#ktaStoreContact').text(`${settings.storeAddress} • ${settings.storePhone}`);
             $('#ktaMemberName').text(member.name);
             $('#ktaMemberId').text(`ID: ${member.id}`);
-
-            $('#ktaLogo').attr('src', '');
-            $('#ktaBarcodeImg').attr('src', '');
             $('#ktaModal').css('display', 'flex');
+            
             showToast('Membuat kartu...', 'info');
             
-            const barcodeData = `ID: ${member.id}\nNama: ${member.name}\nTelp: ${member.phone}`;
-            const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(barcodeData)}&code=Code128&translate-esc=true&imagetype=png`;
-            const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
-
+            // Generate barcode langsung ke elemen SVG
             try {
-                const [logoBase64, barcodeBase64] = await Promise.all([
-                    imageToBase64(logoUrl),
-                    imageToBase64(barcodeUrl)
-                ]);
+                JsBarcode("#ktaBarcodeImg", member.id, {
+                    format: "CODE128",
+                    displayValue: false,
+                    height: 40,
+                    margin: 0
+                });
+            } catch(e) {
+                console.error("Gagal membuat barcode KTA", e);
+                showToast('Gagal membuat barcode KTA.', 'error');
+            }
 
+            // Load logo secara terpisah
+            const logoUrl = 'https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/20250725_194435.png';
+            try {
+                const logoBase64 = await imageToBase64(logoUrl);
                 $('#ktaLogo').attr('src', logoBase64);
-                $('#ktaBarcodeImg').attr('src', barcodeBase64);
             } catch (error) {
                 showToast('Gagal memuat gambar kartu.', 'error');
             }
@@ -2786,52 +2800,19 @@
             });
         }
         
+        // PERBAIKAN: Fungsi cetak disederhanakan dan dibuat lebih andal
         function printElement(selector) {
-            const elementToPrint = $(selector).clone();
+            const elementToPrint = $(selector)[0].outerHTML;
             const printContainer = $('#print-container');
             
             printContainer.html(elementToPrint);
 
-            const images = printContainer.find('img');
-            let loadedImages = 0;
-
-            const triggerPrint = () => {
+            // Beri browser jeda untuk me-render konten sebelum memanggil dialog cetak
+            setTimeout(() => {
                 window.print();
-                setTimeout(() => {
-                    printContainer.empty();
-                }, 100);
-            };
-            
-            if (images.length > 0) {
-                 let allImagesLoaded = false;
-                
-                const checkCompletion = () => {
-                    if (allImagesLoaded) return;
-                    loadedImages++;
-                    if (loadedImages >= images.length) {
-                        allImagesLoaded = true;
-                        triggerPrint();
-                    }
-                };
-
-                images.each(function() {
-                    if (this.complete) {
-                        checkCompletion();
-                    } else {
-                        $(this).on('load', checkCompletion).on('error', checkCompletion); 
-                    }
-                });
-
-                setTimeout(() => {
-                     if (!allImagesLoaded) {
-                         console.warn("Print timed out waiting for images.");
-                         triggerPrint();
-                     }
-                }, 3000);
-
-            } else {
-                triggerPrint();
-            }
+                // Bersihkan container setelah selesai
+                printContainer.empty();
+            }, 250);
         }
 
         // --- KITCHEN FUNCTIONS ---
@@ -2903,7 +2884,8 @@
         // --- UTILITY & UI ---
         async function imageToBase64(url) {
             try {
-                const response = await fetch(url);
+                // Gunakan proxy untuk menghindari masalah CORS
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const blob = await response.blob();
                 return new Promise((resolve, reject) => {
@@ -2914,7 +2896,8 @@
                 });
             } catch (error) {
                 console.error('Failed to convert image to Base64:', url, error);
-                return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // transparent pixel
+                // Return pixel transparan jika gagal
+                return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             }
         }
 
