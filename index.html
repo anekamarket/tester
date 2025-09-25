@@ -954,9 +954,9 @@
             cursor: pointer;
         }
         
-        /* === [PERBAIKAN] KODE CETAK STRUK & HISTORI === */
-        /* Kode ini memperbaiki masalah cetak struk dan histori yang kosong.
-           Strukturnya memastikan bahwa hanya elemen di dalam #print-container yang terlihat saat mencetak. */
+        /* === [PERBAIKAN & PENYEMPURNAAN] KODE CETAK STRUK & HISTORI === */
+        /* Kode ini memastikan struk dan histori dapat menyesuaikan ukuran kertas secara otomatis
+           dan seluruh kontennya tercetak tanpa terpotong. */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
             width: 300px;
@@ -1031,6 +1031,7 @@
             body, .modal, .container {
                 padding: 0;
                 margin: 0;
+                box-shadow: none;
             }
 
             /* Sembunyikan semua elemen di body secara default */
@@ -1049,44 +1050,43 @@
                 left: 0;
                 top: 0;
                 width: 100%;
+                height: auto;
                 margin: 0;
                 padding: 0;
-                display: block !important; /* [FIX] Memastikan kontainer terlihat saat dicetak */
+                display: block !important;
             }
             
             /* Atur ulang gaya elemen yang akan dicetak agar sesuai dengan kertas */
-            #print-container #receiptContent,
-            #print-container .printable-area {
+            #print-container .printable-area,
+            #print-container #receiptContent {
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 10px !important;
                 box-shadow: none !important;
                 border: none !important;
                 display: block !important;
                 color: #000 !important;
                 background: #fff !important;
-            }
-            
-            /* Atur lebar khusus untuk struk thermal */
-            #print-container #receiptContent {
-                width: 72mm !important; 
-                font-size: 9pt !important;
-                padding: 2mm !important; 
+                width: 100% !important; /* [FIX] Memastikan lebar menyesuaikan kertas */
+                font-size: 12pt !important; /* Ukuran font standar untuk kertas A4 */
             }
 
-            /* Atur lebar untuk histori agar sesuai halaman */
-            #print-container #historyResultsContainer {
-                width: 100% !important;
+            /* [FIX] Pastikan histori tidak terpotong saat dicetak */
+            #print-container #historyResultsContainer, 
+            #print-container #historyResults {
+                max-height: none !important;
+                overflow: visible !important;
+                height: auto !important;
             }
             
             /* Sembunyikan elemen yang tidak perlu dicetak seperti tombol */
-            .no-print, .modal-footer {
+            .no-print, .modal-footer, .modal-header {
                 display: none !important;
             }
             
             /* Atur halaman cetak */
             @page {
                 size: auto; 
-                margin: 0mm; 
+                margin: 10mm; 
             }
         }
         /* === AKHIR DARI PERBAIKAN KODE CETAK === */
@@ -3011,9 +3011,6 @@
                 } catch (e) {
                     showToast('Gagal membuka dialog cetak.', 'error');
                     console.error("Print error:", e);
-                } finally {
-                    // Kosongkan kontainer setelah mencetak untuk menghindari masalah
-                    // printContainer.empty();
                 }
             }, 300); // Penundaan singkat untuk memastikan DOM diperbarui
         }
