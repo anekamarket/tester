@@ -1051,6 +1051,7 @@
                 width: 100%;
                 margin: 0;
                 padding: 0;
+                display: block !important; /* [FIX] Memastikan kontainer terlihat saat dicetak */
             }
             
             /* Atur ulang gaya elemen yang akan dicetak agar sesuai dengan kertas */
@@ -1078,7 +1079,7 @@
             }
             
             /* Sembunyikan elemen yang tidak perlu dicetak seperti tombol */
-            .no-print {
+            .no-print, .modal-footer {
                 display: none !important;
             }
             
@@ -1391,7 +1392,7 @@
                         <span id="orderDonation">Rp 0</span>
                     </div>
                     <div id="discountRow" class="summary-row" style="display: none;">
-                        <span>Diskon Member (2%):</span>
+                        <span>Diskon (0%):</span>
                         <span id="orderDiscount">-Rp 0</span>
                     </div>
                     <div class="summary-row total-row">
@@ -1778,7 +1779,21 @@
                         </div>
                         <button type="submit" class="btn btn-sm btn-info">Ubah Password</button>
                     </form>
-                     <hr class="mt-3 mb-3">
+                    
+                    <hr class="mt-3 mb-3">
+                    <h4 class="mt-3">Pengaturan Diskon</h4>
+                    <form id="discountSettingsForm" class="mt-2">
+                        <div class="form-group">
+                            <label class="form-label">Diskon Member (%)</label>
+                            <input type="number" id="memberDiscount" class="form-control" min="0" max="100" value="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Diskon Pelanggan Biasa (%)</label>
+                            <input type="number" id="nonMemberDiscount" class="form-control" min="0" max="100" value="0" required>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-success">Simpan Pengaturan Diskon</button>
+                    </form>
+                    <hr class="mt-3 mb-3">
                     <h4 class="mt-3">Ubah Password Login Anda</h4>
                     <form id="changeOwnPasswordForm" class="mt-2">
                         <div class="form-group">
@@ -1838,7 +1853,7 @@
 
     <div id="receiptModal" class="modal">
         <div class="modal-content" style="max-width: 350px;">
-            <div class="modal-header">
+            <div class="modal-header no-print">
                 <h3 class="modal-title">Struk Pembayaran</h3>
                 <button class="modal-close">&times;</button>
             </div>
@@ -1995,7 +2010,9 @@
                     storeEmail: 'admin@resto.com',
                     tableCount: 5,
                     itemSecurityCode: CryptoJS.SHA256('17081945').toString(),
-                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString()
+                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
+                    memberDiscountPercent: 2,      // [FITUR BARU] Default diskon member
+                    nonMemberDiscountPercent: 0  // [FITUR BARU] Default diskon non-member
                 }));
             }
         }
@@ -2268,6 +2285,9 @@
                     $('#controlPanelModal .tabs .tab').removeClass('active').first().addClass('active');
                     $('#controlPanelModal .tab-content').removeClass('active').first().addClass('active');
                     loadUsersForManagement();
+                    // [FITUR BARU] Load current discount settings into the form
+                    $('#memberDiscount').val(settings.memberDiscountPercent || 2);
+                    $('#nonMemberDiscount').val(settings.nonMemberDiscountPercent || 0);
                     $('#controlPanelModal').css('display', 'flex');
                 });
             });
@@ -2348,7 +2368,7 @@
             $('#reportsModal .tabs .tab').click(function() { switchReportsModalTab($(this).data('tab')); });
             
             $('#historySearchInput').on('input', function() { loadTransactionHistory($(this).val()); });
-            $('#printHistoryBtn').click(() => printElement('#historyResultsContainer'));
+            $('#printHistoryBtn').click(() => printElement('#historyResultsContainer .printable-area'));
             $('#downloadHistoryBtn').click(downloadHistoryAsPdf);
             $(document).on('click', '.reprint-receipt', function() {
                 const orderId = $(this).data('id');
@@ -2385,6 +2405,21 @@
             $('#itemSecurityForm').submit(changeSecurityCode);
             $('#panelSecurityForm').submit(changeSecurityCode);
             $('#changeOwnPasswordForm').submit(changeOwnPassword);
+
+            // [FITUR BARU] Save Discount Settings
+            $('#discountSettingsForm').submit(function(e) {
+                e.preventDefault();
+                const memberDiscount = parseFloat($('#memberDiscount').val());
+                const nonMemberDiscount = parseFloat($('#nonMemberDiscount').val());
+
+                if (isNaN(memberDiscount) || isNaN(nonMemberDiscount) || memberDiscount < 0 || nonMemberDiscount < 0) {
+                    return showToast('Nilai diskon tidak valid.', 'error');
+                }
+                settings.memberDiscountPercent = memberDiscount;
+                settings.nonMemberDiscountPercent = nonMemberDiscount;
+                saveSettings();
+                showToast('Pengaturan diskon berhasil disimpan.', 'success');
+            });
 
             $('#passwordPromptForm').submit(e => e.preventDefault());
             $('#passwordPromptSubmit').click(submitPasswordPrompt);
@@ -2689,8 +2724,23 @@
         
         function updateOrder() {
             currentOrder.subtotal = currentOrder.items.reduce((total, item) => total + (item.menu.price * item.quantity), 0);
+            
+            // [PERBAIKAN] Logika diskon dinamis berdasarkan pengaturan
+            const memberDiscount = settings.memberDiscountPercent ?? 2;
+            const nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
+            let discountPercent = 0;
+            let discountText = '';
+
+            if (currentOrder.memberId && memberDiscount > 0) {
+                discountPercent = memberDiscount;
+                discountText = `Diskon Member (${discountPercent}%)`;
+            } else if (!currentOrder.memberId && nonMemberDiscount > 0) {
+                discountPercent = nonMemberDiscount;
+                discountText = `Diskon Pelanggan (${discountPercent}%)`;
+            }
+            
+            currentOrder.discount = (discountPercent > 0) ? currentOrder.subtotal * (discountPercent / 100) : 0;
             currentOrder.donation = parseFloat($('#donationAmount').val()) || 0;
-            currentOrder.discount = (currentOrder.memberId) ? currentOrder.subtotal * 0.02 : 0;
             currentOrder.total = currentOrder.subtotal - currentOrder.discount + currentOrder.donation;
             
             localStorage.setItem(STORAGE_KEYS.CURRENT_ORDER, JSON.stringify(currentOrder));
@@ -2698,7 +2748,13 @@
             const $orderItems = $('#orderItems').empty();
             $('#orderCount').text(`(${currentOrder.items.length} item)`);
             $('#orderDonation').text(formatCurrency(currentOrder.donation));
-            $('#discountRow').toggle(currentOrder.discount > 0); $('#orderDiscount').text(`-${formatCurrency(currentOrder.discount)}`);
+            
+            if (currentOrder.discount > 0) {
+                $('#discountRow').show().find('span:first-child').text(discountText);
+            } else {
+                $('#discountRow').hide();
+            }
+            $('#orderDiscount').text(`-${formatCurrency(currentOrder.discount)}`);
             
             if (currentOrder.items.length === 0) $orderItems.html('<div class="empty-state"><i class="fas fa-shopping-basket"></i><p>Pesanan kosong</p></div>');
             else {
@@ -2721,10 +2777,18 @@
         }
         
         function updateOrderSummary() {
+            let discountText = '';
+            if (currentOrder.discount > 0) {
+                const memberDiscount = settings.memberDiscountPercent ?? 2;
+                const nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
+                let percent = currentOrder.memberId ? memberDiscount : nonMemberDiscount;
+                discountText = `Diskon (${percent}%):`;
+            }
+
             const summaryHTML = currentOrder.items.map(item => `<div class="summary-row"><span>${item.menu.name} (${item.quantity}x)</span><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join('') +
                 `<div class="summary-row" style="border-top: 1px dashed #ddd; margin-top: 8px; padding-top: 8px;"><span>Subtotal:</span><span>${formatCurrency(currentOrder.subtotal)}</span></div>` +
                 (currentOrder.donation > 0 ? `<div class="summary-row"><span>Donasi:</span><span>${formatCurrency(currentOrder.donation)}</span></div>` : '') +
-                (currentOrder.discount > 0 ? `<div class="summary-row"><span>Diskon:</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') +
+                (currentOrder.discount > 0 ? `<div class="summary-row"><span>${discountText}</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') +
                 `<div class="summary-row total-row"><span>Total:</span><span>${formatCurrency(currentOrder.total)}</span></div>`;
             $('#orderSummary').html(summaryHTML);
         }
@@ -2931,21 +2995,27 @@
             });
         }
         
+        /**
+         * [PERBAIKAN] Fungsi ini disempurnakan untuk menyalin konten ke kontainer cetak
+         * sebelum memanggil window.print(), memastikan konten tidak kosong.
+         */
         function printElement(selector) {
             const elementToPrint = $(selector).clone();
             const printContainer = $('#print-container');
             
             printContainer.empty().append(elementToPrint);
 
-            // Beri sedikit waktu agar DOM diperbarui sebelum mencetak
             setTimeout(() => {
                 try {
                     window.print();
                 } catch (e) {
                     showToast('Gagal membuka dialog cetak.', 'error');
                     console.error("Print error:", e);
+                } finally {
+                    // Kosongkan kontainer setelah mencetak untuk menghindari masalah
+                    // printContainer.empty();
                 }
-            }, 300);
+            }, 300); // Penundaan singkat untuk memastikan DOM diperbarui
         }
 
         function loadKitchenOrders() {
@@ -2992,13 +3062,8 @@
             });
         }
         
-        /**
-         * [PERBAIKAN] Fungsi ini diperbaiki untuk menangani konten yang panjang
-         * dengan membaginya ke beberapa halaman PDF, sehingga hasilnya tidak
-         * menjadi gepeng atau terpotong.
-         */
         function downloadHistoryAsPdf() {
-            const element = document.getElementById('historyResults'); // Target elemen konten langsung
+            const element = document.getElementById('historyResults');
             const filename = `Histori_Transaksi_${moment().format('YYYY-MM-DD')}.pdf`;
             
             showToast('Mengunduh PDF Histori...', 'info');
@@ -3018,22 +3083,18 @@
                 const canvasHeight = canvas.height;
                 const canvasAspectRatio = canvasWidth / canvasHeight;
                 
-                // Hitung tinggi gambar yang diskalakan agar sesuai dengan lebar PDF
                 const scaledHeight = pdfWidth / canvasAspectRatio;
                 
                 let heightLeft = scaledHeight;
-                let position = 10; // Margin atas
+                let position = 10;
 
-                // Tambahkan judul
                 pdf.setFontSize(18);
                 pdf.text("Histori Transaksi", pdfWidth / 2, position, { align: 'center' });
                 position += 10;
                 
-                // Tambahkan gambar ke PDF, potong jika perlu
                 pdf.addImage(imgData, 'PNG', 10, position, pdfWidth - 20, scaledHeight);
-                heightLeft -= (pdfHeight - position - 10); // 10 untuk margin bawah
+                heightLeft -= (pdfHeight - position - 10);
 
-                // Tambahkan halaman baru jika konten melebihi satu halaman
                 while (heightLeft > 0) {
                     position = -heightLeft;
                     pdf.addPage();
