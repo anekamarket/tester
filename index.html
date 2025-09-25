@@ -36,7 +36,7 @@
         }
 
         body {
-            background-color: #f0f2f5; /* REVISI: Latar belakang body sedikit lebih gelap */
+            background-color: #f0f2f5;
             color: #212529;
             line-height: 1.5;
             touch-action: manipulation;
@@ -77,7 +77,6 @@
             background-color: var(--white);
             padding: 5px;
             box-shadow: var(--shadow-sm);
-            /* REVISI: Menghilangkan <img> dan menggantinya dengan icon */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -542,7 +541,7 @@
             resize: vertical;
         }
 
-        /* === [REVISI] LOGIN STYLES === */
+        /* === [PERBAIKAN] DESAIN LOGIN === */
         #loginModal {
             background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
         }
@@ -552,9 +551,9 @@
             margin: 20px auto;
             background: var(--white);
             border-radius: var(--rounded-lg);
-            padding: 32px; /* Padding lebih besar */
+            padding: 32px;
             box-shadow: var(--shadow);
-            border-top: 5px solid var(--primary); /* Aksen warna di atas */
+            border-top: 5px solid var(--primary);
         }
 
         .login-header {
@@ -563,22 +562,23 @@
         }
 
         .login-logo {
-            font-size: 3.5rem; /* Icon lebih besar */
+            font-size: 3.5rem;
             color: var(--primary);
             margin-bottom: 12px;
             line-height: 1;
         }
 
         .login-title {
-            font-size: 2rem; /* Judul lebih besar */
+            font-size: 2rem;
             color: var(--dark);
-            font-weight: 700; /* Lebih tebal */
-            letter-spacing: 1px; /* Jarak huruf */
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         
         .login-header p {
             color: var(--gray);
         }
+        /* === AKHIR DARI PERBAIKAN DESAIN LOGIN === */
 
         /* Toast Notification */
         .toast {
@@ -944,10 +944,10 @@
             cursor: pointer;
         }
         
-        /* === [REVISI FINAL] KODE CETAK STRUK === */
+        /* === [PERBAIKAN] KODE CETAK STRUK === */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
-            width: 300px; /* Lebar default untuk tampilan modal */
+            width: 300px;
             margin: 0 auto;
             padding: 15px;
             font-size: 12px;
@@ -1033,21 +1033,19 @@
                 padding: 0;
             }
             
-            #print-container #receiptContent,
-            #print-container #ktaCard {
+            #print-container #receiptContent {
                 margin: 0;
                 padding: 0;
                 box-shadow: none !important;
                 border: none !important;
-                display: block !important; /* Pastikan elemen block */
+                display: block !important;
             }
             
-            /* Setting untuk printer thermal (72mm atau 58mm) */
             #print-container #receiptContent {
                 width: 72mm !important; 
                 font-size: 9pt !important;
                 padding: 2mm !important; 
-                color: #000 !important; /* Pastikan teks hitam */
+                color: #000 !important;
             }
             
             .no-print {
@@ -1056,7 +1054,7 @@
             
             @page {
                 size: auto; 
-                margin: 0mm; /* Menghapus margin halaman bawaan */
+                margin: 0mm; 
             }
         }
         /* === AKHIR DARI PERBAIKAN KODE CETAK === */
@@ -1091,7 +1089,7 @@
             background-color: #138496;
         }
         
-        /* === [REVISI] DESAIN KTA (TANPA LOGO) === */
+        /* KTA Card Design */
         #ktaCard {
             width: 320px;
             height: 500px;
@@ -1859,7 +1857,6 @@
                - Password: kasir123
         */
         
-        // Default admin user (username: Admin, password: Admin.1945)
         const DEFAULT_ADMIN = {
             id: 'U001',
             username: 'Admin',
@@ -1868,7 +1865,6 @@
             role: 'admin'
         };
         
-        // Default cashier user (username: kasir, password: kasir123)
         const DEFAULT_CASHIER = {
             id: 'U002',
             username: 'kasir',
@@ -1877,7 +1873,6 @@
             role: 'cashier'
         };
         
-        // Default menu images based on category
         const DEFAULT_MENU_IMAGES = {
             'Makanan': {
                 'Nasi Goreng': 'https://raw.githubusercontent.com/LKS-88/aplikasi-transaksi-cafe-resto/refs/heads/main/nasi%20goreng.jpeg',
@@ -1895,7 +1890,6 @@
         let passwordPromptCallback = null;
         let captchaText = '';
         
-        // Initialize data
         function initializeData() {
             let users_init = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
             
@@ -1940,7 +1934,6 @@
             }
         }
         
-        // Initialize the app
         $(document).ready(function() {
             initializeData();
             
@@ -2016,7 +2009,6 @@
             
             $('#reloadCaptchaBtn').click(generateCaptcha);
             
-            // Logout handler
             $('#logoutBtn').click(function(e) {
                 e.preventDefault();
                 currentUser = null;
@@ -2315,7 +2307,6 @@
             $('#downloadReceiptPdfBtn').on('click', downloadReceiptAsPdf);
         });
 
-        // --- CORE FUNCTIONS ---
         function initializeApp() {
             loadMenus(); 
             updateOrder(); 
@@ -2326,7 +2317,6 @@
             $('#adminPanel').toggle(currentUser.role === 'admin');
         }
 
-        // --- SECURITY & PASSWORD FUNCTIONS ---
         function promptForPassword(type, callback) {
             const title = type === 'item' ? 'Password Edit/Hapus' : 'Password Kontrol Panel';
             $('#passwordPromptTitle').text(title);
@@ -2386,7 +2376,6 @@
             }
         }
 
-        // --- USER MANAGEMENT ---
         function loadUsersForManagement() {
             const $list = $('#usersList').empty();
             if (users.length === 0) {
@@ -2440,7 +2429,6 @@
             showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`, 'success');
         }
 
-        // --- BACKUP, RESTORE, RESET ---
         function backupData() {
             const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
             const dataStr = JSON.stringify(backup, null, 2);
@@ -2484,7 +2472,6 @@
             location.reload();
         }
         
-        // --- MENU & CATEGORY ---
         function openEditMenuModal(menu) {
             $('#menuModal .modal-title').text(menu ? 'Edit Menu' : 'Tambah Menu Baru');
             $('#menuForm')[0].reset();
@@ -2514,7 +2501,7 @@
                         </div>` : '';
                     $menuGrid.append(`
                         <div class="menu-card" data-id="${menu.id}">${adminActions}
-                            <div class="menu-image">${menu.image ? `<img src="${menu.image}" alt="${menu.name}">` : `<i class="fas fa-utensils"></i>`}</div>
+                            <div class="menu-image">${menu.image ? `<img src="${menu.image}" alt="${menu.name}" onerror="this.parentElement.innerHTML = '<i class=\\'fas fa-utensils\\'></i>';">` : `<i class="fas fa-utensils"></i>`}</div>
                             <div class="menu-name">${menu.name}</div>
                             <div class="menu-price">${formatCurrency(menu.price)}</div>
                             <div class="menu-category">${menu.category}</div>
@@ -2552,7 +2539,6 @@
             }
         }
 
-        // --- MEMBER FUNCTIONS ---
         function resetMemberForm() {
             $('#memberForm')[0].reset(); $('#memberIdInput').val('');
             $('#memberFormTitle').text('Tambah Member Baru');
@@ -2608,7 +2594,6 @@
             }
         }
         
-        // --- ORDER & PAYMENT ---
         function updateOrder() {
             currentOrder.subtotal = currentOrder.items.reduce((total, item) => total + (item.menu.price * item.quantity), 0);
             currentOrder.donation = parseFloat($('#donationAmount').val()) || 0;
@@ -2697,7 +2682,6 @@
             $('#donationAmount').val('0'); $('#tableNumberContainer').show();
         }
 
-        // --- RECEIPT & PRINTING ---
         function generateReceiptHTML(order) {
             const member = members.find(m => m.id === order.memberId);
             let itemsHTML = '';
@@ -2712,7 +2696,6 @@
                 </div>`;
             });
 
-            // REVISI: Logo dihilangkan dari struk
             return `
             <div id="receiptContent">
                 <div class="receipt-header">
@@ -2848,7 +2831,6 @@
             });
         }
         
-        // REVISI: Fungsi cetak disempurnakan
         function printElement(selector) {
             const elementToPrint = $(selector).clone();
             const printContainer = $('#print-container');
@@ -2865,7 +2847,6 @@
             }, 300);
         }
 
-        // --- KITCHEN FUNCTIONS ---
         function loadKitchenOrders() {
             const kitchenOrders = orders.filter(o => o.type === 'dinein' && o.status !== 'completed');
             const $kitchenOrders = $('#kitchenOrders').empty();
@@ -2883,7 +2864,6 @@
             }
         }
         
-        // --- REPORT FUNCTIONS ---
         function generateReport() {
             let startDate, endDate;
             const period = $('#reportPeriod').val();
@@ -2931,7 +2911,6 @@
             setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
         }
 
-        // --- UTILITY & UI ---
         function saveStoreInfo() {
             settings = { ...settings,
                 storeName: $('#storeName').val().trim(),
@@ -2986,7 +2965,6 @@
 
         function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY, HH:mm')); }
 
-        // --- DATA SAVING ---
         function saveMenus() { localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(menus)); }
         function saveCategories() { localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
         function saveOrders() { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders)); }
@@ -2994,7 +2972,6 @@
         function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
         function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
 
-        // --- CAPTCHA FUNCTION ---
         function generateCaptcha() {
             const canvas = document.getElementById('captchaCanvas');
             if (!canvas) return;
