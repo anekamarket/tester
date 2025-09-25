@@ -36,7 +36,7 @@
         }
 
         body {
-            background-color: #f8f9fa;
+            background-color: #f0f2f5; /* REVISI: Latar belakang body sedikit lebih gelap */
             color: #212529;
             line-height: 1.5;
             touch-action: manipulation;
@@ -77,12 +77,12 @@
             background-color: var(--white);
             padding: 5px;
             box-shadow: var(--shadow-sm);
-        }
-        .header-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
+            /* REVISI: Menghilangkan <img> dan menggantinya dengan icon */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
         }
 
         .app-title {
@@ -542,14 +542,19 @@
             resize: vertical;
         }
 
-        /* Login Styles */
+        /* === [REVISI] LOGIN STYLES === */
+        #loginModal {
+            background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
+        }
+
         .login-container {
             max-width: 400px;
             margin: 20px auto;
             background: var(--white);
             border-radius: var(--rounded-lg);
-            padding: 24px;
+            padding: 32px; /* Padding lebih besar */
             box-shadow: var(--shadow);
+            border-top: 5px solid var(--primary); /* Aksen warna di atas */
         }
 
         .login-header {
@@ -558,15 +563,21 @@
         }
 
         .login-logo {
-            font-size: 3rem;
+            font-size: 3.5rem; /* Icon lebih besar */
             color: var(--primary);
             margin-bottom: 12px;
+            line-height: 1;
         }
 
         .login-title {
-            font-size: 1.8rem;
-            color: var(--primary);
-            font-weight: 600;
+            font-size: 2rem; /* Judul lebih besar */
+            color: var(--dark);
+            font-weight: 700; /* Lebih tebal */
+            letter-spacing: 1px; /* Jarak huruf */
+        }
+        
+        .login-header p {
+            color: var(--gray);
         }
 
         /* Toast Notification */
@@ -933,7 +944,7 @@
             cursor: pointer;
         }
         
-        /* === PERBAIKAN & PENYEMPURNAAN KODE CETAK (REVISI FINAL) === */
+        /* === [REVISI FINAL] KODE CETAK STRUK === */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
             width: 300px; /* Lebar default untuk tampilan modal */
@@ -950,13 +961,6 @@
             margin-bottom: 8px;
         }
         
-        .receipt-logo {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 5px auto;
-            object-fit: contain;
-        }
-
         .receipt-title {
             font-weight: bold;
             font-size: 14px;
@@ -1029,21 +1033,21 @@
                 padding: 0;
             }
             
-            /* Memastikan hanya konten di dalam #print-container yang di-render */
             #print-container #receiptContent,
             #print-container #ktaCard {
                 margin: 0;
                 padding: 0;
                 box-shadow: none !important;
                 border: none !important;
+                display: block !important; /* Pastikan elemen block */
             }
             
-            /* Mengatur ukuran struk untuk printer thermal (misal: 72mm atau 58mm) */
-            /* Sesuaikan 'width' di bawah ini dengan lebar kertas printer Anda */
+            /* Setting untuk printer thermal (72mm atau 58mm) */
             #print-container #receiptContent {
-                width: 72mm !important; /* Ganti ke 58mm jika perlu */
-                font-size: 9pt !important; /* Font diperkecil untuk cetak */
-                padding: 2mm !important; /* Memberi sedikit margin di kertas */
+                width: 72mm !important; 
+                font-size: 9pt !important;
+                padding: 2mm !important; 
+                color: #000 !important; /* Pastikan teks hitam */
             }
             
             .no-print {
@@ -1051,12 +1055,11 @@
             }
             
             @page {
-                size: auto; /* Membiarkan browser menentukan ukuran berdasarkan konten */
-                margin: 0mm; /* Menghapus margin halaman bawaan browser */
+                size: auto; 
+                margin: 0mm; /* Menghapus margin halaman bawaan */
             }
         }
         /* === AKHIR DARI PERBAIKAN KODE CETAK === */
-
 
         /* Backup Restore Styles */
         .backup-actions {
@@ -1088,8 +1091,7 @@
             background-color: #138496;
         }
         
-        
-        /* === PERBAIKAN & PENYEMPURNAAN DESAIN KTA (REVISI FINAL) === */
+        /* === [REVISI] DESAIN KTA (TANPA LOGO) === */
         #ktaCard {
             width: 320px;
             height: 500px;
@@ -1131,7 +1133,7 @@
         }
 
         .kta-header {
-            text-align: center; /* DIUBAH: Mengatur teks menjadi di tengah */
+            text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.3);
             padding-bottom: 15px;
             margin-bottom: 25px;
@@ -1204,9 +1206,6 @@
             border-top: 1px solid rgba(255,255,255,0.3);
             z-index: 1;
         }
-        /* === AKHIR DARI PERBAIKAN KTA === */
-
-
     </style>
 </head>
 <body>
@@ -1251,7 +1250,7 @@
         <header class="app-header">
             <div class="header-title-container">
                 <div class="header-logo">
-                    <img src="" alt="Logo">
+                    <i class="fas fa-utensils"></i>
                 </div>
                 <div>
                     <h1 class="app-title" id="storeNameHeader">CAFE & RESTO</h1>
@@ -1831,21 +1830,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script>
-        // --- [PERBAIKAN & REVISI FINAL] ---
-        // 1. Logo diperbaiki dengan menyematkan gambar (Base64) agar selalu muncul.
-        // 2. Kode cetak struk disempurnakan pada bagian CSS @media print.
-        // 3. Penambahan sistem verifikasi CAPTCHA pada halaman login.
-
         // Set locale to Indonesian
         moment.locale('id');
 
         // Initialize jsPDF
         const { jsPDF } = window.jspdf;
-        
-        // --- [PERBAIKAN LOGO] ---
-        // Logo ini (dari URL yang diberikan dan diubah ke Base64) akan digunakan di seluruh aplikasi.
-        // Ini memastikan logo selalu tampil, bahkan saat offline, dan tercetak dengan benar.
-        const LOGO_BASE64 = 'data:image/png;base64,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';
         
         // Data storage
         const STORAGE_KEYS = {
@@ -1980,7 +1969,6 @@
             
             setInterval(updateCurrentDate, 60000);
             
-            // --- [PERBAIKAN] REVISI LOGIN HANDLER DENGAN CAPTCHA ---
             $('#loginForm').submit(function(e) {
                 e.preventDefault();
                 const $loginBtn = $(this).find('button[type="submit"]');
@@ -2027,7 +2015,6 @@
             });
             
             $('#reloadCaptchaBtn').click(generateCaptcha);
-            // --- AKHIR DARI PERBAIKAN LOGIN ---
             
             // Logout handler
             $('#logoutBtn').click(function(e) {
@@ -2279,8 +2266,6 @@
             });
             
             $(document).on('click', '.kta-member', function() { openKtaModal($(this).data('id')); });
-            // Tombol cetak KTA dihilangkan, jadi event handler-nya tidak diperlukan lagi.
-            // $('#printKtaBtn').click(() => printElement('#ktaCard')); 
             $('#downloadKtaPdfBtn').click(downloadKtaAsPdf);
 
             $('#generateReportBtn').click(generateReport);
@@ -2332,8 +2317,6 @@
 
         // --- CORE FUNCTIONS ---
         function initializeApp() {
-            $('.header-logo img').attr('src', LOGO_BASE64);
-            
             loadMenus(); 
             updateOrder(); 
             loadCategories(); 
@@ -2729,10 +2712,10 @@
                 </div>`;
             });
 
+            // REVISI: Logo dihilangkan dari struk
             return `
             <div id="receiptContent">
                 <div class="receipt-header">
-                    <img src="${LOGO_BASE64}" alt="Logo" class="receipt-logo">
                     <div class="receipt-title">${settings.storeName}</div>
                     <div>${settings.storeAddress}</div>
                     <div>Telp: ${settings.storePhone}</div>
@@ -2809,7 +2792,6 @@
             });
         }
         
-        // --- KTA FUNCTIONS (REVISI) ---
         function openKtaModal(memberId) {
             const member = members.find(m => m.id === memberId);
             if (!member) return;
@@ -2818,9 +2800,6 @@
             $('#ktaStoreContact').text(`${settings.storeAddress} • ${settings.storePhone}`);
             $('#ktaMemberName').text(member.name);
             $('#ktaMemberId').text(`ID: ${member.id}`);
-            
-            // Logo tidak lagi di-set karena sudah dihapus dari HTML
-            // $('#ktaLogo').attr('src', LOGO_BASE64);
             
             showToast('Membuat kartu...', 'info');
             
@@ -2869,22 +2848,19 @@
             });
         }
         
+        // REVISI: Fungsi cetak disempurnakan
         function printElement(selector) {
-            const elementToPrint = $(selector)[0].cloneNode(true);
+            const elementToPrint = $(selector).clone();
             const printContainer = $('#print-container');
             
             printContainer.empty().append(elementToPrint);
 
-            // Beri sedikit waktu agar elemen dirender sebelum mencetak
             setTimeout(() => {
                 try {
                     window.print();
                 } catch (e) {
                     showToast('Gagal membuka dialog cetak.', 'error');
                     console.error("Print error:", e);
-                } finally {
-                    // Selalu bersihkan container setelah mencoba mencetak
-                    printContainer.empty();
                 }
             }, 300);
         }
@@ -3018,7 +2994,7 @@
         function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
         function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
 
-        // --- [PENAMBAHAN] FUNGSI UNTUK CAPTCHA ---
+        // --- CAPTCHA FUNCTION ---
         function generateCaptcha() {
             const canvas = document.getElementById('captchaCanvas');
             if (!canvas) return;
@@ -3059,7 +3035,6 @@
                 ctx.restore();
             }
         }
-        // --- AKHIR PENAMBAHAN FUNGSI CAPTCHA ---
     </script>
 </body>
 </html>
