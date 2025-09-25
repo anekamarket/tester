@@ -465,12 +465,13 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
             background-color: var(--white);
             border-radius: var(--rounded-lg);
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
@@ -542,18 +543,27 @@
         }
 
         /* === [PERBAIKAN] DESAIN LOGIN === */
+        /* Perbaikan ini berfokus pada membuat kotak login lebih proporsional,
+           seimbang secara visual, dan berada tepat di tengah layar. */
         #loginModal {
             background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
+            /* Memastikan modal flexbox bekerja dengan benar untuk pemusatan */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px; /* Memberi sedikit ruang di tepi layar kecil */
         }
 
         .login-container {
-            max-width: 400px;
-            margin: 20px auto;
+            width: 100%; /* Lebar penuh relatif terhadap padding parent */
+            max-width: 400px; /* Batas lebar maksimum agar tidak terlalu lebar di layar besar */
+            margin: 0; /* Menghapus margin auto karena flexbox sudah menangani pemusatan */
             background: var(--white);
             border-radius: var(--rounded-lg);
             padding: 32px;
             box-shadow: var(--shadow);
             border-top: 5px solid var(--primary);
+            animation: fadeIn 0.4s; /* Menambahkan animasi lembut saat muncul */
         }
 
         .login-header {
@@ -944,7 +954,9 @@
             cursor: pointer;
         }
         
-        /* === [PERBAIKAN] KODE CETAK STRUK === */
+        /* === [PERBAIKAN] KODE CETAK STRUK & HISTORI === */
+        /* Kode ini memperbaiki masalah cetak struk dan histori yang kosong.
+           Strukturnya memastikan bahwa hanya elemen di dalam #print-container yang terlihat saat mencetak. */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
             width: 300px;
@@ -1016,14 +1028,22 @@
         }
         
         @media print {
+            body, .modal, .container {
+                padding: 0;
+                margin: 0;
+            }
+
+            /* Sembunyikan semua elemen di body secara default */
             body * {
                 visibility: hidden;
             }
             
+            /* Tampilkan hanya kontainer cetak dan semua isinya */
             #print-container, #print-container * {
                 visibility: visible;
             }
-
+            
+            /* Posisikan kontainer cetak untuk mengisi seluruh halaman */
             #print-container {
                 position: absolute;
                 left: 0;
@@ -1033,27 +1053,36 @@
                 padding: 0;
             }
             
+            /* Atur ulang gaya elemen yang akan dicetak agar sesuai dengan kertas */
             #print-container #receiptContent,
             #print-container .printable-area {
-                margin: 0;
-                padding: 0;
+                margin: 0 !important;
+                padding: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
                 display: block !important;
+                color: #000 !important;
+                background: #fff !important;
             }
             
-            #print-container #receiptContent,
-            #print-container .printable-area {
+            /* Atur lebar khusus untuk struk thermal */
+            #print-container #receiptContent {
                 width: 72mm !important; 
                 font-size: 9pt !important;
                 padding: 2mm !important; 
-                color: #000 !important;
+            }
+
+            /* Atur lebar untuk histori agar sesuai halaman */
+            #print-container #historyResultsContainer {
+                width: 100% !important;
             }
             
+            /* Sembunyikan elemen yang tidak perlu dicetak seperti tombol */
             .no-print {
                 display: none !important;
             }
             
+            /* Atur halaman cetak */
             @page {
                 size: auto; 
                 margin: 0mm; 
@@ -1559,8 +1588,8 @@
                     <i class="fas fa-search"></i>
                     <input type="text" id="historySearchInput" class="search-input" placeholder="Cari berdasarkan Kode Transaksi...">
                 </div>
-                <div id="historyResultsContainer" class="printable-area" style="max-height: 50vh; overflow-y: auto;">
-                    <div id="historyResults"></div>
+                <div id="historyResultsContainer" style="max-height: 50vh; overflow-y: auto;">
+                    <div id="historyResults" class="printable-area"></div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2051,7 +2080,7 @@
                 currentUser = null;
                 localStorage.removeItem(STORAGE_KEYS.USER);
                 $('#mainApp').fadeOut(() => {
-                    $('#loginModal').fadeIn();
+                    $('#loginModal').css('display', 'flex'); // Use display:flex as per new CSS
                     $('#username').val('');
                     $('#password').val('');
                     $('#captchaInput').val('');
@@ -2367,7 +2396,7 @@
             });
             $('#reportPeriod').change(() => $('#customDateRange').toggle($('#reportPeriod').val() === 'custom'));
             
-            $('#printReceiptBtn').on('click', () => printElement('#receiptContent'));
+            $('#printReceiptBtn').on('click', () => printElement('#receiptModalBody #receiptContent'));
             $('#downloadReceiptPdfBtn').on('click', downloadReceiptAsPdf);
         });
 
@@ -2827,7 +2856,7 @@
         function downloadReceiptAsPdf() {
             const order = $('#downloadReceiptPdfBtn').data('order');
             if (!order) return;
-            const element = document.getElementById('receiptContent');
+            const element = document.getElementById('receiptModalBody').querySelector('#receiptContent');
             const filename = `Struk-${order.id}-${moment(order.date).format('DD-MM-YYYY_HH-mm')}.pdf`;
             
             showToast('Mengunduh PDF...', 'info');
@@ -2908,6 +2937,7 @@
             
             printContainer.empty().append(elementToPrint);
 
+            // Beri sedikit waktu agar DOM diperbarui sebelum mencetak
             setTimeout(() => {
                 try {
                     window.print();
@@ -2961,23 +2991,61 @@
                 `);
             });
         }
-
+        
+        /**
+         * [PERBAIKAN] Fungsi ini diperbaiki untuk menangani konten yang panjang
+         * dengan membaginya ke beberapa halaman PDF, sehingga hasilnya tidak
+         * menjadi gepeng atau terpotong.
+         */
         function downloadHistoryAsPdf() {
-            const element = document.getElementById('historyResultsContainer');
+            const element = document.getElementById('historyResults'); // Target elemen konten langsung
             const filename = `Histori_Transaksi_${moment().format('YYYY-MM-DD')}.pdf`;
-
+            
             showToast('Mengunduh PDF Histori...', 'info');
 
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(element, { 
+                scale: 2, 
+                useCORS: true,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
+            }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                const imgProps= pdf.getImageProperties(imgData);
+                
                 const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const canvasAspectRatio = canvasWidth / canvasHeight;
+                
+                // Hitung tinggi gambar yang diskalakan agar sesuai dengan lebar PDF
+                const scaledHeight = pdfWidth / canvasAspectRatio;
+                
+                let heightLeft = scaledHeight;
+                let position = 10; // Margin atas
+
+                // Tambahkan judul
+                pdf.setFontSize(18);
+                pdf.text("Histori Transaksi", pdfWidth / 2, position, { align: 'center' });
+                position += 10;
+                
+                // Tambahkan gambar ke PDF, potong jika perlu
+                pdf.addImage(imgData, 'PNG', 10, position, pdfWidth - 20, scaledHeight);
+                heightLeft -= (pdfHeight - position - 10); // 10 untuk margin bawah
+
+                // Tambahkan halaman baru jika konten melebihi satu halaman
+                while (heightLeft > 0) {
+                    position = -heightLeft;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, pdfWidth - 20, scaledHeight);
+                    heightLeft -= pdfHeight;
+                }
+                
                 pdf.save(filename);
+                showToast('PDF berhasil diunduh.', 'success');
             }).catch(err => {
                 showToast('Gagal mengunduh PDF', 'error');
+                console.error("PDF download error:", err);
             });
         }
         
@@ -3084,7 +3152,7 @@
                 const imgProps= pdf.getImageProperties(imgData);
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
+                pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight > 0 ? pdfHeight : 0);
                 pdf.save(filename);
             }).catch(err => {
                 showToast('Gagal mengunduh PDF', 'error');
