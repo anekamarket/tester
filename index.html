@@ -1033,7 +1033,8 @@
                 padding: 0;
             }
             
-            #print-container #receiptContent {
+            #print-container #receiptContent,
+            #print-container .printable-area {
                 margin: 0;
                 padding: 0;
                 box-shadow: none !important;
@@ -1041,7 +1042,8 @@
                 display: block !important;
             }
             
-            #print-container #receiptContent {
+            #print-container #receiptContent,
+            #print-container .printable-area {
                 width: 72mm !important; 
                 font-size: 9pt !important;
                 padding: 2mm !important; 
@@ -1286,6 +1288,7 @@
                         <button id="addMenuBtn" class="btn btn-sm">Tambah Menu</button>
                         <button id="manageCategoriesBtn" class="btn btn-sm">Kelola Kategori</button>
                         <button id="viewReportsBtn" class="btn btn-sm">Laporan</button>
+                        <button id="historyBtn" class="btn btn-sm">Histori Transaksi</button>
                         <button id="kitchenDisplayBtn" class="btn btn-sm">Info Pesanan</button>
                         <button id="manageMembersBtn" class="btn btn-sm">Kelola Member</button>
                         <button id="manageStoreInfoBtn" class="btn btn-sm">Info Restoran</button>
@@ -1498,38 +1501,72 @@
     </div>
 
     <div id="reportsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h3 class="modal-title">Laporan Penjualan</h3>
+                <h3 class="modal-title">Laporan</h3>
                 <button class="modal-close">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Periode</label>
-                    <select id="reportPeriod" class="form-control">
-                        <option value="today">Hari Ini</option>
-                        <option value="week">Minggu Ini</option>
-                        <option value="month">Bulan Ini</option>
-                        <option value="custom">Custom</option>
-                    </select>
+            <div class="modal-body" style="padding: 0 16px 16px 16px;">
+                 <div class="tabs">
+                    <div class="tab active" data-tab="salesReport"><i class="fas fa-chart-line"></i> Laporan Penjualan</div>
+                    <div class="tab" data-tab="donationsReport"><i class="fas fa-hand-holding-heart"></i> Laporan Donasi</div>
                 </div>
-                <div id="customDateRange" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">Dari Tanggal</label>
-                        <input type="date" id="reportStartDate" class="form-control">
+                
+                <div class="tab-content active" id="salesReportTab">
+                    <div class="form-group mt-3">
+                        <label class="form-label">Periode</label>
+                        <select id="reportPeriod" class="form-control">
+                            <option value="today">Hari Ini</option>
+                            <option value="week">Minggu Ini</option>
+                            <option value="month">Bulan Ini</option>
+                            <option value="custom">Custom</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Sampai Tanggal</label>
-                        <input type="date" id="reportEndDate" class="form-control">
+                    <div id="customDateRange" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Dari Tanggal</label>
+                            <input type="date" id="reportStartDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sampai Tanggal</label>
+                            <input type="date" id="reportEndDate" class="form-control">
+                        </div>
                     </div>
+                    <div id="reportResults" class="mt-3 printable-area"></div>
                 </div>
-                <div id="reportResults" class="mt-3">
-                    </div>
+
+                <div class="tab-content" id="donationsReportTab">
+                     <div id="donationReportResults" class="mt-3 printable-area"></div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning modal-close-btn">Tutup</button>
                 <button class="btn btn-success" id="generateReportBtn">Generate Laporan</button>
-                <button class="btn btn-primary" id="printReportBtn" style="display: none;">Cetak Laporan</button>
+                <button class="btn btn-info" id="downloadReportBtn" style="display: none;"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
+                <button class="btn btn-primary" id="printReportBtn" style="display: none;"><i class="fas fa-print"></i> Cetak Laporan</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="historyModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Histori Transaksi</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="historySearchInput" class="search-input" placeholder="Cari berdasarkan Kode Transaksi...">
+                </div>
+                <div id="historyResultsContainer" class="printable-area" style="max-height: 50vh; overflow-y: auto;">
+                    <div id="historyResults"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+                <button class="btn btn-info" id="downloadHistoryBtn"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
+                <button class="btn btn-primary" id="printHistoryBtn"><i class="fas fa-print"></i> Cetak Histori</button>
             </div>
         </div>
     </div>
@@ -2170,7 +2207,23 @@
             
             $('#addMenuBtn').click(() => { if (currentUser.role === 'admin') openEditMenuModal(null); });
             $('#manageCategoriesBtn').click(() => { if (currentUser.role === 'admin') { loadCategoriesForManagement(); $('#manageCategoriesModal').css('display', 'flex'); } });
-            $('#viewReportsBtn').click(() => { if (currentUser.role === 'admin') { $('#reportPeriod').val('today').trigger('change'); $('#reportResults').empty(); $('#printReportBtn').hide(); $('#reportsModal').css('display', 'flex'); } });
+            
+            $('#viewReportsBtn').click(() => { 
+                if (currentUser.role !== 'admin') return;
+                $('#reportsModal .tabs .tab').removeClass('active').first().addClass('active');
+                $('#reportsModal .tab-content').removeClass('active').first().addClass('active');
+                $('#reportPeriod').val('today').trigger('change');
+                $('#reportResults, #donationReportResults').empty();
+                $('#printReportBtn, #downloadReportBtn').hide();
+                $('#reportsModal').css('display', 'flex');
+            });
+
+            $('#historyBtn').click(() => {
+                if (currentUser.role !== 'admin') return;
+                loadTransactionHistory();
+                $('#historyModal').css('display', 'flex');
+            });
+
             $('#kitchenDisplayBtn').click(() => { loadKitchenOrders(); kitchenInterval = setInterval(loadKitchenOrders, 30000); $('#kitchenDisplayModal').css('display', 'flex'); });
             $('#manageMembersBtn').click(() => { if (currentUser.role === 'admin') { resetMemberForm(); loadMembersForManagement(); $('#memberAdminFields').toggle(currentUser.role === 'admin'); $('#manageMembersModal').css('display', 'flex'); } });
             
@@ -2262,7 +2315,18 @@
 
             $('#generateReportBtn').click(generateReport);
             $('#printReportBtn').click(printReport);
+            $('#downloadReportBtn').click(downloadReportAsPdf);
+            $('#reportsModal .tabs .tab').click(function() { switchReportsModalTab($(this).data('tab')); });
             
+            $('#historySearchInput').on('input', function() { loadTransactionHistory($(this).val()); });
+            $('#printHistoryBtn').click(() => printElement('#historyResultsContainer'));
+            $('#downloadHistoryBtn').click(downloadHistoryAsPdf);
+            $(document).on('click', '.reprint-receipt', function() {
+                const orderId = $(this).data('id');
+                const order = orders.find(o => o.id === orderId);
+                if (order) showReceiptModal(order);
+            });
+
             $(document).on('click', '.status-item', function() {
                 const order = orders.find(o => o.id === $(this).data('id'));
                 if (!order || order.statusLocked) return;
@@ -2665,6 +2729,13 @@
             $(`[data-tab="${tabName}"]`).addClass('active');
             $(`#${tabName}Tab`).addClass('active');
         }
+
+        function switchReportsModalTab(tabName) {
+            $('#reportsModal .tabs .tab').removeClass('active');
+            $('#reportsModal .tab-content').removeClass('active');
+            $(`#reportsModal [data-tab="${tabName}"]`).addClass('active');
+            $(`#${tabName}Tab`).addClass('active');
+        }
         
         function switchControlPanelTab(tabName) {
             $('#controlPanelModal .tabs .tab').removeClass('active');
@@ -2715,7 +2786,7 @@
                 ${order.note ? `<div style="font-size:10px; font-style:italic; padding: 5px 0; border-top: 1px dashed #000;">Catatan: ${order.note}</div>` : ''}
                 <div class="receipt-total">
                     <div class="receipt-item"><span>Subtotal</span> <span>${formatCurrency(order.subtotal)}</span></div>
-                    ${order.donation > 0 ? `<div class="receipt-item"><span>Donasi</span> <span>${formatCurrency(order.donation)}</span></div>` : ''}
+                    ${order.donation > 0 ? `<div class="receipt-item"><span>Donasi LAZISNU</span> <span>${formatCurrency(order.donation)}</span></div>` : ''}
                     ${order.discount > 0 ? `<div class="receipt-item"><span>Diskon</span> <span>-${formatCurrency(order.discount)}</span></div>` : ''}
                     <div class="receipt-item" style="font-weight:bold; font-size: 14px;"><span>TOTAL</span> <span>${formatCurrency(order.total)}</span></div>
                     <div class="receipt-item"><span>${{ cash: 'Tunai', transfer: 'Transfer', ewallet: 'E-Wallet' }[order.paymentMethod]}</span> <span>${formatCurrency(order.paymentAmount)}</span></div>
@@ -2863,6 +2934,52 @@
                 });
             }
         }
+
+        function loadTransactionHistory(searchTerm = '') {
+            const $list = $('#historyResults').empty();
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            const filteredOrders = orders.filter(o => !searchTerm || o.id.toLowerCase().includes(lowerSearchTerm));
+
+            if (filteredOrders.length === 0) {
+                $list.html('<div class="empty-state"><i class="fas fa-history"></i><p>Tidak ada transaksi ditemukan</p></div>');
+                return;
+            }
+
+            filteredOrders.forEach(order => {
+                $list.append(`
+                    <div class="order-item">
+                        <div class="order-item-info">
+                            <div class="order-item-name">${order.id}</div>
+                            <div class="order-item-price">
+                                ${moment(order.date).format('DD MMM YYYY, HH:mm')} | ${order.customerName} | ${formatCurrency(order.total)}
+                            </div>
+                        </div>
+                        <div class="order-item-qty">
+                            <button class="btn btn-sm btn-info reprint-receipt" data-id="${order.id}"><i class="fas fa-print"></i> Cetak Ulang</button>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function downloadHistoryAsPdf() {
+            const element = document.getElementById('historyResultsContainer');
+            const filename = `Histori_Transaksi_${moment().format('YYYY-MM-DD')}.pdf`;
+
+            showToast('Mengunduh PDF Histori...', 'info');
+
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                const imgProps= pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(filename);
+            }).catch(err => {
+                showToast('Gagal mengunduh PDF', 'error');
+            });
+        }
         
         function generateReport() {
             let startDate, endDate;
@@ -2875,15 +2992,24 @@
                 endDate = moment($('#reportEndDate').val()).endOf('day');
                 if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) { return showToast('Rentang tanggal tidak valid', 'error'); }
             }
-            generateReportHTML(orders.filter(o => moment(o.date).isBetween(startDate, endDate)), startDate, endDate);
+            
+            const activeTab = $('#reportsModal .tabs .tab.active').data('tab');
+            const filteredOrders = orders.filter(o => moment(o.date).isBetween(startDate, endDate));
+            
+            if (activeTab === 'salesReport') {
+                generateSalesReportHTML(filteredOrders, startDate, endDate);
+            } else if (activeTab === 'donationsReport') {
+                generateDonationReportHTML(filteredOrders, startDate, endDate);
+            }
         }
 
-        function generateReportHTML(filteredOrders, startDate, endDate) {
+        function generateSalesReportHTML(filteredOrders, startDate, endDate) {
+            const $resultsContainer = $('#reportResults');
             if (filteredOrders.length === 0) {
-                $('#reportResults').html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data</p></div>');
-                $('#printReportBtn').hide(); return;
+                $resultsContainer.html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data penjualan</p></div>');
+                $('#printReportBtn, #downloadReportBtn').hide(); return;
             }
-            const totalRevenue = filteredOrders.reduce((sum, o) => sum + o.total, 0);
+            const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total - o.donation), 0);
             const totalItemsSold = filteredOrders.reduce((sum, o) => sum + o.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
             const menuSales = {};
             filteredOrders.forEach(o => o.items.forEach(item => {
@@ -2892,24 +3018,79 @@
                 menuSales[item.menu.id].total += item.quantity * item.menu.price;
             }));
             const topMenus = Object.values(menuSales).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
-            $('#reportResults').html(`
-                <div class="panel"><h4>Ringkasan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
-                    <div class="summary-row"><span>Total Pesanan:</span> <span>${filteredOrders.length}</span></div>
-                    <div class="summary-row"><span>Total Pendapatan:</span> <span>${formatCurrency(totalRevenue)}</span></div>
+            $resultsContainer.html(`
+                <div class="panel"><h4>Ringkasan Penjualan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
+                    <div class="summary-row"><span>Total Transaksi:</span> <span>${filteredOrders.length}</span></div>
+                    <div class="summary-row"><span>Total Pendapatan (Laba):</span> <span>${formatCurrency(totalRevenue)}</span></div>
                     <div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div>
                 </div>
                 <div class="panel mt-3"><h4>Menu Terlaris</h4>
                     ${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${menu.quantity} terjual</span></div>`).join('')}
                 </div>`);
-            $('#printReportBtn').show();
+            $('#printReportBtn, #downloadReportBtn').show();
+        }
+        
+        function generateDonationReportHTML(allOrders, startDate, endDate) {
+            const $resultsContainer = $('#donationReportResults');
+            const donationOrders = allOrders.filter(o => o.donation > 0);
+
+            if (donationOrders.length === 0) {
+                $resultsContainer.html('<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>Tidak ada data donasi</p></div>');
+                $('#printReportBtn, #downloadReportBtn').hide(); return;
+            }
+            
+            const totalDonation = donationOrders.reduce((sum, o) => sum + o.donation, 0);
+            
+            let tableHTML = `<table class="data-table"><thead><tr><th>Kode Transaksi</th><th>Tanggal</th><th>Nama Pelanggan</th><th>Jumlah Donasi</th></tr></thead><tbody>`;
+            donationOrders.forEach(order => {
+                tableHTML += `<tr>
+                    <td>${order.id}</td>
+                    <td>${moment(order.date).format('DD/MM/YY HH:mm')}</td>
+                    <td>${order.customerName}</td>
+                    <td>${formatCurrency(order.donation)}</td>
+                </tr>`;
+            });
+            tableHTML += `</tbody></table>`;
+            
+            $resultsContainer.html(`
+                <div class="panel">
+                    <h4>Laporan Donasi LAZISNU (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
+                    <div class="summary-row total-row" style="border: none; padding-top: 5px;">
+                        <span>Total Donasi Terkumpul:</span> 
+                        <span>${formatCurrency(totalDonation)}</span>
+                    </div>
+                </div>
+                <div class="panel mt-3">${tableHTML}</div>
+            `);
+             $('#printReportBtn, #downloadReportBtn').show();
         }
 
         function printReport() {
-            const printWindow = window.open('', '', 'width=800,height=600');
-            printWindow.document.write('<html><head><title>Laporan Penjualan</title><style>body{font-family:Arial,sans-serif}.panel{border:1px solid #eee;padding:15px;margin-bottom:15px;}.summary-row{display:flex;justify-content:space-between;margin-bottom:5px;}</style></head><body>' + $('#reportResults').html() + '</body></html>');
-            printWindow.document.close(); printWindow.focus();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
+            const activeTabContentSelector = '#' + $('#reportsModal .tab-content.active').attr('id') + ' .printable-area';
+            printElement(activeTabContentSelector);
         }
+        
+        function downloadReportAsPdf() {
+            const activeTabId = $('#reportsModal .tab-content.active').attr('id');
+            const element = document.getElementById(activeTabId).querySelector('.printable-area');
+            const reportType = activeTabId.includes('sales') ? 'Penjualan' : 'Donasi';
+            const filename = `Laporan_${reportType}_${moment().format('YYYY-MM-DD')}.pdf`;
+            
+            showToast(`Mengunduh PDF Laporan ${reportType}...`, 'info');
+
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                const imgProps= pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
+                pdf.save(filename);
+            }).catch(err => {
+                showToast('Gagal mengunduh PDF', 'error');
+            });
+        }
+
 
         function saveStoreInfo() {
             settings = { ...settings,
