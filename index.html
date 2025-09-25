@@ -622,7 +622,7 @@
 
         /* Admin Panel */
         .admin-panel {
-            display: none;
+            display: block; /* Default to block, can be hidden via JS */
             margin-top: 16px;
             padding: 16px;
             background-color: var(--light);
@@ -656,6 +656,11 @@
         .data-table tr:hover {
             background-color: #f9f9f9;
         }
+        
+        .data-table .actions-cell {
+            display: flex;
+            gap: 4px;
+        }
 
         /* Menu Actions */
         .menu-actions {
@@ -680,13 +685,19 @@
             cursor: pointer;
             font-size: 0.7rem;
             color: white;
+            border: none;
+            background-color: var(--gray);
+        }
+        
+        .action-btn.view-btn {
+            background-color: var(--success);
         }
 
-        .edit-btn {
+        .action-btn.edit-btn {
             background-color: var(--info);
         }
 
-        .delete-btn {
+        .action-btn.delete-btn {
             background-color: var(--danger);
         }
 
@@ -1276,8 +1287,7 @@
                     <input type="text" id="menuSearch" class="search-input" placeholder="Cari menu...">
                 </div>
                 
-                <div class="filter-row">
-                    <div class="filter-chip active" data-category="all">Semua</div>
+                <div class="filter-row" id="categoryFilters">
                     </div>
                 
                 <div class="menu-grid" id="menuGrid">
@@ -1346,7 +1356,7 @@
                 
                 <div class="note-input">
                     <label class="form-label">Catatan Pesanan (Opsional)</label>
-                    <textarea id="orderNote" placeholder="Contoh: Pedas, tanpa bawang, dll."></textarea>
+                    <textarea id="orderNote" class="form-control" placeholder="Contoh: Pedas, tanpa bawang, dll."></textarea>
                 </div>
                 
                 <div class="summary-container">
@@ -1382,7 +1392,6 @@
         </footer>
     </div>
 
-    <!-- Modal untuk tambah/edit menu -->
     <div id="menuModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1391,6 +1400,7 @@
             </div>
             <div class="modal-body">
                 <form id="menuForm">
+                    <input type="hidden" id="menuId">
                     <div class="form-group">
                         <label for="menuName" class="form-label">Nama Menu</label>
                         <input type="text" id="menuName" class="form-control" required>
@@ -1402,11 +1412,7 @@
                     <div class="form-group">
                         <label for="menuCategory" class="form-label">Kategori</label>
                         <select id="menuCategory" class="form-control" required>
-                            <option value="makanan">Makanan</option>
-                            <option value="minuman">Minuman</option>
-                            <option value="snack">Snack</option>
-                            <option value="lainnya">Lainnya</option>
-                        </select>
+                            </select>
                     </div>
                     <div class="form-group">
                         <label for="menuImage" class="form-label">Gambar Menu (URL)</label>
@@ -1423,13 +1429,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="cancelMenuBtn">Batal</button>
+                <button class="btn btn-outline-primary modal-close">Batal</button>
                 <button class="btn" id="saveMenuBtn">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk pembayaran -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1478,13 +1483,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="cancelPaymentBtn">Batal</button>
+                <button class="btn btn-outline-primary modal-close">Batal</button>
                 <button class="btn btn-success" id="confirmPaymentBtn" disabled>Konfirmasi Pembayaran</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk struk -->
     <div id="receiptModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1528,8 +1532,7 @@
                     </div>
                     
                     <div id="receiptItemsContainer">
-                        <!-- Item pesanan akan ditampilkan di sini -->
-                    </div>
+                        </div>
                     
                     <div class="receipt-total">
                         <div class="receipt-item">
@@ -1565,7 +1568,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeReceiptBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
                 <button class="btn btn-info" id="printReceiptBtn">
                     <i class="fas fa-print"></i> Cetak Struk
                 </button>
@@ -1573,7 +1576,6 @@
         </div>
     </div>
 
-    <!-- Modal untuk KTA Member -->
     <div id="ktaModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1603,7 +1605,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeKtaBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
                 <button class="btn btn-info" id="printKtaBtn">
                     <i class="fas fa-print"></i> Cetak KTA
                 </button>
@@ -1611,7 +1613,6 @@
         </div>
     </div>
 
-    <!-- Modal untuk laporan -->
     <div id="reportsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1660,13 +1661,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeReportsBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
                 <button class="btn btn-info" id="generateReportBtn">Generate Laporan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk kontrol panel -->
     <div id="controlPanelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1684,12 +1684,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeControlPanelBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk donasi -->
     <div id="donationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1724,13 +1723,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeDonationBtn">Batal</button>
+                <button class="btn btn-outline-primary modal-close">Batal</button>
                 <button class="btn btn-donation" id="confirmDonationBtn">Konfirmasi Donasi</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk info restoran -->
     <div id="storeInfoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1759,13 +1757,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeStoreInfoBtn">Batal</button>
+                <button class="btn btn-outline-primary modal-close">Batal</button>
                 <button class="btn" id="saveStoreInfoBtn">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk info pesanan dapur -->
     <div id="kitchenModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1776,17 +1773,15 @@
                 <div class="kitchen-status">
                     <h4>Pesanan Sedang Diproses</h4>
                     <div id="kitchenOrders">
-                        <!-- Daftar pesanan akan ditampilkan di sini -->
-                    </div>
+                        </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeKitchenBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk kelola member -->
     <div id="membersModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1813,12 +1808,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeMembersBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk tambah/edit member -->
     <div id="memberModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1827,6 +1821,7 @@
             </div>
             <div class="modal-body">
                 <form id="memberForm">
+                    <input type="hidden" id="memberId">
                     <div class="form-group">
                         <label for="memberName" class="form-label">Nama Member</label>
                         <input type="text" id="memberName" class="form-control" required>
@@ -1846,13 +1841,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="cancelMemberBtn">Batal</button>
+                <button class="btn btn-outline-primary modal-close">Batal</button>
                 <button class="btn" id="saveMemberBtn">Simpan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal untuk kelola kategori -->
     <div id="categoriesModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1883,12 +1877,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline-primary" id="closeCategoriesBtn">Tutup</button>
+                <button class="btn btn-outline-primary modal-close">Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- Hidden container untuk mencetak -->
     <div id="print-container" style="display: none;"></div>
 
     <script>
@@ -1916,7 +1909,7 @@
             user: null,
             settings: {
                 taxRate: 0.1,
-                adminPassword: 'admin123'
+                adminPassword: 'admin' // Password diubah agar lebih mudah diingat untuk demo
             }
         };
 
@@ -1929,120 +1922,27 @@
             } else {
                 // Data menu default
                 appData.menus = [
-                    {
-                        id: 1,
-                        name: 'Nasi Goreng Spesial',
-                        price: 25000,
-                        category: 'makanan',
-                        image: 'https://via.placeholder.com/100?text=Nasgor',
-                        description: 'Nasi goreng dengan telur, ayam, dan sayuran',
-                        stock: 10
-                    },
-                    {
-                        id: 2,
-                        name: 'Mie Ayam',
-                        price: 20000,
-                        category: 'makanan',
-                        image: 'https://via.placeholder.com/100?text=MieAyam',
-                        description: 'Mie ayam dengan pangsit dan bakso',
-                        stock: 15
-                    },
-                    {
-                        id: 3,
-                        name: 'Es Teh Manis',
-                        price: 5000,
-                        category: 'minuman',
-                        image: 'https://via.placeholder.com/100?text=EsTeh',
-                        description: 'Es teh manis segar',
-                        stock: 50
-                    },
-                    {
-                        id: 4,
-                        name: 'Jus Jeruk',
-                        price: 12000,
-                        category: 'minuman',
-                        image: 'https://via.placeholder.com/100?text=JusJeruk',
-                        description: 'Jus jeruk segar tanpa gula',
-                        stock: 20
-                    },
-                    {
-                        id: 5,
-                        name: 'Kentang Goreng',
-                        price: 15000,
-                        category: 'snack',
-                        image: 'https://via.placeholder.com/100?text=Kentang',
-                        description: 'Kentang goreng renyah dengan saus',
-                        stock: 25
-                    },
-                    {
-                        id: 6,
-                        name: 'Donat',
-                        price: 8000,
-                        category: 'snack',
-                        image: 'https://via.placeholder.com/100?text=Donat',
-                        description: 'Donat dengan berbagai topping',
-                        stock: 30
-                    }
+                    { id: 1, name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', image: 'https://via.placeholder.com/100?text=Nasgor', description: 'Nasi goreng dengan telur, ayam, dan sayuran', stock: 10 },
+                    { id: 2, name: 'Mie Ayam', price: 20000, category: 'makanan', image: 'https://via.placeholder.com/100?text=MieAyam', description: 'Mie ayam dengan pangsit dan bakso', stock: 15 },
+                    { id: 3, name: 'Es Teh Manis', price: 5000, category: 'minuman', image: 'https://via.placeholder.com/100?text=EsTeh', description: 'Es teh manis segar', stock: 50 },
+                    { id: 4, name: 'Jus Jeruk', price: 12000, category: 'minuman', image: 'https://via.placeholder.com/100?text=JusJeruk', description: 'Jus jeruk segar tanpa gula', stock: 20 },
+                    { id: 5, name: 'Kentang Goreng', price: 15000, category: 'snack', image: 'https://via.placeholder.com/100?text=Kentang', description: 'Kentang goreng renyah dengan saus', stock: 25 },
+                    { id: 6, name: 'Donat', price: 8000, category: 'snack', image: 'https://via.placeholder.com/100?text=Donat', description: 'Donat dengan berbagai topping', stock: 30 }
                 ];
 
                 // Data member default
                 appData.members = [
-                    {
-                        id: 'MEM-001',
-                        name: 'Budi Santoso',
-                        phone: '081234567890',
-                        email: 'budi@email.com',
-                        address: 'Jl. Contoh No. 1',
-                        joinDate: new Date().toISOString(),
-                        points: 100
-                    },
-                    {
-                        id: 'MEM-002',
-                        name: 'Siti Rahayu',
-                        phone: '081298765432',
-                        email: 'siti@email.com',
-                        address: 'Jl. Contoh No. 2',
-                        joinDate: new Date().toISOString(),
-                        points: 50
-                    }
+                    { id: 'MEM-001', name: 'Budi Santoso', phone: '081234567890', email: 'budi@email.com', address: 'Jl. Contoh No. 1', joinDate: new Date().toISOString(), points: 100 },
+                    { id: 'MEM-002', name: 'Siti Rahayu', phone: '081298765432', email: 'siti@email.com', address: 'Jl. Contoh No. 2', joinDate: new Date().toISOString(), points: 50 }
                 ];
 
                 saveData();
             }
-            
-            // Update logo di semua tempat
-            updateLogoInApp();
         }
 
         // Simpan data ke localStorage
         function saveData() {
             localStorage.setItem('cafeRestoData', JSON.stringify(appData));
-        }
-
-        // Update logo di seluruh aplikasi
-        function updateLogoInApp() {
-            const logoUrl = appData.storeInfo.logo || 'https://via.placeholder.com/100?text=LOGO';
-            
-            // Update logo di header
-            const headerLogo = document.querySelector('.header-logo img');
-            if (headerLogo) {
-                headerLogo.src = logoUrl;
-                headerLogo.alt = appData.storeInfo.name;
-            }
-            
-            // Update logo di struk
-            const receiptLogo = document.querySelector('.receipt-logo');
-            if (receiptLogo) {
-                receiptLogo.src = logoUrl;
-                receiptLogo.alt = appData.storeInfo.name;
-            }
-            
-            // Update logo di KTA
-            const ktaLogo = document.querySelector('.kta-logo');
-            if (ktaLogo) {
-                ktaLogo.src = logoUrl;
-                ktaLogo.alt = appData.storeInfo.name;
-            }
         }
 
         // Tampilkan notifikasi
@@ -2073,97 +1973,117 @@
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
+        // Buka modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'flex';
+        }
+
+        // Tutup modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) modal.style.display = 'none';
+        }
+
+        // === FUNGSI RENDER UI ===
+
+        function renderFullAppUI() {
+            updateStoreInfoUI();
+            renderCategoryFilters();
+            renderMenus();
+            renderOrder();
+        }
+        
+        function updateStoreInfoUI() {
+            const { name, address, phone, logo } = appData.storeInfo;
+            const logoUrl = logo || 'https://via.placeholder.com/100?text=LOGO';
+
+            document.getElementById('storeNameHeader').textContent = name;
+            document.querySelector('.header-logo img').src = logoUrl;
+            document.querySelector('.header-logo img').alt = name;
+            document.getElementById('receiptStoreName').textContent = name;
+            document.getElementById('receiptStoreAddress').textContent = address;
+            document.getElementById('receiptStorePhone').textContent = `Telp: ${phone}`;
+            document.querySelector('.receipt-logo').src = logoUrl;
+            document.getElementById('ktaStoreName').textContent = name;
+            document.querySelector('.kta-logo').src = logoUrl;
+        }
+
+        // Render filter kategori secara dinamis
+        function renderCategoryFilters() {
+            const filterContainer = document.getElementById('categoryFilters');
+            filterContainer.innerHTML = `<div class="filter-chip active" data-category="all">Semua</div>`;
+
+            appData.categories.forEach(category => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.dataset.category = category;
+                chip.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                filterContainer.appendChild(chip);
+            });
+            
+            // Re-attach event listeners
+            filterContainer.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    filterContainer.querySelector('.active').classList.remove('active');
+                    this.classList.add('active');
+                    renderMenus();
+                });
+            });
+        }
+        
+        // Render menu di modal form
+        function renderCategoryOptions() {
+            const select = document.getElementById('menuCategory');
+            select.innerHTML = '';
+            appData.categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                select.appendChild(option);
+            });
+        }
+
         // Update tampilan menu
         function renderMenus() {
             const menuGrid = document.getElementById('menuGrid');
             const menuCount = document.getElementById('menuCount');
             const searchTerm = document.getElementById('menuSearch').value.toLowerCase();
-            const activeCategory = document.querySelector('.filter-chip.active').dataset.category;
+            const activeCategoryFilter = document.querySelector('#categoryFilters .filter-chip.active');
+            const activeCategory = activeCategoryFilter ? activeCategoryFilter.dataset.category : 'all';
             
+            menuGrid.innerHTML = '';
+
             let filteredMenus = appData.menus.filter(menu => {
-                const matchesSearch = menu.name.toLowerCase().includes(searchTerm) || 
-                                     menu.description.toLowerCase().includes(searchTerm);
+                const matchesSearch = menu.name.toLowerCase().includes(searchTerm);
                 const matchesCategory = activeCategory === 'all' || menu.category === activeCategory;
                 return matchesSearch && matchesCategory;
             });
             
-            menuGrid.innerHTML = '';
-            
             if (filteredMenus.length === 0) {
-                menuGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-utensils"></i>
-                        <p>Tidak ada menu ditemukan</p>
-                    </div>
-                `;
+                menuGrid.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-utensils"></i><p>Tidak ada menu ditemukan</p></div>`;
             } else {
                 filteredMenus.forEach(menu => {
                     const menuCard = document.createElement('div');
                     menuCard.className = 'menu-card';
+                    menuCard.dataset.id = menu.id;
                     menuCard.innerHTML = `
                         <div class="menu-image">
-                            ${menu.image ? `<img src="${menu.image}" alt="${menu.name}">` : `<i class="fas fa-utensils"></i>`}
+                            ${menu.image ? `<img src="${menu.image}" alt="${menu.name}" onerror="this.src='https://via.placeholder.com/100?text=Error'">` : `<i class="fas fa-utensils"></i>`}
                         </div>
                         <div class="menu-name">${menu.name}</div>
                         <div class="menu-price">${formatRupiah(menu.price)}</div>
                         <div class="menu-category">${menu.category}</div>
                         <div class="menu-actions">
-                            <div class="action-btn edit-btn" data-id="${menu.id}">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="action-btn delete-btn" data-id="${menu.id}">
-                                <i class="fas fa-trash"></i>
-                            </div>
+                            <button class="action-btn edit-btn" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete-btn" title="Hapus"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
-                    
-                    menuCard.addEventListener('click', (e) => {
-                        if (!e.target.closest('.menu-actions')) {
-                            addToOrder(menu);
-                        }
-                    });
-                    
                     menuGrid.appendChild(menuCard);
                 });
             }
             
             menuCount.textContent = `(${filteredMenus.length} menu)`;
-            
-            // Tambahkan event listener untuk tombol edit dan hapus
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const menuId = parseInt(btn.dataset.id);
-                    editMenu(menuId);
-                });
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const menuId = parseInt(btn.dataset.id);
-                    deleteMenu(menuId);
-                });
-            });
-        }
-
-        // Tambah menu ke pesanan
-        function addToOrder(menu) {
-            const existingItem = appData.currentOrder.items.find(item => item.menuId === menu.id);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                appData.currentOrder.items.push({
-                    menuId: menu.id,
-                    name: menu.name,
-                    price: menu.price,
-                    quantity: 1
-                });
-            }
-            
-            renderOrder();
-            showToast(`${menu.name} ditambahkan ke pesanan`, 'success');
         }
 
         // Update tampilan pesanan
@@ -2173,12 +2093,7 @@
             const checkoutBtn = document.getElementById('checkoutBtn');
             
             if (appData.currentOrder.items.length === 0) {
-                orderItemsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Belum ada pesanan</p>
-                    </div>
-                `;
+                orderItemsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>Belum ada pesanan</p></div>`;
                 checkoutBtn.disabled = true;
                 orderCount.textContent = '(0 item)';
             } else {
@@ -2193,81 +2108,66 @@
                             <div class="order-item-price">${formatRupiah(item.price)}</div>
                         </div>
                         <div class="order-item-qty">
-                            <div class="qty-btn minus-btn" data-index="${index}">
-                                <i class="fas fa-minus"></i>
-                            </div>
+                            <button class="qty-btn minus-btn" data-index="${index}"><i class="fas fa-minus"></i></button>
                             <input type="number" class="qty-input" value="${item.quantity}" min="1" data-index="${index}">
-                            <div class="qty-btn plus-btn" data-index="${index}">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                            <div class="remove-btn" data-index="${index}">
-                                <i class="fas fa-times"></i>
-                            </div>
+                            <button class="qty-btn plus-btn" data-index="${index}"><i class="fas fa-plus"></i></button>
+                            <button class="remove-btn" data-index="${index}"><i class="fas fa-times"></i></button>
                         </div>
                     `;
-                    
                     orderItemsContainer.appendChild(orderItem);
                 });
                 
                 checkoutBtn.disabled = false;
                 orderCount.textContent = `(${appData.currentOrder.items.length} item)`;
-                
-                // Tambahkan event listener untuk tombol kuantitas
-                document.querySelectorAll('.minus-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        updateQuantity(index, -1);
-                    });
-                });
-                
-                document.querySelectorAll('.plus-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        updateQuantity(index, 1);
-                    });
-                });
-                
-                document.querySelectorAll('.qty-input').forEach(input => {
-                    input.addEventListener('change', (e) => {
-                        const index = parseInt(e.target.dataset.index);
-                        const newQuantity = parseInt(e.target.value);
-                        
-                        if (newQuantity < 1) {
-                            e.target.value = 1;
-                            updateQuantity(index, 0, 1);
-                        } else {
-                            updateQuantity(index, 0, newQuantity);
-                        }
-                    });
-                });
-                
-                document.querySelectorAll('.remove-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        removeFromOrder(index);
-                    });
-                });
             }
             
             updateOrderSummary();
         }
 
-        // Update kuantitas item pesanan
-        function updateQuantity(index, change, newQuantity = null) {
-            if (newQuantity !== null) {
-                appData.currentOrder.items[index].quantity = newQuantity;
+        // Update ringkasan pesanan
+        function updateOrderSummary() {
+            const { items, discount } = appData.currentOrder;
+            const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * appData.settings.taxRate;
+            const total = subtotal + tax - discount;
+            
+            document.getElementById('subtotal').textContent = formatRupiah(subtotal);
+            document.getElementById('discount').textContent = formatRupiah(discount);
+            document.getElementById('tax').textContent = formatRupiah(tax);
+            document.getElementById('total').textContent = formatRupiah(total);
+        }
+
+        // === LOGIKA PESANAN ===
+        
+        function addToOrder(menuId) {
+            const menu = appData.menus.find(m => m.id === menuId);
+            if (!menu) return;
+
+            const existingItem = appData.currentOrder.items.find(item => item.menuId === menu.id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
             } else {
-                appData.currentOrder.items[index].quantity += change;
-                
-                if (appData.currentOrder.items[index].quantity < 1) {
-                    appData.currentOrder.items[index].quantity = 1;
-                }
+                appData.currentOrder.items.push({ menuId: menu.id, name: menu.name, price: menu.price, quantity: 1 });
+            }
+            
+            renderOrder();
+            showToast(`${menu.name} ditambahkan ke pesanan`, 'success');
+        }
+
+        function updateQuantity(index, change, newQuantity = null) {
+            const item = appData.currentOrder.items[index];
+            if (!item) return;
+
+            if (newQuantity !== null) {
+                item.quantity = Math.max(1, newQuantity);
+            } else {
+                item.quantity = Math.max(1, item.quantity + change);
             }
             
             renderOrder();
         }
-
-        // Hapus item dari pesanan
+        
         function removeFromOrder(index) {
             const itemName = appData.currentOrder.items[index].name;
             appData.currentOrder.items.splice(index, 1);
@@ -2275,33 +2175,25 @@
             showToast(`${itemName} dihapus dari pesanan`, 'warning');
         }
 
-        // Update ringkasan pesanan
-        function updateOrderSummary() {
-            const subtotalElement = document.getElementById('subtotal');
-            const discountElement = document.getElementById('discount');
-            const taxElement = document.getElementById('tax');
-            const totalElement = document.getElementById('total');
-            
-            const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = subtotal * appData.settings.taxRate;
-            const total = subtotal + tax - appData.currentOrder.discount;
-            
-            subtotalElement.textContent = formatRupiah(subtotal);
-            discountElement.textContent = formatRupiah(appData.currentOrder.discount);
-            taxElement.textContent = formatRupiah(tax);
-            totalElement.textContent = formatRupiah(total);
+        function resetOrder() {
+            appData.currentOrder = { items: [], type: 'dinein', tableNumber: '1', memberId: null, note: '', discount: 0 };
+            document.getElementById('memberSearch').value = '';
+            document.getElementById('orderNote').value = '';
+            document.querySelector('.order-type-btn.active').classList.remove('active');
+            document.querySelector('.order-type-btn[data-type="dinein"]').classList.add('active');
+            document.getElementById('tableNumberContainer').style.display = 'block';
+            renderOrder();
         }
 
-        // Proses checkout
+        // === LOGIKA PEMBAYARAN & STRUK ===
+
         function checkout() {
             if (appData.currentOrder.items.length === 0) {
                 showToast('Tidak ada item dalam pesanan', 'error');
                 return;
             }
             
-            const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = subtotal * appData.settings.taxRate;
-            const total = subtotal + tax - appData.currentOrder.discount;
+            const total = parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, ''));
             
             document.getElementById('paymentTotal').textContent = formatRupiah(total);
             document.getElementById('amountPaid').value = '';
@@ -2311,114 +2203,85 @@
             openModal('paymentModal');
         }
 
-        // Konfirmasi pembayaran
         function confirmPayment() {
             const amountPaid = parseFloat(document.getElementById('amountPaid').value);
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const paymentNote = document.getElementById('paymentNote').value;
-            
-            const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const { items, discount, type, tableNumber, memberId, note } = appData.currentOrder;
+
+            const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const tax = subtotal * appData.settings.taxRate;
-            const total = subtotal + tax - appData.currentOrder.discount;
+            const total = subtotal + tax - discount;
             
-            if (amountPaid < total) {
+            if (isNaN(amountPaid) || amountPaid < total) {
                 showToast('Jumlah pembayaran kurang', 'error');
                 return;
             }
             
-            // Simpan transaksi
             const transaction = {
-                id: generateId(),
+                id: `TRX-${generateId()}`,
                 date: new Date().toISOString(),
-                items: [...appData.currentOrder.items],
-                subtotal: subtotal,
-                tax: tax,
-                discount: appData.currentOrder.discount,
-                total: total,
+                items: JSON.parse(JSON.stringify(items)),
+                subtotal, tax, discount, total,
                 amountPaid: amountPaid,
                 change: amountPaid - total,
-                paymentMethod: paymentMethod,
-                paymentNote: paymentNote,
-                orderType: appData.currentOrder.type,
-                tableNumber: appData.currentOrder.tableNumber,
-                memberId: appData.currentOrder.memberId,
-                note: appData.currentOrder.note,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                paymentNote: document.getElementById('paymentNote').value,
+                orderType: type,
+                tableNumber, memberId, note,
                 cashier: appData.user.username
             };
             
             appData.transactions.unshift(transaction);
             
-            // Update stok menu
-            appData.currentOrder.items.forEach(item => {
+            items.forEach(item => {
                 const menu = appData.menus.find(m => m.id === item.menuId);
-                if (menu) {
-                    menu.stock -= item.quantity;
-                    if (menu.stock < 0) menu.stock = 0;
-                }
+                if (menu) menu.stock -= item.quantity;
             });
             
-            // Update poin member jika ada
-            if (appData.currentOrder.memberId) {
-                const member = appData.members.find(m => m.id === appData.currentOrder.memberId);
-                if (member) {
-                    // 1 poin per Rp 10.000
-                    const pointsEarned = Math.floor(total / 10000);
-                    member.points += pointsEarned;
-                }
+            if (memberId) {
+                const member = appData.members.find(m => m.id === memberId);
+                if (member) member.points += Math.floor(total / 10000);
             }
             
             saveData();
-            
-            // Tampilkan struk
             showReceipt(transaction);
-            
-            // Reset pesanan
             resetOrder();
-            
             closeModal('paymentModal');
         }
 
-        // Tampilkan struk
         function showReceipt(transaction) {
-            // Update informasi struk
             document.getElementById('receiptTransactionId').textContent = transaction.id;
             document.getElementById('receiptDate').textContent = new Date(transaction.date).toLocaleString('id-ID');
             document.getElementById('receiptCashier').textContent = transaction.cashier;
             document.getElementById('receiptOrderType').textContent = transaction.orderType === 'dinein' ? 'Makan di Tempat' : 'Bungkus';
             
+            const tableRow = document.getElementById('receiptTableNumberRow');
             if (transaction.orderType === 'dinein') {
-                document.getElementById('receiptTableNumberRow').style.display = 'flex';
-                document.getElementById('receiptTableNumber').textContent = `Meja ${transaction.tableNumber}`;
+                tableRow.style.display = 'flex';
+                document.getElementById('receiptTableNumber').textContent = transaction.tableNumber;
             } else {
-                document.getElementById('receiptTableNumberRow').style.display = 'none';
+                tableRow.style.display = 'none';
             }
             
+            const memberRow = document.getElementById('receiptMemberRow');
             if (transaction.memberId) {
                 const member = appData.members.find(m => m.id === transaction.memberId);
-                document.getElementById('receiptMemberRow').style.display = 'flex';
-                document.getElementById('receiptMember').textContent = member ? member.name : 'Tidak Diketahui';
+                memberRow.style.display = 'flex';
+                document.getElementById('receiptMember').textContent = member ? member.name : transaction.memberId;
             } else {
-                document.getElementById('receiptMemberRow').style.display = 'none';
+                memberRow.style.display = 'none';
             }
             
-            // Update item pesanan
-            const receiptItemsContainer = document.getElementById('receiptItemsContainer');
-            receiptItemsContainer.innerHTML = '';
-            
-            transaction.items.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'receipt-item';
-                itemElement.innerHTML = `
+            const itemsContainer = document.getElementById('receiptItemsContainer');
+            itemsContainer.innerHTML = transaction.items.map(item => `
+                <div class="receipt-item">
                     <div class="receipt-item-details">
                         <span class="item-name">${item.name}</span>
                         <div class="item-price-calc">${item.quantity} x ${formatRupiah(item.price)}</div>
                     </div>
                     <span>${formatRupiah(item.price * item.quantity)}</span>
-                `;
-                receiptItemsContainer.appendChild(itemElement);
-            });
-            
-            // Update total
+                </div>
+            `).join('');
+
             document.getElementById('receiptSubtotal').textContent = formatRupiah(transaction.subtotal);
             document.getElementById('receiptDiscount').textContent = formatRupiah(transaction.discount);
             document.getElementById('receiptTax').textContent = formatRupiah(transaction.tax);
@@ -2429,166 +2292,68 @@
             openModal('receiptModal');
         }
 
-        // Reset pesanan
-        function resetOrder() {
-            appData.currentOrder = {
-                items: [],
-                type: 'dinein',
-                tableNumber: '1',
-                memberId: null,
-                note: '',
-                discount: 0
-            };
-            
-            document.getElementById('orderType').value = 'dinein';
-            document.getElementById('tableNumber').value = '1';
-            document.getElementById('memberSearch').value = '';
-            document.getElementById('orderNote').value = '';
-            
-            renderOrder();
-        }
-
-        // Buka modal
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        // Tutup modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // === PERBAIKAN FUNGSI CETAK STRUK (REVISI FINAL) ===
-        function printReceipt() {
-            // Clone elemen struk untuk dicetak
-            const receiptContent = document.getElementById('receiptContent').cloneNode(true);
-            
-            // Buat container khusus untuk cetak
+        function printContent(elementId) {
+            const content = document.getElementById(elementId).cloneNode(true);
             const printContainer = document.getElementById('print-container');
             printContainer.innerHTML = '';
-            printContainer.appendChild(receiptContent);
-            
-            // Sembunyikan tombol cetak di struk yang akan dicetak
-            const printBtn = printContainer.querySelector('.no-print');
-            if (printBtn) printBtn.style.display = 'none';
-            
-            // Tampilkan container cetak
-            printContainer.style.display = 'block';
-            
-            // Jalankan fungsi cetak browser
+            printContainer.appendChild(content);
             window.print();
-            
-            // Sembunyikan kembali container cetak setelah selesai
-            setTimeout(() => {
-                printContainer.style.display = 'none';
-                printContainer.innerHTML = '';
-            }, 500);
-        }
-
-        // === PERBAIKAN FUNGSI CETAK KTA (REVISI) ===
-        function printKta() {
-            // Clone elemen KTA untuk dicetak
-            const ktaContent = document.getElementById('ktaCard').cloneNode(true);
-            
-            // Buat container khusus untuk cetak
-            const printContainer = document.getElementById('print-container');
             printContainer.innerHTML = '';
-            printContainer.appendChild(ktaContent);
-            
-            // Tampilkan container cetak
-            printContainer.style.display = 'block';
-            
-            // Jalankan fungsi cetak browser
-            window.print();
-            
-            // Sembunyikan kembali container cetak setelah selesai
-            setTimeout(() => {
-                printContainer.style.display = 'none';
-                printContainer.innerHTML = '';
-            }, 500);
         }
 
-        // Tambah menu baru
-        function addMenu() {
-            document.getElementById('menuModalTitle').textContent = 'Tambah Menu';
+        // === LOGIKA ADMIN PANEL ===
+
+        function openMenuForm(mode = 'add', menuId = null) {
             document.getElementById('menuForm').reset();
-            document.getElementById('saveMenuBtn').dataset.mode = 'add';
+            renderCategoryOptions();
+            
+            if (mode === 'add') {
+                document.getElementById('menuModalTitle').textContent = 'Tambah Menu';
+                document.getElementById('saveMenuBtn').dataset.mode = 'add';
+            } else {
+                const menu = appData.menus.find(m => m.id === menuId);
+                if (menu) {
+                    document.getElementById('menuModalTitle').textContent = 'Edit Menu';
+                    document.getElementById('saveMenuBtn').dataset.mode = 'edit';
+                    document.getElementById('saveMenuBtn').dataset.id = menu.id;
+                    document.getElementById('menuName').value = menu.name;
+                    document.getElementById('menuPrice').value = menu.price;
+                    document.getElementById('menuCategory').value = menu.category;
+                    document.getElementById('menuImage').value = menu.image || '';
+                    document.getElementById('menuDescription').value = menu.description || '';
+                    document.getElementById('menuStock').value = menu.stock || 0;
+                }
+            }
             openModal('menuModal');
         }
 
-        // Edit menu
-        function editMenu(menuId) {
-            const menu = appData.menus.find(m => m.id === menuId);
-            
-            if (menu) {
-                document.getElementById('menuModalTitle').textContent = 'Edit Menu';
-                document.getElementById('menuName').value = menu.name;
-                document.getElementById('menuPrice').value = menu.price;
-                document.getElementById('menuCategory').value = menu.category;
-                document.getElementById('menuImage').value = menu.image || '';
-                document.getElementById('menuDescription').value = menu.description || '';
-                document.getElementById('menuStock').value = menu.stock || 0;
-                
-                document.getElementById('saveMenuBtn').dataset.mode = 'edit';
-                document.getElementById('saveMenuBtn').dataset.menuId = menuId;
-                
-                openModal('menuModal');
-            }
-        }
-
-        // Hapus menu
-        function deleteMenu(menuId) {
-            if (confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
-                appData.menus = appData.menus.filter(m => m.id !== menuId);
-                saveData();
-                renderMenus();
-                showToast('Menu berhasil dihapus', 'success');
-            }
-        }
-
-        // Simpan menu (tambah/edit)
         function saveMenu() {
             const mode = document.getElementById('saveMenuBtn').dataset.mode;
             const name = document.getElementById('menuName').value.trim();
-            const price = parseInt(document.getElementById('menuPrice').value);
-            const category = document.getElementById('menuCategory').value;
-            const image = document.getElementById('menuImage').value.trim();
-            const description = document.getElementById('menuDescription').value.trim();
-            const stock = parseInt(document.getElementById('menuStock').value) || 0;
+            const price = parseFloat(document.getElementById('menuPrice').value);
             
-            if (!name || !price) {
-                showToast('Nama dan harga menu harus diisi', 'error');
+            if (!name || isNaN(price) || price < 0) {
+                showToast('Nama dan harga valid harus diisi', 'error');
                 return;
             }
             
+            const menuData = {
+                name, price,
+                category: document.getElementById('menuCategory').value,
+                image: document.getElementById('menuImage').value.trim(),
+                description: document.getElementById('menuDescription').value.trim(),
+                stock: parseInt(document.getElementById('menuStock').value) || 0
+            };
+
             if (mode === 'add') {
-                const newMenu = {
-                    id: appData.menus.length > 0 ? Math.max(...appData.menus.map(m => m.id)) + 1 : 1,
-                    name: name,
-                    price: price,
-                    category: category,
-                    image: image,
-                    description: description,
-                    stock: stock
-                };
-                
-                appData.menus.push(newMenu);
+                const newId = appData.menus.length > 0 ? Math.max(...appData.menus.map(m => m.id)) + 1 : 1;
+                appData.menus.push({ id: newId, ...menuData });
                 showToast('Menu berhasil ditambahkan', 'success');
             } else {
-                const menuId = parseInt(document.getElementById('saveMenuBtn').dataset.menuId);
+                const menuId = parseInt(document.getElementById('saveMenuBtn').dataset.id);
                 const menuIndex = appData.menus.findIndex(m => m.id === menuId);
-                
                 if (menuIndex !== -1) {
-                    appData.menus[menuIndex] = {
-                        ...appData.menus[menuIndex],
-                        name: name,
-                        price: price,
-                        category: category,
-                        image: image,
-                        description: description,
-                        stock: stock
-                    };
-                    
+                    appData.menus[menuIndex] = { ...appData.menus[menuIndex], ...menuData };
                     showToast('Menu berhasil diperbarui', 'success');
                 }
             }
@@ -2598,275 +2363,288 @@
             closeModal('menuModal');
         }
 
-        // Kelola kategori
+        function deleteMenu(menuId) {
+            if (confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
+                appData.menus = appData.menus.filter(m => m.id !== menuId);
+                saveData();
+                renderMenus();
+                showToast('Menu berhasil dihapus', 'success');
+            }
+        }
+        
+        // --- Kategori ---
         function manageCategories() {
-            const categoriesTable = document.getElementById('categoriesTable');
-            categoriesTable.innerHTML = '';
-            
-            appData.categories.forEach(category => {
+            const tableBody = document.getElementById('categoriesTable');
+            tableBody.innerHTML = appData.categories.map(category => {
                 const menuCount = appData.menus.filter(m => m.category === category).length;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
-                    <td>${menuCount} menu</td>
-                    <td>
-                        <button class="action-btn edit-btn" data-category="${category}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" data-category="${category}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
+                return `
+                    <tr>
+                        <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
+                        <td>${menuCount} menu</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn edit-btn" data-category="${category}" title="Edit"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn" data-category="${category}" title="Hapus"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
                 `;
-                
-                categoriesTable.appendChild(row);
-            });
-            
+            }).join('');
             openModal('categoriesModal');
         }
 
-        // Tambah kategori
         function addCategory() {
-            const categoryName = document.getElementById('newCategoryName').value.trim().toLowerCase();
+            const input = document.getElementById('newCategoryName');
+            const categoryName = input.value.trim().toLowerCase();
             
             if (!categoryName) {
                 showToast('Nama kategori harus diisi', 'error');
                 return;
             }
-            
             if (appData.categories.includes(categoryName)) {
                 showToast('Kategori sudah ada', 'error');
                 return;
             }
             
             appData.categories.push(categoryName);
-            document.getElementById('newCategoryName').value = '';
             saveData();
+            input.value = '';
             manageCategories();
+            renderCategoryFilters();
             showToast('Kategori berhasil ditambahkan', 'success');
         }
 
-        // Hapus kategori
-        function deleteCategory(categoryName) {
-            const menuCount = appData.menus.filter(m => m.category === categoryName).length;
-            
-            if (menuCount > 0) {
-                showToast(`Tidak dapat menghapus kategori yang memiliki ${menuCount} menu`, 'error');
+        function editCategory(oldName) {
+            const newName = prompt('Masukkan nama kategori baru:', oldName);
+            if (!newName || newName.trim() === '') return;
+
+            const trimmedNewName = newName.trim().toLowerCase();
+            if (trimmedNewName === oldName) return;
+
+            if (appData.categories.includes(trimmedNewName)) {
+                showToast('Nama kategori sudah ada.', 'error');
                 return;
             }
-            
-            if (confirm(`Apakah Anda yakin ingin menghapus kategori "${categoryName}"?`)) {
+
+            appData.categories = appData.categories.map(c => c === oldName ? trimmedNewName : c);
+            appData.menus.forEach(menu => {
+                if (menu.category === oldName) menu.category = trimmedNewName;
+            });
+
+            saveData();
+            manageCategories();
+            renderCategoryFilters();
+            renderMenus();
+            showToast('Kategori berhasil diperbarui', 'success');
+        }
+
+        function deleteCategory(categoryName) {
+            if (appData.menus.some(m => m.category === categoryName)) {
+                showToast('Tidak dapat menghapus kategori yang masih digunakan oleh menu.', 'error');
+                return;
+            }
+            if (confirm(`Yakin ingin menghapus kategori "${categoryName}"?`)) {
                 appData.categories = appData.categories.filter(c => c !== categoryName);
                 saveData();
                 manageCategories();
+                renderCategoryFilters();
                 showToast('Kategori berhasil dihapus', 'success');
             }
         }
-
-        // Kelola member
+        
+        // --- Member ---
         function manageMembers() {
-            const membersTable = document.getElementById('membersTable');
-            membersTable.innerHTML = '';
-            
-            appData.members.forEach(member => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
+            const tableBody = document.getElementById('membersTable');
+            tableBody.innerHTML = appData.members.map(member => `
+                <tr>
                     <td>${member.id}</td>
                     <td>${member.name}</td>
                     <td>${member.phone}</td>
                     <td>${member.points}</td>
                     <td>
-                        <button class="action-btn edit-btn" data-member-id="${member.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" data-member-id="${member.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="action-btn" data-member-id="${member.id}" title="Cetak KTA">
-                            <i class="fas fa-id-card"></i>
-                        </button>
+                        <div class="actions-cell">
+                            <button class="action-btn view-btn" data-id="${member.id}" title="Lihat KTA"><i class="fas fa-id-card"></i></button>
+                            <button class="action-btn edit-btn" data-id="${member.id}" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete-btn" data-id="${member.id}" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
-                `;
-                
-                membersTable.appendChild(row);
-            });
-            
+                </tr>
+            `).join('');
             openModal('membersModal');
         }
 
-        // Tambah member
-        function addMember() {
-            document.getElementById('memberModalTitle').textContent = 'Tambah Member';
+        function openMemberForm(mode = 'add', memberId = null) {
             document.getElementById('memberForm').reset();
-            document.getElementById('saveMemberBtn').dataset.mode = 'add';
+            const saveBtn = document.getElementById('saveMemberBtn');
+            
+            if (mode === 'add') {
+                document.getElementById('memberModalTitle').textContent = 'Tambah Member';
+                saveBtn.dataset.mode = 'add';
+            } else {
+                const member = appData.members.find(m => m.id === memberId);
+                if (member) {
+                    document.getElementById('memberModalTitle').textContent = 'Edit Member';
+                    document.getElementById('memberName').value = member.name;
+                    document.getElementById('memberPhone').value = member.phone;
+                    document.getElementById('memberEmail').value = member.email;
+                    document.getElementById('memberAddress').value = member.address;
+                    saveBtn.dataset.mode = 'edit';
+                    saveBtn.dataset.id = member.id;
+                }
+            }
             openModal('memberModal');
         }
 
-        // Simpan member
         function saveMember() {
             const mode = document.getElementById('saveMemberBtn').dataset.mode;
             const name = document.getElementById('memberName').value.trim();
-            const phone = document.getElementById('memberPhone').value.trim();
-            const email = document.getElementById('memberEmail').value.trim();
-            const address = document.getElementById('memberAddress').value.trim();
-            
             if (!name) {
                 showToast('Nama member harus diisi', 'error');
                 return;
             }
             
+            const memberData = {
+                name,
+                phone: document.getElementById('memberPhone').value.trim(),
+                email: document.getElementById('memberEmail').value.trim(),
+                address: document.getElementById('memberAddress').value.trim()
+            };
+
             if (mode === 'add') {
+                let newIdNum = 1;
+                if(appData.members.length > 0) {
+                    newIdNum = Math.max(...appData.members.map(m => parseInt(m.id.split('-')[1]))) + 1;
+                }
                 const newMember = {
-                    id: 'MEM-' + (appData.members.length + 1).toString().padStart(3, '0'),
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    address: address,
+                    ...memberData,
+                    id: `MEM-${String(newIdNum).padStart(3, '0')}`,
                     joinDate: new Date().toISOString(),
                     points: 0
                 };
-                
                 appData.members.push(newMember);
                 showToast('Member berhasil ditambahkan', 'success');
+            } else {
+                const memberId = document.getElementById('saveMemberBtn').dataset.id;
+                const memberIndex = appData.members.findIndex(m => m.id === memberId);
+                if (memberIndex !== -1) {
+                    appData.members[memberIndex] = { ...appData.members[memberIndex], ...memberData };
+                    showToast('Member berhasil diperbarui', 'success');
+                }
             }
-            
+
             saveData();
+            manageMembers();
             closeModal('memberModal');
         }
 
-        // Tampilkan KTA member
+        function deleteMember(memberId) {
+            if (confirm('Yakin ingin menghapus member ini?')) {
+                appData.members = appData.members.filter(m => m.id !== memberId);
+                saveData();
+                manageMembers();
+                showToast('Member berhasil dihapus', 'success');
+            }
+        }
+        
         function showKta(memberId) {
             const member = appData.members.find(m => m.id === memberId);
-            
             if (member) {
                 document.getElementById('ktaMemberName').textContent = member.name;
                 document.getElementById('ktaMemberId').textContent = `ID: ${member.id}`;
                 document.getElementById('ktaQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${member.id}`;
-                
                 openModal('ktaModal');
             }
         }
 
-        // Kelola info restoran
+        // --- Info Toko ---
         function manageStoreInfo() {
             document.getElementById('storeName').value = appData.storeInfo.name;
             document.getElementById('storeAddress').value = appData.storeInfo.address;
             document.getElementById('storePhone').value = appData.storeInfo.phone;
             document.getElementById('storeLogo').value = appData.storeInfo.logo;
-            
             openModal('storeInfoModal');
         }
 
-        // Simpan info restoran
         function saveStoreInfo() {
             appData.storeInfo.name = document.getElementById('storeName').value;
             appData.storeInfo.address = document.getElementById('storeAddress').value;
             appData.storeInfo.phone = document.getElementById('storePhone').value;
             appData.storeInfo.logo = document.getElementById('storeLogo').value;
-            
             saveData();
-            
-            // Update tampilan
-            document.getElementById('storeNameHeader').textContent = appData.storeInfo.name;
-            document.getElementById('receiptStoreName').textContent = appData.storeInfo.name;
-            document.getElementById('receiptStoreAddress').textContent = appData.storeInfo.address;
-            document.getElementById('receiptStorePhone').textContent = `Telp: ${appData.storeInfo.phone}`;
-            document.getElementById('ktaStoreName').textContent = appData.storeInfo.name;
-            
-            // Update logo di seluruh aplikasi
-            updateLogoInApp();
-            
+            updateStoreInfoUI();
             closeModal('storeInfoModal');
             showToast('Informasi restoran berhasil diperbarui', 'success');
         }
-
-        // Backup data
+        
+        // --- Backup & Restore ---
         function backupData() {
             const dataStr = JSON.stringify(appData);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `backup-cafe-resto-${new Date().toISOString().split('T')[0]}.json`;
-            
+            const exportFileName = `backup-cafe-resto-${new Date().toISOString().split('T')[0]}.json`;
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.setAttribute('download', exportFileName);
             linkElement.click();
-            
             showToast('Backup data berhasil', 'success');
         }
 
-        // Restore data
         function restoreData(event) {
             const file = event.target.files[0];
-            
             if (!file) return;
-            
+
+            if (!confirm('Yakin ingin memulihkan data? Semua data saat ini akan diganti.')) {
+                event.target.value = '';
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const restoredData = JSON.parse(e.target.result);
-                    appData = restoredData;
-                    saveData();
-                    initializeData();
-                    renderMenus();
-                    
-                    showToast('Data berhasil dipulihkan', 'success');
+                    if (restoredData.menus && restoredData.categories && restoredData.storeInfo) {
+                        appData = restoredData;
+                        saveData();
+                        showToast('Data berhasil dipulihkan. Aplikasi akan dimuat ulang.', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast('File backup tidak valid.', 'error');
+                    }
                 } catch (error) {
-                    showToast('Gagal memulihkan data. File mungkin rusak.', 'error');
+                    showToast('Gagal membaca file. File mungkin rusak.', 'error');
                 }
             };
             reader.readAsText(file);
-            
-            // Reset input file
             event.target.value = '';
         }
 
-        // Reset data
         function resetData() {
-            if (confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan!')) {
+            if (confirm('PERINGATAN! Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan!')) {
                 localStorage.removeItem('cafeRestoData');
-                initializeData();
-                renderMenus();
-                resetOrder();
-                
-                showToast('Data berhasil direset', 'success');
+                showToast('Data berhasil direset. Aplikasi akan dimuat ulang.', 'success');
+                setTimeout(() => location.reload(), 1500);
             }
         }
-
-        // Login
+        
+        // --- Autentikasi ---
         function login(event) {
             event.preventDefault();
-            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Untuk demo, gunakan password default
             if (password === appData.settings.adminPassword) {
-                appData.user = {
-                    username: username,
-                    role: 'admin'
-                };
-                
+                appData.user = { username, role: 'admin' };
                 document.getElementById('loggedInUser').textContent = username;
                 document.getElementById('loginModal').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
-                
-                // Update tanggal
                 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
                 });
-                
-                showToast('Login berhasil', 'success');
+                showToast(`Selamat datang, ${username}!`, 'success');
             } else {
-                showToast('Password salah', 'error');
+                showToast('Username atau Password salah', 'error');
             }
         }
 
-        // Logout
         function logout() {
             if (confirm('Apakah Anda yakin ingin logout?')) {
                 appData.user = null;
@@ -2875,365 +2653,158 @@
                 document.getElementById('loginForm').reset();
             }
         }
-
-        // Inisialisasi aplikasi saat halaman dimuat
+        
+        // === INISIALISASI & EVENT LISTENERS ===
+        
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
-            renderMenus();
-            renderOrder();
+            renderFullAppUI();
             
-            // Event listener untuk login
+            // --- Event Listeners Utama ---
             document.getElementById('loginForm').addEventListener('submit', login);
             document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            // Event listener untuk pencarian menu
             document.getElementById('menuSearch').addEventListener('input', renderMenus);
-            
-            // Event listener untuk filter kategori
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    renderMenus();
-                });
-            });
-            
-            // Event listener untuk tipe pesanan
-            document.querySelectorAll('.order-type-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.order-type-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    appData.currentOrder.type = this.dataset.type;
-                    
-                    if (appData.currentOrder.type === 'dinein') {
-                        document.getElementById('tableNumberContainer').style.display = 'block';
-                    } else {
-                        document.getElementById('tableNumberContainer').style.display = 'none';
-                    }
-                });
-            });
-            
-            // Event listener untuk nomor meja
-            document.getElementById('tableNumber').addEventListener('change', function() {
-                appData.currentOrder.tableNumber = this.value;
-            });
-            
-            // Event listener untuk catatan pesanan
-            document.getElementById('orderNote').addEventListener('input', function() {
-                appData.currentOrder.note = this.value;
-            });
-            
-            // Event listener untuk tombol checkout
             document.getElementById('checkoutBtn').addEventListener('click', checkout);
-            
-            // Event listener untuk tombol kosongkan pesanan
-            document.getElementById('clearOrderBtn').addEventListener('click', function() {
-                if (appData.currentOrder.items.length > 0 && confirm('Apakah Anda yakin ingin mengosongkan pesanan?')) {
+            document.getElementById('clearOrderBtn').addEventListener('click', () => {
+                if (appData.currentOrder.items.length > 0 && confirm('Yakin ingin mengosongkan pesanan?')) {
                     resetOrder();
                     showToast('Pesanan dikosongkan', 'warning');
                 }
             });
-            
-            // Event listener untuk modal menu
-            document.getElementById('addMenuBtn').addEventListener('click', addMenu);
-            document.getElementById('saveMenuBtn').addEventListener('click', saveMenu);
-            document.getElementById('cancelMenuBtn').addEventListener('click', function() {
-                closeModal('menuModal');
-            });
-            
-            // Event listener untuk modal pembayaran
-            document.getElementById('confirmPaymentBtn').addEventListener('click', confirmPayment);
-            document.getElementById('cancelPaymentBtn').addEventListener('click', function() {
-                closeModal('paymentModal');
-            });
-            
-            // Event listener untuk jumlah bayar
-            document.getElementById('amountPaid').addEventListener('input', function() {
-                const amountPaid = parseFloat(this.value) || 0;
-                const total = parseFloat(document.getElementById('paymentTotal').textContent.replace(/[^\d]/g, ''));
-                const change = amountPaid - total;
+
+            // --- Event Delegation ---
+            document.getElementById('menuGrid').addEventListener('click', e => {
+                const card = e.target.closest('.menu-card');
+                if (!card) return;
+                const menuId = parseInt(card.dataset.id);
                 
-                document.getElementById('changeAmount').value = formatRupiah(change);
+                if (e.target.closest('.edit-btn')) {
+                    openMenuForm('edit', menuId);
+                } else if (e.target.closest('.delete-btn')) {
+                    deleteMenu(menuId);
+                } else {
+                    addToOrder(menuId);
+                }
+            });
+            
+            document.getElementById('orderItemsContainer').addEventListener('click', e => {
+                const target = e.target.closest('button, input');
+                if (!target) return;
+                const index = parseInt(target.dataset.index);
+
+                if (target.classList.contains('minus-btn')) updateQuantity(index, -1);
+                else if (target.classList.contains('plus-btn')) updateQuantity(index, 1);
+                else if (target.classList.contains('remove-btn')) removeFromOrder(index);
+                else if (target.classList.contains('qty-input')) {
+                    target.addEventListener('change', () => updateQuantity(index, 0, parseInt(target.value)), { once: true });
+                }
+            });
+
+            document.getElementById('categoriesTable').addEventListener('click', e => {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const category = btn.dataset.category;
+                if (btn.classList.contains('edit-btn')) editCategory(category);
+                else if (btn.classList.contains('delete-btn')) deleteCategory(category);
+            });
+
+            document.getElementById('membersTable').addEventListener('click', e => {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const memberId = btn.dataset.id;
+                if (btn.classList.contains('view-btn')) showKta(memberId);
+                else if (btn.classList.contains('edit-btn')) openMemberForm('edit', memberId);
+                else if (btn.classList.contains('delete-btn')) deleteMember(memberId);
+            });
+            
+            // --- Event Listeners Modal ---
+            document.getElementById('addMenuBtn').addEventListener('click', () => openMenuForm('add'));
+            document.getElementById('saveMenuBtn').addEventListener('click', saveMenu);
+
+            document.getElementById('confirmPaymentBtn').addEventListener('click', confirmPayment);
+            document.getElementById('printReceiptBtn').addEventListener('click', () => printContent('receiptContent'));
+            document.getElementById('printKtaBtn').addEventListener('click', () => printContent('ktaCard'));
+
+            document.getElementById('manageCategoriesBtn').addEventListener('click', manageCategories);
+            document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
+
+            document.getElementById('manageMembersBtn').addEventListener('click', manageMembers);
+            document.getElementById('addMemberBtn').addEventListener('click', () => openMemberForm('add'));
+            document.getElementById('saveMemberBtn').addEventListener('click', saveMember);
+            
+            document.getElementById('manageStoreInfoBtn').addEventListener('click', manageStoreInfo);
+            document.getElementById('saveStoreInfoBtn').addEventListener('click', saveStoreInfo);
+            
+            // --- Lainnya ---
+            document.querySelectorAll('.order-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelector('.order-type-btn.active').classList.remove('active');
+                    this.classList.add('active');
+                    appData.currentOrder.type = this.dataset.type;
+                    document.getElementById('tableNumberContainer').style.display = (this.dataset.type === 'dinein') ? 'block' : 'none';
+                });
+            });
+
+            document.getElementById('tableNumber').addEventListener('change', e => { appData.currentOrder.tableNumber = e.target.value; });
+            document.getElementById('orderNote').addEventListener('input', e => { appData.currentOrder.note = e.target.value; });
+
+            document.getElementById('amountPaid').addEventListener('input', e => {
+                const amountPaid = parseFloat(e.target.value) || 0;
+                const total = parseFloat(document.getElementById('total').textContent.replace(/[^\d]/g, ''));
+                document.getElementById('changeAmount').value = formatRupiah(amountPaid - total);
                 document.getElementById('confirmPaymentBtn').disabled = amountPaid < total;
             });
             
-            // Event listener untuk tombol quick cash
             document.querySelectorAll('.quick-cash-buttons .btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const amount = parseInt(this.dataset.amount);
-                    document.getElementById('amountPaid').value = amount;
-                    
-                    // Trigger event input untuk menghitung kembalian
+                    document.getElementById('amountPaid').value = this.dataset.amount;
                     document.getElementById('amountPaid').dispatchEvent(new Event('input'));
                 });
             });
-            
-            // Event listener untuk modal struk
-            document.getElementById('closeReceiptBtn').addEventListener('click', function() {
-                closeModal('receiptModal');
-            });
-            
-            // === PERBAIKAN EVENT LISTENER CETAK STRUK (REVISI) ===
-            document.getElementById('printReceiptBtn').addEventListener('click', printReceipt);
-            
-            // Event listener untuk modal KTA
-            document.getElementById('closeKtaBtn').addEventListener('click', function() {
-                closeModal('ktaModal');
-            });
-            document.getElementById('printKtaBtn').addEventListener('click', printKta);
-            
-            // Event listener untuk admin panel
-            document.getElementById('manageCategoriesBtn').addEventListener('click', manageCategories);
-            document.getElementById('viewReportsBtn').addEventListener('click', function() {
-                openModal('reportsModal');
-            });
-            document.getElementById('manageMembersBtn').addEventListener('click', manageMembers);
-            document.getElementById('manageStoreInfoBtn').addEventListener('click', manageStoreInfo);
-            document.getElementById('controlPanelBtn').addEventListener('click', function() {
-                openModal('controlPanelModal');
-            });
-            
-            // Event listener untuk backup dan restore
+
             document.getElementById('backupDataBtn').addEventListener('click', backupData);
             document.getElementById('restoreFile').addEventListener('change', restoreData);
             document.getElementById('resetDataBtn').addEventListener('click', resetData);
-            
-            // Event listener untuk modal kategori
-            document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
-            document.getElementById('closeCategoriesBtn').addEventListener('click', function() {
-                closeModal('categoriesModal');
-            });
-            
-            // Event listener untuk modal member
-            document.getElementById('addMemberBtn').addEventListener('click', addMember);
-            document.getElementById('saveMemberBtn').addEventListener('click', saveMember);
-            document.getElementById('cancelMemberBtn').addEventListener('click', function() {
-                closeModal('memberModal');
-            });
-            document.getElementById('closeMembersBtn').addEventListener('click', function() {
-                closeModal('membersModal');
-            });
-            
-            // Event listener untuk modal info restoran
-            document.getElementById('saveStoreInfoBtn').addEventListener('click', saveStoreInfo);
-            document.getElementById('closeStoreInfoBtn').addEventListener('click', function() {
-                closeModal('storeInfoModal');
-            });
-            
-            // Event listener untuk tombol tutup modal
+
             document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal');
-                    modal.style.display = 'none';
-                });
+                btn.addEventListener('click', () => closeModal(btn.closest('.modal').id));
             });
             
-            // Event listener untuk klik di luar modal
-            window.addEventListener('click', function(event) {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                    }
-                });
+            window.addEventListener('click', e => {
+                if (e.target.classList.contains('modal')) closeModal(e.target.id);
             });
             
-            // Event listener delegasi untuk tabel member
-            document.getElementById('membersTable').addEventListener('click', function(e) {
-                const target = e.target.closest('button');
-                if (!target) return;
-                
-                const memberId = target.dataset.memberId;
-                
-                if (target.classList.contains('delete-btn')) {
-                    if (confirm('Apakah Anda yakin ingin menghapus member ini?')) {
-                        appData.members = appData.members.filter(m => m.id !== memberId);
-                        saveData();
-                        manageMembers();
-                        showToast('Member berhasil dihapus', 'success');
-                    }
-                } else if (target.classList.contains('edit-btn')) {
-                    // Implement edit member functionality here
-                    showToast('Fitur edit member akan segera tersedia', 'info');
-                } else {
-                    showKta(memberId);
-                }
-            });
-            
-            // Event listener delegasi untuk tabel kategori
-            document.getElementById('categoriesTable').addEventListener('click', function(e) {
-                const target = e.target.closest('button');
-                if (!target) return;
-                
-                const category = target.dataset.category;
-                
-                if (target.classList.contains('delete-btn')) {
-                    deleteCategory(category);
-                } else if (target.classList.contains('edit-btn')) {
-                    // Implement edit category functionality here
-                    showToast('Fitur edit kategori akan segera tersedia', 'info');
-                }
-            });
-            
-            // Pencarian member
             document.getElementById('memberSearch').addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 const resultsContainer = document.getElementById('memberSearchResults');
-                
-                if (searchTerm.length < 2) {
+                if (searchTerm.length < 1) {
                     resultsContainer.style.display = 'none';
-                    appData.currentOrder.memberId = null;
                     return;
                 }
-                
-                const results = appData.members.filter(member => 
-                    member.name.toLowerCase().includes(searchTerm) || 
-                    member.id.toLowerCase().includes(searchTerm)
-                );
-                
-                resultsContainer.innerHTML = '';
-                
-                if (results.length === 0) {
-                    resultsContainer.style.display = 'none';
-                } else {
-                    results.forEach(member => {
-                        const item = document.createElement('div');
-                        item.className = 'member-search-item';
-                        item.textContent = `${member.name} (${member.id})`;
-                        item.addEventListener('click', function() {
-                            document.getElementById('memberSearch').value = `${member.name} (${member.id})`;
-                            appData.currentOrder.memberId = member.id;
-                            resultsContainer.style.display = 'none';
-                        });
-                        resultsContainer.appendChild(item);
-                    });
+                const results = appData.members.filter(m => m.name.toLowerCase().includes(searchTerm) || m.id.toLowerCase().includes(searchTerm));
+                if (results.length > 0) {
+                    resultsContainer.innerHTML = results.map(m => `<div class="member-search-item" data-id="${m.id}">${m.name} (${m.id})</div>`).join('');
                     resultsContainer.style.display = 'block';
+                } else {
+                    resultsContainer.style.display = 'none';
                 }
             });
-            
-            // Sembunyikan hasil pencarian member saat klik di luar
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.member-search-container')) {
+
+            document.getElementById('memberSearchResults').addEventListener('click', e => {
+                if (e.target.classList.contains('member-search-item')) {
+                    const memberId = e.target.dataset.id;
+                    appData.currentOrder.memberId = memberId;
+                    document.getElementById('memberSearch').value = e.target.textContent;
                     document.getElementById('memberSearchResults').style.display = 'none';
                 }
             });
-            
-            // Tampilkan/ sembunyikan panel admin
-            document.getElementById('toggleAdminPanelBtn').addEventListener('click', function() {
-                const adminPanel = document.getElementById('adminPanel');
-                if (adminPanel.style.display === 'none') {
-                    adminPanel.style.display = 'block';
-                    this.textContent = 'Sembunyikan Panel Admin';
-                } else {
-                    adminPanel.style.display = 'none';
-                    this.textContent = 'Tampilkan Panel Admin';
-                }
+
+            document.getElementById('controlPanelBtn').addEventListener('click', () => openModal('controlPanelModal'));
+            document.getElementById('viewReportsBtn').addEventListener('click', () => {
+                document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
+                openModal('reportsModal');
             });
-            
-            // Event listener untuk info pesanan dapur
-            document.getElementById('kitchenDisplayBtn').addEventListener('click', function() {
-                openModal('kitchenModal');
-                
-                // Tampilkan pesanan yang sedang diproses
-                const kitchenOrders = document.getElementById('kitchenOrders');
-                kitchenOrders.innerHTML = '';
-                
-                // Ambil transaksi hari ini yang statusnya belum selesai (contoh sederhana)
-                const today = new Date().toISOString().split('T')[0];
-                const todayTransactions = appData.transactions.filter(t => t.date.startsWith(today));
-                
-                if (todayTransactions.length === 0) {
-                    kitchenOrders.innerHTML = '<p>Tidak ada pesanan hari ini</p>';
-                } else {
-                    todayTransactions.forEach(transaction => {
-                        const statusItem = document.createElement('div');
-                        statusItem.className = 'status-item';
-                        statusItem.innerHTML = `
-                            <div>
-                                <strong>${transaction.id}</strong><br>
-                                <small>Meja ${transaction.tableNumber} - ${new Date(transaction.date).toLocaleTimeString()}</small>
-                            </div>
-                            <div class="status-ready">Selesai</div>
-                        `;
-                        kitchenOrders.appendChild(statusItem);
-                    });
-                }
-            });
-            
-            document.getElementById('closeKitchenBtn').addEventListener('click', function() {
-                closeModal('kitchenModal');
-            });
-            
-            // Event listener untuk donasi
-            document.getElementById('donationBtn').addEventListener('click', function() {
-                openModal('donationModal');
-            });
-            
-            document.getElementById('donationMethod').addEventListener('change', function() {
-                const method = this.value;
-                document.getElementById('donationQrCode').style.display = method === 'qris' ? 'block' : 'none';
-                document.getElementById('donationBankInfo').style.display = method === 'transfer' ? 'block' : 'none';
-            });
-            
-            document.getElementById('confirmDonationBtn').addEventListener('click', function() {
-                const amount = document.getElementById('donationAmount').value;
-                const method = document.getElementById('donationMethod').value;
-                
-                showToast(`Terima kasih atas donasi ${formatRupiah(amount)} via ${method.toUpperCase()}`, 'success');
-                closeModal('donationModal');
-            });
-            
-            document.getElementById('closeDonationBtn').addEventListener('click', function() {
-                closeModal('donationModal');
-            });
-            
-            // Event listener untuk kontrol panel
-            document.getElementById('closeControlPanelBtn').addEventListener('click', function() {
-                closeModal('controlPanelModal');
-            });
-            
-            // Event listener untuk laporan
-            document.getElementById('generateReportBtn').addEventListener('click', function() {
-                const reportDate = document.getElementById('reportDate').value;
-                
-                if (!reportDate) {
-                    showToast('Pilih tanggal terlebih dahulu', 'error');
-                    return;
-                }
-                
-                const filteredTransactions = appData.transactions.filter(t => t.date.startsWith(reportDate));
-                
-                document.getElementById('reportTransactionCount').textContent = filteredTransactions.length;
-                document.getElementById('reportTotalRevenue').textContent = formatRupiah(
-                    filteredTransactions.reduce((sum, t) => sum + t.total, 0)
-                );
-                document.getElementById('reportAverageTransaction').textContent = formatRupiah(
-                    filteredTransactions.length > 0 ? 
-                    filteredTransactions.reduce((sum, t) => sum + t.total, 0) / filteredTransactions.length : 0
-                );
-                
-                const transactionsTable = document.getElementById('reportTransactions');
-                transactionsTable.innerHTML = '';
-                
-                filteredTransactions.forEach((transaction, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${new Date(transaction.date).toLocaleString('id-ID')}</td>
-                        <td>${formatRupiah(transaction.total)}</td>
-                        <td>${transaction.cashier}</td>
-                    `;
-                    transactionsTable.appendChild(row);
-                });
-                
-                document.getElementById('reportDetails').style.display = 'block';
-            });
-            
-            document.getElementById('closeReportsBtn').addEventListener('click', function() {
-                closeModal('reportsModal');
-            });
-            
-            // Set tanggal laporan ke hari ini
-            document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
+
         });
     </script>
 </body>
