@@ -1235,18 +1235,13 @@
             </div>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                    <label for="username" class="form-label">Nama Kasir</label>
+                    <input type="text" id="username" class="form-control" placeholder="Masukkan nama Anda" required>
                 </div>
                 <button type="submit" class="btn mt-3">Login</button>
             </form>
         </div>
     </div>
-
     <div class="container" id="mainApp" style="display: none;">
         <header class="app-header">
             <div class="header-title-container">
@@ -1764,7 +1759,7 @@
             </div>
             <div class="modal-body">
                 <div class="kitchen-status">
-                    <h4>Pesanan Sedang Diproses</h4>
+                    <h4>Pesanan Selesai Hari Ini</h4>
                     <div id="kitchenOrders">
                         </div>
                 </div>
@@ -1901,25 +1896,19 @@
             user: null,
             settings: {
                 taxRate: 0.1,
-                adminPassword: 'admin123'
+                // Password tidak lagi digunakan, tapi propertinya dibiarkan untuk kompatibilitas data lama
+                adminPassword: 'admin123' 
             }
         };
 
-        // ======================================================================
-        // === PERBAIKAN: Fungsi inisialisasi data yang lebih aman (robust) ===
-        // ======================================================================
+        // Inisialisasi data default jika tidak ada di localStorage
         function initializeData() {
             const savedData = localStorage.getItem('cafeRestoData');
             
             if (savedData) {
-                try {
+                 try {
                     const parsedData = JSON.parse(savedData);
-                    
-                    // Menggabungkan data yang tersimpan dengan struktur default
-                    // Ini mencegah error jika data tersimpan tidak memiliki properti baru (misal: settings)
                     appData = { ...appData, ...parsedData };
-                    
-                    // Pastikan objek bersarang (nested objects) juga digabung, bukan ditimpa
                     if (parsedData.settings) {
                         appData.settings = { ...appData.settings, ...parsedData.settings };
                     }
@@ -1929,120 +1918,41 @@
                     if (parsedData.currentOrder) {
                         appData.currentOrder = { ...appData.currentOrder, ...parsedData.currentOrder };
                     }
-
                 } catch (error) {
                     console.error("Gagal mem-parsing data dari localStorage, menggunakan data default:", error);
-                    // Jika data di localStorage rusak, gunakan data default
                     setupDefaultData();
                     saveData();
                 }
-
             } else {
-                // Jika tidak ada data sama sekali, buat data default
                 setupDefaultData();
                 saveData();
             }
             
-            // Update UI berdasarkan data yang sudah final
             updateLogoInApp();
             updateStoreInfoUI();
         }
 
-        // Fungsi untuk setup data awal (dipisahkan agar lebih rapi)
         function setupDefaultData() {
-             // Data menu default
              appData.menus = [
-                {
-                    id: 1,
-                    name: 'Nasi Goreng Spesial',
-                    price: 25000,
-                    category: 'makanan',
-                    image: 'https://via.placeholder.com/100?text=Nasgor',
-                    description: 'Nasi goreng dengan telur, ayam, dan sayuran',
-                    stock: 10
-                },
-                {
-                    id: 2,
-                    name: 'Mie Ayam',
-                    price: 20000,
-                    category: 'makanan',
-                    image: 'https://via.placeholder.com/100?text=MieAyam',
-                    description: 'Mie ayam dengan pangsit dan bakso',
-                    stock: 15
-                },
-                {
-                    id: 3,
-                    name: 'Es Teh Manis',
-                    price: 5000,
-                    category: 'minuman',
-                    image: 'https://via.placeholder.com/100?text=EsTeh',
-                    description: 'Es teh manis segar',
-                    stock: 50
-                },
-                {
-                    id: 4,
-                    name: 'Jus Jeruk',
-                    price: 12000,
-                    category: 'minuman',
-                    image: 'https://via.placeholder.com/100?text=JusJeruk',
-                    description: 'Jus jeruk segar tanpa gula',
-                    stock: 20
-                },
-                {
-                    id: 5,
-                    name: 'Kentang Goreng',
-                    price: 15000,
-                    category: 'snack',
-                    image: 'https://via.placeholder.com/100?text=Kentang',
-                    description: 'Kentang goreng renyah dengan saus',
-                    stock: 25
-                },
-                {
-                    id: 6,
-                    name: 'Donat',
-                    price: 8000,
-                    category: 'snack',
-                    image: 'https://via.placeholder.com/100?text=Donat',
-                    description: 'Donat dengan berbagai topping',
-                    stock: 30
-                }
+                { id: 1, name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', image: 'https://via.placeholder.com/100?text=Nasgor', description: 'Nasi goreng dengan telur, ayam, dan sayuran', stock: 10 },
+                { id: 2, name: 'Mie Ayam', price: 20000, category: 'makanan', image: 'https://via.placeholder.com/100?text=MieAyam', description: 'Mie ayam dengan pangsit dan bakso', stock: 15 },
+                { id: 3, name: 'Es Teh Manis', price: 5000, category: 'minuman', image: 'https://via.placeholder.com/100?text=EsTeh', description: 'Es teh manis segar', stock: 50 },
+                { id: 4, name: 'Jus Jeruk', price: 12000, category: 'minuman', image: 'https://via.placeholder.com/100?text=JusJeruk', description: 'Jus jeruk segar tanpa gula', stock: 20 },
+                { id: 5, name: 'Kentang Goreng', price: 15000, category: 'snack', image: 'https://via.placeholder.com/100?text=Kentang', description: 'Kentang goreng renyah dengan saus', stock: 25 },
+                { id: 6, name: 'Donat', price: 8000, category: 'snack', image: 'https://via.placeholder.com/100?text=Donat', description: 'Donat dengan berbagai topping', stock: 30 }
             ];
-
-            // Data member default
             appData.members = [
-                {
-                    id: 'MEM-001',
-                    name: 'Budi Santoso',
-                    phone: '081234567890',
-                    email: 'budi@email.com',
-                    address: 'Jl. Contoh No. 1',
-                    joinDate: new Date().toISOString(),
-                    points: 100
-                },
-                {
-                    id: 'MEM-002',
-                    name: 'Siti Rahayu',
-                    phone: '081298765432',
-                    email: 'siti@email.com',
-                    address: 'Jl. Contoh No. 2',
-                    joinDate: new Date().toISOString(),
-                    points: 50
-                }
+                { id: 'MEM-001', name: 'Budi Santoso', phone: '081234567890', email: 'budi@email.com', address: 'Jl. Contoh No. 1', joinDate: new Date().toISOString(), points: 100 },
+                { id: 'MEM-002', name: 'Siti Rahayu', phone: '081298765432', email: 'siti@email.com', address: 'Jl. Contoh No. 2', joinDate: new Date().toISOString(), points: 50 }
             ];
         }
-        // === AKHIR DARI PERBAIKAN ===
-        // ============================
 
-
-        // Simpan data ke localStorage
         function saveData() {
             localStorage.setItem('cafeRestoData', JSON.stringify(appData));
         }
 
-        // Update logo di seluruh aplikasi
         function updateLogoInApp() {
             const logoUrl = appData.storeInfo.logo || 'https://via.placeholder.com/100?text=LOGO';
-            
             document.querySelectorAll('.header-logo img, .receipt-logo, .kta-logo').forEach(img => {
                 if (img) {
                     img.src = logoUrl;
@@ -2052,29 +1962,23 @@
         }
 
         function updateStoreInfoUI() {
-             // Update tampilan
-             document.getElementById('storeNameHeader').textContent = appData.storeInfo.name;
+            document.getElementById('storeNameHeader').textContent = appData.storeInfo.name;
             document.getElementById('receiptStoreName').textContent = appData.storeInfo.name;
             document.getElementById('receiptStoreAddress').textContent = appData.storeInfo.address;
             document.getElementById('receiptStorePhone').textContent = `Telp: ${appData.storeInfo.phone}`;
             document.getElementById('ktaStoreName').textContent = appData.storeInfo.name;
         }
 
-        // Tampilkan notifikasi
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
-            
             toastMessage.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
-            
+            toast.className = `toast ${type} show`;
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        // Format angka ke Rupiah
         function formatRupiah(amount) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -2083,12 +1987,10 @@
             }).format(amount);
         }
 
-        // Generate ID unik
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
-        // Update tampilan menu
         function renderMenus() {
             const menuGrid = document.getElementById('menuGrid');
             const menuCount = document.getElementById('menuCount');
@@ -2096,8 +1998,7 @@
             const activeCategory = document.querySelector('.filter-chip.active').dataset.category;
             
             let filteredMenus = appData.menus.filter(menu => {
-                const matchesSearch = menu.name.toLowerCase().includes(searchTerm) || 
-                                     (menu.description && menu.description.toLowerCase().includes(searchTerm));
+                const matchesSearch = menu.name.toLowerCase().includes(searchTerm) || (menu.description && menu.description.toLowerCase().includes(searchTerm));
                 const matchesCategory = activeCategory === 'all' || menu.category === activeCategory;
                 return matchesSearch && matchesCategory;
             });
@@ -2105,12 +2006,7 @@
             menuGrid.innerHTML = '';
             
             if (filteredMenus.length === 0) {
-                menuGrid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="fas fa-utensils"></i>
-                        <p>Tidak ada menu ditemukan</p>
-                    </div>
-                `;
+                menuGrid.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-utensils"></i><p>Tidak ada menu ditemukan</p></div>`;
             } else {
                 filteredMenus.forEach(menu => {
                     const menuCard = document.createElement('div');
@@ -2123,82 +2019,51 @@
                         <div class="menu-price">${formatRupiah(menu.price)}</div>
                         <div class="menu-category">${menu.category}</div>
                         <div class="menu-actions">
-                            <div class="action-btn edit-btn" data-id="${menu.id}">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="action-btn delete-btn" data-id="${menu.id}">
-                                <i class="fas fa-trash"></i>
-                            </div>
+                            <div class="action-btn edit-btn" data-id="${menu.id}"><i class="fas fa-edit"></i></div>
+                            <div class="action-btn delete-btn" data-id="${menu.id}"><i class="fas fa-trash"></i></div>
                         </div>
                     `;
-                    
                     menuCard.addEventListener('click', (e) => {
                         if (!e.target.closest('.menu-actions')) {
                             addToOrder(menu);
                         }
                     });
-                    
                     menuGrid.appendChild(menuCard);
                 });
             }
             
             menuCount.textContent = `(${filteredMenus.length} menu)`;
             
-            // Tambahkan event listener untuk tombol edit dan hapus
             document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const menuId = parseInt(btn.dataset.id);
-                    editMenu(menuId);
-                });
+                btn.addEventListener('click', (e) => { e.stopPropagation(); editMenu(parseInt(btn.dataset.id)); });
             });
-            
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const menuId = parseInt(btn.dataset.id);
-                    deleteMenu(menuId);
-                });
+                btn.addEventListener('click', (e) => { e.stopPropagation(); deleteMenu(parseInt(btn.dataset.id)); });
             });
         }
 
-        // Tambah menu ke pesanan
         function addToOrder(menu) {
             const existingItem = appData.currentOrder.items.find(item => item.menuId === menu.id);
-            
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
-                appData.currentOrder.items.push({
-                    menuId: menu.id,
-                    name: menu.name,
-                    price: menu.price,
-                    quantity: 1
-                });
+                appData.currentOrder.items.push({ menuId: menu.id, name: menu.name, price: menu.price, quantity: 1 });
             }
-            
             renderOrder();
             showToast(`${menu.name} ditambahkan ke pesanan`, 'success');
         }
 
-        // Update tampilan pesanan
         function renderOrder() {
             const orderItemsContainer = document.getElementById('orderItemsContainer');
             const orderCount = document.getElementById('orderCount');
             const checkoutBtn = document.getElementById('checkoutBtn');
             
             if (appData.currentOrder.items.length === 0) {
-                orderItemsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-shopping-cart"></i>
-                        <p>Belum ada pesanan</p>
-                    </div>
-                `;
+                orderItemsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>Belum ada pesanan</p></div>`;
                 checkoutBtn.disabled = true;
                 orderCount.textContent = '(0 item)';
             } else {
                 orderItemsContainer.innerHTML = '';
-                
                 appData.currentOrder.items.forEach((item, index) => {
                     const orderItem = document.createElement('div');
                     orderItem.className = 'order-item';
@@ -2208,81 +2073,32 @@
                             <div class="order-item-price">${formatRupiah(item.price)}</div>
                         </div>
                         <div class="order-item-qty">
-                            <div class="qty-btn minus-btn" data-index="${index}">
-                                <i class="fas fa-minus"></i>
-                            </div>
+                            <div class="qty-btn minus-btn" data-index="${index}"><i class="fas fa-minus"></i></div>
                             <input type="number" class="qty-input" value="${item.quantity}" min="1" data-index="${index}">
-                            <div class="qty-btn plus-btn" data-index="${index}">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                            <div class="remove-btn" data-index="${index}">
-                                <i class="fas fa-times"></i>
-                            </div>
+                            <div class="qty-btn plus-btn" data-index="${index}"><i class="fas fa-plus"></i></div>
+                            <div class="remove-btn" data-index="${index}"><i class="fas fa-times"></i></div>
                         </div>
                     `;
-                    
                     orderItemsContainer.appendChild(orderItem);
                 });
-                
                 checkoutBtn.disabled = false;
                 orderCount.textContent = `(${appData.currentOrder.items.length} item)`;
-                
-                // Tambahkan event listener untuk tombol kuantitas
-                document.querySelectorAll('.minus-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        updateQuantity(index, -1);
-                    });
-                });
-                
-                document.querySelectorAll('.plus-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        updateQuantity(index, 1);
-                    });
-                });
-                
-                document.querySelectorAll('.qty-input').forEach(input => {
-                    input.addEventListener('change', (e) => {
-                        const index = parseInt(e.target.dataset.index);
-                        const newQuantity = parseInt(e.target.value);
-                        
-                        if (newQuantity < 1) {
-                            e.target.value = 1;
-                            updateQuantity(index, 0, 1);
-                        } else {
-                            updateQuantity(index, 0, newQuantity);
-                        }
-                    });
-                });
-                
-                document.querySelectorAll('.remove-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const index = parseInt(btn.dataset.index);
-                        removeFromOrder(index);
-                    });
-                });
             }
-            
             updateOrderSummary();
         }
 
-        // Update kuantitas item pesanan
         function updateQuantity(index, change, newQuantity = null) {
             if (newQuantity !== null) {
                 appData.currentOrder.items[index].quantity = newQuantity;
             } else {
                 appData.currentOrder.items[index].quantity += change;
-                
-                if (appData.currentOrder.items[index].quantity < 1) {
-                    appData.currentOrder.items[index].quantity = 1;
-                }
             }
-            
+            if (appData.currentOrder.items[index].quantity < 1) {
+                appData.currentOrder.items[index].quantity = 1;
+            }
             renderOrder();
         }
 
-        // Hapus item dari pesanan
         function removeFromOrder(index) {
             const itemName = appData.currentOrder.items[index].name;
             appData.currentOrder.items.splice(index, 1);
@@ -2290,150 +2106,91 @@
             showToast(`${itemName} dihapus dari pesanan`, 'warning');
         }
 
-        // Update ringkasan pesanan
         function updateOrderSummary() {
-            const subtotalElement = document.getElementById('subtotal');
-            const discountElement = document.getElementById('discount');
-            const taxElement = document.getElementById('tax');
-            const totalElement = document.getElementById('total');
-            
             const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const tax = subtotal * appData.settings.taxRate;
             const total = subtotal + tax - appData.currentOrder.discount;
-            
-            subtotalElement.textContent = formatRupiah(subtotal);
-            discountElement.textContent = formatRupiah(appData.currentOrder.discount);
-            taxElement.textContent = formatRupiah(tax);
-            totalElement.textContent = formatRupiah(total);
+            document.getElementById('subtotal').textContent = formatRupiah(subtotal);
+            document.getElementById('discount').textContent = formatRupiah(appData.currentOrder.discount);
+            document.getElementById('tax').textContent = formatRupiah(tax);
+            document.getElementById('total').textContent = formatRupiah(total);
         }
 
-        // Proses checkout
         function checkout() {
-            if (appData.currentOrder.items.length === 0) {
-                showToast('Tidak ada item dalam pesanan', 'error');
-                return;
-            }
-            
-            const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const tax = subtotal * appData.settings.taxRate;
-            const total = subtotal + tax - appData.currentOrder.discount;
-            
+            if (appData.currentOrder.items.length === 0) return showToast('Tidak ada item dalam pesanan', 'error');
+            const total = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 + appData.settings.taxRate) - appData.currentOrder.discount;
             document.getElementById('paymentTotal').textContent = formatRupiah(total);
             document.getElementById('amountPaid').value = '';
             document.getElementById('changeAmount').value = '';
             document.getElementById('confirmPaymentBtn').disabled = true;
-            
             openModal('paymentModal');
         }
 
-        // Konfirmasi pembayaran
         function confirmPayment() {
             const amountPaid = parseFloat(document.getElementById('amountPaid').value);
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const paymentNote = document.getElementById('paymentNote').value;
-            
             const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const tax = subtotal * appData.settings.taxRate;
             const total = subtotal + tax - appData.currentOrder.discount;
+            if (isNaN(amountPaid) || amountPaid < total) return showToast('Jumlah pembayaran kurang', 'error');
             
-            if (isNaN(amountPaid) || amountPaid < total) {
-                showToast('Jumlah pembayaran kurang', 'error');
-                return;
-            }
-            
-            // Simpan transaksi
             const transaction = {
-                id: generateId(),
-                date: new Date().toISOString(),
-                items: [...appData.currentOrder.items],
-                subtotal: subtotal,
-                tax: tax,
-                discount: appData.currentOrder.discount,
-                total: total,
-                amountPaid: amountPaid,
-                change: amountPaid - total,
-                paymentMethod: paymentMethod,
-                paymentNote: paymentNote,
-                orderType: appData.currentOrder.type,
+                id: generateId(), date: new Date().toISOString(), items: [...appData.currentOrder.items],
+                subtotal, tax, discount: appData.currentOrder.discount, total, amountPaid,
+                change: amountPaid - total, paymentMethod: document.getElementById('paymentMethod').value,
+                paymentNote: document.getElementById('paymentNote').value, orderType: appData.currentOrder.type,
                 tableNumber: appData.currentOrder.type === 'dinein' ? appData.currentOrder.tableNumber : null,
-                memberId: appData.currentOrder.memberId,
-                note: appData.currentOrder.note,
-                cashier: appData.user.username
+                memberId: appData.currentOrder.memberId, note: appData.currentOrder.note, cashier: appData.user.username
             };
-            
             appData.transactions.unshift(transaction);
             
-            // Update stok menu
             appData.currentOrder.items.forEach(item => {
                 const menu = appData.menus.find(m => m.id === item.menuId);
-                if (menu) {
-                    menu.stock -= item.quantity;
-                    if (menu.stock < 0) menu.stock = 0;
-                }
+                if (menu) menu.stock = Math.max(0, menu.stock - item.quantity);
             });
             
-            // Update poin member jika ada
             if (appData.currentOrder.memberId) {
                 const member = appData.members.find(m => m.id === appData.currentOrder.memberId);
-                if (member) {
-                    // 1 poin per Rp 10.000
-                    const pointsEarned = Math.floor(total / 10000);
-                    member.points += pointsEarned;
-                }
+                if (member) member.points += Math.floor(total / 10000);
             }
             
             saveData();
-            
-            // Tampilkan struk
             showReceipt(transaction);
-            
-            // Reset pesanan
             resetOrder();
-            
             closeModal('paymentModal');
         }
 
-        // Tampilkan struk
         function showReceipt(transaction) {
-            // Update informasi struk
             document.getElementById('receiptTransactionId').textContent = transaction.id;
             document.getElementById('receiptDate').textContent = new Date(transaction.date).toLocaleString('id-ID');
             document.getElementById('receiptCashier').textContent = transaction.cashier;
             document.getElementById('receiptOrderType').textContent = transaction.orderType === 'dinein' ? 'Makan di Tempat' : 'Bungkus';
             
+            const tableRow = document.getElementById('receiptTableNumberRow');
             if (transaction.orderType === 'dinein' && transaction.tableNumber) {
-                document.getElementById('receiptTableNumberRow').style.display = 'flex';
+                tableRow.style.display = 'flex';
                 document.getElementById('receiptTableNumber').textContent = `Meja ${transaction.tableNumber}`;
             } else {
-                document.getElementById('receiptTableNumberRow').style.display = 'none';
+                tableRow.style.display = 'none';
             }
             
+            const memberRow = document.getElementById('receiptMemberRow');
             if (transaction.memberId) {
                 const member = appData.members.find(m => m.id === transaction.memberId);
-                document.getElementById('receiptMemberRow').style.display = 'flex';
+                memberRow.style.display = 'flex';
                 document.getElementById('receiptMember').textContent = member ? member.name : 'Tidak Diketahui';
             } else {
-                document.getElementById('receiptMemberRow').style.display = 'none';
+                memberRow.style.display = 'none';
             }
             
-            // Update item pesanan
             const receiptItemsContainer = document.getElementById('receiptItemsContainer');
             receiptItemsContainer.innerHTML = '';
-            
             transaction.items.forEach(item => {
                 const itemElement = document.createElement('div');
                 itemElement.className = 'receipt-item';
-                itemElement.innerHTML = `
-                    <div class="receipt-item-details">
-                        <span class="item-name">${item.name}</span>
-                        <div class="item-price-calc">${item.quantity} x ${formatRupiah(item.price)}</div>
-                    </div>
-                    <span>${formatRupiah(item.price * item.quantity)}</span>
-                `;
+                itemElement.innerHTML = `<div class="receipt-item-details"><span class="item-name">${item.name}</span><div class="item-price-calc">${item.quantity} x ${formatRupiah(item.price)}</div></div><span>${formatRupiah(item.price * item.quantity)}</span>`;
                 receiptItemsContainer.appendChild(itemElement);
             });
             
-            // Update total
             document.getElementById('receiptSubtotal').textContent = formatRupiah(transaction.subtotal);
             document.getElementById('receiptDiscount').textContent = formatRupiah(transaction.discount);
             document.getElementById('receiptTax').textContent = formatRupiah(transaction.tax);
@@ -2444,82 +2201,39 @@
             openModal('receiptModal');
         }
 
-        // Reset pesanan
         function resetOrder() {
-            appData.currentOrder = {
-                items: [],
-                type: 'dinein',
-                tableNumber: '1',
-                memberId: null,
-                note: '',
-                discount: 0
-            };
-            
+            appData.currentOrder = { items: [], type: 'dinein', tableNumber: '1', memberId: null, note: '', discount: 0 };
             document.querySelector('.order-type-btn[data-type="dinein"]').click();
             document.getElementById('tableNumber').value = '1';
             document.getElementById('memberSearch').value = '';
             document.getElementById('orderNote').value = '';
-            
             renderOrder();
         }
 
-        // Buka modal
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'flex';
-        }
-
-        // Tutup modal
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'none';
-        }
-
-        // === PERBAIKAN FUNGSI CETAK STRUK (REVISI FINAL) ===
-        function printReceipt() {
-            // Clone elemen struk untuk dicetak
-            const receiptContent = document.getElementById('receiptContent').cloneNode(true);
-            
-            // Buat container khusus untuk cetak
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        
+        function printWithContainer(elementId) {
+            const content = document.getElementById(elementId).cloneNode(true);
             const printContainer = document.getElementById('print-container');
             printContainer.innerHTML = '';
-            printContainer.appendChild(receiptContent);
-            
-            // Sembunyikan tombol cetak di struk yang akan dicetak
-            const printBtn = printContainer.querySelector('.no-print');
-            if (printBtn) printBtn.style.display = 'none';
-            
-            // Jalankan fungsi cetak browser
+            printContainer.appendChild(content);
             window.print();
         }
+        function printReceipt() { printWithContainer('receiptContent'); }
+        function printKta() { printWithContainer('ktaCard'); }
 
-        // === PERBAIKAN FUNGSI CETAK KTA (REVISI) ===
-        function printKta() {
-            // Clone elemen KTA untuk dicetak
-            const ktaContent = document.getElementById('ktaCard').cloneNode(true);
-            
-            // Buat container khusus untuk cetak
-            const printContainer = document.getElementById('print-container');
-            printContainer.innerHTML = '';
-            printContainer.appendChild(ktaContent);
-            
-            // Jalankan fungsi cetak browser
-            window.print();
-        }
-
-        // Tambah menu baru
         function addMenu() {
             document.getElementById('menuModalTitle').textContent = 'Tambah Menu';
             document.getElementById('menuForm').reset();
-            document.getElementById('saveMenuBtn').dataset.mode = 'add';
-            delete document.getElementById('saveMenuBtn').dataset.menuId;
+            const saveBtn = document.getElementById('saveMenuBtn');
+            saveBtn.dataset.mode = 'add';
+            delete saveBtn.dataset.menuId;
             openModal('menuModal');
         }
 
-        // Edit menu
         function editMenu(menuId) {
             const menu = appData.menus.find(m => m.id === menuId);
-            
             if (menu) {
                 document.getElementById('menuModalTitle').textContent = 'Edit Menu';
                 document.getElementById('menuName').value = menu.name;
@@ -2528,15 +2242,13 @@
                 document.getElementById('menuImage').value = menu.image || '';
                 document.getElementById('menuDescription').value = menu.description || '';
                 document.getElementById('menuStock').value = menu.stock || 0;
-                
-                document.getElementById('saveMenuBtn').dataset.mode = 'edit';
-                document.getElementById('saveMenuBtn').dataset.menuId = menuId;
-                
+                const saveBtn = document.getElementById('saveMenuBtn');
+                saveBtn.dataset.mode = 'edit';
+                saveBtn.dataset.menuId = menuId;
                 openModal('menuModal');
             }
         }
 
-        // Hapus menu
         function deleteMenu(menuId) {
             if (confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
                 appData.menus = appData.menus.filter(m => m.id !== menuId);
@@ -2546,266 +2258,155 @@
             }
         }
 
-        // Simpan menu (tambah/edit)
         function saveMenu() {
             const mode = document.getElementById('saveMenuBtn').dataset.mode;
             const name = document.getElementById('menuName').value.trim();
             const price = parseInt(document.getElementById('menuPrice').value);
-            const category = document.getElementById('menuCategory').value;
-            const image = document.getElementById('menuImage').value.trim();
-            const description = document.getElementById('menuDescription').value.trim();
-            const stock = parseInt(document.getElementById('menuStock').value) || 0;
-            
-            if (!name || isNaN(price)) {
-                showToast('Nama dan harga menu harus diisi dengan benar', 'error');
-                return;
-            }
-            
+            if (!name || isNaN(price)) return showToast('Nama dan harga menu harus diisi dengan benar', 'error');
+            const menuData = {
+                name, price,
+                category: document.getElementById('menuCategory').value,
+                image: document.getElementById('menuImage').value.trim(),
+                description: document.getElementById('menuDescription').value.trim(),
+                stock: parseInt(document.getElementById('menuStock').value) || 0
+            };
             if (mode === 'add') {
-                const newMenu = {
-                    id: appData.menus.length > 0 ? Math.max(...appData.menus.map(m => m.id)) + 1 : 1,
-                    name,
-                    price,
-                    category,
-                    image,
-                    description,
-                    stock
-                };
-                
-                appData.menus.push(newMenu);
+                menuData.id = appData.menus.length > 0 ? Math.max(...appData.menus.map(m => m.id)) + 1 : 1;
+                appData.menus.push(menuData);
                 showToast('Menu berhasil ditambahkan', 'success');
             } else {
                 const menuId = parseInt(document.getElementById('saveMenuBtn').dataset.menuId);
                 const menuIndex = appData.menus.findIndex(m => m.id === menuId);
-                
                 if (menuIndex !== -1) {
-                    appData.menus[menuIndex] = {
-                        ...appData.menus[menuIndex],
-                        name,
-                        price,
-                        category,
-                        image,
-                        description,
-                        stock
-                    };
-                    
+                    appData.menus[menuIndex] = { ...appData.menus[menuIndex], ...menuData };
                     showToast('Menu berhasil diperbarui', 'success');
                 }
             }
-            
             saveData();
             renderMenus();
             closeModal('menuModal');
         }
 
-        // Kelola kategori
         function manageCategories() {
             const categoriesTable = document.getElementById('categoriesTable');
             categoriesTable.innerHTML = '';
-            
             appData.categories.forEach(category => {
                 const menuCount = appData.menus.filter(m => m.category === category).length;
-                
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
-                    <td>${menuCount} menu</td>
-                    <td>
-                        <button class="action-btn delete-btn" data-category="${category}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                
+                row.innerHTML = `<td>${category.charAt(0).toUpperCase() + category.slice(1)}</td><td>${menuCount} menu</td><td><button class="action-btn delete-btn" data-category="${category}"><i class="fas fa-trash"></i></button></td>`;
                 categoriesTable.appendChild(row);
             });
-            
             openModal('categoriesModal');
         }
 
-        // Tambah kategori
         function addCategory() {
             const categoryName = document.getElementById('newCategoryName').value.trim().toLowerCase();
-            
-            if (!categoryName) {
-                showToast('Nama kategori harus diisi', 'error');
-                return;
-            }
-            
-            if (appData.categories.includes(categoryName)) {
-                showToast('Kategori sudah ada', 'error');
-                return;
-            }
-            
+            if (!categoryName) return showToast('Nama kategori harus diisi', 'error');
+            if (appData.categories.includes(categoryName)) return showToast('Kategori sudah ada', 'error');
             appData.categories.push(categoryName);
             document.getElementById('newCategoryName').value = '';
             saveData();
-            manageCategories(); // Re-render the category list
+            manageCategories();
             showToast('Kategori berhasil ditambahkan', 'success');
         }
 
-        // Hapus kategori
         function deleteCategory(categoryName) {
             const menuCount = appData.menus.filter(m => m.category === categoryName).length;
-            
-            if (menuCount > 0) {
-                showToast(`Tidak dapat menghapus kategori yang masih memiliki menu`, 'error');
-                return;
-            }
-            
+            if (menuCount > 0) return showToast(`Tidak dapat menghapus kategori yang masih memiliki menu`, 'error');
             if (confirm(`Apakah Anda yakin ingin menghapus kategori "${categoryName}"?`)) {
                 appData.categories = appData.categories.filter(c => c !== categoryName);
                 saveData();
-                manageCategories(); // Re-render the category list
+                manageCategories();
                 showToast('Kategori berhasil dihapus', 'success');
             }
         }
 
-        // Kelola member
         function manageMembers() {
             const membersTable = document.getElementById('membersTable');
             membersTable.innerHTML = '';
-            
             appData.members.forEach(member => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${member.id}</td>
-                    <td>${member.name}</td>
-                    <td>${member.phone || '-'}</td>
-                    <td>${member.points || 0}</td>
-                    <td class="d-flex gap-2">
-                        <button class="action-btn edit-btn" data-member-id="${member.id}" title="Edit Member">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn delete-btn" data-member-id="${member.id}" title="Hapus Member">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="action-btn" style="background-color: var(--primary);" data-member-id="${member.id}" title="Cetak KTA">
-                            <i class="fas fa-id-card"></i>
-                        </button>
-                    </td>
-                `;
-                
+                row.innerHTML = `<td>${member.id}</td><td>${member.name}</td><td>${member.phone || '-'}</td><td>${member.points || 0}</td><td class="d-flex gap-2"><button class="action-btn edit-btn" data-member-id="${member.id}" title="Edit Member"><i class="fas fa-edit"></i></button><button class="action-btn delete-btn" data-member-id="${member.id}" title="Hapus Member"><i class="fas fa-trash"></i></button><button class="action-btn" style="background-color: var(--primary);" data-member-id="${member.id}" title="Cetak KTA"><i class="fas fa-id-card"></i></button></td>`;
                 membersTable.appendChild(row);
             });
-            
             openModal('membersModal');
         }
 
-        // Tambah member
         function addMember() {
             document.getElementById('memberModalTitle').textContent = 'Tambah Member';
             document.getElementById('memberForm').reset();
-            document.getElementById('saveMemberBtn').dataset.mode = 'add';
-            delete document.getElementById('saveMemberBtn').dataset.memberId;
+            const saveBtn = document.getElementById('saveMemberBtn');
+            saveBtn.dataset.mode = 'add';
+            delete saveBtn.dataset.memberId;
             openModal('memberModal');
         }
 
-        // Simpan member
         function saveMember() {
-            const mode = document.getElementById('saveMemberBtn').dataset.mode;
             const name = document.getElementById('memberName').value.trim();
-            const phone = document.getElementById('memberPhone').value.trim();
-            const email = document.getElementById('memberEmail').value.trim();
-            const address = document.getElementById('memberAddress').value.trim();
-            
-            if (!name) {
-                showToast('Nama member harus diisi', 'error');
-                return;
-            }
-            
-            if (mode === 'add') {
-                const newMember = {
-                    id: 'MEM-' + (appData.members.length > 0 ? Math.max(...appData.members.map(m => parseInt(m.id.split('-')[1]))) + 1 : 1).toString().padStart(3, '0'),
-                    name,
-                    phone,
-                    email,
-                    address,
-                    joinDate: new Date().toISOString(),
-                    points: 0
-                };
-                
-                appData.members.push(newMember);
-                showToast('Member berhasil ditambahkan', 'success');
-            }
-            
+            if (!name) return showToast('Nama member harus diisi', 'error');
+            const newMember = {
+                id: 'MEM-' + (appData.members.length > 0 ? Math.max(...appData.members.map(m => parseInt(m.id.split('-')[1]))) + 1 : 1).toString().padStart(3, '0'),
+                name, phone: document.getElementById('memberPhone').value.trim(),
+                email: document.getElementById('memberEmail').value.trim(), address: document.getElementById('memberAddress').value.trim(),
+                joinDate: new Date().toISOString(), points: 0
+            };
+            appData.members.push(newMember);
             saveData();
-            manageMembers(); // Re-render member list
+            manageMembers();
             closeModal('memberModal');
+            showToast('Member berhasil ditambahkan', 'success');
         }
 
-        // Tampilkan KTA member
         function showKta(memberId) {
             const member = appData.members.find(m => m.id === memberId);
-            
             if (member) {
                 document.getElementById('ktaMemberName').textContent = member.name;
                 document.getElementById('ktaMemberId').textContent = `ID: ${member.id}`;
                 document.getElementById('ktaQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${member.id}`;
-                
                 openModal('ktaModal');
             }
         }
 
-        // Kelola info restoran
         function manageStoreInfo() {
             document.getElementById('storeName').value = appData.storeInfo.name;
             document.getElementById('storeAddress').value = appData.storeInfo.address;
             document.getElementById('storePhone').value = appData.storeInfo.phone;
             document.getElementById('storeLogo').value = appData.storeInfo.logo;
-            
             openModal('storeInfoModal');
         }
 
-        // Simpan info restoran
         function saveStoreInfo() {
             appData.storeInfo.name = document.getElementById('storeName').value;
             appData.storeInfo.address = document.getElementById('storeAddress').value;
             appData.storeInfo.phone = document.getElementById('storePhone').value;
             appData.storeInfo.logo = document.getElementById('storeLogo').value;
-            
             saveData();
-            
             updateStoreInfoUI();
             updateLogoInApp();
-            
             closeModal('storeInfoModal');
             showToast('Informasi restoran berhasil diperbarui', 'success');
         }
 
-        // Backup data
         function backupData() {
             const dataStr = JSON.stringify(appData);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `backup-cafe-resto-${new Date().toISOString().split('T')[0]}.json`;
-            
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.setAttribute('download', `backup-cafe-resto-${new Date().toISOString().split('T')[0]}.json`);
             linkElement.click();
-            
             showToast('Backup data berhasil diunduh', 'success');
         }
 
-        // Restore data
         function restoreData(event) {
             const file = event.target.files[0];
-            
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const restoredData = JSON.parse(e.target.result);
-                    // Validasi sederhana
                     if (restoredData.menus && restoredData.settings) {
                         appData = restoredData;
                         saveData();
-                        // Re-initialize a part of the app state
-                        initializeData(); 
-                        renderMenus();
-                        resetOrder();
                         showToast('Data berhasil dipulihkan. Aplikasi akan dimuat ulang.', 'success');
                         setTimeout(() => location.reload(), 1500);
                     } else {
@@ -2816,12 +2417,9 @@
                 }
             };
             reader.readAsText(file);
-            
-            // Reset input file
             event.target.value = '';
         }
 
-        // Reset data
         function resetData() {
             if (confirm('Apakah Anda yakin ingin mereset semua data? Tindakan ini tidak dapat dibatalkan!')) {
                 localStorage.removeItem('cafeRestoData');
@@ -2830,63 +2428,54 @@
             }
         }
 
-        // Login
+        // ==========================================================
+        // === PERUBAHAN BESAR: FUNGSI LOGIN TANPA PASSWORD ===
+        // ==========================================================
         function login(event) {
             event.preventDefault();
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Gunakan password dari appData yang sudah diinisialisasi dengan benar
-            if (password === appData.settings.adminPassword) {
-                appData.user = {
-                    username: username,
-                    role: 'admin'
-                };
-                
-                document.getElementById('loggedInUser').textContent = username;
-                document.getElementById('loginModal').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                
-                // Update tanggal
-                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                
-                showToast(`Selamat datang, ${username}!`, 'success');
-                document.getElementById('adminPanel').style.display = 'block'; // Tampilkan panel admin saat login
-            } else {
-                showToast('Username atau Password salah', 'error');
+            if (!username) {
+                showToast('Nama kasir tidak boleh kosong!', 'error');
+                usernameInput.focus();
+                return;
             }
+            
+            // Tidak ada lagi pengecekan password, langsung berhasil
+            appData.user = { username: username, role: 'admin' };
+            
+            document.getElementById('loggedInUser').textContent = username;
+            closeModal('loginModal');
+            document.getElementById('mainApp').style.display = 'block';
+            
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            
+            showToast(`Selamat datang, ${username}!`, 'success');
+            document.getElementById('adminPanel').style.display = 'block';
         }
+        // === AKHIR DARI PERUBAHAN FUNGSI LOGIN ===
 
-        // Logout
         function logout() {
             if (confirm('Apakah Anda yakin ingin logout?')) {
                 appData.user = null;
-                document.getElementById('loginModal').style.display = 'flex';
+                openModal('loginModal');
                 document.getElementById('mainApp').style.display = 'none';
                 document.getElementById('loginForm').reset();
             }
         }
 
-        // Inisialisasi aplikasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
             renderMenus();
             renderOrder();
             
-            // Event listener untuk login
             document.getElementById('loginForm').addEventListener('submit', login);
             document.getElementById('logoutBtn').addEventListener('click', logout);
-            
-            // Event listener untuk pencarian menu
             document.getElementById('menuSearch').addEventListener('input', renderMenus);
             
-            // Event listener untuk filter kategori
             document.querySelectorAll('.filter-chip').forEach(chip => {
                 chip.addEventListener('click', function() {
                     document.querySelector('.filter-chip.active').classList.remove('active');
@@ -2895,125 +2484,99 @@
                 });
             });
             
-            // Event listener untuk tipe pesanan
             document.querySelectorAll('.order-type-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelector('.order-type-btn.active').classList.remove('active');
                     this.classList.add('active');
                     appData.currentOrder.type = this.dataset.type;
-                    
-                    document.getElementById('tableNumberContainer').style.display = (appData.currentOrder.type === 'dinein') ? 'block' : 'none';
+                    document.getElementById('tableNumberContainer').style.display = (this.dataset.type === 'dinein') ? 'block' : 'none';
                 });
             });
-            
-            // Event listener untuk nomor meja
-            document.getElementById('tableNumber').addEventListener('change', function() {
-                appData.currentOrder.tableNumber = this.value;
-            });
-            
-            // Event listener untuk catatan pesanan
-            document.getElementById('orderNote').addEventListener('input', function() {
-                appData.currentOrder.note = this.value;
-            });
-            
-            // Event listener untuk tombol checkout
+
+            document.getElementById('tableNumber').addEventListener('change', function() { appData.currentOrder.tableNumber = this.value; });
+            document.getElementById('orderNote').addEventListener('input', function() { appData.currentOrder.note = this.value; });
             document.getElementById('checkoutBtn').addEventListener('click', checkout);
-            
-            // Event listener untuk tombol kosongkan pesanan
-            document.getElementById('clearOrderBtn').addEventListener('click', function() {
+            document.getElementById('clearOrderBtn').addEventListener('click', () => {
                 if (appData.currentOrder.items.length > 0 && confirm('Apakah Anda yakin ingin mengosongkan pesanan?')) {
                     resetOrder();
                     showToast('Pesanan dikosongkan', 'warning');
                 }
             });
             
-            // Event listener untuk modal menu
             document.getElementById('addMenuBtn').addEventListener('click', addMenu);
             document.getElementById('saveMenuBtn').addEventListener('click', saveMenu);
             document.getElementById('cancelMenuBtn').addEventListener('click', () => closeModal('menuModal'));
             
-            // Event listener untuk modal pembayaran
             document.getElementById('confirmPaymentBtn').addEventListener('click', confirmPayment);
             document.getElementById('cancelPaymentBtn').addEventListener('click', () => closeModal('paymentModal'));
             
-            // Event listener untuk jumlah bayar
             document.getElementById('amountPaid').addEventListener('input', function() {
                 const amountPaid = parseFloat(this.value) || 0;
                 const totalText = document.getElementById('paymentTotal').textContent;
                 const total = parseFloat(totalText.replace(/[^0-9,-]+/g,"").replace(",", ".")) || 0;
                 const change = amountPaid - total;
-                
                 document.getElementById('changeAmount').value = formatRupiah(change > 0 ? change : 0);
                 document.getElementById('confirmPaymentBtn').disabled = amountPaid < total;
             });
-            
-            // Event listener untuk tombol quick cash
+
             document.querySelectorAll('.quick-cash-buttons .btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const amount = parseInt(this.dataset.amount);
                     const amountPaidInput = document.getElementById('amountPaid');
-                    amountPaidInput.value = amount;
-                    amountPaidInput.dispatchEvent(new Event('input')); // Trigger event input
+                    amountPaidInput.value = this.dataset.amount;
+                    amountPaidInput.dispatchEvent(new Event('input'));
                 });
             });
-            
-            // Event listener untuk modal struk
+
             document.getElementById('closeReceiptBtn').addEventListener('click', () => closeModal('receiptModal'));
             document.getElementById('printReceiptBtn').addEventListener('click', printReceipt);
-            
-            // Event listener untuk modal KTA
             document.getElementById('closeKtaBtn').addEventListener('click', () => closeModal('ktaModal'));
             document.getElementById('printKtaBtn').addEventListener('click', printKta);
             
-            // Event listener untuk admin panel
             document.getElementById('manageCategoriesBtn').addEventListener('click', manageCategories);
             document.getElementById('viewReportsBtn').addEventListener('click', () => openModal('reportsModal'));
             document.getElementById('manageMembersBtn').addEventListener('click', manageMembers);
             document.getElementById('manageStoreInfoBtn').addEventListener('click', manageStoreInfo);
             document.getElementById('controlPanelBtn').addEventListener('click', () => openModal('controlPanelModal'));
             
-            // Event listener untuk backup dan restore
             document.getElementById('backupDataBtn').addEventListener('click', backupData);
             document.getElementById('restoreFile').addEventListener('change', restoreData);
             document.getElementById('resetDataBtn').addEventListener('click', resetData);
             
-            // Event listener untuk modal kategori
             document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
             document.getElementById('closeCategoriesBtn').addEventListener('click', () => closeModal('categoriesModal'));
             
-            // Event listener untuk modal member
             document.getElementById('addMemberBtn').addEventListener('click', addMember);
             document.getElementById('saveMemberBtn').addEventListener('click', saveMember);
             document.getElementById('cancelMemberBtn').addEventListener('click', () => closeModal('memberModal'));
             document.getElementById('closeMembersBtn').addEventListener('click', () => closeModal('membersModal'));
             
-            // Event listener untuk modal info restoran
             document.getElementById('saveStoreInfoBtn').addEventListener('click', saveStoreInfo);
             document.getElementById('closeStoreInfoBtn').addEventListener('click', () => closeModal('storeInfoModal'));
             
-            // Event listener untuk tombol tutup modal
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    closeModal(this.closest('.modal').id);
-                });
+            document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', function() { closeModal(this.closest('.modal').id); }));
+            window.addEventListener('click', (event) => { if (event.target.classList.contains('modal')) closeModal(event.target.id); });
+
+            document.getElementById('orderItemsContainer').addEventListener('click', (e) => {
+                const target = e.target.closest('.qty-btn, .remove-btn');
+                if (!target) return;
+                const index = parseInt(target.parentElement.querySelector('.qty-input, .remove-btn').dataset.index);
+                if (target.classList.contains('minus-btn')) updateQuantity(index, -1);
+                else if (target.classList.contains('plus-btn')) updateQuantity(index, 1);
+                else if (target.classList.contains('remove-btn')) removeFromOrder(index);
             });
-            
-            // Event listener untuk klik di luar modal
-            window.addEventListener('click', function(event) {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    if (event.target === modal) {
-                        closeModal(modal.id);
-                    }
-                });
+             document.getElementById('orderItemsContainer').addEventListener('change', (e) => {
+                if(e.target.classList.contains('qty-input')){
+                    const index = parseInt(e.target.dataset.index);
+                    const newQty = parseInt(e.target.value);
+                    if (newQty < 1) e.target.value = 1;
+                    updateQuantity(index, 0, newQty < 1 ? 1 : newQty);
+                }
             });
-            
-            // Event listener delegasi untuk tabel member
+
             document.getElementById('membersTable').addEventListener('click', function(e) {
                 const target = e.target.closest('button');
                 if (!target) return;
-                
                 const memberId = target.dataset.memberId;
-                
                 if (target.classList.contains('delete-btn')) {
                     if (confirm('Apakah Anda yakin ingin menghapus member ini?')) {
                         appData.members = appData.members.filter(m => m.id !== memberId);
@@ -3028,43 +2591,31 @@
                 }
             });
             
-            // Event listener delegasi untuk tabel kategori
             document.getElementById('categoriesTable').addEventListener('click', function(e) {
                 const target = e.target.closest('button.delete-btn');
-                if (!target) return;
-                
-                const category = target.dataset.category;
-                deleteCategory(category);
+                if (target) deleteCategory(target.dataset.category);
             });
             
-            // Pencarian member
             document.getElementById('memberSearch').addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 const resultsContainer = document.getElementById('memberSearchResults');
-                
                 if (searchTerm.length < 2) {
                     resultsContainer.style.display = 'none';
                     appData.currentOrder.memberId = null;
                     return;
                 }
-                
-                const results = appData.members.filter(member => 
-                    member.name.toLowerCase().includes(searchTerm) || 
-                    member.id.toLowerCase().includes(searchTerm)
-                );
-                
+                const results = appData.members.filter(m => m.name.toLowerCase().includes(searchTerm) || m.id.toLowerCase().includes(searchTerm));
                 resultsContainer.innerHTML = '';
-                
                 if (results.length > 0) {
                     results.forEach(member => {
                         const item = document.createElement('div');
                         item.className = 'member-search-item';
                         item.textContent = `${member.name} (${member.id})`;
-                        item.addEventListener('click', function() {
-                            document.getElementById('memberSearch').value = `${member.name} (${member.id})`;
+                        item.onclick = () => {
+                            this.value = `${member.name} (${member.id})`;
                             appData.currentOrder.memberId = member.id;
                             resultsContainer.style.display = 'none';
-                        });
+                        };
                         resultsContainer.appendChild(item);
                     });
                     resultsContainer.style.display = 'block';
@@ -3073,14 +2624,8 @@
                 }
             });
             
-            // Sembunyikan hasil pencarian member saat klik di luar
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.member-search-container')) {
-                    document.getElementById('memberSearchResults').style.display = 'none';
-                }
-            });
+            document.addEventListener('click', (e) => { if (!e.target.closest('.member-search-container')) document.getElementById('memberSearchResults').style.display = 'none'; });
             
-            // Tampilkan/ sembunyikan panel admin
             document.getElementById('toggleAdminPanelBtn').addEventListener('click', function() {
                 const adminPanel = document.getElementById('adminPanel');
                 const isHidden = adminPanel.style.display === 'none';
@@ -3088,28 +2633,19 @@
                 this.textContent = isHidden ? 'Sembunyikan Panel Admin' : 'Tampilkan Panel Admin';
             });
             
-            // Event listener untuk info pesanan dapur
             document.getElementById('kitchenDisplayBtn').addEventListener('click', function() {
                 const kitchenOrders = document.getElementById('kitchenOrders');
                 kitchenOrders.innerHTML = '';
-                
                 const today = new Date().toISOString().split('T')[0];
                 const todayTransactions = appData.transactions.filter(t => t.date.startsWith(today));
-                
                 if (todayTransactions.length === 0) {
                     kitchenOrders.innerHTML = '<p class="text-center">Belum ada pesanan yang selesai hari ini.</p>';
                 } else {
-                    todayTransactions.forEach(transaction => {
-                        const statusItem = document.createElement('div');
-                        statusItem.className = 'status-item';
-                        statusItem.innerHTML = `
-                            <div>
-                                <strong>#${transaction.id.substring(0, 8)}</strong><br>
-                                <small>${transaction.orderType === 'dinein' ? 'Meja ' + transaction.tableNumber : 'Bungkus'} - ${new Date(transaction.date).toLocaleTimeString()}</small>
-                            </div>
-                            <div class="status-ready">Selesai</div>
-                        `;
-                        kitchenOrders.appendChild(statusItem);
+                    todayTransactions.forEach(t => {
+                        const item = document.createElement('div');
+                        item.className = 'status-item';
+                        item.innerHTML = `<div><strong>#${t.id.substring(0, 8)}</strong><br><small>${t.orderType === 'dinein' ? 'Meja ' + t.tableNumber : 'Bungkus'} - ${new Date(t.date).toLocaleTimeString()}</small></div><div class="status-ready">Selesai</div>`;
+                        kitchenOrders.appendChild(item);
                     });
                 }
                 openModal('kitchenModal');
@@ -3117,62 +2653,36 @@
             
             document.getElementById('closeKitchenBtn').addEventListener('click', () => closeModal('kitchenModal'));
             
-            // Event listener untuk donasi
             document.getElementById('donationBtn').addEventListener('click', () => openModal('donationModal'));
-            
             document.getElementById('donationMethod').addEventListener('change', function() {
-                const method = this.value;
-                document.getElementById('donationQrCode').style.display = method === 'qris' ? 'block' : 'none';
-                document.getElementById('donationBankInfo').style.display = method === 'transfer' ? 'block' : 'none';
+                document.getElementById('donationQrCode').style.display = this.value === 'qris' ? 'block' : 'none';
+                document.getElementById('donationBankInfo').style.display = this.value === 'transfer' ? 'block' : 'none';
             });
-            
-            document.getElementById('confirmDonationBtn').addEventListener('click', function() {
-                const amount = document.getElementById('donationAmount').value;
-                const method = document.getElementById('donationMethod').value;
-                showToast(`Terima kasih atas donasi ${formatRupiah(amount)} via ${method.toUpperCase()}`, 'success');
+            document.getElementById('confirmDonationBtn').addEventListener('click', () => {
+                showToast(`Terima kasih atas donasi Anda!`, 'success');
                 closeModal('donationModal');
             });
-            
             document.getElementById('closeDonationBtn').addEventListener('click', () => closeModal('donationModal'));
             document.getElementById('closeControlPanelBtn').addEventListener('click', () => closeModal('controlPanelModal'));
             
-            // Event listener untuk laporan
             document.getElementById('generateReportBtn').addEventListener('click', function() {
                 const reportDate = document.getElementById('reportDate').value;
-                if (!reportDate) {
-                    showToast('Pilih tanggal terlebih dahulu', 'error');
-                    return;
-                }
-                
-                const filteredTransactions = appData.transactions.filter(t => t.date.startsWith(reportDate));
-                const totalRevenue = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
-                
-                document.getElementById('reportTransactionCount').textContent = filteredTransactions.length;
+                if (!reportDate) return showToast('Pilih tanggal terlebih dahulu', 'error');
+                const filtered = appData.transactions.filter(t => t.date.startsWith(reportDate));
+                const totalRevenue = filtered.reduce((sum, t) => sum + t.total, 0);
+                document.getElementById('reportTransactionCount').textContent = filtered.length;
                 document.getElementById('reportTotalRevenue').textContent = formatRupiah(totalRevenue);
-                document.getElementById('reportAverageTransaction').textContent = formatRupiah(
-                    filteredTransactions.length > 0 ? totalRevenue / filteredTransactions.length : 0
-                );
-                
-                const transactionsTable = document.getElementById('reportTransactions');
-                transactionsTable.innerHTML = '';
-                
-                filteredTransactions.forEach((transaction, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${new Date(transaction.date).toLocaleTimeString('id-ID')}</td>
-                        <td>${formatRupiah(transaction.total)}</td>
-                        <td>${transaction.cashier}</td>
-                    `;
-                    transactionsTable.appendChild(row);
+                document.getElementById('reportAverageTransaction').textContent = formatRupiah(filtered.length > 0 ? totalRevenue / filtered.length : 0);
+                const tableBody = document.getElementById('reportTransactions');
+                tableBody.innerHTML = '';
+                filtered.forEach((t, i) => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `<td>${i + 1}</td><td>${new Date(t.date).toLocaleTimeString('id-ID')}</td><td>${formatRupiah(t.total)}</td><td>${t.cashier}</td>`;
                 });
-                
                 document.getElementById('reportDetails').style.display = 'block';
             });
             
             document.getElementById('closeReportsBtn').addEventListener('click', () => closeModal('reportsModal'));
-            
-            // Set tanggal laporan default ke hari ini
             document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
         });
     </script>
