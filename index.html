@@ -1242,6 +1242,15 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
                 </div>
+                
+                <div class="form-group mt-3">
+                    <label for="captcha" class="form-label">Verifikasi Keamanan</label>
+                    <div class="d-flex align-center gap-2">
+                        <canvas id="captchaCanvas" width="150" height="40" style="border: 1px solid #ddd; border-radius: var(--rounded-sm);"></canvas>
+                        <button type="button" id="reloadCaptchaBtn" class="btn btn-sm" style="width: auto; background-color: var(--gray);"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <input type="text" id="captchaInput" class="form-control mt-2" placeholder="Masukkan kode di atas" required autocomplete="off">
+                </div>
                 <button type="submit" class="btn mt-3">Login</button>
             </form>
         </div>
@@ -1836,6 +1845,7 @@
         // --- [PERBAIKAN & REVISI FINAL] ---
         // 1. Logo diperbaiki dengan menyematkan gambar (Base64) agar selalu muncul.
         // 2. Kode cetak struk disempurnakan pada bagian CSS @media print.
+        // 3. Penambahan sistem verifikasi CAPTCHA pada halaman login.
 
         // Set locale to Indonesian
         moment.locale('id');
@@ -1846,7 +1856,7 @@
         // --- [PERBAIKAN LOGO] ---
         // Logo ini akan digunakan di seluruh aplikasi (header, struk, KTA) untuk memastikan selalu tampil.
         // Data Base64 yang lama telah diganti dengan yang valid.
-        const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAUlSURBVHhe7Zx/aBxlHMe/5+7u7t4WLbW1pW29FVTqC5UgxG8VKkFBEfFPQXxQCyEiCFYQUUHwT0EQfCiCV4sIKFi1QkEQg1gVNFJaCVbUAqGlhVptU7ud3d3d+Xl+Ntnb3d1d3F1yPtj/zTN/nu/3e2/ze2a+Wf+L2dYtSRJ1pVm9DOnj/U5g10hKElv1GZNfQ/b2Z2t8Rk2WNk3SQq3WAaH9+lB6lBw7qj2gT/e/sC7tqQ4gXlKyx5k/Vd3b+Y/V0Q0G05o0KkkTtJW2LNN2lHyG2hvoX+NT03d5g/B/B4QLgOEB8QEA/j/a+w8gZhp4gWkGnkDMO/A6A78z8A4D/wH43wH+F+B/BvyPgfeZkAC2hAQA6gHBCwDBCwBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgD-BCg"
+        const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAUlSURBVHhe7Zx/aBxlHMe/5+7u7t4WLbW1pW29FVTqC5UgxG8VKkFBEfFPQXxQCyEiCFYQUUHwT0EQfCiCV4sIKFi1QkEQg1gVNFJaCVbUAqGlhVptU7ud3d3d+Xl+Ntnb3d1d3F1yPtj/zTN/nu/3e2/ze2a+Wf+L2dYtSRJ1pVm9DOnj/U5g10hKElv1GZNfQ/b2Z2t8Rk2WNk3SQq3WAaH9+lB6lBw7qj2gT/e/sC7tqQ4gXlKyx5k/Vd3b+Y/V0Q0G05o0KkkTtJW2LNN2lHyG2hvoX+NT03d5g/B/B4QLgOEB8QEA/j/a+w8gZhp4gWkGnkDMO/A6A78z8A4D/wH43wH+F+B/BvyPgfeZkAC2hAQA6gHBCwDBCwBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgDBCgD-BCg';
         
         // Data storage
         const STORAGE_KEYS = {
@@ -1859,6 +1869,17 @@
             USERS: 'warungmakan_users',
             MEMBERS: 'warungmakan_members'
         };
+
+        /*
+            --- [INFORMASI LOGIN DEFAULT] ---
+            Aplikasi ini memiliki 2 pengguna bawaan:
+            1. Admin
+               - Username: Admin
+               - Password: Admin.1945
+            2. Kasir
+               - Username: kasir
+               - Password: kasir123
+        */
         
         // Default admin user (username: Admin, password: Admin.1945)
         const DEFAULT_ADMIN = {
@@ -1894,6 +1915,7 @@
         let menus, categories, orders, settings, users, members, currentUser, currentOrder;
         let kitchenInterval;
         let passwordPromptCallback = null;
+        let captchaText = '';
         
         // Initialize data
         function initializeData() {
@@ -1963,21 +1985,34 @@
                 $('#loginModal').hide();
                 $('#mainApp').show();
                 initializeApp();
+            } else {
+                generateCaptcha();
             }
             
             setInterval(updateCurrentDate, 60000);
             
-            // Login form handler
+            // --- [PERBAIKAN] REVISI LOGIN HANDLER DENGAN CAPTCHA ---
             $('#loginForm').submit(function(e) {
                 e.preventDefault();
                 const $loginBtn = $(this).find('button[type="submit"]');
                 const originalText = $loginBtn.html();
                 setButtonLoading($loginBtn, true);
+
                 setTimeout(() => {
                     try {
+                        const enteredCaptcha = $('#captchaInput').val().trim();
+                        if (enteredCaptcha.toLowerCase() !== captchaText.toLowerCase()) {
+                            showToast('Kode verifikasi (CAPTCHA) salah.', 'error');
+                            generateCaptcha();
+                            $('#captchaInput').val('');
+                            setButtonLoading($loginBtn, false, originalText);
+                            return; 
+                        }
+
                         const username = $('#username').val().trim();
                         const password = $('#password').val().trim();
                         const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+                        
                         if (user && CryptoJS.SHA256(password).toString() === user.password) {
                             currentUser = user;
                             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
@@ -1988,15 +2023,22 @@
                             showToast(`Selamat datang, ${currentUser.name}!`, 'success');
                         } else {
                             showToast('Username atau password salah', 'error');
+                            generateCaptcha();
+                            $('#captchaInput').val('');
                         }
                     } catch (err) {
                         showToast('Error: Gagal memuat library penting. Cek koneksi internet.', 'error');
                         console.error("Login error:", err);
                     } finally {
-                        setButtonLoading($loginBtn, false, originalText);
+                        if ($loginBtn.prop('disabled')) {
+                           setButtonLoading($loginBtn, false, originalText);
+                        }
                     }
                 }, 500);
             });
+            
+            $('#reloadCaptchaBtn').click(generateCaptcha);
+            // --- AKHIR DARI PERBAIKAN LOGIN ---
             
             // Logout handler
             $('#logoutBtn').click(function(e) {
@@ -2007,6 +2049,8 @@
                     $('#loginModal').fadeIn();
                     $('#username').val('');
                     $('#password').val('');
+                    $('#captchaInput').val('');
+                    generateCaptcha();
                 });
                 showToast('Anda telah logout', 'info');
             });
@@ -2982,6 +3026,49 @@
         function saveSettings() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); }
         function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
         function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
+
+        // --- [PENAMBAHAN] FUNGSI UNTUK CAPTCHA ---
+        function generateCaptcha() {
+            const canvas = document.getElementById('captchaCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            captchaText = '';
+            for (let i = 0; i < 6; i++) {
+                captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.3 + 0.1})`;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            ctx.font = 'bold 24px Poppins';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for (let i = 0; i < captchaText.length; i++) {
+                const char = captchaText[i];
+                const x = 20 + (i * 22);
+                const y = canvas.height / 2 + (Math.random() * 10 - 5);
+                const angle = Math.random() * 0.5 - 0.25;
+                ctx.fillStyle = `rgb(${Math.random()*100}, ${Math.random()*100}, ${Math.random()*100})`;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.fillText(char, 0, 0);
+                ctx.restore();
+            }
+        }
+        // --- AKHIR PENAMBAHAN FUNGSI CAPTCHA ---
     </script>
 </body>
 </html>
