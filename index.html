@@ -1272,7 +1272,6 @@
                 </div>
                 
                 <div class="filter-row">
-                    <div class="filter-chip active" data-category="all">Semua</div>
                     </div>
                 
                 <div class="menu-grid" id="menuGrid">
@@ -1396,10 +1395,6 @@
                     <div class="form-group">
                         <label for="menuCategory" class="form-label">Kategori</label>
                         <select id="menuCategory" class="form-control" required>
-                            <option value="makanan">Makanan</option>
-                            <option value="minuman">Minuman</option>
-                            <option value="snack">Snack</option>
-                            <option value="lainnya">Lainnya</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1872,10 +1867,10 @@
     <div id="print-container" style="display: none;"></div>
 
     <script>
-        // Data aplikasi
-        let appData = {
+        // === [REVISI] STRUKTUR DATA UTAMA ===
+        // Struktur data default untuk memastikan aplikasi memiliki fondasi yang benar.
+        const defaultAppData = {
             menus: [],
-            orders: [],
             transactions: [],
             members: [],
             categories: ['makanan', 'minuman', 'snack', 'lainnya'],
@@ -1896,43 +1891,52 @@
             user: null,
             settings: {
                 taxRate: 0.1,
-                // Password tidak lagi digunakan, tapi propertinya dibiarkan untuk kompatibilitas data lama
                 adminPassword: 'admin123' 
             }
         };
 
-        // Inisialisasi data default jika tidak ada di localStorage
+        // Variabel utama aplikasi, akan diisi dari localStorage atau data default.
+        let appData = JSON.parse(JSON.stringify(defaultAppData));
+
+        // === [REVISI & PERBAIKAN] FUNGSI INISIALISASI DATA YANG LEBIH AMAN ===
+        // Fungsi ini bertanggung jawab untuk memuat data dari localStorage dengan aman.
+        // Ini adalah perbaikan krusial untuk mencegah error saat data korup atau tidak lengkap.
         function initializeData() {
             const savedData = localStorage.getItem('cafeRestoData');
             
             if (savedData) {
                  try {
                     const parsedData = JSON.parse(savedData);
-                    appData = { ...appData, ...parsedData };
-                    if (parsedData.settings) {
-                        appData.settings = { ...appData.settings, ...parsedData.settings };
-                    }
-                    if (parsedData.storeInfo) {
-                        appData.storeInfo = { ...appData.storeInfo, ...parsedData.storeInfo };
-                    }
-                    if (parsedData.currentOrder) {
-                        appData.currentOrder = { ...appData.currentOrder, ...parsedData.currentOrder };
-                    }
+                    
+                    // Memvalidasi dan menggabungkan setiap bagian data untuk memastikan tipe data benar.
+                    appData.menus = Array.isArray(parsedData.menus) ? parsedData.menus : defaultAppData.menus;
+                    appData.transactions = Array.isArray(parsedData.transactions) ? parsedData.transactions : defaultAppData.transactions;
+                    appData.members = Array.isArray(parsedData.members) ? parsedData.members : defaultAppData.members;
+                    appData.categories = Array.isArray(parsedData.categories) && parsedData.categories.length > 0 ? parsedData.categories : defaultAppData.categories;
+                    
+                    appData.storeInfo = { ...defaultAppData.storeInfo, ...(parsedData.storeInfo || {}) };
+                    appData.settings = { ...defaultAppData.settings, ...(parsedData.settings || {}) };
+                    appData.currentOrder = { ...defaultAppData.currentOrder, ...(parsedData.currentOrder || {}) };
+                    appData.currentOrder.items = Array.isArray(appData.currentOrder.items) ? appData.currentOrder.items : [];
+                    appData.currentOrder.discount = typeof appData.currentOrder.discount === 'number' ? appData.currentOrder.discount : 0;
+
                 } catch (error) {
-                    console.error("Gagal mem-parsing data dari localStorage, menggunakan data default:", error);
+                    console.error("Gagal mem-parsing data dari localStorage, mereset ke data default:", error);
                     setupDefaultData();
-                    saveData();
                 }
             } else {
                 setupDefaultData();
-                saveData();
             }
             
+            saveData();
             updateLogoInApp();
             updateStoreInfoUI();
+            renderCategoryFilters();
         }
 
+        // Mengisi aplikasi dengan data contoh jika tidak ada data yang tersimpan.
         function setupDefaultData() {
+            appData = JSON.parse(JSON.stringify(defaultAppData)); // Reset to default
              appData.menus = [
                 { id: 1, name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', image: 'https://via.placeholder.com/100?text=Nasgor', description: 'Nasi goreng dengan telur, ayam, dan sayuran', stock: 10 },
                 { id: 2, name: 'Mie Ayam', price: 20000, category: 'makanan', image: 'https://via.placeholder.com/100?text=MieAyam', description: 'Mie ayam dengan pangsit dan bakso', stock: 15 },
@@ -1950,6 +1954,8 @@
         function saveData() {
             localStorage.setItem('cafeRestoData', JSON.stringify(appData));
         }
+
+        // === FUNGSI UTAMA & PEMBARUAN UI ===
 
         function updateLogoInApp() {
             const logoUrl = appData.storeInfo.logo || 'https://via.placeholder.com/100?text=LOGO';
@@ -1991,11 +1997,37 @@
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
+        // === [PENYEMPURNAAN] Membuat filter kategori dinamis ===
+        function renderCategoryFilters() {
+            const filterRow = document.querySelector('.filter-row');
+            filterRow.innerHTML = '<div class="filter-chip active" data-category="all">Semua</div>'; // Selalu mulai dengan "Semua"
+            
+            appData.categories.forEach(category => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.dataset.category = category;
+                chip.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                filterRow.appendChild(chip);
+            });
+            
+            // Pasang ulang event listener untuk semua chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    if (document.querySelector('.filter-chip.active')) {
+                        document.querySelector('.filter-chip.active').classList.remove('active');
+                    }
+                    this.classList.add('active');
+                    renderMenus();
+                });
+            });
+        }
+
         function renderMenus() {
             const menuGrid = document.getElementById('menuGrid');
             const menuCount = document.getElementById('menuCount');
             const searchTerm = document.getElementById('menuSearch').value.toLowerCase();
-            const activeCategory = document.querySelector('.filter-chip.active').dataset.category;
+            const activeCategoryChip = document.querySelector('.filter-chip.active');
+            const activeCategory = activeCategoryChip ? activeCategoryChip.dataset.category : 'all';
             
             let filteredMenus = appData.menus.filter(menu => {
                 const matchesSearch = menu.name.toLowerCase().includes(searchTerm) || (menu.description && menu.description.toLowerCase().includes(searchTerm));
@@ -2118,12 +2150,15 @@
 
         function checkout() {
             if (appData.currentOrder.items.length === 0) return showToast('Tidak ada item dalam pesanan', 'error');
-            const total = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * (1 + appData.settings.taxRate) - appData.currentOrder.discount;
+            const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * appData.settings.taxRate;
+            const total = subtotal + tax - appData.currentOrder.discount;
             document.getElementById('paymentTotal').textContent = formatRupiah(total);
             document.getElementById('amountPaid').value = '';
             document.getElementById('changeAmount').value = '';
             document.getElementById('confirmPaymentBtn').disabled = true;
             openModal('paymentModal');
+            setTimeout(() => document.getElementById('amountPaid').focus(), 100);
         }
 
         function confirmPayment() {
@@ -2160,7 +2195,7 @@
         }
 
         function showReceipt(transaction) {
-            document.getElementById('receiptTransactionId').textContent = transaction.id;
+            document.getElementById('receiptTransactionId').textContent = transaction.id.slice(-8).toUpperCase();
             document.getElementById('receiptDate').textContent = new Date(transaction.date).toLocaleString('id-ID');
             document.getElementById('receiptCashier').textContent = transaction.cashier;
             document.getElementById('receiptOrderType').textContent = transaction.orderType === 'dinein' ? 'Makan di Tempat' : 'Bungkus';
@@ -2202,7 +2237,7 @@
         }
 
         function resetOrder() {
-            appData.currentOrder = { items: [], type: 'dinein', tableNumber: '1', memberId: null, note: '', discount: 0 };
+            appData.currentOrder = JSON.parse(JSON.stringify(defaultAppData.currentOrder));
             document.querySelector('.order-type-btn[data-type="dinein"]').click();
             document.getElementById('tableNumber').value = '1';
             document.getElementById('memberSearch').value = '';
@@ -2223,19 +2258,33 @@
         function printReceipt() { printWithContainer('receiptContent'); }
         function printKta() { printWithContainer('ktaCard'); }
 
+        function populateCategoryDropdown() {
+            const select = document.getElementById('menuCategory');
+            select.innerHTML = '';
+            appData.categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+                select.appendChild(option);
+            });
+        }
+
         function addMenu() {
             document.getElementById('menuModalTitle').textContent = 'Tambah Menu';
             document.getElementById('menuForm').reset();
+            populateCategoryDropdown();
             const saveBtn = document.getElementById('saveMenuBtn');
             saveBtn.dataset.mode = 'add';
             delete saveBtn.dataset.menuId;
             openModal('menuModal');
+            setTimeout(() => document.getElementById('menuName').focus(), 100);
         }
 
         function editMenu(menuId) {
             const menu = appData.menus.find(m => m.id === menuId);
             if (menu) {
                 document.getElementById('menuModalTitle').textContent = 'Edit Menu';
+                populateCategoryDropdown();
                 document.getElementById('menuName').value = menu.name;
                 document.getElementById('menuPrice').value = menu.price;
                 document.getElementById('menuCategory').value = menu.category;
@@ -2246,6 +2295,7 @@
                 saveBtn.dataset.mode = 'edit';
                 saveBtn.dataset.menuId = menuId;
                 openModal('menuModal');
+                setTimeout(() => document.getElementById('menuName').focus(), 100);
             }
         }
 
@@ -2307,6 +2357,7 @@
             document.getElementById('newCategoryName').value = '';
             saveData();
             manageCategories();
+            renderCategoryFilters(); // [REVISI] Update filter di halaman utama
             showToast('Kategori berhasil ditambahkan', 'success');
         }
 
@@ -2317,6 +2368,7 @@
                 appData.categories = appData.categories.filter(c => c !== categoryName);
                 saveData();
                 manageCategories();
+                renderCategoryFilters(); // [REVISI] Update filter di halaman utama
                 showToast('Kategori berhasil dihapus', 'success');
             }
         }
@@ -2404,9 +2456,9 @@
             reader.onload = function(e) {
                 try {
                     const restoredData = JSON.parse(e.target.result);
-                    if (restoredData.menus && restoredData.settings) {
-                        appData = restoredData;
-                        saveData();
+                    // Lakukan validasi sederhana untuk memastikan ini file yang benar
+                    if (restoredData.menus && restoredData.settings && restoredData.storeInfo) {
+                        localStorage.setItem('cafeRestoData', e.target.result);
                         showToast('Data berhasil dipulihkan. Aplikasi akan dimuat ulang.', 'success');
                         setTimeout(() => location.reload(), 1500);
                     } else {
@@ -2417,7 +2469,7 @@
                 }
             };
             reader.readAsText(file);
-            event.target.value = '';
+            event.target.value = ''; // Reset input file
         }
 
         function resetData() {
@@ -2427,10 +2479,7 @@
                 setTimeout(() => location.reload(), 1500);
             }
         }
-
-        // ==========================================================
-        // === PERUBAHAN BESAR: FUNGSI LOGIN TANPA PASSWORD ===
-        // ==========================================================
+        
         function login(event) {
             event.preventDefault();
             const usernameInput = document.getElementById('username');
@@ -2442,7 +2491,6 @@
                 return;
             }
             
-            // Tidak ada lagi pengecekan password, langsung berhasil
             appData.user = { username: username, role: 'admin' };
             
             document.getElementById('loggedInUser').textContent = username;
@@ -2456,7 +2504,6 @@
             showToast(`Selamat datang, ${username}!`, 'success');
             document.getElementById('adminPanel').style.display = 'block';
         }
-        // === AKHIR DARI PERUBAHAN FUNGSI LOGIN ===
 
         function logout() {
             if (confirm('Apakah Anda yakin ingin logout?')) {
@@ -2467,6 +2514,8 @@
             }
         }
 
+        // === EVENT LISTENERS ===
+        // Event listener utama yang dijalankan setelah halaman selesai dimuat.
         document.addEventListener('DOMContentLoaded', function() {
             initializeData();
             renderMenus();
@@ -2475,14 +2524,6 @@
             document.getElementById('loginForm').addEventListener('submit', login);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             document.getElementById('menuSearch').addEventListener('input', renderMenus);
-            
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    document.querySelector('.filter-chip.active').classList.remove('active');
-                    this.classList.add('active');
-                    renderMenus();
-                });
-            });
             
             document.querySelectorAll('.order-type-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2510,12 +2551,16 @@
             document.getElementById('confirmPaymentBtn').addEventListener('click', confirmPayment);
             document.getElementById('cancelPaymentBtn').addEventListener('click', () => closeModal('paymentModal'));
             
+            // [PERBAIKAN] Menggunakan state aplikasi untuk kalkulasi, bukan dari teks di UI
             document.getElementById('amountPaid').addEventListener('input', function() {
                 const amountPaid = parseFloat(this.value) || 0;
-                const totalText = document.getElementById('paymentTotal').textContent;
-                const total = parseFloat(totalText.replace(/[^0-9,-]+/g,"").replace(",", ".")) || 0;
+                
+                const subtotal = appData.currentOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const tax = subtotal * appData.settings.taxRate;
+                const total = subtotal + tax - appData.currentOrder.discount;
+
                 const change = amountPaid - total;
-                document.getElementById('changeAmount').value = formatRupiah(change > 0 ? change : 0);
+                document.getElementById('changeAmount').value = formatRupiah(change >= 0 ? change : 0);
                 document.getElementById('confirmPaymentBtn').disabled = amountPaid < total;
             });
 
@@ -2601,7 +2646,11 @@
                 const resultsContainer = document.getElementById('memberSearchResults');
                 if (searchTerm.length < 2) {
                     resultsContainer.style.display = 'none';
-                    appData.currentOrder.memberId = null;
+                    // [PERBAIKAN] Hapus member terpilih jika input dikosongkan
+                    if (appData.currentOrder.memberId) {
+                        appData.currentOrder.memberId = null;
+                        updateOrderSummary();
+                    }
                     return;
                 }
                 const results = appData.members.filter(m => m.name.toLowerCase().includes(searchTerm) || m.id.toLowerCase().includes(searchTerm));
@@ -2615,6 +2664,7 @@
                             this.value = `${member.name} (${member.id})`;
                             appData.currentOrder.memberId = member.id;
                             resultsContainer.style.display = 'none';
+                            updateOrderSummary();
                         };
                         resultsContainer.appendChild(item);
                     });
@@ -2644,7 +2694,7 @@
                     todayTransactions.forEach(t => {
                         const item = document.createElement('div');
                         item.className = 'status-item';
-                        item.innerHTML = `<div><strong>#${t.id.substring(0, 8)}</strong><br><small>${t.orderType === 'dinein' ? 'Meja ' + t.tableNumber : 'Bungkus'} - ${new Date(t.date).toLocaleTimeString()}</small></div><div class="status-ready">Selesai</div>`;
+                        item.innerHTML = `<div><strong>#${t.id.slice(-8).toUpperCase()}</strong><br><small>${t.orderType === 'dinein' ? 'Meja ' + t.tableNumber : 'Bungkus'} - ${new Date(t.date).toLocaleTimeString()}</small></div><div class="status-ready">Selesai</div>`;
                         kitchenOrders.appendChild(item);
                     });
                 }
