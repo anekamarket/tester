@@ -1888,20 +1888,20 @@
                 items: [], subtotal: 0, total: 0, discount: 0, donation: 0, type: 'dinein', tableNumber: '1', note: '', memberId: null
             };
 
-            // === [PERBAIKAN] Logika Notifikasi Uji Coba ===
+            // === [PENYEMPURNAAN] Logika Notifikasi Uji Coba ===
             let trialNotificationTimeout;
             function showTrialNotification() {
                 $('#trialNotification').css('display', 'flex').hide().fadeIn(500);
                 trialNotificationTimeout = setTimeout(() => {
                     hideTrialNotification();
-                }, 10000); // 10 detik
+                }, 10000); // Otomatis hilang setelah 10 detik
             }
             function hideTrialNotification() {
-                clearTimeout(trialNotificationTimeout);
+                clearTimeout(trialNotificationTimeout); // Hapus timer jika ditutup manual
                 $('#trialNotification').fadeOut(500);
             }
             $('#closeTrialNotification').on('click', hideTrialNotification);
-            // === AKHIR PERBAIKAN ===
+            // === AKHIR PENYEMPURNAAN ===
 
             $('#currentYear').text(new Date().getFullYear());
             
@@ -1918,7 +1918,7 @@
                 $('#mainApp').show();
                 initializeApp();
             } else {
-                showTrialNotification(); // [PERBAIKAN] Tampilkan notifikasi saat pertama kali membuka
+                showTrialNotification(); // Tampilkan notifikasi saat pertama kali membuka
                 generateCaptcha();
             }
             
@@ -1975,7 +1975,7 @@
                     $('#loginModal').css('display', 'flex');
                     $('#captchaInput').val('');
                     generateCaptcha();
-                    showTrialNotification(); // [PERBAIKAN] Tampilkan lagi notifikasi setelah logout
+                    showTrialNotification(); // Tampilkan lagi notifikasi setelah logout
                 });
                 showToast('Anda telah logout', 'info');
             });
@@ -2256,6 +2256,48 @@
         });
 
         function initializeApp() { loadMenus(); updateOrder(); loadCategories(); updateCurrentDate(); updateStoreInfo(); updateTableNumbers(); $('#adminPanel').toggle(currentUser.role === 'admin'); checkTransactionLimit(false); }
+        
+        // === [PERBAIKAN] Fungsi Captcha ===
+        function generateCaptcha() {
+            const canvas = document.getElementById('captchaCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const chars = 'AbCdEfGhIjKlMnOpQrStUvWxYz0123456789'; // Karakter campuran untuk mempersulit
+            let text = '';
+            for (let i = 0; i < 5; i++) { // 5 karakter sudah cukup untuk ukuran canvas ini
+                text += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            captchaText = text; // Simpan teks yang benar ke variabel global
+
+            // Bersihkan canvas dan gambar latar belakang
+            ctx.fillStyle = '#f0f2f5';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Gambar setiap karakter dengan sedikit distorsi
+            for (let i = 0; i < text.length; i++) {
+                ctx.save();
+                // Posisi, warna, dan rotasi acak untuk setiap karakter
+                ctx.translate(20 + i * 25, canvas.height / 2 + (Math.random() - 0.5) * 10);
+                ctx.rotate((Math.random() - 0.5) * 0.4); // Rotasi hingga ~20 derajat
+                ctx.font = 'bold 24px Poppins';
+                ctx.fillStyle = `rgba(0,0,0,${0.7 + Math.random() * 0.3})`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text[i], 0, 0);
+                ctx.restore();
+            }
+
+            // Tambahkan beberapa garis acak (noise)
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.strokeStyle = '#aaa';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        
         function checkTransactionLimit(showAlert) {
             const transactionCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS) || '0');
             const transactionsLeft = TRIAL_LIMIT - transactionCount;
@@ -2581,4 +2623,83 @@
             const menuSales = {};
             filteredOrders.forEach(o => o.items.forEach(item => { menuSales[item.menu.id] = menuSales[item.menu.id] || { name: item.menu.name, quantity: 0, total: 0 }; menuSales[item.menu.id].quantity += item.quantity; menuSales[item.menu.id].total += item.quantity * item.menu.price; }));
             const topMenus = Object.values(menuSales).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
-            $resultsContainer.html(`<div class="panel"><h4>Ringkasan Penjualan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4><div class="summary-row"><span>Total Transaksi:</span> <span>${filteredOrders.length}</span></div><div class="summary-row"><span>Total Pendapatan (Laba):</span> <span>${formatCurrency(totalRevenue)}</span></div><div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div></div><div class="panel mt-3"><h4>Menu Terlaris</h4>${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${
+            $resultsContainer.html(`<div class="panel"><h4>Ringkasan Penjualan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4><div class="summary-row"><span>Total Transaksi:</span> <span>${filteredOrders.length}</span></div><div class="summary-row"><span>Total Pendapatan (Laba):</span> <span>${formatCurrency(totalRevenue)}</span></div><div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div></div><div class="panel mt-3"><h4>Menu Terlaris</h4>${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${menu.quantity} terjual (${formatCurrency(menu.total)})</span></div>`).join('') || '<p>Tidak ada data.</p>'}</div>`);
+            $('#printReportBtn, #downloadReportBtn').show();
+        }
+        function generateDonationReportHTML(filteredOrders, startDate, endDate) {
+            const $resultsContainer = $('#donationReportResults');
+            const donations = filteredOrders.filter(o => o.donation > 0);
+            if (donations.length === 0) { $resultsContainer.html('<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>Tidak ada data donasi</p></div>'); $('#printReportBtn, #downloadReportBtn').hide(); return; }
+            const totalDonation = donations.reduce((s, o) => s + o.donation, 0);
+            let tableHTML = `<div class="panel"><h4>Ringkasan Donasi LAZISNU (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4><div class="summary-row total-row" style="border:none;"><span>Total Donasi Terkumpul:</span> <span>${formatCurrency(totalDonation)}</span></div></div><div class="panel mt-3"><h4>Detail Donasi</h4><table class="data-table"><thead><tr><th>No. Transaksi</th><th>Tanggal</th><th>Jumlah Donasi</th></tr></thead><tbody>`;
+            donations.forEach(order => { tableHTML += `<tr><td>${order.id}</td><td>${moment(order.date).format('DD/MM/YY, HH:mm')}</td><td>${formatCurrency(order.donation)}</td></tr>`; });
+            tableHTML += `</tbody></table></div>`;
+            $resultsContainer.html(tableHTML);
+            $('#printReportBtn, #downloadReportBtn').show();
+        }
+        function printReport() {
+            const activeTabId = $('#reportsModal .tab-content.active').attr('id');
+            const selector = activeTabId === 'salesReportTab' ? '#reportResults' : '#donationReportResults';
+            printElement(selector);
+        }
+        function downloadReportAsPdf() {
+            const activeTabId = $('#reportsModal .tab-content.active').attr('id');
+            const selector = activeTabId === 'salesReportTab' ? '#reportResults' : '#donationReportResults';
+            const element = document.querySelector(selector);
+            const reportType = activeTabId === 'salesReportTab' ? 'Penjualan' : 'Donasi';
+            showToast('Mengunduh Laporan PDF...', 'info');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`Laporan_${reportType}_${moment().format('YYYY-MM-DD')}.pdf`);
+            }).catch(err => { showToast('Gagal mengunduh PDF', 'error'); console.error("PDF report download error:", err); });
+        }
+        function updateStoreInfo() { $('#storeNameHeader').text(settings.storeName || 'CAFE & RESTO'); document.title = settings.storeName || 'CAFE & RESTO'; }
+        function loadStoreInfo() { $('#storeName').val(settings.storeName || ''); $('#storeAddress').val(settings.storeAddress || ''); $('#storePhone').val(settings.storePhone || ''); $('#storeEmail').val(settings.storeEmail || ''); $('#tableCount').val(settings.tableCount || 5); }
+        function saveStoreInfo(e) {
+            e.preventDefault();
+            settings.storeName = $('#storeName').val().trim();
+            settings.storeAddress = $('#storeAddress').val().trim();
+            settings.storePhone = $('#storePhone').val().trim();
+            settings.storeEmail = $('#storeEmail').val().trim();
+            settings.tableCount = parseInt($('#tableCount').val()) || 5;
+            saveSettings(); updateStoreInfo(); updateTableNumbers();
+            $('#manageStoreInfoModal').hide();
+            showToast('Info restoran berhasil disimpan', 'success');
+        }
+        function updateTableNumbers() {
+            const $select = $('#tableNumber').empty(), count = settings.tableCount || 5;
+            for (let i = 1; i <= count; i++) $select.append(`<option value="${i}">Meja ${i}</option>`);
+        }
+        function formatCurrency(amount) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount); }
+        function showToast(message, type = 'info') {
+            const $toast = $('#toast').removeClass('success error warning').addClass(type);
+            $('#toast-message').text(message);
+            $toast.addClass('show');
+            setTimeout(() => $toast.removeClass('show'), 3000);
+        }
+        function setButtonLoading($button, isLoading, originalText = 'Loading...') {
+            if (isLoading) $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+            else $button.prop('disabled', false).html(originalText);
+        }
+        function showConfirmation(title, message, callback, btnClass = 'btn-success') {
+            $('#confirmTitle').text(title);
+            $('#confirmMessage').html(message);
+            const $confirmBtn = $('#confirmAction');
+            $confirmBtn.off('click').on('click', () => { callback(); $('#confirmationModal').hide(); });
+            $confirmBtn.removeClass('btn-success btn-danger btn-info').addClass(btnClass);
+            $('#confirmationModal').css('display', 'flex');
+        }
+        function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, DD MMMM YYYY')); }
+        function saveMenus() { localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(menus)); }
+        function saveCategories() { localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
+        function saveOrders() { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders)); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); }
+        function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
+        function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
+    </script>
+</body>
+</html>
