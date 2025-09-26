@@ -25,6 +25,7 @@
             --rounded: 0.75rem;
             --rounded-lg: 1rem;
             --donation: #6f42c1;
+            --premium-gold: #ffd700;
         }
 
         * {
@@ -542,28 +543,67 @@
             resize: vertical;
         }
 
-        /* === [PERBAIKAN] DESAIN LOGIN === */
-        /* Perbaikan ini berfokus pada membuat kotak login lebih proporsional,
-           seimbang secara visual, dan berada tepat di tengah layar. */
+        /* === [PERBAIKAN] DESAIN LOGIN & TRIAL INFO === */
         #loginModal {
             background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
-            /* Memastikan modal flexbox bekerja dengan benar untuk pemusatan */
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px; /* Memberi sedikit ruang di tepi layar kecil */
+            padding: 20px;
         }
 
         .login-container {
-            width: 100%; /* Lebar penuh relatif terhadap padding parent */
-            max-width: 400px; /* Batas lebar maksimum agar tidak terlalu lebar di layar besar */
-            margin: 0; /* Menghapus margin auto karena flexbox sudah menangani pemusatan */
+            width: 100%;
+            max-width: 400px;
+            margin: 0;
             background: var(--white);
             border-radius: var(--rounded-lg);
             padding: 32px;
             box-shadow: var(--shadow);
             border-top: 5px solid var(--primary);
-            animation: fadeIn 0.4s; /* Menambahkan animasi lembut saat muncul */
+            animation: fadeIn 0.4s;
+        }
+        
+        .trial-notification {
+            background: linear-gradient(135deg, #4f5bd5, #962fbf);
+            color: white;
+            padding: 16px;
+            border-radius: var(--rounded);
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .trial-notification h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .trial-notification h4 i {
+            color: var(--premium-gold);
+        }
+        .trial-notification p {
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+        .trial-notification .btn-upgrade {
+            background: var(--premium-gold);
+            color: var(--dark);
+            font-weight: 700;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .trial-notification .btn-upgrade:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .login-header {
@@ -587,6 +627,11 @@
         
         .login-header p {
             color: var(--gray);
+        }
+        
+        .form-control:read-only {
+            background-color: #e9ecef;
+            cursor: not-allowed;
         }
         /* === AKHIR DARI PERBAIKAN DESAIN LOGIN === */
 
@@ -955,8 +1000,6 @@
         }
         
         /* === [PENYEMPURNAAN] KODE CETAK STRUK & HISTORI === */
-        /* Penyempurnaan ini berfokus pada pencegahan halaman kosong saat mencetak
-           dengan mengatur ulang layout secara ketat khusus untuk mode cetak. */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
             width: 300px;
@@ -1028,29 +1071,24 @@
         }
         
         @media print {
-            /* [FIX] Atur ulang body dan html untuk mencegah overflow yang bisa menyebabkan halaman kosong. */
             html, body {
                 width: 100%;
                 height: auto;
                 margin: 0 !important;
                 padding: 0 !important;
-                overflow: visible !important; /* Mencegah scrollbar virtual */
+                overflow: visible !important;
                 box-shadow: none;
             }
 
-            /* Sembunyikan semua elemen di body secara default */
             body * {
                 visibility: hidden;
             }
             
-            /* [FIX] Tampilkan hanya kontainer cetak dan pastikan ia menjadi satu-satunya yang terlihat. */
-            /* Ini adalah langkah kunci untuk mengisolasi konten yang akan dicetak. */
             #print-container, #print-container * {
                 visibility: visible;
-                box-sizing: border-box !important; /* Pastikan padding/border tidak menambah ukuran */
+                box-sizing: border-box !important;
             }
             
-            /* Posisikan kontainer cetak untuk mengisi seluruh halaman */
             #print-container {
                 position: absolute;
                 left: 0;
@@ -1062,26 +1100,24 @@
                 display: block !important;
             }
             
-            /* [FIX] Atur ulang gaya elemen struk agar sesuai dengan kertas dan tidak terpotong. */
             #print-container .printable-area,
             #print-container #receiptContent {
                 margin: 0 !important;
-                padding: 5px !important; /* Beri sedikit padding agar tidak menempel di tepi kertas */
+                padding: 5px !important;
                 box-shadow: none !important;
                 border: none !important;
                 display: block !important;
                 color: #000 !important;
                 background: #fff !important;
                 width: 100% !important; 
-                font-size: 11pt !important; /* Ukuran font yang nyaman dibaca di kertas */
-                page-break-inside: avoid; /* Mencegah struk terpotong di tengah halaman */
+                font-size: 11pt !important;
+                page-break-inside: avoid;
             }
 
             #print-container #receiptContent {
-                font-size: 10pt !important; /* Struk thermal biasanya lebih kecil fontnya */
+                font-size: 10pt !important;
             }
 
-            /* [FIX] Pastikan histori tidak memiliki scrollbar dan tampil penuh saat dicetak */
             #print-container #historyResultsContainer, 
             #print-container #historyResults {
                 max-height: none !important;
@@ -1089,12 +1125,10 @@
                 height: auto !important;
             }
             
-            /* Sembunyikan elemen yang tidak perlu dicetak seperti tombol */
             .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .order-panel, .menu-panel, #loginModal {
                 display: none !important;
             }
             
-            /* Atur halaman cetak */
             @page {
                 size: auto; 
                 margin: 10mm; 
@@ -1257,6 +1291,11 @@
 
     <div id="loginModal" class="modal" style="display: flex;">
         <div class="login-container">
+            <div class="trial-notification">
+                <h4><i class="fas fa-crown"></i> Versi Uji Coba Gratis</h4>
+                <p>Anda dapat melakukan hingga <strong>10x transaksi</strong>. Hubungi developer untuk upgrade ke versi premium dengan fitur lengkap!</p>
+                <a href="#" id="upgradeBtn" class="btn-upgrade"><i class="fab fa-whatsapp"></i> Upgrade ke Premium</a>
+            </div>
             <div class="login-header">
                 <div class="login-logo">
                     <i class="fas fa-utensils"></i>
@@ -1267,11 +1306,11 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
+                    <input type="text" id="username" class="form-control" value="User" readonly>
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                    <input type="password" id="password" class="form-control" value="UjiCoba" readonly>
                 </div>
                 
                 <div class="form-group mt-3">
@@ -1935,37 +1974,26 @@
             CURRENT_ORDER: 'warungmakan_current_order',
             SETTINGS: 'warungmakan_settings',
             USERS: 'warungmakan_users',
-            MEMBERS: 'warungmakan_members'
+            MEMBERS: 'warungmakan_members',
+            TRIAL_TRANSACTIONS: 'warungmakan_trial_transactions' // [REVISI] Kunci untuk Trial
         };
 
         // [PENYEMPURNAAN] Kunci rahasia untuk enkripsi dan dekripsi file backup.
         const ENCRYPTION_KEY = 'LenteraKaryaSitubondo-SecretKey-2025';
 
         /*
-            --- [INFORMASI LOGIN DEFAULT] ---
-            Aplikasi ini memiliki 2 pengguna bawaan:
-            1. Admin
-               - Username: Admin
-               - Password: Admin.1945
-            2. Kasir
-               - Username: kasir
-               - Password: kasir123
+            --- [REVISI] INFORMASI LOGIN VERSI UJI COBA ---
+            Aplikasi ini sekarang memiliki 1 pengguna default untuk mode uji coba.
+            - Username: User (read-only)
+            - Password: UjiCoba (read-only)
+            Login hanya memerlukan input CAPTCHA.
         */
-        
-        const DEFAULT_ADMIN = {
-            id: 'U001',
-            username: 'Admin',
-            password: CryptoJS.SHA256('Admin.1945').toString(),
-            name: 'Administrator',
-            role: 'admin'
-        };
-        
-        const DEFAULT_CASHIER = {
-            id: 'U002',
-            username: 'kasir',
-            password: CryptoJS.SHA256('kasir123').toString(),
-            name: 'Kasir',
-            role: 'cashier'
+        const DEFAULT_TRIAL_USER = {
+            id: 'U-TRIAL-001',
+            username: 'User',
+            password: CryptoJS.SHA256('UjiCoba').toString(),
+            name: 'Pengguna Uji Coba',
+            role: 'admin' // Diberi role admin agar semua fitur bisa diuji
         };
         
         const DEFAULT_MENU_IMAGES = {
@@ -1984,13 +2012,15 @@
         let kitchenInterval;
         let passwordPromptCallback = null;
         let captchaText = '';
+        const TRIAL_LIMIT = 10; // [REVISI] Batas transaksi
         
         function initializeData() {
             let users_init = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
             
-            if (!users_init.find(u => u.username === 'Admin')) users_init.push(DEFAULT_ADMIN);
-            if (!users_init.find(u => u.username === 'kasir')) users_init.push(DEFAULT_CASHIER);
-            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users_init));
+            // [REVISI] Hanya gunakan satu user untuk trial
+            if (!users_init.find(u => u.username === 'User')) {
+                localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify([DEFAULT_TRIAL_USER]));
+            }
             
             if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify([]));
             
@@ -2015,6 +2045,11 @@
             }
             
             if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
+            
+            // [REVISI] Inisialisasi penghitung transaksi jika belum ada
+            if (!localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS)) {
+                localStorage.setItem(STORAGE_KEYS.TRIAL_TRANSACTIONS, '0');
+            }
             
             if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
                 localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({
@@ -2048,6 +2083,16 @@
 
             $('#currentYear').text(new Date().getFullYear());
             
+            // [REVISI] Logika tombol Upgrade WhatsApp
+            $('#upgradeBtn').on('click', function(e) {
+                e.preventDefault();
+                const phone = "6287865614222";
+                const message = encodeURIComponent(
+                    "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih."
+                );
+                window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${message}`, '_blank');
+            });
+            
             if (currentUser) {
                 $('#loggedInUser').text(currentUser.name);
                 $('#loginModal').hide();
@@ -2076,20 +2121,21 @@
                             return; 
                         }
 
-                        const username = $('#username').val().trim();
-                        const password = $('#password').val().trim();
-                        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+                        // [REVISI] Logika login yang disederhanakan untuk versi trial
+                        const user = users.find(u => u.username === 'User');
+                        const validPassword = CryptoJS.SHA256('UjiCoba').toString();
                         
-                        if (user && CryptoJS.SHA256(password).toString() === user.password) {
+                        if (user && user.password === validPassword) {
                             currentUser = user;
                             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
                             $('#loggedInUser').text(currentUser.name);
                             $('#loginModal').hide();
                             $('#mainApp').fadeIn();
                             initializeApp();
-                            showToast(`Selamat datang, ${currentUser.name}!`, 'success');
+                            showToast(`Selamat datang di versi Uji Coba!`, 'success');
                         } else {
-                            showToast('Username atau password salah', 'error');
+                            // Pesan ini seharusnya tidak pernah muncul jika data default benar
+                            showToast('Autentikasi Uji Coba Gagal', 'error');
                             generateCaptcha();
                             $('#captchaInput').val('');
                         }
@@ -2112,8 +2158,6 @@
                 localStorage.removeItem(STORAGE_KEYS.USER);
                 $('#mainApp').fadeOut(() => {
                     $('#loginModal').css('display', 'flex');
-                    $('#username').val('');
-                    $('#password').val('');
                     $('#captchaInput').val('');
                     generateCaptcha();
                 });
@@ -2208,6 +2252,12 @@
             
             $('#processOrderBtn').click(function() {
                 if (currentOrder.items.length === 0) { showToast('Pesanan kosong', 'warning'); return; }
+                
+                // [REVISI] Cek batas transaksi sebelum membuka modal pembayaran
+                if (checkTransactionLimit(true)) { // true to show alert
+                    return;
+                }
+                
                 const member = members.find(m => m.id === currentOrder.memberId);
                 $('#customerName').val(member ? member.name : '');
                 updateOrderSummary();
@@ -2221,6 +2271,8 @@
             $(document).on('click', '.quick-cash-btn', function() { $('#paymentAmount').val($(this).data('amount')).trigger('input'); });
             
             $('#completePaymentBtn').click(function() {
+                if ($(this).prop('disabled')) return; // [REVISI] Jangan proses jika tombol dibekukan
+
                 const paymentAmount = parseFloat($('#paymentAmount').val()) || 0;
                 if (paymentAmount < currentOrder.total) { showToast('Jumlah pembayaran kurang', 'error'); return; }
                 
@@ -2239,6 +2291,10 @@
                         
                         orders.unshift(order);
                         saveOrders();
+
+                        // [REVISI] Tambah hitungan transaksi
+                        let currentCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS) || '0');
+                        localStorage.setItem(STORAGE_KEYS.TRIAL_TRANSACTIONS, ++currentCount);
                         
                         if (order.memberId) {
                             const member = members.find(m => m.id === order.memberId);
@@ -2253,6 +2309,10 @@
                         resetOrder();
                         $('#processOrderModal').hide();
                         showToast('Pesanan berhasil diproses', 'success');
+
+                        // [REVISI] Periksa lagi batas transaksi setelah selesai, mungkin batas tercapai
+                        checkTransactionLimit(false); 
+
                     } finally {
                         setButtonLoading($btn, false, originalText);
                     }
@@ -2455,6 +2515,60 @@
             updateStoreInfo(); 
             updateTableNumbers();
             $('#adminPanel').toggle(currentUser.role === 'admin');
+            checkTransactionLimit(false); // [REVISI] Cek batas saat aplikasi dimuat
+        }
+
+        // [REVISI] Fungsi untuk memeriksa batas transaksi
+        function checkTransactionLimit(showAlert) {
+            const transactionCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS) || '0');
+            const transactionsLeft = TRIAL_LIMIT - transactionCount;
+
+            if (transactionCount >= TRIAL_LIMIT) {
+                // Bekukan tombol pembayaran
+                $('#completePaymentBtn').prop('disabled', true).html(`<i class="fas fa-lock"></i> Batas Uji Coba Tercapai`);
+                $('#processOrderBtn').prop('disabled', true).text('Batas Uji Coba Tercapai');
+
+                if (showAlert) {
+                    showTrialLimitAlert();
+                }
+                return true; // Limit reached
+            } else {
+                 // Pastikan tombol aktif jika batas belum tercapai
+                $('#completePaymentBtn').prop('disabled', false).html(`<i class="fas fa-check-circle"></i> Selesaikan Pembayaran`);
+                $('#processOrderBtn').prop('disabled', false).text('Proses Pesanan');
+                showToast(`Sisa transaksi uji coba: ${transactionsLeft}`, 'warning');
+                return false; // Limit not reached
+            }
+        }
+
+        // [REVISI] Fungsi untuk menampilkan notifikasi batas tercapai
+        function showTrialLimitAlert() {
+            const phone = "6287865614222";
+            const message = encodeURIComponent(
+                "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih."
+            );
+            const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
+
+            $('#confirmTitle').text('Batas Uji Coba Tercapai');
+            $('#confirmMessage').html(
+                `Anda telah mencapai batas <strong>${TRIAL_LIMIT} transaksi</strong> untuk versi uji coba. ` +
+                `Untuk melanjutkan transaksi dan membuka semua fitur, silakan upgrade ke versi premium.`
+            );
+            const $confirmBtn = $('#confirmAction');
+            $confirmBtn.off('click').on('click', () => { 
+                window.open(waLink, '_blank');
+                $('#confirmationModal').hide();
+            });
+            $confirmBtn.removeClass('btn-danger').addClass('btn-success').html('<i class="fab fa-whatsapp"></i> Hubungi Developer');
+            
+            // Sembunyikan tombol batal agar lebih tegas
+            $('#confirmCancel').hide();
+            // Tampilkan kembali saat modal ditutup
+            $('#confirmationModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                $('#confirmCancel').show();
+            });
+
+            $('#confirmationModal').css('display', 'flex');
         }
 
         function promptForPassword(type, callback) {
@@ -2569,11 +2683,6 @@
             showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`, 'success');
         }
 
-        /**
-         * [PENYEMPURNAAN] Fungsi backup data dengan enkripsi.
-         * Data tidak lagi disimpan sebagai teks biasa, melainkan dienkripsi
-         * menggunakan AES untuk keamanan.
-         */
         function backupData() {
             try {
                 const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
@@ -2591,10 +2700,6 @@
             }
         }
 
-        /**
-         * [PENYEMPURNAAN] Fungsi restore data dari file terenkripsi.
-         * Sistem akan mendekripsi file backup sebelum memprosesnya.
-         */
         function restoreFromFile(file) {
             if (!file) return;
             const reader = new FileReader();
@@ -3038,11 +3143,6 @@
             });
         }
         
-        /**
-         * [PENYEMPURNAAN] Fungsi ini disempurnakan untuk menyalin konten ke kontainer cetak
-         * sebelum memanggil window.print(), memastikan konten tidak kosong dan mencegah
-         * halaman kosong tercetak.
-         */
         function printElement(selector) {
             const elementToPrint = $(selector).clone();
             const printContainer = $('#print-container');
@@ -3307,10 +3407,11 @@
         }
         
         function showConfirmation(title, message, onConfirm, type = 'success') {
-            $('#confirmTitle').text(title); $('#confirmMessage').text(message);
+            $('#confirmTitle').text(title); $('#confirmMessage').html(message); // use .html() for potential formatting
             const $confirmBtn = $('#confirmAction');
             $confirmBtn.off('click').on('click', () => { onConfirm(); $('#confirmationModal').hide(); });
-            $confirmBtn.removeClass('btn-success btn-danger').addClass(type === 'danger' ? 'btn-danger' : 'btn-success');
+            $confirmBtn.removeClass('btn-success btn-danger').addClass(type === 'danger' ? 'btn-danger' : 'btn-success').html('Lanjutkan');
+            $('#confirmCancel').show(); // Ensure cancel button is visible by default
             $('#confirmationModal').css('display', 'flex');
         }
 
