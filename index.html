@@ -394,6 +394,10 @@
             animation: fadeIn 0.3s;
         }
 
+        #reportsModal .modal-content, #profitReportModal .modal-content {
+            max-width: 800px;
+        }
+
         .modal-header {
             padding: 16px;
             border-bottom: 1px solid #eee;
@@ -446,6 +450,13 @@
             font-size: 1rem;
         }
 
+        .form-control:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+            cursor: not-allowed;
+            user-select: none;
+        }
+
         textarea.form-control {
             min-height: 100px;
             resize: vertical;
@@ -476,6 +487,20 @@
             font-size: 1.8rem;
             color: var(--primary);
             font-weight: 600;
+        }
+
+        .captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .captcha-label {
+            font-weight: 600;
+            padding: 8px;
+            background-color: var(--light);
+            border-radius: var(--rounded-sm);
+            user-select: none;
         }
 
         /* Toast Notification */
@@ -585,6 +610,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 16px;
+            font-size: 0.9rem;
         }
 
         .data-table th, .data-table td {
@@ -600,6 +626,10 @@
 
         .data-table tr:hover {
             background-color: #f9f9f9;
+        }
+        
+        .data-table .text-right {
+            text-align: right;
         }
 
         /* Animations */
@@ -659,9 +689,16 @@
                 top: 0;
                 width: 100%;
                 max-width: 100%;
-                padding: 20px;
+                padding: 0;
                 margin: 0;
-                font-size: 14px;
+                font-size: 12px; /* Adjusted for thermal printers */
+            }
+            
+            #receiptTemplate .receipt {
+                width: 100%;
+                max-width: 280px; /* Common thermal printer width */
+                border: none;
+                padding: 5px;
             }
             
             .no-print {
@@ -670,7 +707,7 @@
             
             @page {
                 size: auto;
-                margin: 0;
+                margin: 5mm;
             }
         }
 
@@ -750,7 +787,7 @@
 
         /* Receipt Styles */
         .receipt {
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             max-width: 300px;
             margin: 0 auto;
             padding: 15px;
@@ -764,17 +801,17 @@
 
         .receipt-header h3 {
             margin: 0;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         .receipt-header p {
-            margin: 5px 0;
-            font-size: 12px;
+            margin: 2px 0;
+            font-size: 11px;
         }
 
         .receipt-body {
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .receipt-body hr {
@@ -799,7 +836,7 @@
         .receipt-footer {
             text-align: center;
             margin-top: 15px;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         /* Role Badge */
@@ -985,23 +1022,30 @@
         </div>
     </div>
 
-    <div id="loginModal" class="modal" style="display: block;">
+    <div id="loginModal" class="modal" style="display: flex;">
         <div class="login-container">
             <div class="login-header">
                 <div class="login-logo">
                     <i class="fas fa-cash-register"></i>
                 </div>
                 <h1 class="login-title">SISTEM KASIR DIGITAL</h1>
-                <p>Hubungi Admin Untuk Mendapatkan Password</p> 
+                <p>Silakan Masuk Untuk Melanjutkan</p> 
             </div>
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
+                    <input type="text" id="username" class="form-control" value="admin" disabled>
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                    <input type="password" id="password" class="form-control" value="12345" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="captcha" class="form-label">Verifikasi Keamanan</label>
+                    <div class="captcha-container">
+                        <span id="captchaLabel" class="captcha-label"></span>
+                        <input type="number" id="captchaInput" class="form-control" placeholder="Jawab" required>
+                    </div>
                 </div>
                 <button type="submit" class="btn mt-3">
                     <span id="loginBtnText">Login</span>
@@ -1498,7 +1542,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning" id="cancelReports">Tutup</button>
                 <button class="btn btn-success" id="generateReportBtn">Generate Laporan</button>
-                <button class="btn btn-info" id="printReportBtn">Cetak PDF</button>
+                <button class="btn btn-info" id="printReportBtn" style="display: none;">Unduh PDF</button>
             </div>
         </div>
     </div>
@@ -1535,7 +1579,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning" id="cancelProfitReport">Tutup</button>
                 <button class="btn btn-success" id="generateProfitReportBtn">Generate Laporan</button>
-                <button class="btn btn-info" id="printProfitReportBtn">Cetak PDF</button>
+                <button class="btn btn-info" id="printProfitReportBtn" style="display: none;">Unduh PDF</button>
             </div>
         </div>
     </div>
@@ -1728,7 +1772,7 @@
                 
                 <hr>
                 
-                <div class="summary-container">
+                <div class="summary-container" style="margin-top: 0; padding-top: 0; border-top: none;">
                     <div class="receipt-item">
                         <span>Subtotal:</span>
                         <span id="receiptSubtotal">Rp 0</span>
@@ -1741,7 +1785,7 @@
                         <span>Biaya Tambahan:</span>
                         <span id="receiptAdditionalCost">Rp 0</span>
                     </div>
-                    <div class="receipt-item total-row">
+                    <div class="receipt-item total-row" style="border-top: 1px dashed #ddd;">
                         <span>TOTAL:</span>
                         <span id="receiptTotal">Rp 0</span>
                     </div>
@@ -1761,10 +1805,10 @@
                 <p>&copy; <span id="receiptYear"></span> <span id="receiptCopyright">Lentera Karya Situbondo</span></p>
             </div>
         </div>
-        <button id="printReceiptBtn" class="btn btn-info no-print" onclick="window.printReceipt()">
+        <button id="printReceiptBtn" class="btn btn-info no-print mt-3" style="width: 100%; max-width: 300px; margin: 10px auto; display: block;">
             <i class="fas fa-print"></i> Cetak Struk
         </button>
-        <button id="downloadReceiptBtn" class="btn btn-success no-print mt-2" onclick="window.downloadReceiptPDF()">
+        <button id="downloadReceiptBtn" class="btn btn-success no-print" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
             <i class="fas fa-file-pdf"></i> Download PDF
         </button>
     </div>
@@ -1970,6 +2014,9 @@
     
     // Global variables to hold app state
     let products, categories, transactions, settings, users, members, roles, discounts, currentUser, stockHistory, memos, trialLimits, currentCart;
+    let captchaAnswer = 0;
+    let lastGeneratedReportData = [];
+    let lastGeneratedProfitReportData = [];
 
     // ===================================================================================
     // PERBAIKAN UTAMA: Fungsi ini menangani inisialisasi dan pemuatan semua data
@@ -2048,6 +2095,13 @@
         if (!localStorage.getItem(STORAGE_KEYS.DISCOUNTS)) localStorage.setItem(STORAGE_KEYS.DISCOUNTS, JSON.stringify({ memberDiscount: 10 }));
         if (!localStorage.getItem(STORAGE_KEYS.MEMOS)) localStorage.setItem(STORAGE_KEYS.MEMOS, '[]');
     }
+
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        captchaAnswer = num1 + num2;
+        $('#captchaLabel').text(`${num1} + ${num2} =`);
+    }
         
     // Initialize the app
     $(document).ready(function() {
@@ -2056,6 +2110,9 @@
         
         // Set current year in footer
         $('#currentYear, #receiptYear').text(new Date().getFullYear());
+        
+        // Generate Captcha for login
+        generateCaptcha();
         
         // Check if user is logged in from a previous session
         if (currentUser) {
@@ -2084,13 +2141,16 @@
         $('#loginForm').submit(function(e) {
             e.preventDefault();
             const username = $('#username').val().trim();
-            const password = $('#password').val().trim();
+            const password = "12345"; // Hardcoded password
+            const userAnswer = parseInt($('#captchaInput').val());
             
-            if (!username || !password) {
-                showToast('Username dan password harus diisi', 'error');
+            if (userAnswer !== captchaAnswer) {
+                showToast('Jawaban CAPTCHA salah!', 'error');
+                generateCaptcha();
+                $('#captchaInput').val('');
                 return;
             }
-            
+
             // Find user from the correctly loaded 'users' global variable
             const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
             
@@ -2221,9 +2281,9 @@
                 currentUser = null;
                 localStorage.removeItem(STORAGE_KEYS.USER);
                 $('#mainApp').fadeOut();
-                $('#loginModal').fadeIn();
-                $('#username').val('');
-                $('#password').val('');
+                generateCaptcha();
+                $('#captchaInput').val('');
+                $('#loginModal').css('display', 'flex');
                 $('#mainApp').removeClass('admin-view');
                 
                 showToast('Anda telah logout', 'info');
@@ -2339,8 +2399,8 @@
             });
             
             // Update additional cost
-            $('#additionalCostInput').on('change', function() {
-                currentCart.additionalCost = parseFloat($(this).val()) || 0;
+            $('#additionalCostInput, #additionalCostNote').on('change', function() {
+                currentCart.additionalCost = parseFloat($('#additionalCostInput').val()) || 0;
                 currentCart.additionalCostNote = $('#additionalCostNote').val();
                 updateCart();
             });
@@ -2357,7 +2417,7 @@
                     return;
                 }
                 
-                $('#checkoutModal').show();
+                $('#checkoutModal').css('display', 'flex');
                 $('#customerName').val('');
                 $('#paymentAmount').val('');
                 $('#changeContainer').hide();
@@ -2474,7 +2534,7 @@
                 $('#productForm')[0].reset();
                 $('#productId').val('');
                 loadCategoriesForSelect();
-                $('#productModal').show();
+                $('#productModal').css('display', 'flex');
             });
             
             $('#manageCategoriesBtn').click(function() {
@@ -2482,7 +2542,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola kategori', 'error');
                     return;
                 }
-                $('#manageCategoriesModal').show();
+                $('#manageCategoriesModal').css('display', 'flex');
                 loadCategoriesForManagement();
             });
             
@@ -2491,7 +2551,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola kasir', 'error');
                     return;
                 }
-                $('#manageCashiersModal').show();
+                $('#manageCashiersModal').css('display', 'flex');
                 loadCashiers();
             });
             
@@ -2500,7 +2560,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola member', 'error');
                     return;
                 }
-                $('#manageMembersModal').show();
+                $('#manageMembersModal').css('display', 'flex');
                 loadMembers();
             });
             
@@ -2509,7 +2569,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola role', 'error');
                     return;
                 }
-                $('#manageRolesModal').show();
+                $('#manageRolesModal').css('display', 'flex');
                 loadRoles();
             });
             
@@ -2518,9 +2578,10 @@
                     showToast('Anda tidak memiliki izin untuk melihat laporan', 'error');
                     return;
                 }
-                $('#reportsModal').show();
-                $('#reportPeriod').val('today');
-                $('#customDateRange').hide();
+                $('#reportsModal').css('display', 'flex');
+                $('#reportPeriod').val('today').change();
+                $('#reportResults').html('');
+                $('#printReportBtn').hide();
             });
             
             $('#profitReportBtn').click(function() {
@@ -2528,9 +2589,10 @@
                     showToast('Anda tidak memiliki izin untuk melihat laporan laba rugi', 'error');
                     return;
                 }
-                $('#profitReportModal').show();
-                $('#profitReportPeriod').val('today');
-                $('#profitCustomDateRange').hide();
+                $('#profitReportModal').css('display', 'flex');
+                $('#profitReportPeriod').val('today').change();
+                $('#profitReportResults').html('');
+                $('#printProfitReportBtn').hide();
             });
             
             $('#manageStoreInfoBtn').click(function() {
@@ -2538,7 +2600,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola info toko', 'error');
                     return;
                 }
-                $('#manageStoreInfoModal').show();
+                $('#manageStoreInfoModal').css('display', 'flex');
                 loadStoreInfo();
             });
             
@@ -2554,7 +2616,7 @@
                     return;
                 }
                 
-                $('#manageMemosModal').show();
+                $('#manageMemosModal').css('display', 'flex');
                 loadMemos();
             });
             
@@ -2563,7 +2625,7 @@
                 $('#memoModal .modal-title').text('Tambah Memo Baru');
                 $('#memoForm')[0].reset();
                 $('#memoId').val('');
-                $('#memoModal').show();
+                $('#memoModal').css('display', 'flex');
             });
             
             // Edit memo button
@@ -2581,7 +2643,7 @@
                 $('#memoStartDate').val(memo.startDate ? moment(memo.startDate).format('YYYY-MM-DDTHH:mm') : '');
                 $('#memoEndDate').val(memo.endDate ? moment(memo.endDate).format('YYYY-MM-DDTHH:mm') : '');
                 
-                $('#memoModal').show();
+                $('#memoModal').css('display', 'flex');
             });
             
             // Delete memo button
@@ -2639,7 +2701,7 @@
                 $('#cashierForm')[0].reset();
                 $('#cashierId').val('');
                 loadRolesForSelect();
-                $('#cashierModal').show();
+                $('#cashierModal').css('display', 'flex');
             });
             
             // Edit cashier button
@@ -2655,7 +2717,7 @@
                 $('#cashierPassword, #cashierConfirmPassword').val('').attr('placeholder', 'Kosongkan jika tidak ingin ganti password');
                 loadRolesForSelect();
                 $('#cashierRole').val(cashier.role);
-                $('#cashierModal').show();
+                $('#cashierModal').css('display', 'flex');
             });
             
             // Delete cashier button
@@ -2685,7 +2747,7 @@
                 $('#memberModal .modal-title').text('Tambah Member Baru');
                 $('#memberForm')[0].reset();
                 $('#memberId').val('');
-                $('#memberModal').show();
+                $('#memberModal').css('display', 'flex');
             });
             
             // Edit member button
@@ -2700,7 +2762,7 @@
                 $('#memberPhone').val(member.phone);
                 $('#memberAddress').val(member.address);
                 $('#memberEmail').val(member.email || '');
-                $('#memberModal').show();
+                $('#memberModal').css('display', 'flex');
             });
             
             // Add role button
@@ -2708,7 +2770,7 @@
                 $('#roleModal .modal-title').text('Tambah Role Baru');
                 $('#roleForm')[0].reset();
                 $('#roleId').val('');
-                $('#roleModal').show();
+                $('#roleModal').css('display', 'flex');
             });
             
             // Edit role button
@@ -2723,11 +2785,13 @@
                 $('#roleCode').val(role.code);
                 $('#memberDiscount').val(role.memberDiscount || 0);
                 
-                Object.keys(role.permissions).forEach(perm => {
-                    $(`#perm${perm.charAt(0).toUpperCase() + perm.slice(1)}`).prop('checked', role.permissions[perm] || false);
+                const permissions = role.permissions || {};
+                Object.keys(permissions).forEach(perm => {
+                    const capitalizedPerm = perm.charAt(0).toUpperCase() + perm.slice(1);
+                    $(`#perm${capitalizedPerm}`).prop('checked', permissions[perm]);
                 });
                 
-                $('#roleModal').show();
+                $('#roleModal').css('display', 'flex');
             });
             
             // Delete role button
@@ -3030,11 +3094,8 @@
                 showToast('Info toko berhasil diperbarui', 'success');
             });
             
-            // Generate report
-            $('#generateReportBtn').click(function() {
-                const period = $('#reportPeriod').val();
+            function getReportDateRange(period, startDateVal, endDateVal) {
                 let startDate, endDate;
-                
                 const now = moment();
                 if (period === 'today') {
                     startDate = now.clone().startOf('day');
@@ -3046,45 +3107,201 @@
                     startDate = now.clone().startOf('month');
                     endDate = now.clone().endOf('month');
                 } else {
-                    if (!$('#reportStartDate').val() || !$('#reportEndDate').val()) {
+                    if (!startDateVal || !endDateVal) {
                         showToast('Tanggal custom harus diisi lengkap', 'error');
-                        return;
+                        return null;
                     }
-                    startDate = moment($('#reportStartDate').val()).startOf('day');
-                    endDate = moment($('#reportEndDate').val()).endOf('day');
+                    startDate = moment(startDateVal).startOf('day');
+                    endDate = moment(endDateVal).endOf('day');
                 }
-                
-                const filtered = transactions.filter(t => moment(t.date).isBetween(startDate, endDate));
-                
-                const totalRevenue = filtered.reduce((sum, t) => sum + t.total, 0);
-                const paymentMethods = filtered.reduce((acc, t) => {
-                    acc[t.paymentMethod] = (acc[t.paymentMethod] || 0) + t.total;
-                    return acc;
-                }, {});
+                return { startDate, endDate };
+            }
 
+            // Generate report
+            $('#generateReportBtn').click(function() {
+                const period = $('#reportPeriod').val();
+                const range = getReportDateRange(period, $('#reportStartDate').val(), $('#reportEndDate').val());
+                if (!range) return;
+                
+                const { startDate, endDate } = range;
+                lastGeneratedReportData = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, undefined, '[]'));
+                
+                const totalRevenue = lastGeneratedReportData.reduce((sum, t) => sum + t.total, 0);
+                
                 let reportHtml = `<h4>Laporan Penjualan (${startDate.format('LL')} - ${endDate.format('LL')})</h4>
-                    <p>Total Transaksi: ${filtered.length}</p>
-                    <p>Total Pendapatan: ${formatCurrency(totalRevenue)}</p>
-                    <h5>Metode Pembayaran</h5><table class="data-table">...</table>
-                    <h5>Detail Transaksi</h5><table class="data-table">...</table>`;
-
-                $('#reportResults').html(reportHtml); // Simplified for brevity
+                    <p><b>Total Transaksi:</b> ${lastGeneratedReportData.length}</p>
+                    <p><b>Total Pendapatan:</b> ${formatCurrency(totalRevenue)}</p>
+                    <h5>Detail Transaksi</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>ID Transaksi</th>
+                                <th>Pelanggan</th>
+                                <th>Total</th>
+                                <th>Metode Bayar</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                if(lastGeneratedReportData.length === 0){
+                    reportHtml += `<tr><td colspan="5" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
+                } else {
+                    lastGeneratedReportData.forEach(t => {
+                        reportHtml += `<tr>
+                            <td>${moment(t.date).format('LLL')}</td>
+                            <td>${t.id}</td>
+                            <td>${t.customer}</td>
+                            <td class="text-right">${formatCurrency(t.total)}</td>
+                            <td>${formatPaymentMethod(t.paymentMethod)}</td>
+                        </tr>`;
+                    });
+                }
+                reportHtml += `</tbody></table>`;
+                $('#reportResults').html(reportHtml);
+                $('#printReportBtn').show();
             });
             
             // Generate profit report
             $('#generateProfitReportBtn').click(function() {
-                 // Logic is similar to sales report, but calculates profit
-                 // ...
+                const period = $('#profitReportPeriod').val();
+                const range = getReportDateRange(period, $('#profitReportStartDate').val(), $('#profitReportEndDate').val());
+                if (!range) return;
+
+                const { startDate, endDate } = range;
+                lastGeneratedProfitReportData = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, undefined, '[]'));
+
+                let totalRevenue = 0;
+                let totalCost = 0;
+                
+                lastGeneratedProfitReportData.forEach(t => {
+                    totalRevenue += t.total;
+                    t.items.forEach(item => {
+                        totalCost += (item.product.cost || 0) * item.quantity;
+                    });
+                });
+
+                const totalProfit = totalRevenue - totalCost;
+
+                let reportHtml = `<h4>Laporan Laba Rugi (${startDate.format('LL')} - ${endDate.format('LL')})</h4>
+                    <p><b>Total Transaksi:</b> ${lastGeneratedProfitReportData.length}</p>
+                    <p><b>Total Pendapatan:</b> ${formatCurrency(totalRevenue)}</p>
+                    <p><b>Total Modal (HPP):</b> ${formatCurrency(totalCost)}</p>
+                    <p><b>Total Laba Kotor:</b> ${formatCurrency(totalProfit)}</p>
+                    <h5>Detail Transaksi</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>ID Transaksi</th>
+                                <th>Pendapatan</th>
+                                <th>Modal (HPP)</th>
+                                <th>Laba</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                
+                if (lastGeneratedProfitReportData.length === 0) {
+                     reportHtml += `<tr><td colspan="5" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
+                } else {
+                    lastGeneratedProfitReportData.forEach(t => {
+                        const revenue = t.total;
+                        const cost = t.items.reduce((sum, item) => sum + (item.product.cost || 0) * item.quantity, 0);
+                        const profit = revenue - cost;
+                        reportHtml += `<tr>
+                            <td>${moment(t.date).format('L')}</td>
+                            <td>${t.id}</td>
+                            <td class="text-right">${formatCurrency(revenue)}</td>
+                            <td class="text-right">${formatCurrency(cost)}</td>
+                            <td class="text-right">${formatCurrency(profit)}</td>
+                        </tr>`;
+                    });
+                }
+
+                reportHtml += `</tbody></table>`;
+                $('#profitReportResults').html(reportHtml);
+                $('#printProfitReportBtn').show();
             });
             
             // Print report as PDF
             $('#printReportBtn').click(function() {
-                // ... (Existing PDF generation logic)
+                const doc = new jsPDF();
+                const period = $('#reportPeriod').val();
+                const range = getReportDateRange(period, $('#reportStartDate').val(), $('#reportEndDate').val());
+
+                doc.setFontSize(18);
+                doc.text(settings.storeName, 14, 22);
+                doc.setFontSize(11);
+                doc.text(`Laporan Penjualan: ${range.startDate.format('D MMM YYYY')} - ${range.endDate.format('D MMM YYYY')}`, 14, 30);
+                
+                const head = [['Tanggal', 'ID', 'Pelanggan', 'Metode Bayar', 'Total']];
+                const body = lastGeneratedReportData.map(t => [
+                    moment(t.date).format('DD/MM/YY HH:mm'),
+                    t.id,
+                    t.customer,
+                    formatPaymentMethod(t.paymentMethod),
+                    formatCurrency(t.total)
+                ]);
+
+                doc.autoTable({
+                    head: head,
+                    body: body,
+                    startY: 35,
+                    headStyles: { fillColor: [67, 97, 238] },
+                    didDrawPage: function(data) {
+                        const totalRevenue = lastGeneratedReportData.reduce((sum, t) => sum + t.total, 0);
+                        doc.setFontSize(12);
+                        doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 14, doc.internal.pageSize.height - 10);
+                    }
+                });
+
+                doc.save(`Laporan_Penjualan_${moment().format('YYYYMMDD')}.pdf`);
             });
             
             // Print profit report as PDF
             $('#printProfitReportBtn').click(function() {
-                // ... (Existing PDF generation logic)
+                const doc = new jsPDF();
+                const period = $('#profitReportPeriod').val();
+                const range = getReportDateRange(period, $('#profitReportStartDate').val(), $('#profitReportEndDate').val());
+
+                doc.setFontSize(18);
+                doc.text(settings.storeName, 14, 22);
+                doc.setFontSize(11);
+                doc.text(`Laporan Laba Rugi: ${range.startDate.format('D MMM YYYY')} - ${range.endDate.format('D MMM YYYY')}`, 14, 30);
+
+                const head = [['Tanggal', 'ID Transaksi', 'Pendapatan', 'Modal (HPP)', 'Laba']];
+                const body = lastGeneratedProfitReportData.map(t => {
+                    const revenue = t.total;
+                    const cost = t.items.reduce((sum, item) => sum + (item.product.cost || 0) * item.quantity, 0);
+                    const profit = revenue - cost;
+                    return [
+                        moment(t.date).format('DD/MM/YYYY'),
+                        t.id,
+                        formatCurrency(revenue),
+                        formatCurrency(cost),
+                        formatCurrency(profit)
+                    ];
+                });
+                
+                doc.autoTable({
+                    head: head,
+                    body: body,
+                    startY: 35,
+                    headStyles: { fillColor: [67, 97, 238] },
+                    didDrawPage: function(data) {
+                        const totalRevenue = lastGeneratedProfitReportData.reduce((sum, t) => sum + t.total, 0);
+                        const totalCost = lastGeneratedProfitReportData.reduce((sum, t) => sum + t.items.reduce((itemSum, item) => itemSum + (item.product.cost || 0) * item.quantity, 0), 0);
+                        const totalProfit = totalRevenue - totalCost;
+                        
+                        let finalY = doc.internal.pageSize.height - 20;
+                        doc.setFontSize(12);
+                        doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 14, finalY);
+                        doc.text(`Total Modal (HPP): ${formatCurrency(totalCost)}`, 80, finalY);
+                        doc.text(`Total Laba: ${formatCurrency(totalProfit)}`, 150, finalY);
+                    }
+                });
+                
+                doc.save(`Laporan_Laba_Rugi_${moment().format('YYYYMMDD')}.pdf`);
             });
             
             // Report period change
@@ -3096,14 +3313,36 @@
             // Modal close buttons & handlers
             $('.modal-close').click(function() { $(this).closest('.modal').hide(); });
             $('.modal').click(function(e) { if (e.target === this) $(this).hide(); });
-            $('.modal-content, .login-container').click(e => e.stopPropagation());
-            $('#cancelProduct, #cancelManageCategories, #cancelCashier, #cancelMember, #cancelRole, #cancelReports, #cancelProfitReport, #cancelStoreInfo').click(function() {
+            $('.modal-content, .login-container, .trial-limit-content').click(e => e.stopPropagation());
+            $('#cancelProduct, #cancelManageCategories, #cancelCashier, #cancelMember, #cancelRole, #cancelReports, #cancelProfitReport, #cancelStoreInfo, #cancelAdminPassword, #cancelMember, #cancelRole, #cancelCashier').click(function() {
                 $(this).closest('.modal').hide();
             });
             
             // Print/Download receipt from template
-            window.printReceipt = function() { /* existing logic */ };
-            window.downloadReceiptPDF = function() { /* existing logic */ };
+            $(document).on('click', '#printReceiptBtn', function(){
+                window.print();
+            });
+
+            $(document).on('click', '#downloadReceiptBtn', function(){
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [80, 200] // Thermal printer paper size
+                });
+
+                const receiptContent = document.getElementById('receiptTemplate').querySelector('.receipt');
+                
+                html2canvas(receiptContent).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgProps = doc.getImageProperties(imgData);
+                    const pdfWidth = doc.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    const trxId = $('#receiptId').text();
+                    doc.save(`struk_${trxId}.pdf`);
+                });
+            });
             
             // Helper functions
             function loadProducts(searchTerm = '', category = 'all') {
@@ -3299,7 +3538,31 @@
             }
             
             function generateReceipt(transaction) {
-                 // ... (existing logic is fine)
+                 $('#receiptDate').text(moment(transaction.date).format('DD/MM/YYYY HH:mm'));
+                 $('#receiptId').text(transaction.id);
+                 $('#receiptCashier').text(transaction.cashier.name);
+                 $('#receiptCustomer').text(transaction.customer);
+                 $('#receiptMember').text(transaction.member ? transaction.member : '-');
+                 
+                 const itemsDiv = $('#receiptItems').empty();
+                 transaction.items.forEach(item => {
+                     const itemTotal = item.product.price * item.quantity;
+                     let itemHtml = `<div>${item.product.name}</div>
+                                     <div>${item.quantity} x ${formatCurrency(item.product.price)}</div>
+                                     <div>${formatCurrency(itemTotal)}</div>`;
+                     itemsDiv.append(`<div class="receipt-item">${itemHtml}</div>`);
+                 });
+
+                 $('#receiptSubtotal').text(formatCurrency(transaction.subtotal));
+                 $('#receiptDiscount').text(formatCurrency(transaction.discount));
+                 $('#receiptAdditionalCost').text(formatCurrency(transaction.additionalCost));
+                 $('#receiptTotal').text(formatCurrency(transaction.total));
+                 $('#receiptPaymentMethod').text(formatPaymentMethod(transaction.paymentMethod) + ':');
+                 $('#receiptPaymentAmount').text(formatCurrency(transaction.paymentAmount));
+                 $('#receiptChange').text(formatCurrency(transaction.change));
+                 
+                 // Show the receipt template as a modal or new view
+                 $('#receiptTemplate').show();
             }
             
             function resetCart() {
@@ -3320,7 +3583,7 @@
                 $('#productPrice').val(product.price);
                 $('#productCost').val(product.cost || '');
                 $('#productStock').val(product.stock);
-                $('#productModal').show();
+                $('#productModal').css('display', 'flex');
             }
             
             function formatCurrency(amount) {
