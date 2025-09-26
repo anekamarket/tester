@@ -394,10 +394,6 @@
             animation: fadeIn 0.3s;
         }
 
-        #reportsModal .modal-content, #profitReportModal .modal-content {
-            max-width: 800px;
-        }
-
         .modal-header {
             padding: 16px;
             border-bottom: 1px solid #eee;
@@ -450,13 +446,6 @@
             font-size: 1rem;
         }
 
-        .form-control:disabled {
-            background-color: #e9ecef;
-            opacity: 1;
-            cursor: not-allowed;
-            user-select: none;
-        }
-
         textarea.form-control {
             min-height: 100px;
             resize: vertical;
@@ -489,18 +478,13 @@
             font-weight: 600;
         }
 
-        .captcha-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .captcha-label {
-            font-weight: 600;
-            padding: 8px;
-            background-color: var(--light);
-            border-radius: var(--rounded-sm);
+        .readonly-input {
+            background-color: #e9ecef;
+            cursor: not-allowed;
             user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         /* Toast Notification */
@@ -610,7 +594,6 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 16px;
-            font-size: 0.9rem;
         }
 
         .data-table th, .data-table td {
@@ -626,10 +609,6 @@
 
         .data-table tr:hover {
             background-color: #f9f9f9;
-        }
-        
-        .data-table .text-right {
-            text-align: right;
         }
 
         /* Animations */
@@ -689,16 +668,9 @@
                 top: 0;
                 width: 100%;
                 max-width: 100%;
-                padding: 0;
+                padding: 20px;
                 margin: 0;
-                font-size: 12px; /* Adjusted for thermal printers */
-            }
-            
-            #receiptTemplate .receipt {
-                width: 100%;
-                max-width: 280px; /* Common thermal printer width */
-                border: none;
-                padding: 5px;
+                font-size: 14px;
             }
             
             .no-print {
@@ -707,7 +679,7 @@
             
             @page {
                 size: auto;
-                margin: 5mm;
+                margin: 0;
             }
         }
 
@@ -787,7 +759,7 @@
 
         /* Receipt Styles */
         .receipt {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, sans-serif;
             max-width: 300px;
             margin: 0 auto;
             padding: 15px;
@@ -801,17 +773,17 @@
 
         .receipt-header h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
         }
 
         .receipt-header p {
-            margin: 2px 0;
-            font-size: 11px;
+            margin: 5px 0;
+            font-size: 12px;
         }
 
         .receipt-body {
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .receipt-body hr {
@@ -836,7 +808,7 @@
         .receipt-footer {
             text-align: center;
             margin-top: 15px;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         /* Role Badge */
@@ -1022,29 +994,30 @@
         </div>
     </div>
 
-    <div id="loginModal" class="modal" style="display: flex;">
+    <div id="loginModal" class="modal" style="display: block;">
         <div class="login-container">
             <div class="login-header">
                 <div class="login-logo">
                     <i class="fas fa-cash-register"></i>
                 </div>
                 <h1 class="login-title">SISTEM KASIR DIGITAL</h1>
-                <p>Silakan Masuk Untuk Melanjutkan</p> 
+                <p>Selesaikan captcha untuk login</p> 
             </div>
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" value="admin" disabled>
+                    <input type="text" id="username" class="form-control readonly-input" value="admin" readonly>
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" value="12345" disabled>
+                    <input type="password" id="password" class="form-control readonly-input" value="12345" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="captcha" class="form-label">Verifikasi Keamanan</label>
-                    <div class="captcha-container">
-                        <span id="captchaLabel" class="captcha-label"></span>
-                        <input type="number" id="captchaInput" class="form-control" placeholder="Jawab" required>
+                    <label for="captcha" class="form-label">Verifikasi Captcha</label>
+                    <div class="d-flex align-center gap-2">
+                        <span id="captchaQuestion" style="font-weight: bold; padding: 12px; background: #f0f0f0; border-radius: var(--rounded-sm);"></span>
+                        <input type="text" id="captcha" class="form-control" placeholder="Jawaban" required autocomplete="off">
+                        <button type="button" id="refreshCaptcha" class="btn btn-sm" style="width: auto; padding: 10px 12px;"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
                 <button type="submit" class="btn mt-3">
@@ -1542,7 +1515,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning" id="cancelReports">Tutup</button>
                 <button class="btn btn-success" id="generateReportBtn">Generate Laporan</button>
-                <button class="btn btn-info" id="printReportBtn" style="display: none;">Unduh PDF</button>
+                <button class="btn btn-info" id="printReportBtn">Cetak PDF</button>
             </div>
         </div>
     </div>
@@ -1579,7 +1552,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning" id="cancelProfitReport">Tutup</button>
                 <button class="btn btn-success" id="generateProfitReportBtn">Generate Laporan</button>
-                <button class="btn btn-info" id="printProfitReportBtn" style="display: none;">Unduh PDF</button>
+                <button class="btn btn-info" id="printProfitReportBtn">Cetak PDF</button>
             </div>
         </div>
     </div>
@@ -1772,7 +1745,7 @@
                 
                 <hr>
                 
-                <div class="summary-container" style="margin-top: 0; padding-top: 0; border-top: none;">
+                <div class="summary-container">
                     <div class="receipt-item">
                         <span>Subtotal:</span>
                         <span id="receiptSubtotal">Rp 0</span>
@@ -1785,7 +1758,7 @@
                         <span>Biaya Tambahan:</span>
                         <span id="receiptAdditionalCost">Rp 0</span>
                     </div>
-                    <div class="receipt-item total-row" style="border-top: 1px dashed #ddd;">
+                    <div class="receipt-item total-row">
                         <span>TOTAL:</span>
                         <span id="receiptTotal">Rp 0</span>
                     </div>
@@ -1805,10 +1778,10 @@
                 <p>&copy; <span id="receiptYear"></span> <span id="receiptCopyright">Lentera Karya Situbondo</span></p>
             </div>
         </div>
-        <button id="printReceiptBtn" class="btn btn-info no-print mt-3" style="width: 100%; max-width: 300px; margin: 10px auto; display: block;">
+        <button id="printReceiptBtn" class="btn btn-info no-print" onclick="window.printReceipt()">
             <i class="fas fa-print"></i> Cetak Struk
         </button>
-        <button id="downloadReceiptBtn" class="btn btn-success no-print" style="width: 100%; max-width: 300px; margin: 0 auto; display: block;">
+        <button id="downloadReceiptBtn" class="btn btn-success no-print mt-2" onclick="window.downloadReceiptPDF()">
             <i class="fas fa-file-pdf"></i> Download PDF
         </button>
     </div>
@@ -2012,171 +1985,156 @@
         }
     ];
     
-    // Global variables to hold app state
-    let products, categories, transactions, settings, users, members, roles, discounts, currentUser, stockHistory, memos, trialLimits, currentCart;
-    let captchaAnswer = 0;
-    let lastGeneratedReportData = [];
-    let lastGeneratedProfitReportData = [];
+    // Global variables for data
+    let products, categories, transactions, settings, users, members, roles, discounts, currentUser, stockHistory, memos, trialLimits, currentCart, captchaAnswer;
 
-    // ===================================================================================
-    // PERBAIKAN UTAMA: Fungsi ini menangani inisialisasi dan pemuatan semua data
-    // ke dalam variabel global. Ini memperbaiki bug login.
-    // ===================================================================================
-    function loadAndInitializeData() {
-        let dataUpdated = false;
-
-        // 1. Users & Roles
-        let localUsers = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
-        let localRoles = JSON.parse(localStorage.getItem(STORAGE_KEYS.ROLES)) || [];
-
-        // Initialize roles if they don't exist
-        if (localRoles.length === 0) {
-            localRoles = DEFAULT_ROLES;
-            localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(localRoles));
+    // Initialize data in localStorage if not exists
+    function initializeData() {
+        let currentUsers = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS));
+        if (!currentUsers || !Array.isArray(currentUsers)) {
+            currentUsers = [];
         }
 
-        // Ensure default admin user exists without overwriting
-        if (!localUsers.some(u => u.username === 'admin')) {
-            localUsers.push(DEFAULT_ADMIN);
-            dataUpdated = true;
-        }
-
-        // Ensure default cashier user exists without overwriting
-        if (!localUsers.some(u => u.username === 'kasir')) {
-            localUsers.push(DEFAULT_CASHIER);
-            dataUpdated = true;
-        }
-
-        if (dataUpdated) {
-            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(localUsers));
-        }
+        // Check if default users already exist
+        const adminExists = currentUsers.some(u => u.username === 'admin');
+        const cashierExists = currentUsers.some(u => u.username === 'kasir');
         
-        // Load data into global variables
-        users = localUsers;
-        roles = localRoles;
-
-        // 2. Settings
-        const defaultSettings = {
-            storeName: 'APLIKASI KASIR MODERN',
-            storeAddress: 'Jl. Contoh No. 123, Kota',
-            storePhone: '081234567890',
-            storeDescription: 'Toko serba ada dengan harga terjangkau'
-        };
-        settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || defaultSettings;
-        localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-
-        // 3. Trial Limits
-        const defaultTrialLimits = { transactions: 0, categories: 0, products: 0 };
-        trialLimits = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRIAL_LIMITS)) || defaultTrialLimits;
-        localStorage.setItem(STORAGE_KEYS.TRIAL_LIMITS, JSON.stringify(trialLimits));
-
-        // 4. Other data (load or initialize as empty arrays/objects)
+        if (!adminExists) {
+            currentUsers.push(DEFAULT_ADMIN);
+        }
+        if (!cashierExists) {
+            currentUsers.push(DEFAULT_CASHIER);
+        }
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(currentUsers));
+                
+        if (!localStorage.getItem(STORAGE_KEYS.ROLES)) {
+            localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(DEFAULT_ROLES));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) {
+            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
+            localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) {
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({
+                storeName: 'APLIKASI KASIR MODERN',
+                storeAddress: 'Jl. Contoh No. 123, Kota',
+                storePhone: '081234567890',
+                storeDescription: 'Toko serba ada dengan harga terjangkau'
+            }));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.STOCK_HISTORY)) {
+            localStorage.setItem(STORAGE_KEYS.STOCK_HISTORY, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
+            localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.DISCOUNTS)) {
+            localStorage.setItem(STORAGE_KEYS.DISCOUNTS, JSON.stringify({ memberDiscount: 10 }));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.MEMOS)) {
+            localStorage.setItem(STORAGE_KEYS.MEMOS, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_KEYS.TRIAL_LIMITS)) {
+            localStorage.setItem(STORAGE_KEYS.TRIAL_LIMITS, JSON.stringify({
+                transactions: 0,
+                categories: 0,
+                products: 0
+            }));
+        }
+    }
+    
+    // Load all data from localStorage into global variables
+    function loadData() {
         products = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS)) || [];
         categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
         transactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [];
-        stockHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.STOCK_HISTORY)) || [];
+        settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+        users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
         members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
+        roles = JSON.parse(localStorage.getItem(STORAGE_KEYS.ROLES)) || [];
         discounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.DISCOUNTS)) || { memberDiscount: 10 };
-        memos = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMOS)) || [];
-        
-        // 5. Session and Cart
         currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
+        stockHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.STOCK_HISTORY)) || [];
+        memos = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMOS)) || [];
+        trialLimits = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRIAL_LIMITS)) || { transactions: 0, categories: 0, products: 0 };
         currentCart = JSON.parse(localStorage.getItem(STORAGE_KEYS.CART)) || {
-            items: [], subtotal: 0, discount: 0, additionalCost: 0, 
-            additionalCostNote: '', total: 0, memberId: null 
+            items: [], subtotal: 0, discount: 0, additionalCost: 0, additionalCostNote: '', total: 0, memberId: null
         };
-        
-        // Initial setup for empty local storage
-        if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) localStorage.setItem(STORAGE_KEYS.PRODUCTS, '[]');
-        if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) localStorage.setItem(STORAGE_KEYS.CATEGORIES, '[]');
-        if (!localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, '[]');
-        if (!localStorage.getItem(STORAGE_KEYS.STOCK_HISTORY)) localStorage.setItem(STORAGE_KEYS.STOCK_HISTORY, '[]');
-        if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) localStorage.setItem(STORAGE_KEYS.MEMBERS, '[]');
-        if (!localStorage.getItem(STORAGE_KEYS.DISCOUNTS)) localStorage.setItem(STORAGE_KEYS.DISCOUNTS, JSON.stringify({ memberDiscount: 10 }));
-        if (!localStorage.getItem(STORAGE_KEYS.MEMOS)) localStorage.setItem(STORAGE_KEYS.MEMOS, '[]');
     }
 
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        $('#captchaLabel').text(`${num1} + ${num2} =`);
-    }
-        
     // Initialize the app
     $(document).ready(function() {
-        // Initialize and load all data from localStorage into global variables
-        loadAndInitializeData();
+        // Ensure data is initialized in localStorage, then load it into variables
+        initializeData();
+        loadData();
+        
+        // Set up login page
+        generateCaptcha();
+        $('#refreshCaptcha').click(generateCaptcha);
         
         // Set current year in footer
         $('#currentYear, #receiptYear').text(new Date().getFullYear());
         
-        // Generate Captcha for login
-        generateCaptcha();
-        
-        // Check if user is logged in from a previous session
+        // Check if user is logged in
         if (currentUser) {
-            $('#loggedInUser').text(currentUser.name);
-            updateRoleBadge(currentUser.role);
-            $('#loginModal').hide();
-            $('#mainApp').show();
-            
-            // Load all necessary data for the UI
-            loadProducts();
-            updateCart();
-            loadCategories();
-            updateCurrentDate();
-            updateStoreInfo();
-            loadMembersForSelect();
-            loadActiveMemos();
-            
-            // Check trial limits and disable features if exceeded
-            checkTrialLimits();
-            
-            // Configure UI based on user role and permissions
-            configureUIPermissions();
+            setupMainApp();
         }
         
-        // Login form handler with password hashing
+        // Login form handler
         $('#loginForm').submit(function(e) {
             e.preventDefault();
-            const username = $('#username').val().trim();
-            const password = "12345"; // Hardcoded password
-            const userAnswer = parseInt($('#captchaInput').val());
-            
+
+            // Captcha validation
+            const userAnswer = parseInt($('#captcha').val());
             if (userAnswer !== captchaAnswer) {
-                showToast('Jawaban CAPTCHA salah!', 'error');
+                showToast('Jawaban Captcha salah', 'error');
                 generateCaptcha();
-                $('#captchaInput').val('');
                 return;
             }
-
-            // Find user from the correctly loaded 'users' global variable
+            
+            // Hardcoded credentials as per the new design
+            const username = 'admin';
+            const password = '12345';
+            
+            // Find user
             const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
             
             if (!user) {
-                showToast('Username tidak ditemukan', 'error');
+                showToast('Username default "admin" tidak ditemukan. Hubungi developer.', 'error');
+                generateCaptcha();
                 return;
             }
             
-            // Verify password by comparing hashes
+            // Verify password
             const hashedPassword = CryptoJS.SHA256(password).toString();
             
             if (hashedPassword !== user.password) {
-                showToast('Password salah', 'error');
+                showToast('Password default salah. Hubungi developer.', 'error');
+                generateCaptcha();
                 return;
             }
             
             // Login successful
             currentUser = user;
             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
-            $('#loggedInUser').text(currentUser.name);
             
-            updateRoleBadge(currentUser.role);
             $('#loginModal').hide();
             $('#mainApp').fadeIn();
             
-            // Load all necessary data for the UI
+            setupMainApp();
+            showToast('Login berhasil', 'success');
+        });
+        
+        function setupMainApp() {
+            $('#loggedInUser').text(currentUser.name);
+            updateRoleBadge(currentUser.role);
+            
+            $('#mainApp').show();
             loadProducts();
             updateCart();
             loadCategories();
@@ -2186,52 +2144,64 @@
             loadActiveMemos();
             
             checkTrialLimits();
-            configureUIPermissions();
             
-            showToast(`Login berhasil, selamat datang ${currentUser.name}`, 'success');
-        });
-
-        function configureUIPermissions() {
-            if (currentUser.role === 'admin' || hasPermission(currentUser.role, 'manageProducts')) {
+            // Show admin panel and configure UI based on role permissions
+            if (hasPermission(currentUser.role, 'manageProducts')) { // Using a broad permission as a proxy for admin-like view
                 $('#adminPanel').show();
                 $('#mainApp').addClass('admin-view');
                 
-                // Show/Hide buttons based on specific permissions
-                toggleElement(hasPermission(currentUser.role, 'manageCashiers'), '#manageCashiersBtn');
-                toggleElement(hasPermission(currentUser.role, 'manageRoles'), '#manageRolesBtn');
-                toggleElement(hasPermission(currentUser.role, 'viewProfitReports'), '#profitReportBtn');
-                toggleElement(hasPermission(currentUser.role, 'dataManagement'), '#backupDataBtn, #restoreDataBtn, #resetDataBtn');
-                toggleElement(hasPermission(currentUser.role, 'manageMemos'), '#manageMemosBtn');
-                toggleElement(hasPermission(currentUser.role, 'addProduct'), '#addProductBtn');
-                toggleElement(hasPermission(currentUser.role, 'manageCategories'), '#manageCategoriesBtn');
-                toggleElement(hasPermission(currentUser.role, 'manageMembers'), '#manageMembersBtn');
-                toggleElement(hasPermission(currentUser.role, 'viewReports'), '#viewReportsBtn');
-                toggleElement(hasPermission(currentUser.role, 'manageStoreInfo'), '#manageStoreInfoBtn');
+                // Show/hide specific admin buttons based on fine-grained permissions
+                toggleAdminButton('#addProductBtn', 'addProduct');
+                toggleAdminButton('#manageCategoriesBtn', 'manageCategories');
+                toggleAdminButton('#manageCashiersBtn', 'manageCashiers');
+                toggleAdminButton('#manageMembersBtn', 'manageMembers');
+                toggleAdminButton('#manageRolesBtn', 'manageRoles');
+                toggleAdminButton('#viewReportsBtn', 'viewReports');
+                toggleAdminButton('#profitReportBtn', 'viewProfitReports');
+                toggleAdminButton('#manageStoreInfoBtn', 'manageStoreInfo');
+                toggleAdminButton('#manageMemosBtn', 'manageMemos');
 
+                if (hasPermission(currentUser.role, 'dataManagement')) {
+                    $('#backupDataBtn, #restoreDataBtn, #resetDataBtn').show();
+                } else {
+                    $('#backupDataBtn, #restoreDataBtn, #resetDataBtn').hide();
+                }
             } else {
-                 $('#adminPanel').hide();
-                 $('#mainApp').removeClass('admin-view');
+                $('#adminPanel').hide();
+                $('#mainApp').removeClass('admin-view');
             }
         }
         
-        function toggleElement(condition, selector) {
-            if (condition) {
+        function toggleAdminButton(selector, permission) {
+            if (hasPermission(currentUser.role, permission)) {
                 $(selector).show();
             } else {
                 $(selector).hide();
             }
         }
             
+        // Function to generate and display the CAPTCHA
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            captchaAnswer = num1 + num2;
+            $('#captchaQuestion').text(`${num1} + ${num2} = ?`);
+            $('#captcha').val('').focus();
+        }
+
             // Function to check trial limits and disable features
             function checkTrialLimits() {
+                // Check transaction limit
                 if (trialLimits.transactions >= 5) {
                     $('#checkoutBtn, #completePaymentBtn').addClass('btn-disabled');
                 }
                 
+                // Check categories limit
                 if (trialLimits.categories >= 5) {
                     $('#addCategoryBtn').addClass('btn-disabled');
                 }
                 
+                // Check products limit
                 if (trialLimits.products >= 5) {
                     $('#addProductBtn').addClass('btn-disabled');
                 }
@@ -2255,13 +2225,12 @@
                 
                 badge.removeClass('role-admin role-cashier role-assistant');
                 
-                if (role) {
-                    badge.text(role.name);
-                    if (roleCode === 'admin') badge.addClass('role-admin');
-                    else if (roleCode === 'cashier') badge.addClass('role-cashier');
-                    else badge.addClass('role-assistant');
+                if (roleCode === 'admin') {
+                    badge.addClass('role-admin').text('Admin');
+                } else if (roleCode === 'cashier') {
+                    badge.addClass('role-cashier').text('Kasir');
                 } else {
-                    badge.text(roleCode).addClass('role-assistant');
+                    badge.addClass('role-assistant').text(role ? role.name : 'Asisten');
                 }
             }
             
@@ -2281,9 +2250,8 @@
                 currentUser = null;
                 localStorage.removeItem(STORAGE_KEYS.USER);
                 $('#mainApp').fadeOut();
-                generateCaptcha();
-                $('#captchaInput').val('');
-                $('#loginModal').css('display', 'flex');
+                $('#loginModal').fadeIn();
+                generateCaptcha(); // Generate new captcha on logout
                 $('#mainApp').removeClass('admin-view');
                 
                 showToast('Anda telah logout', 'info');
@@ -2301,14 +2269,17 @@
                 
                 if (!product) return;
                 
+                // Check stock
                 if (product.stock <= 0) {
                     showToast('Stok produk habis', 'error');
                     return;
                 }
                 
+                // Check if product already in cart
                 const existingItem = currentCart.items.find(item => item.product.id === productId);
                 
                 if (existingItem) {
+                    // Check stock
                     if (existingItem.quantity + 1 > product.stock) {
                         showToast('Stok tidak mencukupi', 'error');
                         return;
@@ -2328,29 +2299,25 @@
             // Edit product button
             $(document).on('click', '.edit-product', function(e) {
                 e.stopPropagation();
-                const productId = $(this).data('id');
-                const product = products.find(p => p.id === productId);
-                
-                if (!product) return;
-                
                 if (!hasPermission(currentUser.role, 'manageProducts')) {
                     showToast('Anda tidak memiliki izin untuk mengedit produk', 'error');
                     return;
                 }
                 
-                openEditProductModal(product);
+                const productId = $(this).closest('.product-card').data('id');
+                const product = products.find(p => p.id === productId);
+                if (product) openEditProductModal(product);
             });
-            
+
             // Delete product button
             $(document).on('click', '.delete-product', function(e) {
                 e.stopPropagation();
-                const productId = $(this).data('id');
-                
                 if (!hasPermission(currentUser.role, 'manageProducts')) {
                     showToast('Anda tidak memiliki izin untuk menghapus produk', 'error');
                     return;
                 }
-                
+
+                const productId = $(this).closest('.product-card').data('id');
                 if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
                     products = products.filter(p => p.id !== productId);
                     saveProducts();
@@ -2379,6 +2346,7 @@
                 
                 const item = currentCart.items.find(item => item.product.id === productId);
                 if (item) {
+                    // Check stock
                     const product = products.find(p => p.id === productId);
                     if (quantity > product.stock) {
                         showToast('Stok tidak mencukupi', 'error');
@@ -2399,8 +2367,8 @@
             });
             
             // Update additional cost
-            $('#additionalCostInput, #additionalCostNote').on('change', function() {
-                currentCart.additionalCost = parseFloat($('#additionalCostInput').val()) || 0;
+            $('#additionalCostInput').on('change', function() {
+                currentCart.additionalCost = parseFloat($(this).val()) || 0;
                 currentCart.additionalCostNote = $('#additionalCostNote').val();
                 updateCart();
             });
@@ -2412,8 +2380,9 @@
                     return;
                 }
                 
+                // Check transaction trial limit
                 if (trialLimits.transactions >= 5) {
-                    showTrialLimitWarning('Anda telah mencapai batas 5 transaksi dalam versi uji coba.<br><br>Silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                    showTrialLimitWarning('Anda telah mencapai batas transaksi dalam versi uji coba. Anda hanya diperbolehkan melakukan 5 transaksi untuk uji coba sistem.<br><br>Untuk menikmati fitur lengkap tanpa batasan, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
                     return;
                 }
                 
@@ -2446,11 +2415,13 @@
                     return;
                 }
                 
+                // Get member info if exists
                 let memberInfo = null;
                 if (currentCart.memberId) {
                     memberInfo = members.find(m => m.id === currentCart.memberId);
                 }
                 
+                // Create transaction
                 const transaction = {
                     id: 'TRX' + moment().format('YYYYMMDDHHmmss'),
                     date: new Date(),
@@ -2468,6 +2439,7 @@
                     cashier: currentUser
                 };
                 
+                // Update product stock
                 transaction.items.forEach(item => {
                     const product = products.find(p => p.id === item.product.id);
                     if (product) {
@@ -2475,34 +2447,47 @@
                         product.stock -= item.quantity;
                         if (product.stock < 0) product.stock = 0;
                         
+                        // Add to stock history
                         stockHistory.push({
-                            productId: product.id, productName: product.name, date: new Date(),
-                            type: 'out', quantity: item.quantity, oldStock: oldStock,
-                            newStock: product.stock, note: `Penjualan transaksi ${transaction.id}`,
+                            productId: product.id,
+                            productName: product.name,
+                            date: new Date(),
+                            type: 'out',
+                            quantity: item.quantity,
+                            oldStock: oldStock,
+                            newStock: product.stock,
+                            note: `Penjualan transaksi ${transaction.id}`,
                             user: currentUser.name
                         });
                     }
                 });
                 
+                // Save updated products
                 saveProducts();
                 saveStockHistory();
                 
+                // Add transaction
                 transactions.unshift(transaction);
                 saveTransactions();
                 
+                // Update transaction trial limit
                 trialLimits.transactions++;
                 localStorage.setItem(STORAGE_KEYS.TRIAL_LIMITS, JSON.stringify(trialLimits));
                 
+                // Check if reached transaction limit
                 if (trialLimits.transactions >= 5) {
                     $('#checkoutBtn, #completePaymentBtn').addClass('btn-disabled');
-                    showTrialLimitWarning('Anda telah mencapai batas 5 transaksi dalam versi uji coba.<br><br>Silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                    showTrialLimitWarning('Anda telah mencapai batas transaksi dalam versi uji coba. Anda hanya diperbolehkan melakukan 5 transaksi untuk uji coba sistem.<br><br>Untuk menikmati fitur lengkap tanpa batasan, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
                 }
                 
+                // Generate receipt
                 generateReceipt(transaction);
                 
+                // Show receipt with print button
                 $('#checkoutModal').hide();
                 showToast('Transaksi berhasil', 'success');
                 
+                // Reset cart
                 resetCart();
             });
             
@@ -2518,15 +2503,16 @@
                 loadProducts($('#productSearch').val(), $(this).data('category'));
             });
             
-            // Admin panel buttons
+            // Admin panel buttons (only for admin)
             $('#addProductBtn').click(function() {
                 if (!hasPermission(currentUser.role, 'addProduct')) {
                     showToast('Anda tidak memiliki izin untuk menambah produk', 'error');
                     return;
                 }
                 
+                // Check product trial limit
                 if (trialLimits.products >= 5) {
-                    showTrialLimitWarning('Anda telah mencapai batas 5 produk dalam versi uji coba.<br><br>Silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                    showTrialLimitWarning('Anda telah mencapai batas penambahan produk dalam versi uji coba. Anda hanya diperbolehkan menambahkan 5 produk untuk uji coba sistem.<br><br>Untuk menikmati fitur lengkap tanpa batasan, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
                     return;
                 }
                 
@@ -2542,6 +2528,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola kategori', 'error');
                     return;
                 }
+                
                 $('#manageCategoriesModal').css('display', 'flex');
                 loadCategoriesForManagement();
             });
@@ -2551,6 +2538,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola kasir', 'error');
                     return;
                 }
+                
                 $('#manageCashiersModal').css('display', 'flex');
                 loadCashiers();
             });
@@ -2569,6 +2557,7 @@
                     showToast('Anda tidak memiliki izin untuk mengelola role', 'error');
                     return;
                 }
+                
                 $('#manageRolesModal').css('display', 'flex');
                 loadRoles();
             });
@@ -2578,10 +2567,10 @@
                     showToast('Anda tidak memiliki izin untuk melihat laporan', 'error');
                     return;
                 }
+                
                 $('#reportsModal').css('display', 'flex');
-                $('#reportPeriod').val('today').change();
-                $('#reportResults').html('');
-                $('#printReportBtn').hide();
+                $('#reportPeriod').val('today');
+                $('#customDateRange').hide();
             });
             
             $('#profitReportBtn').click(function() {
@@ -2589,10 +2578,10 @@
                     showToast('Anda tidak memiliki izin untuk melihat laporan laba rugi', 'error');
                     return;
                 }
+                
                 $('#profitReportModal').css('display', 'flex');
-                $('#profitReportPeriod').val('today').change();
-                $('#profitReportResults').html('');
-                $('#printProfitReportBtn').hide();
+                $('#profitReportPeriod').val('today');
+                $('#profitCustomDateRange').hide();
             });
             
             $('#manageStoreInfoBtn').click(function() {
@@ -2600,15 +2589,63 @@
                     showToast('Anda tidak memiliki izin untuk mengelola info toko', 'error');
                     return;
                 }
+                
                 $('#manageStoreInfoModal').css('display', 'flex');
                 loadStoreInfo();
             });
             
             // Data management buttons
-            $('#backupDataBtn, #restoreDataBtn, #resetDataBtn').click(function() {
-                showTrialLimitWarning('Fitur manajemen data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+            $('#backupDataBtn').click(function() {
+                showTrialLimitWarning('Fitur backup data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
             });
-
+            
+            $('#restoreDataBtn').click(function() {
+                showTrialLimitWarning('Fitur restore data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+            });
+            
+            $('#resetDataBtn').click(function() {
+                showTrialLimitWarning('Fitur reset data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+            });
+            
+            // Confirm backup data
+            $('#confirmBackupBtn').click(function() {
+                showTrialLimitWarning('Fitur backup data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                $('#backupDataModal').hide();
+            });
+            
+            // Cancel backup
+            $('#cancelBackup').click(function() {
+                $('#backupDataModal').hide();
+            });
+            
+            // Confirm restore data
+            $('#confirmRestoreBtn').click(function() {
+                showTrialLimitWarning('Fitur restore data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                $('#restoreDataModal').hide();
+            });
+            
+            // Cancel restore
+            $('#cancelRestore').click(function() {
+                $('#restoreDataModal').hide();
+            });
+            
+            // Reset confirmation text change
+            $('#resetConfirmText').on('input', function() {
+                const confirmText = $(this).val().trim();
+                $('#confirmResetBtn').prop('disabled', confirmText !== 'RESET DATA');
+            });
+            
+            // Confirm reset data
+            $('#confirmResetBtn').click(function() {
+                showTrialLimitWarning('Fitur reset data tidak tersedia dalam versi uji coba. Untuk menggunakan fitur ini, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                $('#resetDataModal').hide();
+            });
+            
+            // Cancel reset
+            $('#cancelReset').click(function() {
+                $('#resetDataModal').hide();
+            });
+            
             // Manage memos button
             $('#manageMemosBtn').click(function() {
                 if (!hasPermission(currentUser.role, 'manageMemos')) {
@@ -2632,6 +2669,7 @@
             $(document).on('click', '.edit-memo', function() {
                 const memoId = $(this).data('id');
                 const memo = memos.find(m => m.id === memoId);
+                
                 if (!memo) return;
                 
                 $('#memoModal .modal-title').text('Edit Memo');
@@ -2640,8 +2678,18 @@
                 $('#memoContent').val(memo.content);
                 $('#memoColor').val(memo.color || 'warning');
                 $('#memoPinned').prop('checked', memo.pinned || false);
-                $('#memoStartDate').val(memo.startDate ? moment(memo.startDate).format('YYYY-MM-DDTHH:mm') : '');
-                $('#memoEndDate').val(memo.endDate ? moment(memo.endDate).format('YYYY-MM-DDTHH:mm') : '');
+                
+                if (memo.startDate) {
+                    $('#memoStartDate').val(moment(memo.startDate).format('YYYY-MM-DDTHH:mm'));
+                } else {
+                    $('#memoStartDate').val('');
+                }
+                
+                if (memo.endDate) {
+                    $('#memoEndDate').val(moment(memo.endDate).format('YYYY-MM-DDTHH:mm'));
+                } else {
+                    $('#memoEndDate').val('');
+                }
                 
                 $('#memoModal').css('display', 'flex');
             });
@@ -2649,6 +2697,7 @@
             // Delete memo button
             $(document).on('click', '.delete-memo', function() {
                 const memoId = $(this).data('id');
+                
                 if (confirm('Apakah Anda yakin ingin menghapus memo ini?')) {
                     memos = memos.filter(m => m.id !== memoId);
                     saveMemos();
@@ -2674,26 +2723,152 @@
                 }
                 
                 if (id) {
+                    // Editing existing memo
                     const memoIndex = memos.findIndex(m => m.id === id);
                     if (memoIndex === -1) return;
-                    memos[memoIndex] = { ...memos[memoIndex], title, content, color, pinned, startDate, endDate, updatedAt: new Date(), updatedBy: currentUser.username };
-                } else {
-                    const newMemo = {
-                        id: 'MEMO' + moment().format('YYYYMMDDHHmmss'), title, content, color, pinned, startDate, endDate,
-                        createdAt: new Date(), createdBy: currentUser.username, updatedAt: new Date(), updatedBy: currentUser.username
+                    
+                    // Update memo
+                    memos[memoIndex] = {
+                        ...memos[memoIndex],
+                        title: title,
+                        content: content,
+                        color: color,
+                        pinned: pinned,
+                        startDate: startDate,
+                        endDate: endDate,
+                        updatedAt: new Date(),
+                        updatedBy: currentUser.username
                     };
+                } else {
+                    // Create new memo
+                    const newMemo = {
+                        id: 'MEMO' + moment().format('YYYYMMDDHHmmss'),
+                        title: title,
+                        content: content,
+                        color: color,
+                        pinned: pinned,
+                        startDate: startDate,
+                        endDate: endDate,
+                        createdAt: new Date(),
+                        createdBy: currentUser.username,
+                        updatedAt: new Date(),
+                        updatedBy: currentUser.username
+                    };
+                    
                     memos.unshift(newMemo);
                 }
                 
                 saveMemos();
                 loadMemos();
                 loadActiveMemos();
+                
                 $('#memoModal').hide();
+                $('#memoForm')[0].reset();
+                
                 showToast('Memo berhasil disimpan', 'success');
             });
             
-            $('#cancelMemo, #cancelManageMemos').click(() => $('.modal').hide());
-            $(document).on('click', '.memo-close', function() { $(this).closest('.memo-card').remove(); });
+            // Cancel memo modal
+            $('#cancelMemo').click(function() {
+                $('#memoModal').hide();
+            });
+            
+            // Cancel manage memos
+            $('#cancelManageMemos').click(function() {
+                $('#manageMemosModal').hide();
+            });
+            
+            // Close memo
+            $(document).on('click', '.memo-close', function() {
+                $(this).closest('.memo-card').remove();
+            });
+            
+            // Load active memos
+            function loadActiveMemos() {
+                $('#memoContainer').empty();
+                const now = new Date();
+                
+                // Filter active memos
+                const activeMemos = memos.filter(memo => {
+                    // Check if memo is pinned
+                    if (memo.pinned) return true;
+                    
+                    // Check date range
+                    const startValid = !memo.startDate || new Date(memo.startDate) <= now;
+                    const endValid = !memo.endDate || new Date(memo.endDate) >= now;
+                    
+                    return startValid && endValid;
+                });
+                
+                // Sort by pinned first, then by date
+                activeMemos.sort((a, b) => {
+                    if (a.pinned && !b.pinned) return -1;
+                    if (!a.pinned && b.pinned) return 1;
+                    return new Date(b.updatedAt) - new Date(a.updatedAt);
+                });
+                
+                // Display memos
+                activeMemos.forEach(memo => {
+                    const memoCard = $(`
+                        <div class="memo-card" style="background-color: var(--${memo.color || 'warning'}); color: ${memo.color === 'warning' ? '#000' : '#fff'};">
+                            ${memo.pinned ? '<div class="memo-pin"><i class="fas fa-thumbtack"></i></div>' : ''}
+                            <div class="memo-header">
+                                <div class="memo-title">${memo.title}</div>
+                                <button class="memo-close">&times;</button>
+                            </div>
+                            <div class="memo-content">${memo.content}</div>
+                            <div class="memo-date">
+                                ${moment(memo.updatedAt).format('LLL')} - ${memo.updatedBy}
+                            </div>
+                        </div>
+                    `);
+                    
+                    $('#memoContainer').append(memoCard);
+                });
+            }
+            
+            // Load memos for management
+            function loadMemos() {
+                $('#memosList').empty();
+                
+                if (memos.length === 0) {
+                    $('#memosList').html(`
+                        <div class="empty-state">
+                            <i class="fas fa-sticky-note"></i>
+                            <p>Tidak ada memo</p>
+                        </div>
+                    `);
+                    return;
+                }
+                
+                // Sort by updated date (newest first)
+                const sortedMemos = [...memos].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                
+                sortedMemos.forEach(memo => {
+                    $('#memosList').append(`
+                        <div class="member-card">
+                            <div class="d-flex justify-between align-center">
+                                <div>
+                                    <div class="member-id">ID: ${memo.id}</div>
+                                    <div class="member-name">${memo.title}</div>
+                                    <div class="member-contact">
+                                        ${memo.pinned ? '<i class="fas fa-thumbtack"></i> ' : ''}
+                                        ${moment(memo.updatedAt).format('LLL')} - ${memo.updatedBy}
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-info edit-memo" data-id="${memo.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-memo" data-id="${memo.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
             
             // Add cashier button
             $('#addCashierBtn').click(function() {
@@ -2708,13 +2883,15 @@
             $(document).on('click', '.edit-cashier', function() {
                 const cashierId = $(this).data('id');
                 const cashier = users.find(u => u.id === cashierId);
+                
                 if (!cashier) return;
                 
                 $('#cashierModal .modal-title').text('Edit Kasir');
                 $('#cashierId').val(cashier.id);
                 $('#cashierUsername').val(cashier.username);
                 $('#cashierName').val(cashier.name);
-                $('#cashierPassword, #cashierConfirmPassword').val('').attr('placeholder', 'Kosongkan jika tidak ingin ganti password');
+                $('#cashierPassword').val('');
+                $('#cashierConfirmPassword').val('');
                 loadRolesForSelect();
                 $('#cashierRole').val(cashier.role);
                 $('#cashierModal').css('display', 'flex');
@@ -2723,17 +2900,12 @@
             // Delete cashier button
             $(document).on('click', '.delete-cashier', function() {
                 const cashierId = $(this).data('id');
-                const userToDelete = users.find(u => u.id === cashierId);
-
-                if (!userToDelete) return;
-                if (userToDelete.role === 'admin') {
-                    showToast('Akun admin tidak dapat dihapus', 'error');
-                    return;
-                }
+                
                 if (cashierId === currentUser.id) {
                     showToast('Tidak bisa menghapus akun sendiri', 'error');
                     return;
                 }
+                
                 if (confirm('Apakah Anda yakin ingin menghapus kasir ini?')) {
                     users = users.filter(u => u.id !== cashierId);
                     saveUsers();
@@ -2754,6 +2926,7 @@
             $(document).on('click', '.edit-member', function() {
                 const memberId = $(this).data('id');
                 const member = members.find(m => m.id === memberId);
+                
                 if (!member) return;
                 
                 $('#memberModal .modal-title').text('Edit Member');
@@ -2777,7 +2950,8 @@
             $(document).on('click', '.edit-role', function() {
                 const roleId = $(this).data('id');
                 const role = roles.find(r => r.id === roleId);
-		        if (!role) return;
+		                
+                if (!role) return;
                 
                 $('#roleModal .modal-title').text('Edit Role');
                 $('#roleId').val(role.id);
@@ -2785,11 +2959,18 @@
                 $('#roleCode').val(role.code);
                 $('#memberDiscount').val(role.memberDiscount || 0);
                 
-                const permissions = role.permissions || {};
-                Object.keys(permissions).forEach(perm => {
-                    const capitalizedPerm = perm.charAt(0).toUpperCase() + perm.slice(1);
-                    $(`#perm${capitalizedPerm}`).prop('checked', permissions[perm]);
-                });
+                // Set permissions checkboxes
+                $('#permAddProduct').prop('checked', role.permissions.addProduct || false);
+                $('#permManageCategories').prop('checked', role.permissions.manageCategories || false);
+                $('#permViewReports').prop('checked', role.permissions.viewReports || false);
+                $('#permManageProducts').prop('checked', role.permissions.manageProducts || false);
+                $('#permManageCashiers').prop('checked', role.permissions.manageCashiers || false);
+                $('#permManageMembers').prop('checked', role.permissions.manageMembers || false);
+                $('#permManageStoreInfo').prop('checked', role.permissions.manageStoreInfo || false);
+                $('#permViewProfitReports').prop('checked', role.permissions.viewProfitReports || false);
+                $('#permManageRoles').prop('checked', role.permissions.manageRoles || false);
+                $('#permDataManagement').prop('checked', role.permissions.dataManagement || false);
+                $('#permManageMemos').prop('checked', role.permissions.manageMemos || false);
                 
                 $('#roleModal').css('display', 'flex');
             });
@@ -2797,20 +2978,21 @@
             // Delete role button
             $(document).on('click', '.delete-role', function() {
                 const roleId = $(this).data('id');
-                const roleToDelete = roles.find(r => r.id === roleId);
-
-                if (!roleToDelete) return;
-                if (roleToDelete.code === 'admin' || roleToDelete.code === 'cashier') {
+                
+                if (roleId === 'R001' || roleId === 'R002') {
                     showToast('Tidak bisa menghapus role default', 'error');
                     return;
                 }
                 
-                if (users.some(u => u.role === roleToDelete.code)) {
-                    showToast('Tidak bisa menghapus role karena masih digunakan oleh pengguna', 'error');
-                    return;
-                }
-
                 if (confirm('Apakah Anda yakin ingin menghapus role ini?')) {
+                    // Check if any users are using this role
+                    const usersWithRole = users.filter(u => u.role === roles.find(r => r.id === roleId).code);
+                    
+                    if (usersWithRole.length > 0) {
+                        showToast('Tidak bisa menghapus role karena masih digunakan oleh pengguna', 'error');
+                        return;
+                    }
+                    
                     roles = roles.filter(r => r.id !== roleId);
                     saveRoles();
                     loadRoles();
@@ -2821,6 +3003,7 @@
             // Delete member button
             $(document).on('click', '.delete-member', function() {
                 const memberId = $(this).data('id');
+                
                 if (confirm('Apakah Anda yakin ingin menghapus member ini?')) {
                     members = members.filter(m => m.id !== memberId);
                     saveMembers();
@@ -2839,48 +3022,63 @@
                 const confirmPassword = $('#cashierConfirmPassword').val();
                 const role = $('#cashierRole').val();
                 
-                if (!username || !name || !role) {
-                    showToast('Username, nama, dan role harus diisi', 'error');
+                if (!username || !name) {
+                    showToast('Username dan nama harus diisi', 'error');
                     return;
                 }
                 
-                // Cek duplikasi username
-                if (users.some(u => u.username.toLowerCase() === username.toLowerCase() && u.id !== id)) {
-                    showToast('Username sudah digunakan', 'error');
+                if (!id && (!password || !confirmPassword)) {
+                    showToast('Password harus diisi', 'error');
                     return;
                 }
                 
-                // Validasi password
-                if (!id && !password) { // Wajib password untuk user baru
-                    showToast('Password harus diisi untuk kasir baru', 'error');
-                    return;
-                }
-                if (password && password !== confirmPassword) {
-                    showToast('Konfirmasi password tidak cocok', 'error');
+                if (password !== confirmPassword) {
+                    showToast('Password tidak cocok', 'error');
                     return;
                 }
                 
-                if (id) { // Edit user
-                    const userIndex = users.findIndex(u => u.id === id);
-                    if (userIndex === -1) return;
+                if (id) {
+                    // Editing existing cashier
+                    const cashierIndex = users.findIndex(u => u.id === id);
+                    if (cashierIndex === -1) return;
                     
-                    users[userIndex] = { ...users[userIndex], username, name, role };
-                    if (password) {
-                        users[userIndex].password = CryptoJS.SHA256(password).toString();
-                    }
-                } else { // User baru
-                    const newUser = {
-                        id: 'U' + moment().format('YYYYMMDDHHmmss'),
-                        username, name, role,
-                        password: CryptoJS.SHA256(password).toString()
+                    // Update cashier
+                    users[cashierIndex] = {
+                        ...users[cashierIndex],
+                        username: username,
+                        name: name,
+                        role: role
                     };
-                    users.push(newUser);
+                    
+                    // Update password if provided
+                    if (password) {
+                        users[cashierIndex].password = CryptoJS.SHA256(password).toString();
+                    }
+                } else {
+                    // Create new cashier
+                    const newCashier = {
+                        id: 'U' + moment().format('YYYYMMDDHHmmss'),
+                        username: username,
+                        password: CryptoJS.SHA256(password).toString(),
+                        name: name,
+                        role: role
+                    };
+                    
+                    users.push(newCashier);
                 }
                 
                 saveUsers();
                 loadCashiers();
+                
                 $('#cashierModal').hide();
-                showToast('Data kasir berhasil disimpan', 'success');
+                $('#cashierForm')[0].reset();
+                
+                showToast('Kasir berhasil disimpan', 'success');
+            });
+            
+            // Cancel cashier modal
+            $('#cancelCashier').click(function() {
+                $('#cashierModal').hide();
             });
             
             // Save member
@@ -2897,30 +3095,52 @@
                 }
                 
                 if (id) {
+                    // Editing existing member
                     const memberIndex = members.findIndex(m => m.id === id);
-                    if (memberIndex !== -1) {
-                         members[memberIndex] = { ...members[memberIndex], name, phone, address, email };
-                    }
+                    if (memberIndex === -1) return;
+                    
+                    // Update member
+                    members[memberIndex] = {
+                        ...members[memberIndex],
+                        name: name,
+                        phone: phone,
+                        address: address,
+                        email: email
+                    };
                 } else {
+                    // Create new member
                     const newMember = {
                         id: 'M' + moment().format('YYYYMMDDHHmmss'),
-                        name, phone, address, email, createdAt: new Date()
+                        name: name,
+                        phone: phone,
+                        address: address,
+                        email: email,
+                        createdAt: new Date()
                     };
+                    
                     members.unshift(newMember);
                 }
                 
                 saveMembers();
                 loadMembers();
                 loadMembersForSelect();
+                
                 $('#memberModal').hide();
+                $('#memberForm')[0].reset();
+                
                 showToast('Member berhasil disimpan', 'success');
+            });
+            
+            // Cancel member modal
+            $('#cancelMember').click(function() {
+                $('#memberModal').hide();
             });
             
             // Save role
             $('#saveRoleBtn').click(function() {
                 const id = $('#roleId').val();
                 const name = $('#roleName').val().trim();
-                const code = $('#roleCode').val().trim().replace(/\s+/g, '_').toLowerCase();
+                const code = $('#roleCode').val().trim();
                 const memberDiscount = parseInt($('#memberDiscount').val()) || 0;
                 
                 if (!name || !code) {
@@ -2928,42 +3148,75 @@
                     return;
                 }
                 
-                if (roles.some(r => r.code === code && r.id !== id)) {
+                // Check if code is unique (except for current role)
+                const existingRole = roles.find(r => r.code === code && r.id !== id);
+                if (existingRole) {
                     showToast('Kode role sudah digunakan', 'error');
                     return;
                 }
                 
-                const permissions = {
-                    addProduct: $('#permAddProduct').is(':checked'),
-                    manageCategories: $('#permManageCategories').is(':checked'),
-                    viewReports: $('#permViewReports').is(':checked'),
-                    manageProducts: $('#permManageProducts').is(':checked'),
-                    manageCashiers: $('#permManageCashiers').is(':checked'),
-                    manageMembers: $('#permManageMembers').is(':checked'),
-                    manageStoreInfo: $('#permManageStoreInfo').is(':checked'),
-                    viewProfitReports: $('#permViewProfitReports').is(':checked'),
-                    manageRoles: $('#permManageRoles').is(':checked'),
-                    dataManagement: $('#permDataManagement').is(':checked'),
-                    manageMemos: $('#permManageMemos').is(':checked')
-                };
-
                 if (id) {
+                    // Editing existing role
                     const roleIndex = roles.findIndex(r => r.id === id);
-                    if (roleIndex !== -1) {
-                        roles[roleIndex] = { ...roles[roleIndex], name, code, memberDiscount, permissions };
-                    }
+                    if (roleIndex === -1) return;
+                    
+                    // Update role
+                    roles[roleIndex] = {
+                        ...roles[roleIndex],
+                        name: name,
+                        code: code,
+                        memberDiscount: memberDiscount,
+                        permissions: {
+                            addProduct: $('#permAddProduct').is(':checked'),
+                            manageCategories: $('#permManageCategories').is(':checked'),
+                            viewReports: $('#permViewReports').is(':checked'),
+                            manageProducts: $('#permManageProducts').is(':checked'),
+                            manageCashiers: $('#permManageCashiers').is(':checked'),
+                            manageMembers: $('#permManageMembers').is(':checked'),
+                            manageStoreInfo: $('#permManageStoreInfo').is(':checked'),
+                            viewProfitReports: $('#permViewProfitReports').is(':checked'),
+                            manageRoles: $('#permManageRoles').is(':checked'),
+                            dataManagement: $('#permDataManagement').is(':checked'),
+                            manageMemos: $('#permManageMemos').is(':checked')
+                        }
+                    };
                 } else {
+                    // Create new role
                     const newRole = {
                         id: 'R' + moment().format('YYYYMMDDHHmmss'),
-                        name, code, memberDiscount, permissions
+                        name: name,
+                        code: code,
+                        memberDiscount: memberDiscount,
+                        permissions: {
+                            addProduct: $('#permAddProduct').is(':checked'),
+                            manageCategories: $('#permManageCategories').is(':checked'),
+                            viewReports: $('#permViewReports').is(':checked'),
+                            manageProducts: $('#permManageProducts').is(':checked'),
+                            manageCashiers: $('#permManageCashiers').is(':checked'),
+                            manageMembers: $('#permManageMembers').is(':checked'),
+                            manageStoreInfo: $('#permManageStoreInfo').is(':checked'),
+                            viewProfitReports: $('#permViewProfitReports').is(':checked'),
+                            manageRoles: $('#permManageRoles').is(':checked'),
+                            dataManagement: $('#permDataManagement').is(':checked'),
+                            manageMemos: $('#permManageMemos').is(':checked')
+                        }
                     };
+                    
                     roles.push(newRole);
                 }
                 
                 saveRoles();
                 loadRoles();
+                
                 $('#roleModal').hide();
+                $('#roleForm')[0].reset();
+                
                 showToast('Role berhasil disimpan', 'success');
+            });
+            
+            // Cancel role modal
+            $('#cancelRole').click(function() {
+                $('#roleModal').hide();
             });
             
             // Save product
@@ -2982,44 +3235,92 @@
                 }
                 
                 if (id) {
+                    // Editing existing product
                     const productIndex = products.findIndex(p => p.id === id);
                     if (productIndex === -1) return;
                     
+                    // Get old stock for history
                     const oldStock = products[productIndex].stock;
-                    products[productIndex] = { ...products[productIndex], name, category, unit, price, cost, stock };
                     
+                    // Update product
+                    products[productIndex] = {
+                        ...products[productIndex],
+                        name: name,
+                        category: category,
+                        unit: unit,
+                        price: price,
+                        cost: cost,
+                        stock: stock
+                    };
+                    
+                    // Add to stock history if stock changed
                     if (oldStock !== stock) {
                         stockHistory.push({
-                            productId: id, productName: name, date: new Date(), type: 'adjustment',
-                            quantity: stock - oldStock, oldStock: oldStock, newStock: stock,
-                            note: 'Penyesuaian stok manual', user: currentUser.name
+                            productId: id,
+                            productName: name,
+                            date: new Date(),
+                            type: 'adjustment',
+                            quantity: stock - oldStock,
+                            oldStock: oldStock,
+                            newStock: stock,
+                            note: 'Penyesuaian stok manual',
+                            user: currentUser.name
                         });
+                        
                         saveStockHistory();
                     }
                 } else {
-                    const newProduct = { id: 'P' + moment().format('YYYYMMDDHHmmss'), name, category, unit, price, cost, stock };
+                    // Create new product
+                    const newProduct = {
+                        id: 'P' + moment().format('YYYYMMDDHHmmss'),
+                        name: name,
+                        category: category,
+                        unit: unit,
+                        price: price,
+                        cost: cost,
+                        stock: stock
+                    };
+                    
                     products.unshift(newProduct);
                     
+                    // Add to stock history
                     stockHistory.push({
-                        productId: newProduct.id, productName: name, date: new Date(), type: 'initial',
-                        quantity: stock, oldStock: 0, newStock: stock,
-                        note: 'Stok awal', user: currentUser.name
+                        productId: newProduct.id,
+                        productName: name,
+                        date: new Date(),
+                        type: 'initial',
+                        quantity: stock,
+                        oldStock: 0,
+                        newStock: stock,
+                        note: 'Stok awal',
+                        user: currentUser.name
                     });
+                    
                     saveStockHistory();
                     
+                    // Update product trial limit
                     trialLimits.products++;
                     localStorage.setItem(STORAGE_KEYS.TRIAL_LIMITS, JSON.stringify(trialLimits));
                     
+                    // Check if reached product limit
                     if (trialLimits.products >= 5) {
                         $('#addProductBtn').addClass('btn-disabled');
-                        showTrialLimitWarning('Anda telah mencapai batas 5 produk dalam versi uji coba.<br><br>Silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                        showTrialLimitWarning('Anda telah mencapai batas penambahan produk dalam versi uji coba. Anda hanya diperbolehkan menambahkan 5 produk untuk uji coba sistem.<br><br>Untuk menikmati fitur lengkap tanpa batasan, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
                     }
                 }
                 
                 saveProducts();
                 loadProducts();
+                
                 $('#productModal').hide();
+                $('#productForm')[0].reset();
+                
                 showToast('Produk berhasil disimpan', 'success');
+            });
+            
+            // Cancel product modal
+            $('#cancelProduct').click(function() {
+                $('#productModal').hide();
             });
             
             // Add category
@@ -3031,12 +3332,14 @@
                     return;
                 }
                 
+                // Check category trial limit
                 if (trialLimits.categories >= 5) {
-                    showTrialLimitWarning('Anda telah mencapai batas 5 kategori dalam versi uji coba.<br><br>Silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
+                    showTrialLimitWarning('Anda telah mencapai batas penambahan kategori dalam versi uji coba. Anda hanya diperbolehkan menambahkan 5 kategori untuk uji coba sistem.<br><br>Untuk menikmati fitur lengkap tanpa batasan, silakan hubungi tim penjualan kami untuk melakukan pembelian versi premium.');
                     return;
                 }
                 
-                if (categories.some(c => c.toLowerCase() === name.toLowerCase())) {
+                // Check if category already exists
+                if (categories.includes(name)) {
                     showToast('Kategori sudah ada', 'error');
                     return;
                 }
@@ -3044,13 +3347,16 @@
                 categories.unshift(name);
                 saveCategories();
                 loadCategoriesForManagement();
-                loadCategories();
                 loadCategoriesForSelect();
+                loadProducts();
                 
                 $('#newCategoryName').val('');
                 
+                // Update category trial limit
                 trialLimits.categories++;
                 localStorage.setItem(STORAGE_KEYS.TRIAL_LIMITS, JSON.stringify(trialLimits));
+                
+                // Check if reached category limit
                 if (trialLimits.categories >= 5) {
                     $('#addCategoryBtn').addClass('btn-disabled');
                 }
@@ -3062,7 +3368,10 @@
             $(document).on('click', '.delete-category', function() {
                 const category = $(this).data('category');
                 
-                if (products.some(p => p.category === category)) {
+                // Check if category is used by any products
+                const productsInCategory = products.filter(p => p.category === category);
+                
+                if (productsInCategory.length > 0) {
                     showToast('Tidak bisa menghapus kategori karena masih digunakan oleh produk', 'error');
                     return;
                 }
@@ -3071,378 +3380,964 @@
                     categories = categories.filter(c => c !== category);
                     saveCategories();
                     loadCategoriesForManagement();
-                    loadCategories();
+                    loadProducts();
                     showToast('Kategori berhasil dihapus', 'success');
                 }
             });
             
             // Save store info
             $('#saveStoreInfoBtn').click(function() {
-                settings.storeName = $('#storeName').val().trim() || 'Toko Anda';
-                settings.storeAddress = $('#storeAddress').val().trim();
-                settings.storePhone = $('#storePhone').val().trim();
-                settings.storeDescription = $('#storeDescription').val().trim();
+                const name = $('#storeName').val().trim();
+                const address = $('#storeAddress').val().trim();
+                const phone = $('#storePhone').val().trim();
+                const description = $('#storeDescription').val().trim();
                 
-                if (!settings.storeName) {
-                    showToast('Nama toko harus diisi', 'error');
+                if (!name || !address || !phone) {
+                    showToast('Nama, alamat dan telepon toko harus diisi', 'error');
                     return;
                 }
                 
+                settings = {
+                    storeName: name,
+                    storeAddress: address,
+                    storePhone: phone,
+                    storeDescription: description
+                };
+                
                 saveSettings();
                 updateStoreInfo();
+                
                 $('#manageStoreInfoModal').hide();
+                
                 showToast('Info toko berhasil diperbarui', 'success');
             });
             
-            function getReportDateRange(period, startDateVal, endDateVal) {
-                let startDate, endDate;
-                const now = moment();
-                if (period === 'today') {
-                    startDate = now.clone().startOf('day');
-                    endDate = now.clone().endOf('day');
-                } else if (period === 'week') {
-                    startDate = now.clone().startOf('week');
-                    endDate = now.clone().endOf('week');
-                } else if (period === 'month') {
-                    startDate = now.clone().startOf('month');
-                    endDate = now.clone().endOf('month');
-                } else {
-                    if (!startDateVal || !endDateVal) {
-                        showToast('Tanggal custom harus diisi lengkap', 'error');
-                        return null;
-                    }
-                    startDate = moment(startDateVal).startOf('day');
-                    endDate = moment(endDateVal).endOf('day');
-                }
-                return { startDate, endDate };
-            }
-
+            // Cancel store info
+            $('#cancelStoreInfo').click(function() {
+                $('#manageStoreInfoModal').hide();
+            });
+            
             // Generate report
             $('#generateReportBtn').click(function() {
                 const period = $('#reportPeriod').val();
-                const range = getReportDateRange(period, $('#reportStartDate').val(), $('#reportEndDate').val());
-                if (!range) return;
+                let startDate, endDate;
                 
-                const { startDate, endDate } = range;
-                lastGeneratedReportData = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, undefined, '[]'));
+                if (period === 'custom') {
+                    startDate = new Date($('#reportStartDate').val());
+                    endDate = new Date($('#reportEndDate').val());
+                    
+                    if (!startDate || !endDate) {
+                        showToast('Tanggal harus diisi', 'error');
+                        return;
+                    }
+                    
+                    // Set end date to end of day
+                    endDate.setHours(23, 59, 59, 999);
+                } else {
+                    if (period === 'today') {
+                        startDate = new Date();
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setHours(23, 59, 59, 999);
+                    } else if (period === 'week') {
+                        startDate = new Date();
+                        startDate.setDate(startDate.getDate() - startDate.getDay()); // Start of week (Sunday)
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setHours(23, 59, 59, 999);
+                    } else if (period === 'month') {
+                        startDate = new Date();
+                        startDate.setDate(1);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setMonth(endDate.getMonth() + 1);
+                        endDate.setDate(0);
+                        endDate.setHours(23, 59, 59, 999);
+                    }
+                }
                 
-                const totalRevenue = lastGeneratedReportData.reduce((sum, t) => sum + t.total, 0);
+                // Filter transactions by date
+                const filteredTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= startDate && transactionDate <= endDate;
+                });
                 
-                let reportHtml = `<h4>Laporan Penjualan (${startDate.format('LL')} - ${endDate.format('LL')})</h4>
-                    <p><b>Total Transaksi:</b> ${lastGeneratedReportData.length}</p>
-                    <p><b>Total Pendapatan:</b> ${formatCurrency(totalRevenue)}</p>
+                // Calculate totals
+                const totalTransactions = filteredTransactions.length;
+                const totalRevenue = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
+                const totalDiscount = filteredTransactions.reduce((sum, t) => sum + t.discount, 0);
+                const totalAdditionalCost = filteredTransactions.reduce((sum, t) => sum + t.additionalCost, 0);
+                
+                // Group by payment method
+                const paymentMethods = {};
+                filteredTransactions.forEach(t => {
+                    if (!paymentMethods[t.paymentMethod]) {
+                        paymentMethods[t.paymentMethod] = 0;
+                    }
+                    paymentMethods[t.paymentMethod] += t.total;
+                });
+                
+                // Generate report HTML
+                let reportHtml = `
+                    <h4>Laporan Penjualan</h4>
+                    <p>Periode: ${moment(startDate).format('LL')} - ${moment(endDate).format('LL')}</p>
+                    <p>Total Transaksi: ${totalTransactions}</p>
+                    <p>Total Pendapatan: ${formatCurrency(totalRevenue)}</p>
+                    <p>Total Diskon: ${formatCurrency(totalDiscount)}</p>
+                    <p>Total Biaya Tambahan: ${formatCurrency(totalAdditionalCost)}</p>
+                    
+                    <h5>Metode Pembayaran</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Metode</th>
+                                <th>Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                for (const method in paymentMethods) {
+                    reportHtml += `
+                        <tr>
+                            <td>${formatPaymentMethod(method)}</td>
+                            <td>${formatCurrency(paymentMethods[method])}</td>
+                        </tr>
+                    `;
+                }
+                
+                reportHtml += `
+                        </tbody>
+                    </table>
+                    
                     <h5>Detail Transaksi</h5>
                     <table class="data-table">
                         <thead>
                             <tr>
+                                <th>No. Transaksi</th>
                                 <th>Tanggal</th>
-                                <th>ID Transaksi</th>
                                 <th>Pelanggan</th>
                                 <th>Total</th>
-                                <th>Metode Bayar</th>
                             </tr>
                         </thead>
-                        <tbody>`;
+                        <tbody>
+                `;
                 
-                if(lastGeneratedReportData.length === 0){
-                    reportHtml += `<tr><td colspan="5" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
-                } else {
-                    lastGeneratedReportData.forEach(t => {
-                        reportHtml += `<tr>
-                            <td>${moment(t.date).format('LLL')}</td>
+                filteredTransactions.forEach(t => {
+                    reportHtml += `
+                        <tr>
                             <td>${t.id}</td>
+                            <td>${moment(t.date).format('LLL')}</td>
                             <td>${t.customer}</td>
-                            <td class="text-right">${formatCurrency(t.total)}</td>
-                            <td>${formatPaymentMethod(t.paymentMethod)}</td>
-                        </tr>`;
-                    });
-                }
-                reportHtml += `</tbody></table>`;
+                            <td>${formatCurrency(t.total)}</td>
+                        </tr>
+                    `;
+                });
+                
+                reportHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
                 $('#reportResults').html(reportHtml);
-                $('#printReportBtn').show();
             });
             
             // Generate profit report
             $('#generateProfitReportBtn').click(function() {
                 const period = $('#profitReportPeriod').val();
-                const range = getReportDateRange(period, $('#profitReportStartDate').val(), $('#profitReportEndDate').val());
-                if (!range) return;
-
-                const { startDate, endDate } = range;
-                lastGeneratedProfitReportData = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, undefined, '[]'));
-
-                let totalRevenue = 0;
-                let totalCost = 0;
+                let startDate, endDate;
                 
-                lastGeneratedProfitReportData.forEach(t => {
-                    totalRevenue += t.total;
+                if (period === 'custom') {
+                    startDate = new Date($('#profitReportStartDate').val());
+                    endDate = new Date($('#profitReportEndDate').val());
+                    
+                    if (!startDate || !endDate) {
+                        showToast('Tanggal harus diisi', 'error');
+                        return;
+                    }
+                    
+                    // Set end date to end of day
+                    endDate.setHours(23, 59, 59, 999);
+                } else {
+                    if (period === 'today') {
+                        startDate = new Date();
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setHours(23, 59, 59, 999);
+                    } else if (period === 'week') {
+                        startDate = new Date();
+                        startDate.setDate(startDate.getDate() - startDate.getDay()); // Start of week (Sunday)
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setHours(23, 59, 59, 999);
+                    } else if (period === 'month') {
+                        startDate = new Date();
+                        startDate.setDate(1);
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate = new Date();
+                        endDate.setMonth(endDate.getMonth() + 1);
+                        endDate.setDate(0);
+                        endDate.setHours(23, 59, 59, 999);
+                    }
+                }
+                
+                // Filter transactions by date
+                const filteredTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= startDate && transactionDate <= endDate;
+                });
+                
+                // Calculate totals
+                const totalTransactions = filteredTransactions.length;
+                const totalRevenue = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
+                const totalDiscount = filteredTransactions.reduce((sum, t) => sum + t.discount, 0);
+                const totalAdditionalCost = filteredTransactions.reduce((sum, t) => sum + t.additionalCost, 0);
+                
+                // Calculate cost of goods sold (COGS)
+                let totalCost = 0;
+                filteredTransactions.forEach(t => {
                     t.items.forEach(item => {
-                        totalCost += (item.product.cost || 0) * item.quantity;
+                        if (item.product.cost) {
+                            totalCost += item.product.cost * item.quantity;
+                        }
                     });
                 });
-
-                const totalProfit = totalRevenue - totalCost;
-
-                let reportHtml = `<h4>Laporan Laba Rugi (${startDate.format('LL')} - ${endDate.format('LL')})</h4>
-                    <p><b>Total Transaksi:</b> ${lastGeneratedProfitReportData.length}</p>
-                    <p><b>Total Pendapatan:</b> ${formatCurrency(totalRevenue)}</p>
-                    <p><b>Total Modal (HPP):</b> ${formatCurrency(totalCost)}</p>
-                    <p><b>Total Laba Kotor:</b> ${formatCurrency(totalProfit)}</p>
-                    <h5>Detail Transaksi</h5>
+                
+                const grossProfit = totalRevenue - totalCost;
+                const netProfit = grossProfit - totalAdditionalCost;
+                
+                // Generate report HTML
+                let reportHtml = `
+                    <h4>Laporan Laba Rugi</h4>
+                    <p>Periode: ${moment(startDate).format('LL')} - ${moment(endDate).format('LL')}</p>
+                    <p>Total Transaksi: ${totalTransactions}</p>
+                    <p>Total Pendapatan: ${formatCurrency(totalRevenue)}</p>
+                    <p>Total HPP: ${formatCurrency(totalCost)}</p>
+                    <p>Laba Kotor: ${formatCurrency(grossProfit)}</p>
+                    <p>Total Diskon: ${formatCurrency(totalDiscount)}</p>
+                    <p>Total Biaya Tambahan: ${formatCurrency(totalAdditionalCost)}</p>
+                    <p>Laba Bersih: ${formatCurrency(netProfit)}</p>
+                    
+                    <h5>Detail Produk Terjual</h5>
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Tanggal</th>
-                                <th>ID Transaksi</th>
-                                <th>Pendapatan</th>
-                                <th>Modal (HPP)</th>
+                                <th>Produk</th>
+                                <th>Jumlah</th>
+                                <th>Total Penjualan</th>
+                                <th>Total HPP</th>
                                 <th>Laba</th>
                             </tr>
                         </thead>
-                        <tbody>`;
+                        <tbody>
+                `;
                 
-                if (lastGeneratedProfitReportData.length === 0) {
-                     reportHtml += `<tr><td colspan="5" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
-                } else {
-                    lastGeneratedProfitReportData.forEach(t => {
-                        const revenue = t.total;
-                        const cost = t.items.reduce((sum, item) => sum + (item.product.cost || 0) * item.quantity, 0);
-                        const profit = revenue - cost;
-                        reportHtml += `<tr>
-                            <td>${moment(t.date).format('L')}</td>
-                            <td>${t.id}</td>
-                            <td class="text-right">${formatCurrency(revenue)}</td>
-                            <td class="text-right">${formatCurrency(cost)}</td>
-                            <td class="text-right">${formatCurrency(profit)}</td>
-                        </tr>`;
+                // Group sold products
+                const soldProducts = {};
+                filteredTransactions.forEach(t => {
+                    t.items.forEach(item => {
+                        if (!soldProducts[item.product.id]) {
+                            soldProducts[item.product.id] = {
+                                name: item.product.name,
+                                quantity: 0,
+                                revenue: 0,
+                                cost: 0
+                            };
+                        }
+                        
+                        soldProducts[item.product.id].quantity += item.quantity;
+                        soldProducts[item.product.id].revenue += item.product.price * item.quantity;
+                        
+                        if (item.product.cost) {
+                            soldProducts[item.product.id].cost += item.product.cost * item.quantity;
+                        }
                     });
+                });
+                
+                // Add sold products to report
+                for (const productId in soldProducts) {
+                    const product = soldProducts[productId];
+                    const profit = product.revenue - product.cost;
+                    
+                    reportHtml += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.quantity}</td>
+                            <td>${formatCurrency(product.revenue)}</td>
+                            <td>${formatCurrency(product.cost)}</td>
+                            <td>${formatCurrency(profit)}</td>
+                        </tr>
+                    `;
                 }
-
-                reportHtml += `</tbody></table>`;
+                
+                reportHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
                 $('#profitReportResults').html(reportHtml);
-                $('#printProfitReportBtn').show();
             });
             
             // Print report as PDF
             $('#printReportBtn').click(function() {
                 const doc = new jsPDF();
-                const period = $('#reportPeriod').val();
-                const range = getReportDateRange(period, $('#reportStartDate').val(), $('#reportEndDate').val());
-
-                doc.setFontSize(18);
-                doc.text(settings.storeName, 14, 22);
-                doc.setFontSize(11);
-                doc.text(`Laporan Penjualan: ${range.startDate.format('D MMM YYYY')} - ${range.endDate.format('D MMM YYYY')}`, 14, 30);
                 
-                const head = [['Tanggal', 'ID', 'Pelanggan', 'Metode Bayar', 'Total']];
-                const body = lastGeneratedReportData.map(t => [
-                    moment(t.date).format('DD/MM/YY HH:mm'),
+                // Add title
+                doc.setFontSize(18);
+                doc.text('Laporan Penjualan', 105, 15, { align: 'center' });
+                
+                // Add date range
+                doc.setFontSize(12);
+                const period = $('#reportPeriod').val();
+                let startDate, endDate;
+                
+                if (period === 'custom') {
+                    startDate = new Date($('#reportStartDate').val());
+                    endDate = new Date($('#reportEndDate').val());
+                } else if (period === 'today') {
+                    startDate = new Date();
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setHours(23, 59, 59, 999);
+                } else if (period === 'week') {
+                    startDate = new Date();
+                    startDate.setDate(startDate.getDate() - startDate.getDay());
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setHours(23, 59, 59, 999);
+                } else if (period === 'month') {
+                    startDate = new Date();
+                    startDate.setDate(1);
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setMonth(endDate.getMonth() + 1);
+                    endDate.setDate(0);
+                    endDate.setHours(23, 59, 59, 999);
+                }
+                
+                doc.text(`Periode: ${moment(startDate).format('LL')} - ${moment(endDate).format('LL')}`, 105, 25, { align: 'center' });
+                
+                // Add store info
+                doc.setFontSize(10);
+                doc.text(`Toko: ${settings.storeName}`, 14, 35);
+                doc.text(`Alamat: ${settings.storeAddress}`, 14, 40);
+                doc.text(`Telp: ${settings.storePhone}`, 14, 45);
+                
+                // Add summary
+                doc.setFontSize(12);
+                doc.text('Ringkasan', 14, 55);
+                
+                // Filter transactions by date
+                const filteredTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= startDate && transactionDate <= endDate;
+                });
+                
+                // Calculate totals
+                const totalTransactions = filteredTransactions.length;
+                const totalRevenue = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
+                const totalDiscount = filteredTransactions.reduce((sum, t) => sum + t.discount, 0);
+                const totalAdditionalCost = filteredTransactions.reduce((sum, t) => sum + t.additionalCost, 0);
+                
+                // Add summary data
+                doc.setFontSize(10);
+                doc.text(`Total Transaksi: ${totalTransactions}`, 20, 65);
+                doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 20, 70);
+                doc.text(`Total Diskon: ${formatCurrency(totalDiscount)}`, 20, 75);
+                doc.text(`Total Biaya Tambahan: ${formatCurrency(totalAdditionalCost)}`, 20, 80);
+                
+                // Add payment methods
+                doc.setFontSize(12);
+                doc.text('Metode Pembayaran', 14, 90);
+                
+                // Group by payment method
+                const paymentMethods = {};
+                filteredTransactions.forEach(t => {
+                    if (!paymentMethods[t.paymentMethod]) {
+                        paymentMethods[t.paymentMethod] = 0;
+                    }
+                    paymentMethods[t.paymentMethod] += t.total;
+                });
+                
+                // Add payment methods data
+                let yPos = 100;
+                doc.setFontSize(10);
+                for (const method in paymentMethods) {
+                    doc.text(`${formatPaymentMethod(method)}: ${formatCurrency(paymentMethods[method])}`, 20, yPos);
+                    yPos += 5;
+                }
+                
+                // Add transactions table
+                doc.setFontSize(12);
+                doc.text('Detail Transaksi', 14, yPos + 10);
+                
+                // Prepare data for table
+                const tableData = filteredTransactions.map(t => [
                     t.id,
+                    moment(t.date).format('DD/MM/YY HH:mm'),
                     t.customer,
-                    formatPaymentMethod(t.paymentMethod),
                     formatCurrency(t.total)
                 ]);
-
+                
+                // Add table
                 doc.autoTable({
-                    head: head,
-                    body: body,
-                    startY: 35,
-                    headStyles: { fillColor: [67, 97, 238] },
-                    didDrawPage: function(data) {
-                        const totalRevenue = lastGeneratedReportData.reduce((sum, t) => sum + t.total, 0);
-                        doc.setFontSize(12);
-                        doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 14, doc.internal.pageSize.height - 10);
-                    }
+                    startY: yPos + 15,
+                    head: [['No. Transaksi', 'Tanggal', 'Pelanggan', 'Total']],
+                    body: tableData,
+                    margin: { left: 14 },
+                    styles: { fontSize: 8 }
                 });
-
+                
+                // Save PDF
                 doc.save(`Laporan_Penjualan_${moment().format('YYYYMMDD')}.pdf`);
             });
             
             // Print profit report as PDF
             $('#printProfitReportBtn').click(function() {
                 const doc = new jsPDF();
-                const period = $('#profitReportPeriod').val();
-                const range = getReportDateRange(period, $('#profitReportStartDate').val(), $('#profitReportEndDate').val());
-
+                
+                // Add title
                 doc.setFontSize(18);
-                doc.text(settings.storeName, 14, 22);
-                doc.setFontSize(11);
-                doc.text(`Laporan Laba Rugi: ${range.startDate.format('D MMM YYYY')} - ${range.endDate.format('D MMM YYYY')}`, 14, 30);
-
-                const head = [['Tanggal', 'ID Transaksi', 'Pendapatan', 'Modal (HPP)', 'Laba']];
-                const body = lastGeneratedProfitReportData.map(t => {
-                    const revenue = t.total;
-                    const cost = t.items.reduce((sum, item) => sum + (item.product.cost || 0) * item.quantity, 0);
-                    const profit = revenue - cost;
-                    return [
-                        moment(t.date).format('DD/MM/YYYY'),
-                        t.id,
-                        formatCurrency(revenue),
-                        formatCurrency(cost),
-                        formatCurrency(profit)
-                    ];
+                doc.text('Laporan Laba Rugi', 105, 15, { align: 'center' });
+                
+                // Add date range
+                doc.setFontSize(12);
+                const period = $('#profitReportPeriod').val();
+                let startDate, endDate;
+                
+                if (period === 'custom') {
+                    startDate = new Date($('#profitReportStartDate').val());
+                    endDate = new Date($('#profitReportEndDate').val());
+                } else if (period === 'today') {
+                    startDate = new Date();
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setHours(23, 59, 59, 999);
+                } else if (period === 'week') {
+                    startDate = new Date();
+                    startDate.setDate(startDate.getDate() - startDate.getDay());
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setHours(23, 59, 59, 999);
+                } else if (period === 'month') {
+                    startDate = new Date();
+                    startDate.setDate(1);
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate = new Date();
+                    endDate.setMonth(endDate.getMonth() + 1);
+                    endDate.setDate(0);
+                    endDate.setHours(23, 59, 59, 999);
+                }
+                
+                doc.text(`Periode: ${moment(startDate).format('LL')} - ${moment(endDate).format('LL')}`, 105, 25, { align: 'center' });
+                
+                // Add store info
+                doc.setFontSize(10);
+                doc.text(`Toko: ${settings.storeName}`, 14, 35);
+                doc.text(`Alamat: ${settings.storeAddress}`, 14, 40);
+                doc.text(`Telp: ${settings.storePhone}`, 14, 45);
+                
+                // Add summary
+                doc.setFontSize(12);
+                doc.text('Ringkasan', 14, 55);
+                
+                // Filter transactions by date
+                const filteredTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate >= startDate && transactionDate <= endDate;
                 });
                 
-                doc.autoTable({
-                    head: head,
-                    body: body,
-                    startY: 35,
-                    headStyles: { fillColor: [67, 97, 238] },
-                    didDrawPage: function(data) {
-                        const totalRevenue = lastGeneratedProfitReportData.reduce((sum, t) => sum + t.total, 0);
-                        const totalCost = lastGeneratedProfitReportData.reduce((sum, t) => sum + t.items.reduce((itemSum, item) => itemSum + (item.product.cost || 0) * item.quantity, 0), 0);
-                        const totalProfit = totalRevenue - totalCost;
+                // Calculate totals
+                const totalTransactions = filteredTransactions.length;
+                const totalRevenue = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
+                const totalDiscount = filteredTransactions.reduce((sum, t) => sum + t.discount, 0);
+                const totalAdditionalCost = filteredTransactions.reduce((sum, t) => sum + t.additionalCost, 0);
+                
+                // Calculate cost of goods sold (COGS)
+                let totalCost = 0;
+                filteredTransactions.forEach(t => {
+                    t.items.forEach(item => {
+                        if (item.product.cost) {
+                            totalCost += item.product.cost * item.quantity;
+                        }
+                    });
+                });
+                
+                const grossProfit = totalRevenue - totalCost;
+                const netProfit = grossProfit - totalAdditionalCost;
+                
+                // Add summary data
+                doc.setFontSize(10);
+                doc.text(`Total Transaksi: ${totalTransactions}`, 20, 65);
+                doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 20, 70);
+                doc.text(`Total HPP: ${formatCurrency(totalCost)}`, 20, 75);
+                doc.text(`Laba Kotor: ${formatCurrency(grossProfit)}`, 20, 80);
+                doc.text(`Total Diskon: ${formatCurrency(totalDiscount)}`, 20, 85);
+                doc.text(`Total Biaya Tambahan: ${formatCurrency(totalAdditionalCost)}`, 20, 90);
+                doc.text(`Laba Bersih: ${formatCurrency(netProfit)}`, 20, 95);
+                
+                // Add sold products table
+                doc.setFontSize(12);
+                doc.text('Detail Produk Terjual', 14, 105);
+                
+                // Group sold products
+                const soldProducts = {};
+                filteredTransactions.forEach(t => {
+                    t.items.forEach(item => {
+                        if (!soldProducts[item.product.id]) {
+                            soldProducts[item.product.id] = {
+                                name: item.product.name,
+                                quantity: 0,
+                                revenue: 0,
+                                cost: 0
+                            };
+                        }
                         
-                        let finalY = doc.internal.pageSize.height - 20;
-                        doc.setFontSize(12);
-                        doc.text(`Total Pendapatan: ${formatCurrency(totalRevenue)}`, 14, finalY);
-                        doc.text(`Total Modal (HPP): ${formatCurrency(totalCost)}`, 80, finalY);
-                        doc.text(`Total Laba: ${formatCurrency(totalProfit)}`, 150, finalY);
-                    }
+                        soldProducts[item.product.id].quantity += item.quantity;
+                        soldProducts[item.product.id].revenue += item.product.price * item.quantity;
+                        
+                        if (item.product.cost) {
+                            soldProducts[item.product.id].cost += item.product.cost * item.quantity;
+                        }
+                    });
                 });
                 
+                // Prepare data for table
+                const tableData = [];
+                for (const productId in soldProducts) {
+                    const product = soldProducts[productId];
+                    const profit = product.revenue - product.cost;
+                    
+                    tableData.push([
+                        product.name,
+                        product.quantity,
+                        formatCurrency(product.revenue),
+                        formatCurrency(product.cost),
+                        formatCurrency(profit)
+                    ]);
+                }
+                
+                // Add table
+                doc.autoTable({
+                    startY: 110,
+                    head: [['Produk', 'Jumlah', 'Penjualan', 'HPP', 'Laba']],
+                    body: tableData,
+                    margin: { left: 14 },
+                    styles: { fontSize: 8 }
+                });
+                
+                // Save PDF
                 doc.save(`Laporan_Laba_Rugi_${moment().format('YYYYMMDD')}.pdf`);
             });
             
             // Report period change
             $('#reportPeriod, #profitReportPeriod').change(function() {
-                const targetDiv = $(this).attr('id').startsWith('profit') ? '#profitCustomDateRange' : '#customDateRange';
-                $(this).val() === 'custom' ? $(targetDiv).show() : $(targetDiv).hide();
+                const isCustom = $(this).val() === 'custom';
+                const dateRangeDiv = $(this).attr('id') === 'reportPeriod' ? $('#customDateRange') : $('#profitCustomDateRange');
+                
+                if (isCustom) {
+                    dateRangeDiv.show();
+                } else {
+                    dateRangeDiv.hide();
+                }
             });
             
-            // Modal close buttons & handlers
-            $('.modal-close').click(function() { $(this).closest('.modal').hide(); });
-            $('.modal').click(function(e) { if (e.target === this) $(this).hide(); });
-            $('.modal-content, .login-container, .trial-limit-content').click(e => e.stopPropagation());
-            $('#cancelProduct, #cancelManageCategories, #cancelCashier, #cancelMember, #cancelRole, #cancelReports, #cancelProfitReport, #cancelStoreInfo, #cancelAdminPassword, #cancelMember, #cancelRole, #cancelCashier').click(function() {
+            // Cancel reports
+            $('#cancelReports, #cancelProfitReport').click(function() {
+                $('#reportsModal, #profitReportModal').hide();
+            });
+            
+            // Cancel manage categories
+            $('#cancelManageCategories').click(function() {
+                $('#manageCategoriesModal').hide();
+            });
+            
+            // Cancel manage cashiers
+            $('#cancelManageCashiers').click(function() {
+                $('#manageCashiersModal').hide();
+            });
+            
+            // Cancel manage members
+            $('#cancelManageMembers').click(function() {
+                $('#manageMembersModal').hide();
+            });
+            
+            // Cancel manage roles
+            $('#cancelManageRoles').click(function() {
+                $('#manageRolesModal').hide();
+            });
+            
+            // Modal close buttons
+            $('.modal-close').click(function() {
                 $(this).closest('.modal').hide();
             });
             
-            // Print/Download receipt from template
-            $(document).on('click', '#printReceiptBtn', function(){
-                window.print();
+            // Close modal when clicking outside
+            $('.modal').click(function(e) {
+                if (e.target === this) {
+                    $(this).hide();
+                }
             });
-
-            $(document).on('click', '#downloadReceiptBtn', function(){
+            
+            // Prevent modal content click from closing modal
+            $('.modal-content, .login-container').click(function(e) {
+                e.stopPropagation();
+            });
+            
+            // Admin password verification
+            $('#adminPasswordForm').submit(function(e) {
+                e.preventDefault();
+                const password = $('#adminPassword').val();
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+                
+                if (hashedPassword === DEFAULT_ADMIN.password) {
+                    $('#adminPasswordModal').hide();
+                    
+                    // Execute pending admin action
+                    if (pendingAdminAction) {
+                        pendingAdminAction();
+                        pendingAdminAction = null;
+                    }
+                } else {
+                    showToast('Password admin salah', 'error');
+                }
+            });
+            
+            // Cancel admin password
+            $('#cancelAdminPassword').click(function() {
+                $('#adminPasswordModal').hide();
+                pendingAdminAction = null;
+            });
+            
+            // Print receipt
+            window.printReceipt = function() {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Cetak Struk</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; }
+                                .receipt { max-width: 300px; margin: 0 auto; padding: 15px; }
+                                .receipt-header { text-align: center; margin-bottom: 15px; }
+                                .receipt-header h3 { margin: 0; font-size: 18px; font-weight: bold; }
+                                .receipt-header p { margin: 5px 0; font-size: 12px; }
+                                .receipt-body { font-size: 14px; }
+                                .receipt-body hr { border: none; border-top: 1px dashed #ddd; margin: 10px 0; }
+                                .receipt-item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+                                .receipt-item.total-row { font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
+                                .receipt-footer { text-align: center; margin-top: 15px; font-size: 12px; }
+                            </style>
+                        </head>
+                        <body>
+                            ${$('#receiptTemplate').html()}
+                            <script>
+                                window.onload = function() {
+                                    window.print();
+                                    setTimeout(function() { window.close(); }, 1000);
+                                };
+                            <\/script>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            };
+            
+            // Download receipt as PDF
+            window.downloadReceiptPDF = function() {
                 const doc = new jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [80, 200] // Thermal printer paper size
+                    format: [80, 297] // 80mm width (common receipt width), length will auto-adjust
                 });
-
-                const receiptContent = document.getElementById('receiptTemplate').querySelector('.receipt');
                 
-                html2canvas(receiptContent).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgProps = doc.getImageProperties(imgData);
-                    const pdfWidth = doc.internal.pageSize.getWidth();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                // Add store info
+                doc.setFontSize(12);
+                doc.text($('#receiptStoreName').text(), 40, 10, { align: 'center' });
+                doc.setFontSize(8);
+                doc.text($('#receiptStoreAddress').text(), 40, 15, { align: 'center' });
+                doc.text($('#receiptStorePhone').text(), 40, 18, { align: 'center' });
+                
+                // Add divider
+                doc.setDrawColor(0);
+                doc.setLineWidth(0.2);
+                doc.line(5, 22, 75, 22);
+                
+                // Add transaction info
+                doc.setFontSize(8);
+                doc.text(`Tanggal: ${$('#receiptDate').text()}`, 5, 26);
+                doc.text(`No. Transaksi: ${$('#receiptId').text()}`, 5, 30);
+                doc.text(`Kasir: ${$('#receiptCashier').text()}`, 5, 34);
+                doc.text(`Pelanggan: ${$('#receiptCustomer').text()}`, 5, 38);
+                doc.text(`Member: ${$('#receiptMember').text()}`, 5, 42);
+                
+                // Add divider
+                doc.line(5, 46, 75, 46);
+                
+                // Add items
+                let yPos = 50;
+                $('#receiptItems .receipt-item').each(function() {
+                    const name = $(this).find('.item-name').text();
+                    const qty = $(this).find('.item-qty').text();
+                    const price = $(this).find('.item-price').text();
+                    const total = $(this).find('.item-total').text();
                     
-                    doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                    const trxId = $('#receiptId').text();
-                    doc.save(`struk_${trxId}.pdf`);
+                    doc.text(`${name}`, 5, yPos);
+                    doc.text(`${qty} x ${price}`, 60, yPos, { align: 'right' });
+                    doc.text(`${total}`, 75, yPos, { align: 'right' });
+                    
+                    yPos += 4;
                 });
-            });
+                
+                // Add divider
+                doc.line(5, yPos, 75, yPos);
+                yPos += 4;
+                
+                // Add summary
+                $('#receiptTemplate .receipt-item').each(function() {
+                    const label = $(this).find('span:first').text();
+                    const value = $(this).find('span:last').text();
+                    
+                    // Skip items that are already in the items section
+                    if (!$(this).hasClass('receipt-item-detail')) {
+                        doc.text(`${label} ${value}`, 75, yPos, { align: 'right' });
+                        yPos += 4;
+                    }
+                });
+                
+                // Add footer
+                doc.setFontSize(8);
+                doc.text($('#receiptFooter p:first').text(), 40, yPos + 10, { align: 'center' });
+                doc.text($('#receiptFooter p:last').text(), 40, yPos + 14, { align: 'center' });
+                
+                // Save PDF
+                doc.save(`Struk_${$('#receiptId').text()}.pdf`);
+            };
             
             // Helper functions
-            function loadProducts(searchTerm = '', category = 'all') {
-                let filteredProducts = products;
-                if (searchTerm) {
-                    const lower = searchTerm.toLowerCase();
-                    filteredProducts = filteredProducts.filter(p => p.name.toLowerCase().includes(lower));
-                }
-                if (category !== 'all') {
-                    filteredProducts = filteredProducts.filter(p => p.category === category);
-                }
-                
-                $('#productCount').text(`(${filteredProducts.length} produk)`);
-                const grid = $('#productGrid').empty();
-                
-                if (filteredProducts.length === 0) {
-                    grid.html(`<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-box-open"></i><p>Tidak ada produk</p></div>`);
-                    return;
-                }
-                
-                filteredProducts.forEach(p => {
-                    grid.append(`<div class="product-card" data-id="${p.id}">
-                        <div class="product-name">${p.name}</div>
-                        <div class="product-price">${formatCurrency(p.price)}</div>
-                        <div class="product-cost">HPP: ${formatCurrency(p.cost || 0)}</div>
-                        <div class="product-stock ${p.stock <= 5 ? 'low' : ''}">Stok: ${p.stock} ${p.unit || 'pcs'}</div>
-                        <div class="product-actions">
-                            <div class="action-btn edit-btn edit-product" data-id="${p.id}"><i class="fas fa-edit"></i></div>
-                            <div class="action-btn delete-btn delete-product" data-id="${p.id}"><i class="fas fa-trash"></i></div>
+           function loadProducts(searchTerm = '', category = 'all') {
+    let filteredProducts = [...products];
+    
+    // Apply search filter
+    if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        filteredProducts = filteredProducts.filter(p => 
+            p.name.toLowerCase().includes(searchLower) || 
+            (p.category && p.category.toLowerCase().includes(searchLower))
+        );
+    }
+        
+        // Apply category filter
+        if (category !== 'all') {
+            filteredProducts = filteredProducts.filter(p => p.category === category);
+        }
+        
+        // Update product count
+        $('#productCount').text(`(${filteredProducts.length} produk)`);
+        
+        // Clear product grid
+        $('#productGrid').empty();
+        
+        if (filteredProducts.length === 0) {
+            $('#productGrid').html(`
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-box-open"></i>
+                    <p>Tidak ada produk</p>
+                </div>
+            `);
+            return;
+        }
+        
+        // Add products to grid
+        filteredProducts.forEach(product => {
+            const stockClass = product.stock <= 5 ? 'low' : '';
+            const adminView = $('#mainApp').hasClass('admin-view') ? 'admin-view' : '';
+            
+            $('#productGrid').append(`
+                <div class="product-card ${adminView}" data-id="${product.id}">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">${formatCurrency(product.price)}</div>
+                    <div class="product-cost">HPP: ${formatCurrency(product.cost || 0)}</div>
+                    <div class="product-stock ${stockClass}">Stok: ${product.stock} ${product.unit || 'pcs'}</div>
+                    
+                    <div class="product-actions">
+                        <div class="action-btn edit-btn edit-product">
+                            <i class="fas fa-edit"></i>
                         </div>
-                    </div>`);
-                });
-            }
+                        <div class="action-btn delete-btn delete-product">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    }
             
             function loadCategories() {
-                const filterRow = $('.filter-row');
-                filterRow.find('.filter-chip:not([data-category="all"])').remove();
-                categories.forEach(cat => filterRow.append(`<div class="filter-chip" data-category="${cat}">${cat}</div>`));
+                // Clear filter chips
+                $('.filter-chip:not([data-category="all"])').remove();
+                
+                // Add category filters
+                categories.forEach(category => {
+                    $('.filter-row').append(`
+                        <div class="filter-chip" data-category="${category}">${category}</div>
+                    `);
+                });
             }
             
             function loadCategoriesForManagement() {
-                const list = $('#categoriesList').empty();
+                $('#categoriesList').empty();
+                
                 if (categories.length === 0) {
-                    list.html(`<div class="empty-state"><i class="fas fa-tags"></i><p>Tidak ada kategori</p></div>`);
+                    $('#categoriesList').html(`
+                        <div class="empty-state">
+                            <i class="fas fa-tags"></i>
+                            <p>Tidak ada kategori</p>
+                        </div>
+                    `);
                     return;
                 }
-                categories.forEach(cat => list.append(`<div class="d-flex justify-between align-center mb-2"><span>${cat}</span><button class="btn btn-sm btn-danger delete-category" data-category="${cat}"><i class="fas fa-trash"></i></button></div>`));
+                
+                categories.forEach(category => {
+                    $('#categoriesList').append(`
+                        <div class="d-flex justify-between align-center mb-2">
+                            <span>${category}</span>
+                            <button class="btn btn-sm btn-danger delete-category" data-category="${category}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `);
+                });
             }
             
             function loadCategoriesForSelect() {
-                const select = $('#productCategory').empty().append('<option value="">Pilih Kategori</option>');
-                categories.forEach(cat => select.append(`<option value="${cat}">${cat}</option>`));
+                $('#productCategory').empty();
+                $('#productCategory').append('<option value="">Pilih Kategori</option>');
+                
+                categories.forEach(category => {
+                    $('#productCategory').append(`<option value="${category}">${category}</option>`);
+                });
             }
             
             function loadCashiers() {
-                const list = $('#cashiersList').empty();
+                $('#cashiersList').empty();
+                
                 if (users.length === 0) {
-                    list.html(`<tr><td colspan="4" class="text-center">Tidak ada kasir</td></tr>`);
+                    $('#cashiersList').html(`
+                        <tr>
+                            <td colspan="4" class="text-center">Tidak ada kasir</td>
+                        </tr>
+                    `);
                     return;
                 }
+                
                 users.forEach(user => {
-                    list.append(`<tr><td>${user.username}</td><td>${user.name}</td><td>${formatRole(user.role)}</td>
-                        <td><button class="btn btn-sm btn-info edit-cashier" data-id="${user.id}"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger delete-cashier" data-id="${user.id}"><i class="fas fa-trash"></i></button>
-                        </td></tr>`);
+                    $('#cashiersList').append(`
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.name}</td>
+                            <td>${formatRole(user.role)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info edit-cashier" data-id="${user.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-cashier" data-id="${user.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
                 });
             }
             
             function loadMembers() {
-                const list = $('#membersList').empty();
+                $('#membersList').empty();
+                
                 if (members.length === 0) {
-                    list.html(`<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada member</p></div>`);
+                    $('#membersList').html(`
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <p>Tidak ada member</p>
+                        </div>
+                    `);
                     return;
                 }
-                members.forEach(m => list.append(`<div class="member-card"><div class="d-flex justify-between align-center"><div>
-                    <div class="member-id">ID: ${m.id}</div><div class="member-name">${m.name}</div><div class="member-contact">${m.phone}</div></div>
-                    <div><button class="btn btn-sm btn-info edit-member" data-id="${m.id}"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-sm btn-danger delete-member" data-id="${m.id}"><i class="fas fa-trash"></i></button></div></div></div>`));
+                
+                members.forEach(member => {
+                    $('#membersList').append(`
+                        <div class="member-card">
+                            <div class="d-flex justify-between align-center">
+                                <div>
+                                    <div class="member-id">ID: ${member.id}</div>
+                                    <div class="member-name">${member.name}</div>
+                                    <div class="member-contact">${member.phone}</div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-info edit-member" data-id="${member.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-member" data-id="${member.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
             }
             
             function loadMembersForSelect() {
-                const select = $('#memberSelect').empty().append('<option value="">Pilih Member</option>');
-                members.forEach(m => select.append(`<option value="${m.id}">${m.name} (${m.phone})</option>`));
+                $('#memberSelect').empty();
+                $('#memberSelect').append('<option value="">Pilih Member</option>');
+                
+                members.forEach(member => {
+                    $('#memberSelect').append(`<option value="${member.id}">${member.name} (${member.phone})</option>`);
+                });
             }
             
             function loadRoles() {
-                const list = $('#rolesList').empty();
+                $('#rolesList').empty();
+                
                 if (roles.length === 0) {
-                    list.html(`<div class="empty-state"><i class="fas fa-user-tag"></i><p>Tidak ada role</p></div>`);
+                    $('#rolesList').html(`
+                        <div class="empty-state">
+                            <i class="fas fa-user-tag"></i>
+                            <p>Tidak ada role</p>
+                        </div>
+                    `);
                     return;
                 }
-                roles.forEach(r => list.append(`<div class="member-card"><div class="d-flex justify-between align-center"><div>
-                    <div class="member-id">Kode: ${r.code}</div><div class="member-name">${r.name}</div><div class="member-contact">Diskon: ${r.memberDiscount || 0}%</div></div>
-                    <div><button class="btn btn-sm btn-info edit-role" data-id="${r.id}"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-sm btn-danger delete-role" data-id="${r.id}"><i class="fas fa-trash"></i></button></div></div></div>`));
+                
+                roles.forEach(role => {
+                    $('#rolesList').append(`
+                        <div class="member-card">
+                            <div class="d-flex justify-between align-center">
+                                <div>
+                                    <div class="member-id">Kode: ${role.code}</div>
+                                    <div class="member-name">${role.name}</div>
+                                    <div class="member-contact">Diskon Member: ${role.memberDiscount || 0}%</div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-info edit-role" data-id="${role.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger delete-role" data-id="${role.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
             }
             
             function loadRolesForSelect() {
-                const select = $('#cashierRole').empty().append('<option value="">Pilih Role</option>');
-                roles.forEach(r => select.append(`<option value="${r.code}">${r.name}</option>`));
+                $('#cashierRole').empty();
+                $('#cashierRole').append('<option value="">Pilih Role</option>');
+                
+                roles.forEach(role => {
+                    $('#cashierRole').append(`<option value="${role.code}">${role.name}</option>`);
+                });
             }
             
             function loadStoreInfo() {
@@ -3453,76 +4348,62 @@
             }
             
             function updateStoreInfo() {
-                document.title = settings.storeName || 'Aplikasi Kasir';
-                $('#storeNameHeader').text(settings.storeName || 'APLIKASI KASIR');
-                $('#receiptStoreName').text(settings.storeName || 'APLIKASI KASIR');
-                $('#receiptStoreAddress').text(settings.storeAddress || 'Alamat Toko');
-                $('#receiptStorePhone').text(`Telp: ${settings.storePhone || ''}`);
+                $('#storeNameHeader').text(settings.storeName || 'APLIKASI KASIR MODERN');
+                $('#receiptStoreName').text(settings.storeName || 'APLIKASI KASIR MODERN');
+                $('#receiptStoreAddress').text(settings.storeAddress || 'Jl. Contoh No. 123, Kota');
+                $('#receiptStorePhone').text(`Telp: ${settings.storePhone || '081234567890'}`);
                 $('#receiptCopyright').text(settings.storeName || 'Lentera Karya Situbondo');
-            }
-
-            function loadActiveMemos() {
-                const container = $('#memoContainer').empty();
-                const now = new Date();
-                const activeMemos = memos
-                    .filter(memo => {
-                        const startOk = !memo.startDate || new Date(memo.startDate) <= now;
-                        const endOk = !memo.endDate || new Date(memo.endDate) >= now;
-                        return memo.pinned || (startOk && endOk);
-                    })
-                    .sort((a, b) => (b.pinned - a.pinned) || (new Date(b.updatedAt) - new Date(a.updatedAt)));
-                
-                activeMemos.forEach(memo => {
-                    container.append(`<div class="memo-card" style="background-color: var(--${memo.color || 'warning'}); color: ${memo.color === 'warning' ? '#000' : '#fff'};">
-                        ${memo.pinned ? '<div class="memo-pin"><i class="fas fa-thumbtack"></i></div>' : ''}
-                        <div class="memo-header"><div class="memo-title">${memo.title}</div><button class="memo-close">&times;</button></div>
-                        <div class="memo-content">${memo.content}</div>
-                        <div class="memo-date">${moment(memo.updatedAt).format('LLL')} - ${memo.updatedBy}</div>
-                    </div>`);
-                });
-            }
-            
-            function loadMemos() {
-                const list = $('#memosList').empty();
-                 if (memos.length === 0) {
-                    list.html(`<div class="empty-state"><i class="fas fa-sticky-note"></i><p>Tidak ada memo</p></div>`);
-                    return;
-                }
-                const sorted = [...memos].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                sorted.forEach(memo => {
-                    list.append(`<div class="member-card"><div class="d-flex justify-between align-center">
-                        <div><div class="member-id">ID: ${memo.id}</div><div class="member-name">${memo.title}</div>
-                        <div class="member-contact">${memo.pinned ? '<i class="fas fa-thumbtack"></i> ' : ''}${moment(memo.updatedAt).format('LLL')}</div></div>
-                        <div><button class="btn btn-sm btn-info edit-memo" data-id="${memo.id}"><i class="fas fa-edit"></i></button>
-                             <button class="btn btn-sm btn-danger delete-memo" data-id="${memo.id}"><i class="fas fa-trash"></i></button></div>
-                    </div></div>`);
-                });
             }
             
             function updateCart() {
-                currentCart.subtotal = currentCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+                // Calculate subtotal
+                currentCart.subtotal = currentCart.items.reduce((sum, item) => {
+                    return sum + (item.product.price * item.quantity);
+                }, 0);
+                
+                // Calculate total
                 currentCart.total = currentCart.subtotal - currentCart.discount + currentCart.additionalCost;
                 
-                const cartItemsDiv = $('#cartItems').empty();
+                // Update cart display
+                $('#cartItems').empty();
+                
                 if (currentCart.items.length === 0) {
-                    cartItemsDiv.html(`<div class="empty-state"><i class="fas fa-shopping-cart"></i><p>Keranjang kosong</p></div>`);
+                    $('#cartItems').html(`
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Keranjang belanja kosong</p>
+                        </div>
+                    `);
                 } else {
                     currentCart.items.forEach(item => {
-                        cartItemsDiv.append(`<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">${item.product.name}</div>
-                            <div class="cart-item-price">${formatCurrency(item.product.price)} x ${item.quantity}</div></div>
-                            <div class="cart-item-qty"><input type="number" class="item-qty qty-input" data-id="${item.product.id}" value="${item.quantity}" min="1">
-                            <div class="remove-item remove-btn" data-id="${item.product.id}"><i class="fas fa-trash"></i></div></div></div>`);
+                        $('#cartItems').append(`
+                            <div class="cart-item">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-name">${item.product.name}</div>
+                                    <div class="cart-item-price">${formatCurrency(item.product.price)} x ${item.quantity}</div>
+                                </div>
+                                <div class="cart-item-qty">
+                                    <input type="number" class="item-qty qty-input" data-id="${item.product.id}" value="${item.quantity}" min="1">
+                                    <div class="remove-item remove-btn" data-id="${item.product.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
                     });
                 }
                 
+                // Update summary
                 $('#cartSubtotal').text(formatCurrency(currentCart.subtotal));
                 $('#cartDiscount').text(formatCurrency(currentCart.discount));
                 $('#cartAdditionalCost').text(formatCurrency(currentCart.additionalCost));
                 $('#cartTotal').text(formatCurrency(currentCart.total));
                 
+                // Update cart count
                 const itemCount = currentCart.items.reduce((sum, item) => sum + item.quantity, 0);
-                $('#cartCount').text(`(${itemCount} item)`);
+                $('#cartCount').text(`(${itemCount} ${itemCount === 1 ? 'item' : 'items'})`);
                 
+                // Save cart to localStorage
                 saveCart();
             }
             
@@ -3534,42 +4415,64 @@
             }
             
             function updateCurrentDate() {
-                $('#currentDate').text(moment().format('dddd, LL'));
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                $('#currentDate').text(now.toLocaleDateString('id-ID', options));
+                $('#receiptDate').text(moment(now).format('DD/MM/YYYY HH:mm'));
             }
             
             function generateReceipt(transaction) {
-                 $('#receiptDate').text(moment(transaction.date).format('DD/MM/YYYY HH:mm'));
-                 $('#receiptId').text(transaction.id);
-                 $('#receiptCashier').text(transaction.cashier.name);
-                 $('#receiptCustomer').text(transaction.customer);
-                 $('#receiptMember').text(transaction.member ? transaction.member : '-');
-                 
-                 const itemsDiv = $('#receiptItems').empty();
-                 transaction.items.forEach(item => {
-                     const itemTotal = item.product.price * item.quantity;
-                     let itemHtml = `<div>${item.product.name}</div>
-                                     <div>${item.quantity} x ${formatCurrency(item.product.price)}</div>
-                                     <div>${formatCurrency(itemTotal)}</div>`;
-                     itemsDiv.append(`<div class="receipt-item">${itemHtml}</div>`);
-                 });
-
-                 $('#receiptSubtotal').text(formatCurrency(transaction.subtotal));
-                 $('#receiptDiscount').text(formatCurrency(transaction.discount));
-                 $('#receiptAdditionalCost').text(formatCurrency(transaction.additionalCost));
-                 $('#receiptTotal').text(formatCurrency(transaction.total));
-                 $('#receiptPaymentMethod').text(formatPaymentMethod(transaction.paymentMethod) + ':');
-                 $('#receiptPaymentAmount').text(formatCurrency(transaction.paymentAmount));
-                 $('#receiptChange').text(formatCurrency(transaction.change));
-                 
-                 // Show the receipt template as a modal or new view
-                 $('#receiptTemplate').show();
+                // Update receipt template with transaction data
+                $('#receiptId').text(transaction.id);
+                $('#receiptDate').text(moment(transaction.date).format('DD/MM/YYYY HH:mm'));
+                $('#receiptCashier').text(transaction.cashier.name);
+                $('#receiptCustomer').text(transaction.customer);
+                $('#receiptMember').text(transaction.member ? 'Ya' : 'Tidak');
+                
+                // Clear items
+                $('#receiptItems').empty();
+                
+                // Add items
+                transaction.items.forEach(item => {
+                    $('#receiptItems').append(`
+                        <div class="receipt-item receipt-item-detail">
+                            <span class="item-name">${item.product.name}</span>
+                            <span class="item-qty">${item.quantity}</span>
+                            <span class="item-price">${formatCurrency(item.product.price)}</span>
+                            <span class="item-total">${formatCurrency(item.product.price * item.quantity)}</span>
+                        </div>
+                    `);
+                });
+                
+                // Update summary
+                $('#receiptSubtotal').text(formatCurrency(transaction.subtotal));
+                $('#receiptDiscount').text(formatCurrency(transaction.discount));
+                $('#receiptAdditionalCost').text(formatCurrency(transaction.additionalCost));
+                $('#receiptTotal').text(formatCurrency(transaction.total));
+                
+                // Update payment info
+                const paymentMethod = formatPaymentMethod(transaction.paymentMethod);
+                $('#receiptPaymentMethod').text(`${paymentMethod}:`);
+                $('#receiptPaymentAmount').text(formatCurrency(transaction.paymentAmount));
+                $('#receiptChange').text(formatCurrency(transaction.change));
             }
             
             function resetCart() {
-                currentCart = { items: [], subtotal: 0, discount: 0, additionalCost: 0, additionalCostNote: '', total: 0, memberId: null };
+                currentCart = {
+                    items: [],
+                    subtotal: 0,
+                    discount: 0,
+                    additionalCost: 0,
+                    additionalCostNote: '',
+                    total: 0,
+                    memberId: null
+                };
+                
                 updateCart();
-                $('#customerType').val('regular').change();
-                $('#cartDiscountInput, #additionalCostInput').val(0);
+                $('#customerType').val('regular');
+                $('#memberSelectContainer').hide();
+                $('#cartDiscountInput').val(0);
+                $('#additionalCostInput').val(0);
                 $('#additionalCostNote').val('');
             }
             
@@ -3587,12 +4490,16 @@
             }
             
             function formatCurrency(amount) {
-                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+                return 'Rp ' + amount.toLocaleString('id-ID');
             }
             
             function formatPaymentMethod(method) {
-                const map = { cash: 'Tunai', transfer: 'Transfer Bank', ewallet: 'E-Wallet' };
-                return map[method] || method;
+                switch (method) {
+                    case 'cash': return 'Tunai';
+                    case 'transfer': return 'Transfer Bank';
+                    case 'ewallet': return 'E-Wallet';
+                    default: return method;
+                }
             }
             
             function formatRole(roleCode) {
@@ -3602,27 +4509,87 @@
             
             function showToast(message, type = 'info') {
                 const toast = $('#toast');
-                toast.find('#toast-message').text(message);
+                const toastMessage = $('#toast-message');
+                const toastIcon = toast.find('i');
+                
+                // Set message and type
+                toastMessage.text(message);
                 toast.removeClass('success error warning').addClass(type);
                 
-                const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
-                toast.find('i').removeClass().addClass(`fas ${icons[type]}`);
+                // Change icon based on type
+                switch (type) {
+                    case 'success':
+                        toastIcon.removeClass().addClass('fas fa-check-circle');
+                        break;
+                    case 'error':
+                        toastIcon.removeClass().addClass('fas fa-exclamation-circle');
+                        break;
+                    case 'warning':
+                        toastIcon.removeClass().addClass('fas fa-exclamation-triangle');
+                        break;
+                    default:
+                        toastIcon.removeClass().addClass('fas fa-info-circle');
+                }
                 
+                // Show toast
                 toast.addClass('show');
-                setTimeout(() => toast.removeClass('show'), 3000);
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    toast.removeClass('show');
+                }, 3000);
+            }
+            
+            function verifyAdminAction(action) {
+                if (currentUser.role === 'admin') {
+                    action();
+                } else {
+                    pendingAdminAction = action;
+                    $('#adminPasswordModal').css('display', 'flex');
+                    $('#adminPassword').val('');
+                }
             }
             
             // Data saving functions
-            const saveProducts = () => localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
-            const saveCategories = () => localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-            const saveTransactions = () => localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
-            const saveSettings = () => localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
-            const saveUsers = () => localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-            const saveMembers = () => localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
-            const saveRoles = () => localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
-            const saveStockHistory = () => localStorage.setItem(STORAGE_KEYS.STOCK_HISTORY, JSON.stringify(stockHistory));
-            const saveMemos = () => localStorage.setItem(STORAGE_KEYS.MEMOS, JSON.stringify(memos));
-            const saveCart = () => localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(currentCart));
+            function saveProducts() {
+                localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+            }
+            
+            function saveCategories() {
+                localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+            }
+            
+            function saveTransactions() {
+                localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+            }
+            
+            function saveSettings() {
+                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+            }
+            
+            function saveUsers() {
+                localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+            }
+            
+            function saveMembers() {
+                localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+            }
+            
+            function saveRoles() {
+                localStorage.setItem(STORAGE_KEYS.ROLES, JSON.stringify(roles));
+            }
+            
+            function saveStockHistory() {
+                localStorage.setItem(STORAGE_KEYS.STOCK_HISTORY, JSON.stringify(stockHistory));
+            }
+            
+            function saveMemos() {
+                localStorage.setItem(STORAGE_KEYS.MEMOS, JSON.stringify(memos));
+            }
+            
+            function saveCart() {
+                localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(currentCart));
+            }
         });
     </script>
 </body>
