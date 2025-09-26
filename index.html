@@ -60,7 +60,8 @@
         }
 
         .container {
-            max-width: 100%;
+            width: 100%;
+            max-width: 1200px; /* [PERBAIKAN] Batasi lebar maksimum pada layar besar */
             margin: 0 auto;
             padding: 12px;
         }
@@ -412,7 +413,6 @@
             background-color: #e0a800;
         }
         
-        /* [PENYEMPURNAAN] Menambahkan kelas tombol baru untuk tombol abu-abu */
         .btn-gray {
             background-color: var(--gray);
         }
@@ -567,36 +567,95 @@
             resize: vertical;
         }
 
-        /* === [PERBAIKAN SESUAI PERMINTAAN] DESAIN LOGIN & NOTIFIKASI === */
-        #loginModal {
-            background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
-            display: flex;
-            align-items: flex-start; /* Mengubah dari 'center' untuk mencegah bagian atas terpotong */
-            justify-content: center;
-            padding: 20px;
-            padding-top: 180px; /* Memberi ruang untuk notifikasi mengambang di atas */
-            padding-bottom: 40px; /* Padding bawah untuk scrolling nyaman */
-            overflow-y: auto; /* Mempertahankan scroll jika konten tetap panjang */
-            position: fixed; /* Memastikan modal login selalu di atas konten lain */
-        }
+        /* === [PENYEMPURNAAN] DESAIN LOGIN & NOTIFIKASI === */
         
-        /* [PERBAIKAN] Membuat notifikasi trial mengambang (floating) */
-        .trial-notification {
-            position: absolute; /* Mengambang relatif terhadap #loginModal */
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            z-index: 1001; /* Di atas konten modal lainnya */
+        /* [PERBAIKAN] Notifikasi Uji Coba (Modal Pop-up) */
+        .trial-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none; /* Awalnya disembunyikan */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+
+        .trial-notification-content {
+            position: relative;
             background: linear-gradient(135deg, #4f5bd5, #962fbf);
             color: white;
-            padding: 16px;
+            padding: 25px;
             border-radius: var(--rounded);
             text-align: center;
             box-shadow: 0 6px 20px rgba(0,0,0,0.25);
             border: 1px solid rgba(255,255,255,0.2);
             animation: fadeIn 0.5s ease-out;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .trial-notification-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .trial-notification-close:hover {
+            opacity: 1;
+        }
+
+        .trial-notification-content h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .trial-notification-content h4 i {
+            color: var(--premium-gold);
+        }
+        .trial-notification-content p {
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+        .trial-notification-content .btn-upgrade {
+            background: var(--premium-gold);
+            color: var(--dark);
+            font-weight: 700;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .trial-notification-content .btn-upgrade:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        #loginModal {
+            background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
+            display: flex;
+            align-items: center; /* Memusatkan secara vertikal */
+            justify-content: center; /* Memusatkan secara horizontal */
+            padding: 20px;
+            overflow-y: auto;
+            position: fixed;
         }
 
         .login-container {
@@ -609,38 +668,6 @@
             box-shadow: var(--shadow);
             border-top: 5px solid var(--primary);
             animation: fadeIn 0.4s;
-        }
-        
-        .trial-notification h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .trial-notification h4 i {
-            color: var(--premium-gold);
-        }
-        .trial-notification p {
-            font-size: 0.85rem;
-            margin-bottom: 16px;
-            opacity: 0.9;
-        }
-        .trial-notification .btn-upgrade {
-            background: var(--premium-gold);
-            color: var(--dark);
-            font-weight: 700;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        .trial-notification .btn-upgrade:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .login-header {
@@ -670,7 +697,7 @@
             background-color: #e9ecef;
             cursor: not-allowed;
         }
-        /* === AKHIR DARI PERBAIKAN DESAIN LOGIN === */
+        /* === AKHIR DARI PENYEMPURNAAN DESAIN LOGIN === */
 
         /* Toast Notification */
         .toast {
@@ -970,6 +997,28 @@
             }
         }
 
+        /* [PERBAIKAN] Penyesuaian untuk layar sangat kecil */
+        @media (max-width: 380px) {
+            .app-title {
+                font-size: 1.2rem;
+            }
+            .header-info {
+                font-size: 0.8rem;
+            }
+            .header-logo {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            .panel-title {
+                font-size: 1.1rem;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
@@ -984,38 +1033,14 @@
         .text-center {
             text-align: center;
         }
-
-        .mt-2 {
-            margin-top: 8px;
-        }
-
-        .mt-3 {
-            margin-top: 16px;
-        }
-
-        .mb-2 {
-            margin-bottom: 8px;
-        }
-
-        .mb-3 {
-            margin-bottom: 16px;
-        }
-
-        .d-flex {
-            display: flex;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .align-center {
-            align-items: center;
-        }
-
-        .gap-2 {
-            gap: 8px;
-        }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 16px; }
+        .d-flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .align-center { align-items: center; }
+        .gap-2 { gap: 8px; }
         
         /* Footer */
         .app-footer {
@@ -1026,16 +1051,6 @@
             font-size: 0.8rem;
         }
 
-        .print-btn {
-            background-color: var(--info);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: inline-block;
-            cursor: pointer;
-        }
-        
         /* === [PENYEMPURNAAN] KODE CETAK STRUK & HISTORI === */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
@@ -1047,277 +1062,51 @@
             color: #000;
             background: white;
         }
-
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        
-        .receipt-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .receipt-info {
-            margin-bottom: 8px;
-            font-size: 11px;
-            border-top: 1px dashed #000;
-            border-bottom: 1px dashed #000;
-            padding: 5px 0;
-        }
-        
-        .receipt-info div {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .receipt-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2px;
-        }
-        
-        .receipt-item-details {
-            display: block;
-        }
-        
-        .receipt-item-details .item-name {
-            font-weight: bold;
-        }
-        .receipt-item-details .item-price-calc {
-            font-size: 10px;
-            padding-left: 5px;
-        }
-        
-        #receiptItemsContainer {
-             padding: 8px 0;
-        }
-
-        .receipt-total {
-            font-weight: bold;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed #000;
-        }
-
-        .receipt-footer {
-            margin-top: 12px;
-            font-size: 10px;
-            text-align: center;
-        }
+        .receipt-header { text-align: center; margin-bottom: 8px; }
+        .receipt-title { font-weight: bold; font-size: 14px; margin-bottom: 3px; }
+        .receipt-info { margin-bottom: 8px; font-size: 11px; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0; }
+        .receipt-info div { display: flex; justify-content: space-between; }
+        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .receipt-item-details { display: block; }
+        .receipt-item-details .item-name { font-weight: bold; }
+        .receipt-item-details .item-price-calc { font-size: 10px; padding-left: 5px; }
+        #receiptItemsContainer { padding: 8px 0; }
+        .receipt-total { font-weight: bold; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #000; }
+        .receipt-footer { margin-top: 12px; font-size: 10px; text-align: center; }
         
         @media print {
-            html, body {
-                width: 100%;
-                height: auto;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-                box-shadow: none;
-            }
-
-            body * {
-                visibility: hidden;
-            }
-            
-            #print-container, #print-container * {
-                visibility: visible;
-                box-sizing: border-box !important;
-            }
-            
-            #print-container {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: auto;
-                margin: 0;
-                padding: 0;
-                display: block !important;
-            }
-            
-            #print-container .printable-area,
-            #print-container #receiptContent {
-                margin: 0 !important;
-                padding: 5px !important;
-                box-shadow: none !important;
-                border: none !important;
-                display: block !important;
-                color: #000 !important;
-                background: #fff !important;
-                width: 100% !important; 
-                font-size: 11pt !important;
-                page-break-inside: avoid;
-            }
-
-            #print-container #receiptContent {
-                font-size: 10pt !important;
-            }
-
-            #print-container #historyResultsContainer, 
-            #print-container #historyResults {
-                max-height: none !important;
-                overflow: visible !important;
-                height: auto !important;
-            }
-            
-            .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .order-panel, .menu-panel, #loginModal {
-                display: none !important;
-            }
-            
-            @page {
-                size: auto; 
-                margin: 10mm; 
-            }
+            html, body { width: 100%; height: auto; margin: 0 !important; padding: 0 !important; overflow: visible !important; box-shadow: none; }
+            body * { visibility: hidden; }
+            #print-container, #print-container * { visibility: visible; box-sizing: border-box !important; }
+            #print-container { position: absolute; left: 0; top: 0; width: 100%; height: auto; margin: 0; padding: 0; display: block !important; }
+            #print-container .printable-area, #print-container #receiptContent { margin: 0 !important; padding: 5px !important; box-shadow: none !important; border: none !important; display: block !important; color: #000 !important; background: #fff !important; width: 100% !important; font-size: 11pt !important; page-break-inside: avoid; }
+            #print-container #receiptContent { font-size: 10pt !important; }
+            #print-container #historyResultsContainer, #print-container #historyResults { max-height: none !important; overflow: visible !important; height: auto !important; }
+            .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .order-panel, .menu-panel, #loginModal { display: none !important; }
+            @page { size: auto; margin: 10mm; }
         }
         /* === AKHIR DARI PENYEMPURNAAN KODE CETAK === */
 
         /* Backup Restore Styles */
-        .backup-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .backup-btn {
-            flex: 1;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-label {
-            display: block;
-            padding: 12px;
-            background-color: var(--info);
-            color: white;
-            border-radius: var(--rounded-sm);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .file-label:hover {
-            background-color: #138496;
-        }
+        .backup-actions { display: flex; gap: 8px; margin-top: 16px; }
+        .backup-btn { flex: 1; }
+        .file-input { display: none; }
+        .file-label { display: block; padding: 12px; background-color: var(--info); color: white; border-radius: var(--rounded-sm); text-align: center; cursor: pointer; transition: all 0.2s; }
+        .file-label:hover { background-color: #138496; }
         
         /* KTA Card Design */
-        #ktaCard {
-            width: 320px;
-            height: 500px;
-            margin: 0 auto;
-            border-radius: 20px;
-            background: radial-gradient(circle at top left, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        #ktaCard::before {
-            content: '';
-            position: absolute;
-            top: -80px;
-            left: -80px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            filter: blur(10px);
-        }
-        
-        #ktaCard::after {
-            content: '';
-            position: absolute;
-            bottom: -100px;
-            right: -60px;
-            width: 250px;
-            height: 250px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 45%;
-            filter: blur(15px);
-        }
-
-        .kta-header {
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            z-index: 1;
-        }
-
-        .kta-store-info h3 {
-            font-size: 18px;
-            margin: 0;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
-        .kta-store-info p {
-            font-size: 11px;
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        .kta-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 1;
-        }
-
-        #ktaMemberName {
-            font-size: 26px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-        }
-        
-        #ktaMemberId {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            background-color: rgba(0,0,0,0.3);
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-        
-        .kta-qrcode {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .kta-qrcode img {
-            width: 160px;
-            height: auto;
-            display: block;
-        }
-
-        .kta-footer {
-            text-align: center;
-            font-size: 11px;
-            opacity: 0.8;
-            padding-top: 15px;
-            margin-top: 25px;
-            border-top: 1px solid rgba(255,255,255,0.3);
-            z-index: 1;
-        }
+        #ktaCard { width: 320px; height: 500px; margin: 0 auto; border-radius: 20px; background: radial-gradient(circle at top left, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); color: white; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2); }
+        #ktaCard::before { content: ''; position: absolute; top: -80px; left: -80px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(10px); }
+        #ktaCard::after { content: ''; position: absolute; bottom: -100px; right: -60px; width: 250px; height: 250px; background: rgba(255,255,255,0.15); border-radius: 45%; filter: blur(15px); }
+        .kta-header { text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 15px; margin-bottom: 25px; z-index: 1; }
+        .kta-store-info h3 { font-size: 18px; margin: 0; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+        .kta-store-info p { font-size: 11px; margin: 0; opacity: 0.9; }
+        .kta-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 1; }
+        #ktaMemberName { font-size: 26px; font-weight: 600; margin-bottom: 8px; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        #ktaMemberId { font-family: 'Courier New', monospace; font-size: 14px; background-color: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 20px; letter-spacing: 1px; }
+        .kta-qrcode { background: white; padding: 10px; border-radius: 8px; min-height: 160px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .kta-qrcode img { width: 160px; height: auto; display: block; }
+        .kta-footer { text-align: center; font-size: 11px; opacity: 0.8; padding-top: 15px; margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.3); z-index: 1; }
     </style>
 </head>
 <body>
@@ -1326,13 +1115,16 @@
         <span id="toast-message">Notification message</span>
     </div>
 
-    <div id="loginModal" class="modal" style="display: flex;">
-        <div class="trial-notification">
+    <div id="trialNotification" class="trial-notification-overlay">
+        <div class="trial-notification-content">
+            <button id="closeTrialNotification" class="trial-notification-close">&times;</button>
             <h4><i class="fas fa-crown"></i> Versi Uji Coba Gratis</h4>
             <p>Anda dapat melakukan hingga <strong>10x transaksi</strong>. Hubungi developer untuk upgrade ke versi premium dengan fitur lengkap!</p>
             <a href="#" id="upgradeBtn" class="btn-upgrade"><i class="fab fa-whatsapp"></i> Upgrade ke Premium</a>
         </div>
+    </div>
 
+    <div id="loginModal" class="modal" style="display: flex;">
         <div class="login-container">
             <div class="login-header">
                 <div class="login-logo">
@@ -2054,14 +1846,10 @@
         
         function initializeData() {
             let users_init = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
-            
-            // [REVISI] Hanya gunakan satu user untuk trial
             if (!users_init.find(u => u.username === 'User')) {
                 localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify([DEFAULT_TRIAL_USER]));
             }
-            
             if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify([]));
-            
             if (!localStorage.getItem(STORAGE_KEYS.MENUS)) {
                 const sampleMenus = [
                     { id: 'M001', name: 'Nasi Goreng', category: 'Makanan', price: 15000, image: DEFAULT_MENU_IMAGES['Makanan']['Nasi Goreng'], description: 'Nasi goreng spesial dengan telur dan ayam' },
@@ -2072,34 +1860,16 @@
                 ];
                 localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(sampleMenus));
             }
-            
             if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
-                const sampleCategories = [
-                    { id: 'C001', name: 'Makanan' },
-                    { id: 'C002', name: 'Minuman' },
-                    { id: 'C003', name: 'Snack' }
-                ];
+                const sampleCategories = [ { id: 'C001', name: 'Makanan' }, { id: 'C002', name: 'Minuman' }, { id: 'C003', name: 'Snack' } ];
                 localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(sampleCategories));
             }
-            
             if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
-            
-            // [REVISI] Inisialisasi penghitung transaksi jika belum ada
-            if (!localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS)) {
-                localStorage.setItem(STORAGE_KEYS.TRIAL_TRANSACTIONS, '0');
-            }
-            
+            if (!localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS)) localStorage.setItem(STORAGE_KEYS.TRIAL_TRANSACTIONS, '0');
             if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
                 localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({
-                    storeName: 'WARUNG MAKAN SEDERHANA',
-                    storeAddress: 'Jl. Contoh No. 123, Kota',
-                    storePhone: '081234567890',
-                    storeEmail: 'admin@resto.com',
-                    tableCount: 5,
-                    itemSecurityCode: CryptoJS.SHA256('17081945').toString(),
-                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
-                    memberDiscountPercent: 2,
-                    nonMemberDiscountPercent: 0
+                    storeName: 'WARUNG MAKAN SEDERHANA', storeAddress: 'Jl. Contoh No. 123, Kota', storePhone: '081234567890', storeEmail: 'admin@resto.com', tableCount: 5,
+                    itemSecurityCode: CryptoJS.SHA256('17081945').toString(), panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(), memberDiscountPercent: 2, nonMemberDiscountPercent: 0
                 }));
             }
         }
@@ -2115,19 +1885,30 @@
             members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
             currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
             currentOrder = JSON.parse(localStorage.getItem(STORAGE_KEYS.CURRENT_ORDER)) || {
-                items: [], subtotal: 0, total: 0, discount: 0, donation: 0,
-                type: 'dinein', tableNumber: '1', note: '', memberId: null
+                items: [], subtotal: 0, total: 0, discount: 0, donation: 0, type: 'dinein', tableNumber: '1', note: '', memberId: null
             };
+
+            // === [PERBAIKAN] Logika Notifikasi Uji Coba ===
+            let trialNotificationTimeout;
+            function showTrialNotification() {
+                $('#trialNotification').css('display', 'flex').hide().fadeIn(500);
+                trialNotificationTimeout = setTimeout(() => {
+                    hideTrialNotification();
+                }, 10000); // 10 detik
+            }
+            function hideTrialNotification() {
+                clearTimeout(trialNotificationTimeout);
+                $('#trialNotification').fadeOut(500);
+            }
+            $('#closeTrialNotification').on('click', hideTrialNotification);
+            // === AKHIR PERBAIKAN ===
 
             $('#currentYear').text(new Date().getFullYear());
             
-            // [REVISI] Logika tombol Upgrade WhatsApp
             $('#upgradeBtn').on('click', function(e) {
                 e.preventDefault();
                 const phone = "6287865614222";
-                const message = encodeURIComponent(
-                    "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih."
-                );
+                const message = encodeURIComponent( "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih." );
                 window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${message}`, '_blank');
             });
             
@@ -2137,6 +1918,7 @@
                 $('#mainApp').show();
                 initializeApp();
             } else {
+                showTrialNotification(); // [PERBAIKAN] Tampilkan notifikasi saat pertama kali membuka
                 generateCaptcha();
             }
             
@@ -2158,11 +1940,8 @@
                             setButtonLoading($loginBtn, false, originalText);
                             return; 
                         }
-
-                        // [REVISI] Logika login yang disederhanakan untuk versi trial
                         const user = users.find(u => u.username === 'User');
                         const validPassword = CryptoJS.SHA256('UjiCoba').toString();
-                        
                         if (user && user.password === validPassword) {
                             currentUser = user;
                             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
@@ -2172,7 +1951,6 @@
                             initializeApp();
                             showToast(`Selamat datang di versi Uji Coba!`, 'success');
                         } else {
-                            // Pesan ini seharusnya tidak pernah muncul jika data default benar
                             showToast('Autentikasi Uji Coba Gagal', 'error');
                             generateCaptcha();
                             $('#captchaInput').val('');
@@ -2189,7 +1967,6 @@
             });
             
             $('#reloadCaptchaBtn').click(generateCaptcha);
-            
             $('#logoutBtn').click(function(e) {
                 e.preventDefault();
                 currentUser = null;
@@ -2198,12 +1975,12 @@
                     $('#loginModal').css('display', 'flex');
                     $('#captchaInput').val('');
                     generateCaptcha();
+                    showTrialNotification(); // [PERBAIKAN] Tampilkan lagi notifikasi setelah logout
                 });
                 showToast('Anda telah logout', 'info');
             });
             
             $('#menuSearch').on('input', function() { loadMenus($(this).val(), $('.filter-chip.active').data('category')); });
-            
             $(document).on('click', '.menu-card', function() {
                 const menu = menus.find(m => m.id === $(this).data('id'));
                 if (menu) {
@@ -2215,7 +1992,6 @@
             });
             
             $(document).on('click', '.edit-menu', function(e) { e.stopPropagation(); if (currentUser.role === 'admin') openEditMenuModal(menus.find(m => m.id === $(this).data('id'))); });
-            
             $(document).on('click', '.delete-menu', function(e) {
                 e.stopPropagation();
                 if (currentUser.role !== 'admin') return;
@@ -2263,11 +2039,7 @@
                     if (currentOrder.memberId) { currentOrder.memberId = null; updateOrder(); }
                     return;
                 }
-                const filteredMembers = members.filter(member => 
-                    member.name.toLowerCase().includes(searchTerm) || 
-                    member.id.toLowerCase().includes(searchTerm) ||
-                    member.phone.includes(searchTerm)
-                );
+                const filteredMembers = members.filter(member => member.name.toLowerCase().includes(searchTerm) || member.id.toLowerCase().includes(searchTerm) || member.phone.includes(searchTerm));
                 $results.empty().show();
                 if (filteredMembers.length > 0) {
                     filteredMembers.forEach(member => $results.append(`<div class="member-search-item" data-id="${member.id}">${member.name} (${member.id})</div>`));
@@ -2290,17 +2062,10 @@
             
             $('#processOrderBtn').click(function() {
                 if (currentOrder.items.length === 0) { showToast('Pesanan kosong', 'warning'); return; }
-                
-                // [REVISI] Cek batas transaksi sebelum membuka modal pembayaran
-                if (checkTransactionLimit(true)) { // true to show alert
-                    return;
-                }
-                
+                if (checkTransactionLimit(true)) return;
                 const member = members.find(m => m.id === currentOrder.memberId);
                 $('#customerName').val(member ? member.name : '');
-                updateOrderSummary();
-                updatePaymentTab();
-                switchPaymentModalTab('payment');
+                updateOrderSummary(); updatePaymentTab(); switchPaymentModalTab('payment');
                 $('#processOrderModal').css('display', 'flex');
             });
             
@@ -2309,8 +2074,7 @@
             $(document).on('click', '.quick-cash-btn', function() { $('#paymentAmount').val($(this).data('amount')).trigger('input'); });
             
             $('#completePaymentBtn').click(function() {
-                if ($(this).prop('disabled')) return; // [REVISI] Jangan proses jika tombol dibekukan
-
+                if ($(this).prop('disabled')) return;
                 const paymentAmount = parseFloat($('#paymentAmount').val()) || 0;
                 if (paymentAmount < currentOrder.total) { showToast('Jumlah pembayaran kurang', 'error'); return; }
                 
@@ -2320,52 +2084,30 @@
                 setTimeout(() => {
                     try {
                         const order = {
-                            id: 'ORD' + moment().format('YYYYMMDDHHmmss'), date: new Date(), ...currentOrder,
-                            paymentMethod: $('#paymentMethod').val(), paymentAmount,
-                            change: paymentAmount - currentOrder.total, cashier: currentUser,
-                            customerName: $('#customerName').val().trim() || 'Pelanggan',
+                            id: 'ORD' + moment().format('YYYYMMDDHHmmss'), date: new Date(), ...currentOrder, paymentMethod: $('#paymentMethod').val(), paymentAmount,
+                            change: paymentAmount - currentOrder.total, cashier: currentUser, customerName: $('#customerName').val().trim() || 'Pelanggan',
                             status: currentOrder.type === 'dinein' ? 'preparing' : 'completed', statusLocked: false
                         };
-                        
-                        orders.unshift(order);
-                        saveOrders();
-
-                        // [REVISI] Tambah hitungan transaksi
+                        orders.unshift(order); saveOrders();
                         let currentCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS) || '0');
                         localStorage.setItem(STORAGE_KEYS.TRIAL_TRANSACTIONS, ++currentCount);
-                        
                         if (order.memberId) {
                             const member = members.find(m => m.id === order.memberId);
-                            if (member) {
-                                member.transactions = (member.transactions || 0) + 1;
-                                member.totalSpent = (member.totalSpent || 0) + order.total;
-                                saveMembers();
-                            }
+                            if (member) { member.transactions = (member.transactions || 0) + 1; member.totalSpent = (member.totalSpent || 0) + order.total; saveMembers(); }
                         }
-                        
-                        showReceiptModal(order);
-                        resetOrder();
+                        showReceiptModal(order); resetOrder();
                         $('#processOrderModal').hide();
                         showToast('Pesanan berhasil diproses', 'success');
-
-                        // [REVISI] Periksa lagi batas transaksi setelah selesai, mungkin batas tercapai
                         checkTransactionLimit(false); 
-
                     } finally {
                         setButtonLoading($btn, false, originalText);
                     }
                 }, 500);
             });
             
-            $(document).on('click', '.filter-chip', function() {
-                $('.filter-chip').removeClass('active');
-                $(this).addClass('active');
-                loadMenus($('#menuSearch').val(), $(this).data('category'));
-            });
-            
+            $(document).on('click', '.filter-chip', function() { $('.filter-chip').removeClass('active'); $(this).addClass('active'); loadMenus($('#menuSearch').val(), $(this).data('category')); });
             $('#addMenuBtn').click(() => { if (currentUser.role === 'admin') openEditMenuModal(null); });
             $('#manageCategoriesBtn').click(() => { if (currentUser.role === 'admin') { loadCategoriesForManagement(); $('#manageCategoriesModal').css('display', 'flex'); } });
-            
             $('#viewReportsBtn').click(() => { 
                 if (currentUser.role !== 'admin') return;
                 $('#reportsModal .tabs .tab').removeClass('active').first().addClass('active');
@@ -2375,22 +2117,11 @@
                 $('#printReportBtn, #downloadReportBtn').hide();
                 $('#reportsModal').css('display', 'flex');
             });
-
-            $('#historyBtn').click(() => {
-                if (currentUser.role !== 'admin') return;
-                loadTransactionHistory();
-                $('#historyModal').css('display', 'flex');
-            });
-
+            $('#historyBtn').click(() => { if (currentUser.role !== 'admin') { loadTransactionHistory(); $('#historyModal').css('display', 'flex'); } });
             $('#kitchenDisplayBtn').click(() => { loadKitchenOrders(); kitchenInterval = setInterval(loadKitchenOrders, 30000); $('#kitchenDisplayModal').css('display', 'flex'); });
             $('#manageMembersBtn').click(() => { if (currentUser.role === 'admin') { resetMemberForm(); loadMembersForManagement(); $('#memberAdminFields').toggle(currentUser.role === 'admin'); $('#manageMembersModal').css('display', 'flex'); } });
-            
-            $('#manageMemberSearchInput').on('input', function() {
-                loadMembersForManagement($(this).val());
-            });
-
+            $('#manageMemberSearchInput').on('input', function() { loadMembersForManagement($(this).val()); });
             $('#manageStoreInfoBtn').click(() => { if (currentUser.role === 'admin') { loadStoreInfo(); $('#manageStoreInfoModal').css('display', 'flex'); } });
-            
             $('#controlPanelBtn').click(() => {
                 if (currentUser.role !== 'admin') return;
                 promptForPassword('panel', () => {
@@ -2402,15 +2133,12 @@
                     $('#controlPanelModal').css('display', 'flex');
                 });
             });
-
             $('#backupDataBtn').click(() => { if (currentUser.role === 'admin') showConfirmation('Backup Data', 'Data akan di-backup ke file terenkripsi (.lksbackup). Lanjutkan?', backupData); });
             $('#restoreFile').change(function() { if (currentUser.role === 'admin') { restoreFromFile(this.files[0]); $(this).val(''); } });
             $('#resetDataBtn').click(() => { if (currentUser.role === 'admin') promptForPassword('item', () => showConfirmation('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', resetAllData, 'danger')); });
-            
             $('#saveMenuBtn').click(function() {
                 const id = $('#menuId').val(), name = $('#menuName').val().trim(), category = $('#menuCategory').val(), price = parseFloat($('#menuPrice').val()) || 0, image = $('#menuImage').val().trim(), description = $('#menuDescription').val().trim();
                 if (!name || !category || price <= 0) { showToast('Nama, kategori, dan harga harus valid', 'error'); return; }
-                
                 const action = () => {
                     if (id) {
                         const menuIndex = menus.findIndex(m => m.id === id);
@@ -2472,21 +2200,14 @@
             
             $(document).on('click', '.kta-member', function() { openKtaModal($(this).data('id')); });
             $('#downloadKtaPdfBtn').click(downloadKtaAsPdf);
-
             $('#generateReportBtn').click(generateReport);
             $('#printReportBtn').click(printReport);
             $('#downloadReportBtn').click(downloadReportAsPdf);
             $('#reportsModal .tabs .tab').click(function() { switchReportsModalTab($(this).data('tab')); });
-            
             $('#historySearchInput').on('input', function() { loadTransactionHistory($(this).val()); });
             $('#printHistoryBtn').click(() => printElement('#historyResultsContainer .printable-area'));
             $('#downloadHistoryBtn').click(downloadHistoryAsPdf);
-            $(document).on('click', '.reprint-receipt', function() {
-                const orderId = $(this).data('id');
-                const order = orders.find(o => o.id === orderId);
-                if (order) showReceiptModal(order);
-            });
-
+            $(document).on('click', '.reprint-receipt', function() { const order = orders.find(o => o.id === $(this).data('id')); if (order) showReceiptModal(order); });
             $(document).on('click', '.status-item', function() {
                 const order = orders.find(o => o.id === $(this).data('id'));
                 if (!order || order.statusLocked) return;
@@ -2497,7 +2218,6 @@
             
             $('#refreshKitchenBtn').click(loadKitchenOrders);
             $('#saveStoreInfoBtn').click(saveStoreInfo);
-            
             $('#controlPanelModal .tabs .tab').click(function() { switchControlPanelTab($(this).data('tab')); });
             $('#showAddUserFormBtn').click(() => { resetUserForm(); $('#userFormContainer').slideDown(); });
             $('#cancelUserFormBtn').click(() => $('#userFormContainer').slideUp(resetUserForm));
@@ -2516,99 +2236,52 @@
             $('#itemSecurityForm').submit(changeSecurityCode);
             $('#panelSecurityForm').submit(changeSecurityCode);
             $('#changeOwnPasswordForm').submit(changeOwnPassword);
-
             $('#discountSettingsForm').submit(function(e) {
                 e.preventDefault();
-                const memberDiscount = parseFloat($('#memberDiscount').val());
-                const nonMemberDiscount = parseFloat($('#nonMemberDiscount').val());
-
-                if (isNaN(memberDiscount) || isNaN(nonMemberDiscount) || memberDiscount < 0 || nonMemberDiscount < 0) {
-                    return showToast('Nilai diskon tidak valid.', 'error');
-                }
-                settings.memberDiscountPercent = memberDiscount;
-                settings.nonMemberDiscountPercent = nonMemberDiscount;
-                saveSettings();
-                showToast('Pengaturan diskon berhasil disimpan.', 'success');
+                const memberDiscount = parseFloat($('#memberDiscount').val()), nonMemberDiscount = parseFloat($('#nonMemberDiscount').val());
+                if (isNaN(memberDiscount) || isNaN(nonMemberDiscount) || memberDiscount < 0 || nonMemberDiscount < 0) return showToast('Nilai diskon tidak valid.', 'error');
+                settings.memberDiscountPercent = memberDiscount; settings.nonMemberDiscountPercent = nonMemberDiscount;
+                saveSettings(); showToast('Pengaturan diskon berhasil disimpan.', 'success');
             });
-
             $('#passwordPromptForm').submit(e => e.preventDefault());
             $('#passwordPromptSubmit').click(submitPasswordPrompt);
-            
             $('.modal-close, .modal-close-btn').click(function() {
                 const modal = $(this).closest('.modal');
                 modal.hide();
                 if (modal.attr('id') === 'kitchenDisplayModal' && kitchenInterval) clearInterval(kitchenInterval);
             });
             $('#reportPeriod').change(() => $('#customDateRange').toggle($('#reportPeriod').val() === 'custom'));
-            
             $('#printReceiptBtn').on('click', () => printElement('#receiptModalBody #receiptContent'));
             $('#downloadReceiptPdfBtn').on('click', downloadReceiptAsPdf);
         });
 
-        function initializeApp() {
-            loadMenus(); 
-            updateOrder(); 
-            loadCategories(); 
-            updateCurrentDate();
-            updateStoreInfo(); 
-            updateTableNumbers();
-            $('#adminPanel').toggle(currentUser.role === 'admin');
-            checkTransactionLimit(false); // [REVISI] Cek batas saat aplikasi dimuat
-        }
-
-        // [REVISI] Fungsi untuk memeriksa batas transaksi
+        function initializeApp() { loadMenus(); updateOrder(); loadCategories(); updateCurrentDate(); updateStoreInfo(); updateTableNumbers(); $('#adminPanel').toggle(currentUser.role === 'admin'); checkTransactionLimit(false); }
         function checkTransactionLimit(showAlert) {
             const transactionCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_TRANSACTIONS) || '0');
             const transactionsLeft = TRIAL_LIMIT - transactionCount;
-
             if (transactionCount >= TRIAL_LIMIT) {
-                // Bekukan tombol pembayaran
                 $('#completePaymentBtn').prop('disabled', true).html(`<i class="fas fa-lock"></i> Batas Uji Coba Tercapai`);
                 $('#processOrderBtn').prop('disabled', true).text('Batas Uji Coba Tercapai');
-
-                if (showAlert) {
-                    showTrialLimitAlert();
-                }
-                return true; // Limit reached
+                if (showAlert) showTrialLimitAlert();
+                return true;
             } else {
-                 // Pastikan tombol aktif jika batas belum tercapai
                 $('#completePaymentBtn').prop('disabled', false).html(`<i class="fas fa-check-circle"></i> Selesaikan Pembayaran`);
                 $('#processOrderBtn').prop('disabled', false).text('Proses Pesanan');
                 showToast(`Sisa transaksi uji coba: ${transactionsLeft}`, 'warning');
-                return false; // Limit not reached
+                return false;
             }
         }
-
-        // [REVISI] Fungsi untuk menampilkan notifikasi batas tercapai
         function showTrialLimitAlert() {
-            const phone = "6287865614222";
-            const message = encodeURIComponent(
-                "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih."
-            );
-            const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
-
+            const phone = "6287865614222", message = encodeURIComponent( "Halo Lentera Karya Situbondo, saya tertarik dengan Aplikasi Cafe & Resto Anda. Saya telah mencoba versi trial dan ingin melakukan upgrade ke versi premium. Mohon informasinya, terima kasih." ), waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
             $('#confirmTitle').text('Batas Uji Coba Tercapai');
-            $('#confirmMessage').html(
-                `Anda telah mencapai batas <strong>${TRIAL_LIMIT} transaksi</strong> untuk versi uji coba. ` +
-                `Untuk melanjutkan transaksi dan membuka semua fitur, silakan upgrade ke versi premium.`
-            );
+            $('#confirmMessage').html(`Anda telah mencapai batas <strong>${TRIAL_LIMIT} transaksi</strong> untuk versi uji coba. Untuk melanjutkan transaksi dan membuka semua fitur, silakan upgrade ke versi premium.`);
             const $confirmBtn = $('#confirmAction');
-            $confirmBtn.off('click').on('click', () => { 
-                window.open(waLink, '_blank');
-                $('#confirmationModal').hide();
-            });
+            $confirmBtn.off('click').on('click', () => { window.open(waLink, '_blank'); $('#confirmationModal').hide(); });
             $confirmBtn.removeClass('btn-danger').addClass('btn-success').html('<i class="fab fa-whatsapp"></i> Hubungi Developer');
-            
-            // Sembunyikan tombol batal agar lebih tegas
             $('#confirmCancel').hide();
-            // Tampilkan kembali saat modal ditutup
-            $('#confirmationModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
-                $('#confirmCancel').show();
-            });
-
+            $('#confirmationModal').off('hidden.bs.modal').on('hidden.bs.modal', function () { $('#confirmCancel').show(); });
             $('#confirmationModal').css('display', 'flex');
         }
-
         function promptForPassword(type, callback) {
             const title = type === 'item' ? 'Password Edit/Hapus' : 'Password Kontrol Panel';
             $('#passwordPromptTitle').text(title);
@@ -2617,11 +2290,8 @@
             $('#passwordPromptInput').val('');
             $('#passwordPromptModal').css('display', 'flex').find('input').focus();
         }
-
         function submitPasswordPrompt() {
-            const password = $('#passwordPromptInput').val();
-            const type = $('#passwordPromptTitle').text().includes('Kontrol Panel') ? 'panel' : 'item';
-            const correctHash = type === 'panel' ? settings.panelSecurityCode : settings.itemSecurityCode;
+            const password = $('#passwordPromptInput').val(), type = $('#passwordPromptTitle').text().includes('Kontrol Panel') ? 'panel' : 'item', correctHash = type === 'panel' ? settings.panelSecurityCode : settings.itemSecurityCode;
             if (CryptoJS.SHA256(password).toString() === correctHash) {
                 $('#passwordPromptModal').hide();
                 if (passwordPromptCallback) passwordPromptCallback();
@@ -2630,13 +2300,10 @@
                 showToast('Password keamanan salah.', 'error');
             }
         }
-
         function changeSecurityCode(e) {
             e.preventDefault();
-            const formId = $(this).attr('id');
-            const newPassword = formId === 'itemSecurityForm' ? $('#itemSecurityCode').val() : $('#panelSecurityCode').val();
+            const formId = $(this).attr('id'), newPassword = formId === 'itemSecurityForm' ? $('#itemSecurityCode').val() : $('#panelSecurityCode').val();
             if (newPassword.length < 4) { showToast('Password minimal 4 karakter', 'error'); return; }
-            
             if (formId === 'itemSecurityForm') {
                 settings.itemSecurityCode = CryptoJS.SHA256(newPassword).toString();
                 showToast('Password keamanan item berhasil diubah.', 'success');
@@ -2644,74 +2311,40 @@
                 settings.panelSecurityCode = CryptoJS.SHA256(newPassword).toString();
                 showToast('Password keamanan kontrol panel berhasil diubah.', 'success');
             }
-            saveSettings();
-            $(this)[0].reset();
+            saveSettings(); $(this)[0].reset();
         }
-
         function changeOwnPassword(e) {
             e.preventDefault();
-            const currentPass = $('#currentPassword').val();
-            const newPass = $('#newPassword').val();
-            if (CryptoJS.SHA256(currentPass).toString() !== currentUser.password) {
-                showToast('Password saat ini salah.', 'error'); return;
-            }
+            const currentPass = $('#currentPassword').val(), newPass = $('#newPassword').val();
+            if (CryptoJS.SHA256(currentPass).toString() !== currentUser.password) { showToast('Password saat ini salah.', 'error'); return; }
             if (newPass.length < 6) { showToast('Password baru minimal 6 karakter', 'error'); return; }
-
             const userIndex = users.findIndex(u => u.id === currentUser.id);
             if (userIndex !== -1) {
                 users[userIndex].password = CryptoJS.SHA256(newPass).toString();
                 currentUser.password = users[userIndex].password;
-                saveUsers();
-                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+                saveUsers(); localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
                 showToast('Password login Anda berhasil diubah.', 'success');
                 $(this)[0].reset();
             }
         }
-
         function loadUsersForManagement() {
             const $list = $('#usersList').empty();
-            if (users.length === 0) {
-                $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></div>');
-            } else {
+            if (users.length === 0) { $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Tidak ada pengguna</p></div>'); }
+            else {
                 users.forEach(user => {
-                    $list.append(`
-                        <div class="order-item">
-                            <div class="order-item-info">
-                                <div class="order-item-name">${user.name} <span class="member-badge">${user.role}</span></div>
-                                <div class="order-item-price">${user.username}</div>
-                            </div>
-                            <div class="order-item-qty gap-2">
-                                <i class="fas fa-edit edit-user" data-id="${user.id}" style="cursor:pointer; color: var(--info);"></i>
-                                <i class="fas fa-trash delete-user" data-id="${user.id}" style="cursor:pointer; color: var(--danger);"></i>
-                            </div>
-                        </div>`);
+                    $list.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${user.name} <span class="member-badge">${user.role}</span></div><div class="order-item-price">${user.username}</div></div><div class="order-item-qty gap-2"><i class="fas fa-edit edit-user" data-id="${user.id}" style="cursor:pointer; color: var(--info);"></i><i class="fas fa-trash delete-user" data-id="${user.id}" style="cursor:pointer; color: var(--danger);"></i></div></div>`);
                 });
             }
         }
-
-        function resetUserForm() {
-            $('#userForm')[0].reset(); $('#userIdInput').val('');
-            $('#userFormTitle').text('Tambah Pengguna'); $('#userUsername').prop('disabled', false);
-        }
-
-        function populateUserForm(user) {
-            $('#userFormTitle').text('Edit Pengguna'); $('#userIdInput').val(user.id);
-            $('#userName').val(user.name); $('#userUsername').val(user.username).prop('disabled', true);
-            $('#userRole').val(user.role);
-        }
-
+        function resetUserForm() { $('#userForm')[0].reset(); $('#userIdInput').val(''); $('#userFormTitle').text('Tambah Pengguna'); $('#userUsername').prop('disabled', false); }
+        function populateUserForm(user) { $('#userFormTitle').text('Edit Pengguna'); $('#userIdInput').val(user.id); $('#userName').val(user.name); $('#userUsername').val(user.username).prop('disabled', true); $('#userRole').val(user.role); }
         function saveUser(e) {
             e.preventDefault();
             const id = $('#userIdInput').val(), name = $('#userName').val().trim(), username = $('#userUsername').val().trim(), password = $('#userPassword').val(), role = $('#userRole').val();
             if (!name || !username) { showToast('Nama dan username harus diisi.', 'error'); return; }
-            
             if (id) {
                 const userIndex = users.findIndex(u => u.id === id);
-                if (userIndex !== -1) {
-                    users[userIndex].name = name;
-                    users[userIndex].role = role;
-                    if (password) users[userIndex].password = CryptoJS.SHA256(password).toString();
-                }
+                if (userIndex !== -1) { users[userIndex].name = name; users[userIndex].role = role; if (password) users[userIndex].password = CryptoJS.SHA256(password).toString(); }
             } else {
                 if (!password) { showToast('Password harus diisi untuk pengguna baru.', 'error'); return; }
                 if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('Username sudah digunakan.', 'error'); return; }
@@ -2720,575 +2353,213 @@
             saveUsers(); loadUsersForManagement(); $('#userFormContainer').slideUp(resetUserForm);
             showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`, 'success');
         }
-
         function backupData() {
             try {
                 const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
-                const dataStr = JSON.stringify(backup);
-                const encryptedData = CryptoJS.AES.encrypt(dataStr, ENCRYPTION_KEY).toString();
-                
+                const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(backup), ENCRYPTION_KEY).toString();
                 const linkElement = document.createElement('a');
                 linkElement.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(encryptedData);
                 linkElement.download = `backup_cafe_resto_${moment().format('YYYYMMDD_HHmmss')}.lksbackup`;
                 linkElement.click();
                 showToast('Backup data terenkripsi berhasil', 'success');
-            } catch (err) {
-                showToast('Gagal membuat backup terenkripsi', 'error');
-                console.error("Backup encryption error:", err);
-            }
+            } catch (err) { showToast('Gagal membuat backup terenkripsi', 'error'); console.error("Backup encryption error:", err); }
         }
-
         function restoreFromFile(file) {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const encryptedData = e.target.result;
-                    const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
-                    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
-                    
-                    if (!decryptedString) {
-                        throw new Error("Decryption failed. Invalid key or corrupted file.");
-                    }
-
+                    const decryptedString = CryptoJS.AES.decrypt(e.target.result, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+                    if (!decryptedString) throw new Error("Decryption failed.");
                     const data = JSON.parse(decryptedString);
-                    
                     if (data.menus && data.categories && data.orders && data.settings && data.users && data.members) {
                         showConfirmation('Restore Data', 'Data saat ini akan diganti oleh file backup. Lanjutkan?', () => restoreData(data));
-                    } else {
-                        showToast('File backup tidak valid atau rusak.', 'error');
-                    }
-                } catch (err) {
-                    showToast('Gagal memproses file backup. File mungkin rusak atau bukan file backup yang valid.', 'error');
-                    console.error("Restore decryption/parsing error:", err);
-                }
+                    } else { showToast('File backup tidak valid atau rusak.', 'error'); }
+                } catch (err) { showToast('Gagal memproses file backup. File mungkin rusak atau bukan file backup yang valid.', 'error'); console.error("Restore error:", err); }
             };
             reader.readAsText(file);
         }
-        
-        function restoreData(data) {
-            try {
-                localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(data.menus));
-                localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(data.categories));
-                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data.orders));
-                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings));
-                localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(data.users));
-                localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(data.members));
-                location.reload();
-            } catch (e) { showToast('Gagal melakukan restore data', 'error'); }
-        }
-        
-        function resetAllData() {
-            Object.values(STORAGE_KEYS).forEach(key => { if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key); });
-            location.reload();
-        }
-        
+        function restoreData(data) { try { Object.keys(STORAGE_KEYS).forEach(key => localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(data[key.toLowerCase().slice(0,-1) + 's']))); location.reload(); } catch (e) { showToast('Gagal melakukan restore data', 'error'); } }
+        function resetAllData() { Object.values(STORAGE_KEYS).forEach(key => { if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key); }); location.reload(); }
         function openEditMenuModal(menu) {
             $('#menuModal .modal-title').text(menu ? 'Edit Menu' : 'Tambah Menu Baru');
-            $('#menuForm')[0].reset();
-            $('#menuId').val(menu ? menu.id : '');
-            if (menu) {
-                $('#menuName').val(menu.name); $('#menuPrice').val(menu.price);
-                $('#menuImage').val(menu.image || ''); $('#menuDescription').val(menu.description || '');
-                $('#menuCategory').val(menu.category);
-            }
-            loadCategoriesForSelect();
-            $('#menuModal').css('display', 'flex');
+            $('#menuForm')[0].reset(); $('#menuId').val(menu ? menu.id : '');
+            if (menu) { $('#menuName').val(menu.name); $('#menuPrice').val(menu.price); $('#menuImage').val(menu.image || ''); $('#menuDescription').val(menu.description || ''); $('#menuCategory').val(menu.category); }
+            loadCategoriesForSelect(); $('#menuModal').css('display', 'flex');
         }
-        
         function loadMenus(searchTerm = '', category = 'all') {
             const lowerSearchTerm = searchTerm.toLowerCase();
             let filteredMenus = menus.filter(m => (category === 'all' || m.category === category) && (!searchTerm || m.name.toLowerCase().includes(lowerSearchTerm)));
             $('#menuCount').text(`(${filteredMenus.length} menu)`);
             const $menuGrid = $('#menuGrid').empty();
-            if (filteredMenus.length === 0) {
-                $menuGrid.html('<div class="empty-state"><i class="fas fa-utensils"></i><p>Tidak ada menu ditemukan</p></div>');
-            } else {
+            if (filteredMenus.length === 0) { $menuGrid.html('<div class="empty-state"><i class="fas fa-utensils"></i><p>Tidak ada menu ditemukan</p></div>'); }
+            else {
                 filteredMenus.forEach(menu => {
-                    const adminActions = currentUser.role === 'admin' ? `
-                        <div class="menu-actions">
-                            <div class="action-btn edit-btn edit-menu" data-id="${menu.id}"><i class="fas fa-edit"></i></div>
-                            <div class="action-btn delete-btn delete-menu" data-id="${menu.id}"><i class="fas fa-trash"></i></div>
-                        </div>` : '';
-                    $menuGrid.append(`
-                        <div class="menu-card" data-id="${menu.id}">${adminActions}
-                            <div class="menu-image">${menu.image ? `<img src="${menu.image}" alt="${menu.name}" onerror="this.parentElement.innerHTML = '<i class=\\'fas fa-utensils\\'></i>';">` : `<i class="fas fa-utensils"></i>`}</div>
-                            <div class="menu-name">${menu.name}</div>
-                            <div class="menu-price">${formatCurrency(menu.price)}</div>
-                            <div class="menu-category">${menu.category}</div>
-                        </div>`);
+                    const adminActions = currentUser.role === 'admin' ? `<div class="menu-actions"><div class="action-btn edit-btn edit-menu" data-id="${menu.id}"><i class="fas fa-edit"></i></div><div class="action-btn delete-btn delete-menu" data-id="${menu.id}"><i class="fas fa-trash"></i></div></div>` : '';
+                    $menuGrid.append(`<div class="menu-card" data-id="${menu.id}">${adminActions}<div class="menu-image">${menu.image ? `<img src="${menu.image}" alt="${menu.name}" onerror="this.parentElement.innerHTML = '<i class=\\'fas fa-utensils\\'></i>';">` : `<i class="fas fa-utensils"></i>`}</div><div class="menu-name">${menu.name}</div><div class="menu-price">${formatCurrency(menu.price)}</div><div class="menu-category">${menu.category}</div></div>`);
                 });
             }
         }
-        
-        function loadCategories() {
-            const $filterRow = $('.filter-row').html('<div class="filter-chip active" data-category="all">Semua</div>');
-            categories.forEach(category => $filterRow.append(`<div class="filter-chip" data-category="${category.name}">${category.name}</div>`));
-        }
-        
+        function loadCategories() { const $filterRow = $('.filter-row').html('<div class="filter-chip active" data-category="all">Semua</div>'); categories.forEach(category => $filterRow.append(`<div class="filter-chip" data-category="${category.name}">${category.name}</div>`)); }
         function loadCategoriesForSelect() {
             const $select = $('#menuCategory').empty();
             if (categories.length === 0) $select.append('<option value="" disabled selected>Tidak ada kategori</option>');
             else categories.forEach(category => $select.append(`<option value="${category.name}">${category.name}</option>`));
         }
-        
         function loadCategoriesForManagement() {
             const $list = $('#categoriesList').empty();
             if (categories.length === 0) $list.html('<div class="empty-state"><i class="fas fa-tags"></i><p>Tidak ada kategori</p></div>');
             else {
                 categories.forEach(category => {
                     const menuCount = menus.filter(m => m.category === category.name).length;
-                    $list.append(`
-                        <div class="order-item">
-                            <div class="order-item-info">
-                                <div class="order-item-name">${category.name}</div>
-                                <div class="order-item-price">${menuCount} menu</div>
-                            </div>
-                            <div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}" style="cursor:pointer; color: var(--danger);"></i></div>
-                        </div>`);
+                    $list.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${category.name}</div><div class="order-item-price">${menuCount} menu</div></div><div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}" style="cursor:pointer; color: var(--danger);"></i></div></div>`);
                 });
             }
         }
-
-        function resetMemberForm() {
-            $('#memberForm')[0].reset(); $('#memberIdInput').val('');
-            $('#memberFormTitle').text('Tambah Member Baru');
-            $('#saveMemberBtn').text('Tambah Member'); $('#deleteMemberBtn').hide();
-        }
-
-        function generateMemberId() {
-            let id = 'M' + moment().format('YYMMDDHHmmss');
-            return members.some(m => m.id === id) ? generateMemberId() : id;
-        }
-        
-        function formatPhoneNumberForWhatsApp(phone) {
-            let formattedPhone = phone.replace(/[^0-9]/g, ''); 
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '62' + formattedPhone.substring(1);
-            } else if (!formattedPhone.startsWith('62')) {
-                formattedPhone = '62' + formattedPhone;
-            }
-            return `https://wa.me/${formattedPhone}`;
-        }
-        
+        function resetMemberForm() { $('#memberForm')[0].reset(); $('#memberIdInput').val(''); $('#memberFormTitle').text('Tambah Member Baru'); $('#saveMemberBtn').text('Tambah Member'); $('#deleteMemberBtn').hide(); }
+        function generateMemberId() { let id = 'M' + moment().format('YYMMDDHHmmss'); return members.some(m => m.id === id) ? generateMemberId() : id; }
+        function formatPhoneNumberForWhatsApp(phone) { let p = phone.replace(/[^0-9]/g, ''); return `https://wa.me/${p.startsWith('0') ? '62' + p.substring(1) : (p.startsWith('62') ? p : '62' + p)}`; }
         function loadMembersForManagement(searchTerm = '') {
-            const $list = $('#membersList').empty();
-            const lowerSearchTerm = searchTerm.toLowerCase();
-
-            const filteredMembers = members.filter(member => 
-                !searchTerm ||
-                member.name.toLowerCase().includes(lowerSearchTerm) ||
-                member.id.toLowerCase().includes(lowerSearchTerm) ||
-                member.phone.includes(lowerSearchTerm)
-            );
-
-            if (filteredMembers.length === 0) {
-                $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Member tidak ditemukan</p></div>');
-            } else {
+            const $list = $('#membersList').empty(), lowerSearchTerm = searchTerm.toLowerCase();
+            const filteredMembers = members.filter(m => !searchTerm || m.name.toLowerCase().includes(lowerSearchTerm) || m.id.toLowerCase().includes(lowerSearchTerm) || m.phone.includes(lowerSearchTerm));
+            if (filteredMembers.length === 0) { $list.html('<div class="empty-state"><i class="fas fa-users"></i><p>Member tidak ditemukan</p></div>'); }
+            else {
                 filteredMembers.forEach(member => {
-                    const whatsappUrl = formatPhoneNumberForWhatsApp(member.phone);
-                    $list.append(`
-                        <div class="order-item">
-                            <div class="order-item-info">
-                                <div class="order-item-name">${member.name}</div>
-                                <div class="order-item-price">
-                                    <a href="${whatsappUrl}" target="_blank" class="whatsapp-link">${member.phone} <i class="fab fa-whatsapp"></i></a>
-                                    <span class="member-badge">${member.id}</span>
-                                </div>
-                            </div>
-                            <div class="order-item-qty gap-2">
-                                <i class="fas fa-id-card kta-member" data-id="${member.id}" style="cursor:pointer; color: var(--success);"></i>
-                                <i class="fas fa-edit edit-member" data-id="${member.id}" style="cursor:pointer; color: var(--info);"></i>
-                            </div>
-                        </div>`);
+                    $list.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${member.name}</div><div class="order-item-price"><a href="${formatPhoneNumberForWhatsApp(member.phone)}" target="_blank" class="whatsapp-link">${member.phone} <i class="fab fa-whatsapp"></i></a><span class="member-badge">${member.id}</span></div></div><div class="order-item-qty gap-2"><i class="fas fa-id-card kta-member" data-id="${member.id}" style="cursor:pointer; color: var(--success);"></i><i class="fas fa-edit edit-member" data-id="${member.id}" style="cursor:pointer; color: var(--info);"></i></div></div>`);
                 });
             }
         }
-        
         function updateOrder() {
             currentOrder.subtotal = currentOrder.items.reduce((total, item) => total + (item.menu.price * item.quantity), 0);
-            
-            const memberDiscount = settings.memberDiscountPercent ?? 2;
-            const nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
-            let discountPercent = 0;
-            let discountText = '';
-
-            if (currentOrder.memberId && memberDiscount > 0) {
-                discountPercent = memberDiscount;
-                discountText = `Diskon Member (${discountPercent}%)`;
-            } else if (!currentOrder.memberId && nonMemberDiscount > 0) {
-                discountPercent = nonMemberDiscount;
-                discountText = `Diskon Pelanggan (${discountPercent}%)`;
-            }
-            
-            currentOrder.discount = (discountPercent > 0) ? currentOrder.subtotal * (discountPercent / 100) : 0;
+            const memberDiscount = settings.memberDiscountPercent ?? 2, nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
+            let discountPercent = currentOrder.memberId && memberDiscount > 0 ? memberDiscount : (!currentOrder.memberId && nonMemberDiscount > 0 ? nonMemberDiscount : 0);
+            let discountText = discountPercent > 0 ? (currentOrder.memberId ? `Diskon Member (${discountPercent}%)` : `Diskon Pelanggan (${discountPercent}%)`) : '';
+            currentOrder.discount = currentOrder.subtotal * (discountPercent / 100);
             currentOrder.donation = parseFloat($('#donationAmount').val()) || 0;
             currentOrder.total = currentOrder.subtotal - currentOrder.discount + currentOrder.donation;
-            
             localStorage.setItem(STORAGE_KEYS.CURRENT_ORDER, JSON.stringify(currentOrder));
-            
             const $orderItems = $('#orderItems').empty();
             $('#orderCount').text(`(${currentOrder.items.length} item)`);
             $('#orderDonation').text(formatCurrency(currentOrder.donation));
-            
-            if (currentOrder.discount > 0) {
-                $('#discountRow').show().find('span:first-child').text(discountText);
-            } else {
-                $('#discountRow').hide();
-            }
+            $('#discountRow').toggle(currentOrder.discount > 0).find('span:first-child').text(discountText);
             $('#orderDiscount').text(`-${formatCurrency(currentOrder.discount)}`);
-            
             if (currentOrder.items.length === 0) $orderItems.html('<div class="empty-state"><i class="fas fa-shopping-basket"></i><p>Pesanan kosong</p></div>');
             else {
-                currentOrder.items.forEach(item => {
-                    $orderItems.append(`
-                        <div class="order-item">
-                            <div class="order-item-info">
-                                <div class="order-item-name">${item.menu.name}</div>
-                                <div class="order-item-price">${formatCurrency(item.menu.price)} x ${item.quantity}</div>
-                            </div>
-                            <div class="order-item-qty">
-                                <input type="number" value="${item.quantity}" min="1" class="item-qty qty-input" data-id="${item.menu.id}">
-                                <i class="fas fa-trash remove-item" data-id="${item.menu.id}" style="cursor:pointer; color: var(--danger); margin-left: 8px;"></i>
-                            </div>
-                        </div>`);
-                });
+                currentOrder.items.forEach(item => { $orderItems.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${item.menu.name}</div><div class="order-item-price">${formatCurrency(item.menu.price)} x ${item.quantity}</div></div><div class="order-item-qty"><input type="number" value="${item.quantity}" min="1" class="item-qty qty-input" data-id="${item.menu.id}"><i class="fas fa-trash remove-item" data-id="${item.menu.id}" style="cursor:pointer; color: var(--danger); margin-left: 8px;"></i></div></div>`); });
             }
             $('#orderSubtotal').text(formatCurrency(currentOrder.subtotal));
             $('#orderTotal').text(formatCurrency(currentOrder.total));
         }
-        
         function updateOrderSummary() {
             let discountText = '';
-            if (currentOrder.discount > 0) {
-                const memberDiscount = settings.memberDiscountPercent ?? 2;
-                const nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
-                let percent = currentOrder.memberId ? memberDiscount : nonMemberDiscount;
-                discountText = `Diskon (${percent}%):`;
-            }
-
-            const summaryHTML = currentOrder.items.map(item => `<div class="summary-row"><span>${item.menu.name} (${item.quantity}x)</span><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join('') +
-                `<div class="summary-row" style="border-top: 1px dashed #ddd; margin-top: 8px; padding-top: 8px;"><span>Subtotal:</span><span>${formatCurrency(currentOrder.subtotal)}</span></div>` +
-                (currentOrder.donation > 0 ? `<div class="summary-row"><span>Donasi:</span><span>${formatCurrency(currentOrder.donation)}</span></div>` : '') +
-                (currentOrder.discount > 0 ? `<div class="summary-row"><span>${discountText}</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') +
-                `<div class="summary-row total-row"><span>Total:</span><span>${formatCurrency(currentOrder.total)}</span></div>`;
-            $('#orderSummary').html(summaryHTML);
+            if (currentOrder.discount > 0) { let percent = currentOrder.memberId ? (settings.memberDiscountPercent ?? 2) : (settings.nonMemberDiscountPercent ?? 0); discountText = `Diskon (${percent}%):`; }
+            $('#orderSummary').html(currentOrder.items.map(item => `<div class="summary-row"><span>${item.menu.name} (${item.quantity}x)</span><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join('') + `<div class="summary-row" style="border-top: 1px dashed #ddd; margin-top: 8px; padding-top: 8px;"><span>Subtotal:</span><span>${formatCurrency(currentOrder.subtotal)}</span></div>` + (currentOrder.donation > 0 ? `<div class="summary-row"><span>Donasi:</span><span>${formatCurrency(currentOrder.donation)}</span></div>` : '') + (currentOrder.discount > 0 ? `<div class="summary-row"><span>${discountText}</span><span>-${formatCurrency(currentOrder.discount)}</span></div>` : '') + `<div class="summary-row total-row"><span>Total:</span><span>${formatCurrency(currentOrder.total)}</span></div>`);
         }
-        
         function updatePaymentTab() {
             $('#paymentTotal').text(formatCurrency(currentOrder.total));
             $('#paymentAmount').val('').trigger('input');
-            
-            const $quickCash = $('#quickCashButtons').empty();
-            const total = currentOrder.total;
+            const $quickCash = $('#quickCashButtons').empty(), total = currentOrder.total;
             if (total > 0) {
                 const denominations = [total, Math.ceil(total / 10000) * 10000, 50000, 100000].filter(d => d >= total);
-                const uniqueDenominations = [...new Set(denominations)].sort((a,b) => a-b).slice(0,3);
-                uniqueDenominations.forEach(amount => {
-                    const text = amount === total ? 'Uang Pas' : formatCurrency(amount);
-                    $quickCash.append(`<button class="btn btn-sm btn-outline-primary quick-cash-btn" data-amount="${amount}">${text}</button>`);
+                [...new Set(denominations)].sort((a,b) => a-b).slice(0,3).forEach(amount => {
+                    $quickCash.append(`<button class="btn btn-sm btn-outline-primary quick-cash-btn" data-amount="${amount}">${amount === total ? 'Uang Pas' : formatCurrency(amount)}</button>`);
                 });
             }
         }
-
-        function calculateChange() {
-            const amount = parseFloat($('#paymentAmount').val()) || 0;
-            const change = amount - currentOrder.total;
-            $('#changeContainer').toggle(change >= 0);
-            $('#paymentChange').text(formatCurrency(change));
-        }
-        
-        function switchPaymentModalTab(tabName) {
-            $('#processOrderModal .tabs .tab').removeClass('active');
-            $('#processOrderModal .tab-content').removeClass('active');
-            $(`[data-tab="${tabName}"]`).addClass('active');
-            $(`#${tabName}Tab`).addClass('active');
-        }
-
-        function switchReportsModalTab(tabName) {
-            $('#reportsModal .tabs .tab').removeClass('active');
-            $('#reportsModal .tab-content').removeClass('active');
-            $(`#reportsModal [data-tab="${tabName}"]`).addClass('active');
-            $(`#${tabName}Tab`).addClass('active');
-        }
-        
-        function switchControlPanelTab(tabName) {
-            $('#controlPanelModal .tabs .tab').removeClass('active');
-            $('#controlPanelModal .tab-content').removeClass('active');
-            $(`#controlPanelModal [data-tab="${tabName}"]`).addClass('active');
-            $(`#${tabName}Tab`).addClass('active');
-        }
-
+        function calculateChange() { const amount = parseFloat($('#paymentAmount').val()) || 0, change = amount - currentOrder.total; $('#changeContainer').toggle(change >= 0); $('#paymentChange').text(formatCurrency(change)); }
+        function switchPaymentModalTab(tabName) { $('#processOrderModal .tabs .tab, #processOrderModal .tab-content').removeClass('active'); $(`[data-tab="${tabName}"], #${tabName}Tab`).addClass('active'); }
+        function switchReportsModalTab(tabName) { $('#reportsModal .tabs .tab, #reportsModal .tab-content').removeClass('active'); $(`#reportsModal [data-tab="${tabName}"], #${tabName}Tab`).addClass('active'); }
+        function switchControlPanelTab(tabName) { $('#controlPanelModal .tabs .tab, #controlPanelModal .tab-content').removeClass('active'); $(`#controlPanelModal [data-tab="${tabName}"], #${tabName}Tab`).addClass('active'); }
         function resetOrder() {
             currentOrder = { items: [], subtotal: 0, total: 0, discount: 0, donation: 0, type: 'dinein', tableNumber: '1', note: '', memberId: null };
             localStorage.setItem(STORAGE_KEYS.CURRENT_ORDER, JSON.stringify(currentOrder));
-            updateOrder();
-            $('.order-type-btn').removeClass('active'); $('[data-type="dinein"]').addClass('active');
-            $('#orderNote, #memberSearchInput').val('');
-            $('#donationAmount').val('0'); $('#tableNumberContainer').show();
+            updateOrder(); $('.order-type-btn').removeClass('active'); $('[data-type="dinein"]').addClass('active');
+            $('#orderNote, #memberSearchInput').val(''); $('#donationAmount').val('0'); $('#tableNumberContainer').show();
         }
-
         function generateReceiptHTML(order) {
             const member = members.find(m => m.id === order.memberId);
-            let itemsHTML = '';
-            order.items.forEach(item => {
-                itemsHTML += `
-                <div class="receipt-item">
-                    <div class="receipt-item-details">
-                        <div class="item-name">${item.menu.name}</div>
-                        <div class="item-price-calc">${item.quantity} x ${formatCurrency(item.menu.price)}</div>
-                    </div>
-                    <span>${formatCurrency(item.menu.price * item.quantity)}</span>
-                </div>`;
-            });
-
-            return `
-            <div id="receiptContent">
-                <div class="receipt-header">
-                    <img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/logo-cafe.png" alt="Logo" style="width: 80px; margin-bottom: 5px;">
-                    <div class="receipt-title">${settings.storeName}</div>
-                    <div>${settings.storeAddress}</div>
-                    <div>Telp: ${settings.storePhone}</div>
-                </div>
-                <div class="receipt-info">
-                    <div><span>Tanggal:</span> <span>${moment(order.date).format('DD/MM/YY HH:mm')}</span></div>
-                    <div><span>No. Trx:</span> <span>${order.id}</span></div>
-                    <div><span>Kasir:</span> <span>${order.cashier.name}</span></div>
-                    <div><span>Pelanggan:</span> <span>${order.customerName}</span></div>
-                    ${member ? `<div><span>Member:</span> <span>${member.name} (${member.id})</span></div>` : ''}
-                    <div><span>Tipe:</span> <span>${order.type === 'dinein' ? `Makan di Tempat (Meja ${order.tableNumber})` : 'Bungkus'}</span></div>
-                </div>
-                <div id="receiptItemsContainer">${itemsHTML}</div>
-                ${order.note ? `<div style="font-size:10px; font-style:italic; padding: 5px 0; border-top: 1px dashed #000;">Catatan: ${order.note}</div>` : ''}
-                <div class="receipt-total">
-                    <div class="receipt-item"><span>Subtotal</span> <span>${formatCurrency(order.subtotal)}</span></div>
-                    ${order.donation > 0 ? `<div class="receipt-item"><span>Donasi LAZISNU</span> <span>${formatCurrency(order.donation)}</span></div>` : ''}
-                    ${order.discount > 0 ? `<div class="receipt-item"><span>Diskon</span> <span>-${formatCurrency(order.discount)}</span></div>` : ''}
-                    <div class="receipt-item" style="font-weight:bold; font-size: 14px;"><span>TOTAL</span> <span>${formatCurrency(order.total)}</span></div>
-                    <div class="receipt-item"><span>${{ cash: 'Tunai', transfer: 'Transfer', ewallet: 'E-Wallet' }[order.paymentMethod]}</span> <span>${formatCurrency(order.paymentAmount)}</span></div>
-                    <div class="receipt-item"><span>Kembali</span> <span>${formatCurrency(order.change)}</span></div>
-                </div>
-                <div class="receipt-footer">
-                    <p>Terima kasih telah berkunjung</p>
-                    <div id="receiptQrcode" style="display: flex; justify-content: center; margin: 10px 0;"></div>
-                    <p style="margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
-                        AppWeb Lentera Karya Situbondo &copy; 2025<br>
-                        www.anekamarket.my.id | WA: 087865614222
-                    </p>
-                </div>
-            </div>`;
+            return `<div id="receiptContent"><div class="receipt-header"><img src="https://raw.githubusercontent.com/anekamarket/tester/refs/heads/main/logo-cafe.png" alt="Logo" style="width: 80px; margin-bottom: 5px;"><div class="receipt-title">${settings.storeName}</div><div>${settings.storeAddress}</div><div>Telp: ${settings.storePhone}</div></div><div class="receipt-info"><div><span>Tanggal:</span> <span>${moment(order.date).format('DD/MM/YY HH:mm')}</span></div><div><span>No. Trx:</span> <span>${order.id}</span></div><div><span>Kasir:</span> <span>${order.cashier.name}</span></div><div><span>Pelanggan:</span> <span>${order.customerName}</span></div>${member ? `<div><span>Member:</span> <span>${member.name} (${member.id})</span></div>` : ''}<div><span>Tipe:</span> <span>${order.type === 'dinein' ? `Makan di Tempat (Meja ${order.tableNumber})` : 'Bungkus'}</span></div></div><div id="receiptItemsContainer">${order.items.map(item => `<div class="receipt-item"><div class="receipt-item-details"><div class="item-name">${item.menu.name}</div><div class="item-price-calc">${item.quantity} x ${formatCurrency(item.menu.price)}</div></div><span>${formatCurrency(item.menu.price * item.quantity)}</span></div>`).join('')}</div>${order.note ? `<div style="font-size:10px; font-style:italic; padding: 5px 0; border-top: 1px dashed #000;">Catatan: ${order.note}</div>` : ''}<div class="receipt-total"><div class="receipt-item"><span>Subtotal</span> <span>${formatCurrency(order.subtotal)}</span></div>${order.donation > 0 ? `<div class="receipt-item"><span>Donasi LAZISNU</span> <span>${formatCurrency(order.donation)}</span></div>` : ''}${order.discount > 0 ? `<div class="receipt-item"><span>Diskon</span> <span>-${formatCurrency(order.discount)}</span></div>` : ''}<div class="receipt-item" style="font-weight:bold; font-size: 14px;"><span>TOTAL</span> <span>${formatCurrency(order.total)}</span></div><div class="receipt-item"><span>${{ cash: 'Tunai', transfer: 'Transfer', ewallet: 'E-Wallet' }[order.paymentMethod]}</span> <span>${formatCurrency(order.paymentAmount)}</span></div><div class="receipt-item"><span>Kembali</span> <span>${formatCurrency(order.change)}</span></div></div><div class="receipt-footer"><p>Terima kasih telah berkunjung</p><div id="receiptQrcode" style="display: flex; justify-content: center; margin: 10px 0;"></div><p style="margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">AppWeb Lentera Karya Situbondo &copy; 2025<br>www.anekamarket.my.id | WA: 087865614222</p></div></div>`;
         }
-        
         function showReceiptModal(order) {
             showToast('Membuat struk...', 'info');
-            const receiptHTML = generateReceiptHTML(order);
-            $('#receiptModalBody').html(receiptHTML);
-            
-            const qrCodeData = JSON.stringify({
-                trxId: order.id,
-                store: settings.storeName,
-                date: moment(order.date).toISOString(),
-                total: order.total
-            });
-            
+            $('#receiptModalBody').html(generateReceiptHTML(order));
+            const qrCodeData = JSON.stringify({ trxId: order.id, store: settings.storeName, date: moment(order.date).toISOString(), total: order.total });
             $('#receiptQrcode').empty();
-            new QRCode(document.getElementById("receiptQrcode"), {
-                text: qrCodeData,
-                width: 80,
-                height: 80,
-                correctLevel: QRCode.CorrectLevel.M
-            });
-
+            new QRCode(document.getElementById("receiptQrcode"), { text: qrCodeData, width: 80, height: 80, correctLevel: QRCode.CorrectLevel.M });
             $('#downloadReceiptPdfBtn').data('order', order);
             $('#receiptModal').css('display', 'flex');
         }
-        
         function downloadReceiptAsPdf() {
             const order = $('#downloadReceiptPdfBtn').data('order');
             if (!order) return;
             const element = document.getElementById('receiptModalBody').querySelector('#receiptContent');
-            const filename = `Struk-${order.id}-${moment(order.date).format('DD-MM-YYYY_HH-mm')}.pdf`;
-            
             showToast('Mengunduh PDF...', 'info');
-            
-            html2canvas(element, { 
-                scale: 2, 
-                useCORS: true 
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-                pdf.save(filename);
-            }).catch(err => {
-                showToast('Gagal mengunduh PDF', 'error');
-                console.error("html2canvas error:", err);
-            });
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+                pdf.save(`Struk-${order.id}-${moment(order.date).format('DD-MM-YYYY')}.pdf`);
+            }).catch(err => { showToast('Gagal mengunduh PDF', 'error'); console.error("PDF download error:", err); });
         }
-        
         function openKtaModal(memberId) {
-            const member = members.find(m => m.id === memberId);
-            if (!member) return;
-
+            const member = members.find(m => m.id === memberId); if (!member) return;
             $('#ktaStoreName').text(settings.storeName);
             $('#ktaStoreContact').text(`${settings.storeAddress} • ${settings.storePhone}`);
-            $('#ktaMemberName').text(member.name);
-            $('#ktaMemberId').text(`ID: ${member.id}`);
-            
+            $('#ktaMemberName').text(member.name); $('#ktaMemberId').text(`ID: ${member.id}`);
             showToast('Membuat kartu...', 'info');
-            
             const qrContainer = document.getElementById("ktaQrcodeImg");
             $(qrContainer).empty();
-            
-            const qrCodeData = JSON.stringify({
-                memberId: member.id,
-                name: member.name,
-                phone: member.phone,
-                store: settings.storeName,
-                joinDate: member.joinDate
-            });
-
-            new QRCode(qrContainer, {
-                text: qrCodeData,
-                width: 160,
-                height: 160,
-                correctLevel : QRCode.CorrectLevel.H
-            });
-            
+            const qrCodeData = JSON.stringify({ memberId: member.id, name: member.name, phone: member.phone, store: settings.storeName, joinDate: member.joinDate });
+            new QRCode(qrContainer, { text: qrCodeData, width: 160, height: 160, correctLevel : QRCode.CorrectLevel.H });
             $('#downloadKtaPdfBtn').data('member', member);
             $('#ktaModal').css('display', 'flex');
         }
-        
         function downloadKtaAsPdf() {
-            const member = $('#downloadKtaPdfBtn').data('member');
-            if (!member) return;
+            const member = $('#downloadKtaPdfBtn').data('member'); if (!member) return;
             const element = document.getElementById('ktaCard');
-            const filename = `KTA-${member.name.replace(/\s/g, '_')}-${member.id}.pdf`;
-
             showToast('Mempersiapkan PDF...', 'info');
-
-            html2canvas(element, { 
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
+            html2canvas(element, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
                 const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
-                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-                pdf.save(filename);
-            }).catch(err => {
-                showToast('Gagal mengunduh PDF KTA', 'error');
-                console.error("html2canvas error on KTA:", err);
-            });
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+                pdf.save(`KTA-${member.name.replace(/\s/g, '_')}-${member.id}.pdf`);
+            }).catch(err => { showToast('Gagal mengunduh PDF KTA', 'error'); console.error("KTA PDF error:", err); });
         }
-        
         function printElement(selector) {
-            const elementToPrint = $(selector).clone();
-            const printContainer = $('#print-container');
-            
-            printContainer.empty().append(elementToPrint);
-
-            setTimeout(() => {
-                try {
-                    window.print();
-                } catch (e) {
-                    showToast('Gagal membuka dialog cetak.', 'error');
-                    console.error("Print error:", e);
-                }
-            }, 300);
+            const printContainer = $('#print-container').empty().append($(selector).clone());
+            setTimeout(() => { try { window.print(); } catch (e) { showToast('Gagal membuka dialog cetak.', 'error'); console.error("Print error:", e); } }, 300);
         }
-
         function loadKitchenOrders() {
-            const kitchenOrders = orders.filter(o => o.type === 'dinein' && o.status !== 'completed');
-            const $kitchenOrders = $('#kitchenOrders').empty();
+            const kitchenOrders = orders.filter(o => o.type === 'dinein' && o.status !== 'completed'), $kitchenOrders = $('#kitchenOrders').empty();
             if (kitchenOrders.length === 0) $kitchenOrders.html('<div class="empty-state"><i class="fas fa-check-circle"></i><p>Tidak ada pesanan aktif</p></div>');
             else {
                 kitchenOrders.forEach(order => {
                     const statusClass = order.status === 'ready' ? (order.statusLocked ? 'status-locked' : 'status-ready') : 'status-preparing';
                     const itemsSummary = order.items.slice(0, 2).map(item => `${item.menu.name} (${item.quantity}x)`).join(', ') + (order.items.length > 2 ? ` + ${order.items.length - 2} lainnya` : '');
-                    $kitchenOrders.append(`
-                        <div class="status-item ${statusClass}" data-id="${order.id}">
-                            <div><strong>${order.id} (Meja ${order.tableNumber})</strong><div style="font-size:0.8rem;">${itemsSummary}</div></div>
-                            <div style="font-weight:600;">${order.status === 'ready' ? 'Siap' : 'Proses'}</div>
-                        </div>`);
+                    $kitchenOrders.append(`<div class="status-item ${statusClass}" data-id="${order.id}"><div><strong>${order.id} (Meja ${order.tableNumber})</strong><div style="font-size:0.8rem;">${itemsSummary}</div></div><div style="font-weight:600;">${order.status === 'ready' ? 'Siap' : 'Proses'}</div></div>`);
                 });
             }
         }
-
         function loadTransactionHistory(searchTerm = '') {
-            const $list = $('#historyResults').empty();
-            const lowerSearchTerm = searchTerm.toLowerCase();
+            const $list = $('#historyResults').empty(), lowerSearchTerm = searchTerm.toLowerCase();
             const filteredOrders = orders.filter(o => !searchTerm || o.id.toLowerCase().includes(lowerSearchTerm));
-
-            if (filteredOrders.length === 0) {
-                $list.html('<div class="empty-state"><i class="fas fa-history"></i><p>Tidak ada transaksi ditemukan</p></div>');
-                return;
-            }
-
+            if (filteredOrders.length === 0) { $list.html('<div class="empty-state"><i class="fas fa-history"></i><p>Tidak ada transaksi ditemukan</p></div>'); return; }
             filteredOrders.forEach(order => {
-                $list.append(`
-                    <div class="order-item">
-                        <div class="order-item-info">
-                            <div class="order-item-name">${order.id}</div>
-                            <div class="order-item-price">
-                                ${moment(order.date).format('DD MMM YYYY, HH:mm')} | ${order.customerName} | ${formatCurrency(order.total)}
-                            </div>
-                        </div>
-                        <div class="order-item-qty">
-                            <button class="btn btn-sm btn-info reprint-receipt" data-id="${order.id}"><i class="fas fa-print"></i> Cetak Ulang</button>
-                        </div>
-                    </div>
-                `);
+                $list.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${order.id}</div><div class="order-item-price">${moment(order.date).format('DD MMM YYYY, HH:mm')} | ${order.customerName} | ${formatCurrency(order.total)}</div></div><div class="order-item-qty"><button class="btn btn-sm btn-info reprint-receipt" data-id="${order.id}"><i class="fas fa-print"></i> Cetak Ulang</button></div></div>`);
             });
         }
-        
         function downloadHistoryAsPdf() {
             const element = document.getElementById('historyResults');
-            const filename = `Histori_Transaksi_${moment().format('YYYY-MM-DD')}.pdf`;
-            
             showToast('Mengunduh PDF Histori...', 'info');
-
-            html2canvas(element, { 
-                scale: 2, 
-                useCORS: true,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
+            html2canvas(element, { scale: 2, useCORS: true, windowWidth: element.scrollWidth, windowHeight: element.scrollHeight }).then(canvas => {
                 const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const canvasWidth = canvas.width;
-                const canvasHeight = canvas.height;
-                const canvasAspectRatio = canvasWidth / canvasHeight;
-                
-                const scaledHeight = pdfWidth / canvasAspectRatio;
-                
-                let heightLeft = scaledHeight;
-                let position = 10;
-
-                pdf.setFontSize(18);
-                pdf.text("Histori Transaksi", pdfWidth / 2, position, { align: 'center' });
-                position += 10;
-                
-                pdf.addImage(imgData, 'PNG', 10, position, pdfWidth - 20, scaledHeight);
-                heightLeft -= (pdfHeight - position - 10);
-
-                while (heightLeft > 0) {
-                    position = -heightLeft;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 10, position, pdfWidth - 20, scaledHeight);
-                    heightLeft -= pdfHeight;
-                }
-                
-                pdf.save(filename);
+                const pdfWidth = pdf.internal.pageSize.getWidth(), pdfHeight = pdf.internal.pageSize.getHeight(), canvasAspectRatio = canvas.width / canvas.height, scaledHeight = pdfWidth / canvasAspectRatio;
+                let heightLeft = scaledHeight, position = 10;
+                pdf.setFontSize(18); pdf.text("Histori Transaksi", pdfWidth / 2, position, { align: 'center' }); position += 10;
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, position, pdfWidth - 20, scaledHeight);
+                for (heightLeft -= (pdfHeight - position - 10); heightLeft > 0; heightLeft -= pdfHeight) { position = -heightLeft; pdf.addPage(); pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, position, pdfWidth - 20, scaledHeight); }
+                pdf.save(`Histori_Transaksi_${moment().format('YYYY-MM-DD')}.pdf`);
                 showToast('PDF berhasil diunduh.', 'success');
-            }).catch(err => {
-                showToast('Gagal mengunduh PDF', 'error');
-                console.error("PDF download error:", err);
-            });
+            }).catch(err => { showToast('Gagal mengunduh PDF', 'error'); console.error("PDF history download error:", err); });
         }
-        
         function generateReport() {
             let startDate, endDate;
             const period = $('#reportPeriod').val();
@@ -3296,212 +2567,18 @@
             else if (period === 'week') { startDate = moment().startOf('week'); endDate = moment().endOf('week'); }
             else if (period === 'month') { startDate = moment().startOf('month'); endDate = moment().endOf('month'); }
             else if (period === 'custom') {
-                startDate = moment($('#reportStartDate').val());
-                endDate = moment($('#reportEndDate').val()).endOf('day');
-                if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) { return showToast('Rentang tanggal tidak valid', 'error'); }
+                startDate = moment($('#reportStartDate').val()); endDate = moment($('#reportEndDate').val()).endOf('day');
+                if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) return showToast('Rentang tanggal tidak valid', 'error');
             }
-            
-            const activeTab = $('#reportsModal .tabs .tab.active').data('tab');
-            const filteredOrders = orders.filter(o => moment(o.date).isBetween(startDate, endDate));
-            
-            if (activeTab === 'salesReport') {
-                generateSalesReportHTML(filteredOrders, startDate, endDate);
-            } else if (activeTab === 'donationsReport') {
-                generateDonationReportHTML(filteredOrders, startDate, endDate);
-            }
+            const activeTab = $('#reportsModal .tabs .tab.active').data('tab'), filteredOrders = orders.filter(o => moment(o.date).isBetween(startDate, endDate));
+            if (activeTab === 'salesReport') generateSalesReportHTML(filteredOrders, startDate, endDate);
+            else if (activeTab === 'donationsReport') generateDonationReportHTML(filteredOrders, startDate, endDate);
         }
-
         function generateSalesReportHTML(filteredOrders, startDate, endDate) {
             const $resultsContainer = $('#reportResults');
-            if (filteredOrders.length === 0) {
-                $resultsContainer.html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data penjualan</p></div>');
-                $('#printReportBtn, #downloadReportBtn').hide(); return;
-            }
-            const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total - o.donation), 0);
-            const totalItemsSold = filteredOrders.reduce((sum, o) => sum + o.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
+            if (filteredOrders.length === 0) { $resultsContainer.html('<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Tidak ada data penjualan</p></div>'); $('#printReportBtn, #downloadReportBtn').hide(); return; }
+            const totalRevenue = filteredOrders.reduce((s, o) => s + (o.total - o.donation), 0), totalItemsSold = filteredOrders.reduce((s, o) => s + o.items.reduce((i, item) => i + item.quantity, 0), 0);
             const menuSales = {};
-            filteredOrders.forEach(o => o.items.forEach(item => {
-                menuSales[item.menu.id] = menuSales[item.menu.id] || { name: item.menu.name, quantity: 0, total: 0 };
-                menuSales[item.menu.id].quantity += item.quantity;
-                menuSales[item.menu.id].total += item.quantity * item.menu.price;
-            }));
+            filteredOrders.forEach(o => o.items.forEach(item => { menuSales[item.menu.id] = menuSales[item.menu.id] || { name: item.menu.name, quantity: 0, total: 0 }; menuSales[item.menu.id].quantity += item.quantity; menuSales[item.menu.id].total += item.quantity * item.menu.price; }));
             const topMenus = Object.values(menuSales).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
-            $resultsContainer.html(`
-                <div class="panel"><h4>Ringkasan Penjualan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
-                    <div class="summary-row"><span>Total Transaksi:</span> <span>${filteredOrders.length}</span></div>
-                    <div class="summary-row"><span>Total Pendapatan (Laba):</span> <span>${formatCurrency(totalRevenue)}</span></div>
-                    <div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div>
-                </div>
-                <div class="panel mt-3"><h4>Menu Terlaris</h4>
-                    ${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${menu.quantity} terjual</span></div>`).join('')}
-                </div>`);
-            $('#printReportBtn, #downloadReportBtn').show();
-        }
-        
-        function generateDonationReportHTML(allOrders, startDate, endDate) {
-            const $resultsContainer = $('#donationReportResults');
-            const donationOrders = allOrders.filter(o => o.donation > 0);
-
-            if (donationOrders.length === 0) {
-                $resultsContainer.html('<div class="empty-state"><i class="fas fa-hand-holding-heart"></i><p>Tidak ada data donasi</p></div>');
-                $('#printReportBtn, #downloadReportBtn').hide(); return;
-            }
-            
-            const totalDonation = donationOrders.reduce((sum, o) => sum + o.donation, 0);
-            
-            let tableHTML = `<table class="data-table"><thead><tr><th>Kode Transaksi</th><th>Tanggal</th><th>Nama Pelanggan</th><th>Jumlah Donasi</th></tr></thead><tbody>`;
-            donationOrders.forEach(order => {
-                tableHTML += `<tr>
-                    <td>${order.id}</td>
-                    <td>${moment(order.date).format('DD/MM/YY HH:mm')}</td>
-                    <td>${order.customerName}</td>
-                    <td>${formatCurrency(order.donation)}</td>
-                </tr>`;
-            });
-            tableHTML += `</tbody></table>`;
-            
-            $resultsContainer.html(`
-                <div class="panel">
-                    <h4>Laporan Donasi LAZISNU (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4>
-                    <div class="summary-row total-row" style="border: none; padding-top: 5px;">
-                        <span>Total Donasi Terkumpul:</span> 
-                        <span>${formatCurrency(totalDonation)}</span>
-                    </div>
-                </div>
-                <div class="panel mt-3">${tableHTML}</div>
-            `);
-             $('#printReportBtn, #downloadReportBtn').show();
-        }
-
-        function printReport() {
-            const activeTabContentSelector = '#' + $('#reportsModal .tab-content.active').attr('id') + ' .printable-area';
-            printElement(activeTabContentSelector);
-        }
-        
-        function downloadReportAsPdf() {
-            const activeTabId = $('#reportsModal .tab-content.active').attr('id');
-            const element = document.getElementById(activeTabId).querySelector('.printable-area');
-            const reportType = activeTabId.includes('sales') ? 'Penjualan' : 'Donasi';
-            const filename = `Laporan_${reportType}_${moment().format('YYYY-MM-DD')}.pdf`;
-            
-            showToast(`Mengunduh PDF Laporan ${reportType}...`, 'info');
-
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                const imgProps= pdf.getImageProperties(imgData);
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight > 0 ? pdfHeight : 0);
-                pdf.save(filename);
-            }).catch(err => {
-                showToast('Gagal mengunduh PDF', 'error');
-            });
-        }
-
-
-        function saveStoreInfo() {
-            settings = { ...settings,
-                storeName: $('#storeName').val().trim(),
-                storeAddress: $('#storeAddress').val().trim(),
-                storePhone: $('#storePhone').val().trim(),
-                storeEmail: $('#storeEmail').val().trim(),
-                tableCount: parseInt($('#tableCount').val()) || 5
-            };
-            if (!settings.storeName || !settings.storeAddress || !settings.storePhone) { return showToast('Info dasar harus diisi', 'error'); }
-            saveSettings(); updateStoreInfo(); updateTableNumbers();
-            $('#manageStoreInfoModal').hide(); showToast('Info restoran diperbarui', 'success');
-        }
-
-        function loadStoreInfo() {
-            $('#storeName').val(settings.storeName); $('#storeAddress').val(settings.storeAddress);
-            $('#storePhone').val(settings.storePhone); $('#storeEmail').val(settings.storeEmail || '');
-            $('#tableCount').val(settings.tableCount || 5);
-        }
-        
-        function updateStoreInfo() {
-            $('#storeNameHeader').text(settings.storeName);
-            document.title = settings.storeName || 'CAFE & RESTO';
-        }
-        
-        function updateTableNumbers() {
-            const $tableSelect = $('#tableNumber').empty();
-            for (let i = 1; i <= settings.tableCount; i++) $tableSelect.append(`<option value="${i}">Meja ${i}</option>`);
-            if (currentOrder.tableNumber) $tableSelect.val(currentOrder.tableNumber);
-        }
-        
-        function formatCurrency(amount) { return 'Rp ' + (amount || 0).toLocaleString('id-ID'); }
-        
-        function showToast(message, type = 'info', duration = 3000) {
-            const $toast = $('#toast');
-            $toast.removeClass('success error warning info').addClass(type);
-            $('#toast-message').text(message); $toast.addClass('show');
-            setTimeout(() => $toast.removeClass('show'), duration);
-        }
-
-        function setButtonLoading($button, isLoading, originalText = 'Login') {
-            if (isLoading) $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
-            else $button.prop('disabled', false).html(originalText);
-        }
-        
-        function showConfirmation(title, message, onConfirm, type = 'success') {
-            $('#confirmTitle').text(title); $('#confirmMessage').html(message); // use .html() for potential formatting
-            const $confirmBtn = $('#confirmAction');
-            $confirmBtn.off('click').on('click', () => { onConfirm(); $('#confirmationModal').hide(); });
-            $confirmBtn.removeClass('btn-success btn-danger').addClass(type === 'danger' ? 'btn-danger' : 'btn-success').html('Lanjutkan');
-            $('#confirmCancel').show(); // Ensure cancel button is visible by default
-            $('#confirmationModal').css('display', 'flex');
-        }
-
-        function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY, HH:mm')); }
-
-        function saveMenus() { localStorage.setItem(STORAGE_KEYS.MENUS, JSON.stringify(menus)); }
-        function saveCategories() { localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
-        function saveOrders() { localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders)); }
-        function saveSettings() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); }
-        function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
-        function saveMembers() { localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members)); }
-
-        function generateCaptcha() {
-            const canvas = document.getElementById('captchaCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            captchaText = '';
-            for (let i = 0; i < 6; i++) {
-                captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#f8f9fa';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < 5; i++) {
-                ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.3 + 0.1})`;
-                ctx.beginPath();
-                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.stroke();
-            }
-
-            ctx.font = 'bold 24px Poppins';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            for (let i = 0; i < captchaText.length; i++) {
-                const char = captchaText[i];
-                const x = 20 + (i * 22);
-                const y = canvas.height / 2 + (Math.random() * 10 - 5);
-                const angle = Math.random() * 0.5 - 0.25;
-                ctx.fillStyle = `rgb(${Math.random()*100}, ${Math.random()*100}, ${Math.random()*100})`;
-                
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(angle);
-                ctx.fillText(char, 0, 0);
-                ctx.restore();
-            }
-        }
-    </script>
-</body>
-</html>
+            $resultsContainer.html(`<div class="panel"><h4>Ringkasan Penjualan (${startDate.format('DD/MM/YY')} - ${endDate.format('DD/MM/YY')})</h4><div class="summary-row"><span>Total Transaksi:</span> <span>${filteredOrders.length}</span></div><div class="summary-row"><span>Total Pendapatan (Laba):</span> <span>${formatCurrency(totalRevenue)}</span></div><div class="summary-row"><span>Total Item Terjual:</span> <span>${totalItemsSold}</span></div></div><div class="panel mt-3"><h4>Menu Terlaris</h4>${topMenus.map(menu => `<div class="summary-row"><span>${menu.name}:</span> <span>${
