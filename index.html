@@ -954,9 +954,9 @@
             cursor: pointer;
         }
         
-        /* === [PERBAIKAN & PENYEMPURNAAN] KODE CETAK STRUK & HISTORI === */
-        /* Kode ini memastikan struk dan histori dapat menyesuaikan ukuran kertas secara otomatis
-           dan seluruh kontennya tercetak tanpa terpotong. */
+        /* === [PENYEMPURNAAN] KODE CETAK STRUK & HISTORI === */
+        /* Penyempurnaan ini berfokus pada pencegahan halaman kosong saat mencetak
+           dengan mengatur ulang layout secara ketat khusus untuk mode cetak. */
         #receiptContent {
             font-family: 'Courier New', Courier, monospace;
             width: 300px;
@@ -1028,9 +1028,13 @@
         }
         
         @media print {
-            body, .modal, .container {
-                padding: 0;
-                margin: 0;
+            /* [FIX] Atur ulang body dan html untuk mencegah overflow yang bisa menyebabkan halaman kosong. */
+            html, body {
+                width: 100%;
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important; /* Mencegah scrollbar virtual */
                 box-shadow: none;
             }
 
@@ -1039,9 +1043,11 @@
                 visibility: hidden;
             }
             
-            /* Tampilkan hanya kontainer cetak dan semua isinya */
+            /* [FIX] Tampilkan hanya kontainer cetak dan pastikan ia menjadi satu-satunya yang terlihat. */
+            /* Ini adalah langkah kunci untuk mengisolasi konten yang akan dicetak. */
             #print-container, #print-container * {
                 visibility: visible;
+                box-sizing: border-box !important; /* Pastikan padding/border tidak menambah ukuran */
             }
             
             /* Posisikan kontainer cetak untuk mengisi seluruh halaman */
@@ -1056,21 +1062,26 @@
                 display: block !important;
             }
             
-            /* Atur ulang gaya elemen yang akan dicetak agar sesuai dengan kertas */
+            /* [FIX] Atur ulang gaya elemen struk agar sesuai dengan kertas dan tidak terpotong. */
             #print-container .printable-area,
             #print-container #receiptContent {
                 margin: 0 !important;
-                padding: 10px !important;
+                padding: 5px !important; /* Beri sedikit padding agar tidak menempel di tepi kertas */
                 box-shadow: none !important;
                 border: none !important;
                 display: block !important;
                 color: #000 !important;
                 background: #fff !important;
-                width: 100% !important; /* [FIX] Memastikan lebar menyesuaikan kertas */
-                font-size: 12pt !important; /* Ukuran font standar untuk kertas A4 */
+                width: 100% !important; 
+                font-size: 11pt !important; /* Ukuran font yang nyaman dibaca di kertas */
+                page-break-inside: avoid; /* Mencegah struk terpotong di tengah halaman */
             }
 
-            /* [FIX] Pastikan histori tidak terpotong saat dicetak */
+            #print-container #receiptContent {
+                font-size: 10pt !important; /* Struk thermal biasanya lebih kecil fontnya */
+            }
+
+            /* [FIX] Pastikan histori tidak memiliki scrollbar dan tampil penuh saat dicetak */
             #print-container #historyResultsContainer, 
             #print-container #historyResults {
                 max-height: none !important;
@@ -1079,7 +1090,7 @@
             }
             
             /* Sembunyikan elemen yang tidak perlu dicetak seperti tombol */
-            .no-print, .modal-footer, .modal-header {
+            .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .order-panel, .menu-panel, #loginModal {
                 display: none !important;
             }
             
@@ -1089,7 +1100,7 @@
                 margin: 10mm; 
             }
         }
-        /* === AKHIR DARI PERBAIKAN KODE CETAK === */
+        /* === AKHIR DARI PENYEMPURNAAN KODE CETAK === */
 
         /* Backup Restore Styles */
         .backup-actions {
@@ -1330,9 +1341,9 @@
                         <div class="backup-actions">
                             <button id="backupDataBtn" class="btn btn-sm backup-btn">Backup Data</button>
                             <label for="restoreFile" class="file-label">
-                                <i class="fas fa-upload"></i> Restore
+                                <i class="fas fa-upload"></i> Restore Data
                             </label>
-                            <input type="file" id="restoreFile" class="file-input" accept=".json">
+                            <input type="file" id="restoreFile" class="file-input" accept=".json,.lksbackup">
                         </div>
                         <button id="resetDataBtn" class="btn btn-sm btn-danger mt-2" style="width: 100%;">Reset Data</button>
                     </div>
@@ -1927,6 +1938,9 @@
             MEMBERS: 'warungmakan_members'
         };
 
+        // [PENYEMPURNAAN] Kunci rahasia untuk enkripsi dan dekripsi file backup.
+        const ENCRYPTION_KEY = 'LenteraKaryaSitubondo-SecretKey-2025';
+
         /*
             --- [INFORMASI LOGIN DEFAULT] ---
             Aplikasi ini memiliki 2 pengguna bawaan:
@@ -2011,8 +2025,8 @@
                     tableCount: 5,
                     itemSecurityCode: CryptoJS.SHA256('17081945').toString(),
                     panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
-                    memberDiscountPercent: 2,      // [FITUR BARU] Default diskon member
-                    nonMemberDiscountPercent: 0  // [FITUR BARU] Default diskon non-member
+                    memberDiscountPercent: 2,
+                    nonMemberDiscountPercent: 0
                 }));
             }
         }
@@ -2097,7 +2111,7 @@
                 currentUser = null;
                 localStorage.removeItem(STORAGE_KEYS.USER);
                 $('#mainApp').fadeOut(() => {
-                    $('#loginModal').css('display', 'flex'); // Use display:flex as per new CSS
+                    $('#loginModal').css('display', 'flex');
                     $('#username').val('');
                     $('#password').val('');
                     $('#captchaInput').val('');
@@ -2285,14 +2299,13 @@
                     $('#controlPanelModal .tabs .tab').removeClass('active').first().addClass('active');
                     $('#controlPanelModal .tab-content').removeClass('active').first().addClass('active');
                     loadUsersForManagement();
-                    // [FITUR BARU] Load current discount settings into the form
                     $('#memberDiscount').val(settings.memberDiscountPercent || 2);
                     $('#nonMemberDiscount').val(settings.nonMemberDiscountPercent || 0);
                     $('#controlPanelModal').css('display', 'flex');
                 });
             });
 
-            $('#backupDataBtn').click(() => { if (currentUser.role === 'admin') showConfirmation('Backup Data', 'Data akan di-backup ke file JSON. Lanjutkan?', backupData); });
+            $('#backupDataBtn').click(() => { if (currentUser.role === 'admin') showConfirmation('Backup Data', 'Data akan di-backup ke file terenkripsi (.lksbackup). Lanjutkan?', backupData); });
             $('#restoreFile').change(function() { if (currentUser.role === 'admin') { restoreFromFile(this.files[0]); $(this).val(''); } });
             $('#resetDataBtn').click(() => { if (currentUser.role === 'admin') promptForPassword('item', () => showConfirmation('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', resetAllData, 'danger')); });
             
@@ -2406,7 +2419,6 @@
             $('#panelSecurityForm').submit(changeSecurityCode);
             $('#changeOwnPasswordForm').submit(changeOwnPassword);
 
-            // [FITUR BARU] Save Discount Settings
             $('#discountSettingsForm').submit(function(e) {
                 e.preventDefault();
                 const memberDiscount = parseFloat($('#memberDiscount').val());
@@ -2557,28 +2569,56 @@
             showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'ditambahkan'}.`, 'success');
         }
 
+        /**
+         * [PENYEMPURNAAN] Fungsi backup data dengan enkripsi.
+         * Data tidak lagi disimpan sebagai teks biasa, melainkan dienkripsi
+         * menggunakan AES untuk keamanan.
+         */
         function backupData() {
-            const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
-            const dataStr = JSON.stringify(backup, null, 2);
-            const linkElement = document.createElement('a');
-            linkElement.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-            linkElement.download = `backup_cafe_resto_${moment().format('YYYYMMDD_HHmmss')}.json`;
-            linkElement.click();
-            showToast('Backup data berhasil', 'success');
+            try {
+                const backup = { menus, categories, orders, settings, users, members, backupDate: new Date().toISOString() };
+                const dataStr = JSON.stringify(backup);
+                const encryptedData = CryptoJS.AES.encrypt(dataStr, ENCRYPTION_KEY).toString();
+                
+                const linkElement = document.createElement('a');
+                linkElement.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(encryptedData);
+                linkElement.download = `backup_cafe_resto_${moment().format('YYYYMMDD_HHmmss')}.lksbackup`;
+                linkElement.click();
+                showToast('Backup data terenkripsi berhasil', 'success');
+            } catch (err) {
+                showToast('Gagal membuat backup terenkripsi', 'error');
+                console.error("Backup encryption error:", err);
+            }
         }
 
+        /**
+         * [PENYEMPURNAAN] Fungsi restore data dari file terenkripsi.
+         * Sistem akan mendekripsi file backup sebelum memprosesnya.
+         */
         function restoreFromFile(file) {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.menus && data.categories && data.orders && data.settings && data.users && data.members) {
-                        showConfirmation('Restore Data', 'Data saat ini akan diganti. Lanjutkan?', () => restoreData(data));
-                    } else {
-                        showToast('File backup tidak valid', 'error');
+                    const encryptedData = e.target.result;
+                    const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+                    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+                    
+                    if (!decryptedString) {
+                        throw new Error("Decryption failed. Invalid key or corrupted file.");
                     }
-                } catch (err) { showToast('Gagal membaca file backup', 'error'); }
+
+                    const data = JSON.parse(decryptedString);
+                    
+                    if (data.menus && data.categories && data.orders && data.settings && data.users && data.members) {
+                        showConfirmation('Restore Data', 'Data saat ini akan diganti oleh file backup. Lanjutkan?', () => restoreData(data));
+                    } else {
+                        showToast('File backup tidak valid atau rusak.', 'error');
+                    }
+                } catch (err) {
+                    showToast('Gagal memproses file backup. File mungkin rusak atau bukan file backup yang valid.', 'error');
+                    console.error("Restore decryption/parsing error:", err);
+                }
             };
             reader.readAsText(file);
         }
@@ -2725,7 +2765,6 @@
         function updateOrder() {
             currentOrder.subtotal = currentOrder.items.reduce((total, item) => total + (item.menu.price * item.quantity), 0);
             
-            // [PERBAIKAN] Logika diskon dinamis berdasarkan pengaturan
             const memberDiscount = settings.memberDiscountPercent ?? 2;
             const nonMemberDiscount = settings.nonMemberDiscountPercent ?? 0;
             let discountPercent = 0;
@@ -2996,8 +3035,9 @@
         }
         
         /**
-         * [PERBAIKAN] Fungsi ini disempurnakan untuk menyalin konten ke kontainer cetak
-         * sebelum memanggil window.print(), memastikan konten tidak kosong.
+         * [PENYEMPURNAAN] Fungsi ini disempurnakan untuk menyalin konten ke kontainer cetak
+         * sebelum memanggil window.print(), memastikan konten tidak kosong dan mencegah
+         * halaman kosong tercetak.
          */
         function printElement(selector) {
             const elementToPrint = $(selector).clone();
@@ -3012,7 +3052,7 @@
                     showToast('Gagal membuka dialog cetak.', 'error');
                     console.error("Print error:", e);
                 }
-            }, 300); // Penundaan singkat untuk memastikan DOM diperbarui
+            }, 300);
         }
 
         function loadKitchenOrders() {
