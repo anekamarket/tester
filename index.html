@@ -445,21 +445,13 @@
             border-radius: var(--rounded-sm);
             font-size: 1rem;
         }
-        
-        /* New Style for Readonly Login Inputs */
-        .readonly-input {
-            background-color: #e9ecef;
-            user-select: none;
-            pointer-events: none;
-            opacity: 0.8;
-        }
 
         textarea.form-control {
             min-height: 100px;
             resize: vertical;
         }
 
-        /* Login Styles */
+        /* Login & Captcha Styles */
         .login-container {
             max-width: 400px;
             margin: 20px auto;
@@ -484,6 +476,34 @@
             font-size: 1.8rem;
             color: var(--primary);
             font-weight: 600;
+        }
+        
+        #captcha-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #captcha {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded-sm);
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            background-color: #f0f0f0;
+            text-decoration: line-through;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+        }
+
+        #refreshCaptcha {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
         }
 
         /* Toast Notification */
@@ -970,22 +990,6 @@
     </style>
 </head>
 <body>
-    <div id="initialAccessModal" class="modal" style="display: flex; z-index: 3000;">
-        <div class="modal-content" style="max-width: 450px; text-align: center;">
-            <div class="modal-header">
-                <h3 class="modal-title" style="margin: 0 auto;"><i class="fas fa-info-circle"></i> Akses Versi Uji Coba</h3>
-            </div>
-            <div class="modal-body">
-                <p>Selamat datang! Anda akan mengakses Aplikasi Kasir dalam <strong>versi uji coba (LIMITED)</strong> dengan beberapa batasan fitur.</p>
-                <p>Apakah Anda ingin melanjutkan?</p>
-            </div>
-            <div class="modal-footer" style="justify-content: center; gap: 15px;">
-                <button class="btn btn-success" id="acceptTrialBtn" style="flex: 1;">Iya, Lanjutkan</button>
-                <a href="https://wa.me/6287865614222?text=Halo,%20saya%20tertarik%20dengan%20Aplikasi%20Kasir%20versi%20Premium.%20Bisa%20minta%20info%20lebih%20lanjut?" target="_blank" class="btn btn-info" style="flex: 1;">Upgrade ke Premium</a>
-            </div>
-        </div>
-    </div>
-    
     <div id="toast" class="toast">
         <i class="fas fa-info-circle"></i>
         <span id="toast-message">Notification message</span>
@@ -999,7 +1003,7 @@
             <p id="trialLimitMessage">Anda telah mencapai batas penggunaan fitur dalam versi uji coba.</p>
             <p>Untuk mendapatkan akses penuh ke semua fitur aplikasi, silakan hubungi tim penjualan kami untuk melakukan pembelian versi lengkap.</p>
             <p>Dengan membeli versi lengkap, Anda akan mendapatkan:</p>
-            <ul style="text-align: left; margin: 15px 0;">
+            <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
                 <li>Akses penuh tanpa batasan</li>
                 <li>Dukungan teknis prioritas</li>
                 <li>Pembaruan fitur gratis</li>
@@ -1008,39 +1012,64 @@
             <button class="btn btn-primary" id="closeTrialLimitModal">Tutup Peringatan</button>
         </div>
     </div>
+    
+    <div id="infoModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-info-circle" style="color: var(--primary);"></i> Selamat Datang di Aplikasi Kasir</h3>
+            </div>
+            <div class="modal-body">
+                <h4>Informasi Aplikasi</h4>
+                <p>Ini adalah <strong>versi uji coba (LIMITED)</strong> dari Sistem Kasir Digital. Anda dapat mencoba fitur-fitur dasar yang tersedia dengan beberapa batasan:</p>
+                <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
+                    <li>Maksimal <strong>5 Transaksi</strong></li>
+                    <li>Maksimal <strong>5 Kategori Produk</strong></li>
+                    <li>Maksimal <strong>5 Produk</strong></li>
+                </ul>
+                <hr style="margin: 15px 0;">
+                <h4>Upgrade ke Versi Premium</h4>
+                <p>Dapatkan pengalaman tanpa batas dan fitur eksklusif dengan versi premium!</p>
+                <ul style="list-style-type: disc; padding-left: 20px; margin: 10px 0;">
+                    <li><strong>Tanpa Batasan:</strong> Transaksi, produk, dan kategori tak terbatas.</li>
+                    <li><strong>Laporan Lengkap:</strong> Laporan laba rugi dan analisis penjualan mendalam.</li>
+                    <li><strong>Manajemen Data:</strong> Fitur Backup, Restore, dan Reset data.</li>
+                    <li><strong>Dukungan Prioritas:</strong> Bantuan teknis kapan pun Anda butuhkan.</li>
+                </ul>
+                <p>Hubungi tim kami untuk informasi lebih lanjut dan dapatkan penawaran spesial!</p>
+            </div>
+            <div class="modal-footer">
+                <a href="https://wa.me/6281234567890?text=Halo, saya tertarik dengan versi premium Aplikasi Kasir." target="_blank" class="btn btn-success"><i class="fab fa-whatsapp"></i> Hubungi Kami</a>
+                <button class="btn btn-primary" id="continueToAppBtn">Lanjutkan ke Aplikasi</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="loginModal" class="modal" style="display: flex;">
+
+    <div id="loginModal" class="modal">
         <div class="login-container">
             <div class="login-header">
                 <div class="login-logo">
                     <i class="fas fa-cash-register"></i>
                 </div>
                 <h1 class="login-title">SISTEM KASIR DIGITAL</h1>
-                <p>Hubungi Admin Untuk Mendapatkan Password</p> 
+                <p>Verifikasi untuk melanjutkan</p> 
             </div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control readonly-input" value="admin" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control readonly-input" value="12345" readonly>
-                </div>
+            <form id="captchaForm">
                 <div class="form-group">
                     <label for="captchaInput" class="form-label">Masukkan Kode Captcha</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="text" id="captchaInput" class="form-control" placeholder="Kode..." required autocomplete="off">
-                        <span id="captchaDisplay" style="font-weight: bold; font-size: 1.2rem; background: #eee; padding: 8px 12px; border-radius: 5px; user-select: none;"></span>
-                        <button type="button" id="reloadCaptcha" class="btn btn-sm" style="padding: 10px 12px;"><i class="fas fa-sync-alt"></i></button>
+                    <div id="captcha-container">
+                        <span id="captcha"></span>
+                        <button type="button" id="refreshCaptcha" title="Refresh Captcha"><i class="fas fa-sync-alt"></i></button>
                     </div>
+                    <input type="text" id="captchaInput" class="form-control" placeholder="Ketik kode di atas" required>
                 </div>
                 <button type="submit" class="btn mt-3">
-                    <span id="loginBtnText">Login</span>
+                    <span id="loginBtnText">Masuk</span>
                 </button>
             </form>
         </div>
     </div>
+
 
     <div id="adminPasswordModal" class="modal">
         <div class="admin-password-modal">
@@ -2071,7 +2100,7 @@
         }
     }
         
-        // Load data
+    // Load data
     let products = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS)) || [];
     let categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
     let transactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [];
@@ -2080,7 +2109,7 @@
     let members = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMBERS)) || [];
     let roles = JSON.parse(localStorage.getItem(STORAGE_KEYS.ROLES)) || [];
     let discounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.DISCOUNTS)) || { memberDiscount: 10 };
-    let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
+    let currentUser = null; // Set to null initially
     let stockHistory = JSON.parse(localStorage.getItem(STORAGE_KEYS.STOCK_HISTORY)) || [];
     let memos = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEMOS)) || [];
     let trialLimits = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRIAL_LIMITS)) || {
@@ -2097,7 +2126,6 @@
         total: 0,
         memberId: null
     };
-
     let captchaText = '';
 
     // Initialize the app
@@ -2107,149 +2135,74 @@
         
         // Set current year in footer
         $('#currentYear, #receiptYear').text(new Date().getFullYear());
-
-        // --- NEW --- Initial Access Modal Handler
-        $('#acceptTrialBtn').click(function() {
-            $('#initialAccessModal').fadeOut();
-        });
         
-        // --- NEW --- CAPTCHA Generation
+        // Display Info Modal first
+        $('#infoModal').css('display', 'flex');
+
+        // Handle continue button on info modal
+        $('#continueToAppBtn').click(function() {
+            $('#infoModal').fadeOut();
+            $('#loginModal').css('display', 'flex').hide().fadeIn();
+            generateCaptcha();
+        });
+
+        // Function to generate CAPTCHA
         function generateCaptcha() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 6; i++) {
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             captchaText = result;
-            $('#captchaDisplay').text(captchaText);
-            $('#captchaInput').val(''); // Clear previous input
+            $('#captcha').text(captchaText);
+            $('#captchaInput').val('');
         }
 
-        generateCaptcha();
-        $('#reloadCaptcha').click(generateCaptcha);
-        
-        // Check if user is logged in
-        if (currentUser) {
-            $('#loggedInUser').text(currentUser.name);
-            
-            // Set role badge
-            updateRoleBadge(currentUser.role);
-            
-            $('#initialAccessModal').hide(); // Hide initial modal if already logged in
-            $('#loginModal').hide();
-            $('#mainApp').show();
-            loadProducts();
-            updateCart();
-            loadCategories();
-            updateCurrentDate();
-            updateStoreInfo();
-            loadMembersForSelect();
-            loadActiveMemos();
-            
-            // Check trial limits and disable features if exceeded
-            checkTrialLimits();
-            
-            // Show admin panel if user has admin permissions
-            if (currentUser.role === 'admin' || hasPermission(currentUser.role, 'manageProducts')) {
-                $('#adminPanel').show();
-                $('#mainApp').addClass('admin-view');
-                
-                // Hide buttons based on permissions
-                if (!hasPermission(currentUser.role, 'manageCashiers')) {
-                    $('#manageCashiersBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'manageRoles')) {
-                    $('#manageRolesBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'viewProfitReports')) {
-                    $('#profitReportBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'dataManagement')) {
-                    $('#backupDataBtn').hide();
-                    $('#restoreDataBtn').hide();
-                    $('#resetDataBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'manageMemos')) {
-                    $('#manageMemosBtn').hide();
-                }
-            }
-        }
-        
-        // --- MODIFIED --- Login form handler with CAPTCHA
-        $('#loginForm').submit(function(e) {
+        // Refresh CAPTCHA
+        $('#refreshCaptcha').click(generateCaptcha);
+
+        // CAPTCHA form handler for automatic admin login
+        $('#captchaForm').submit(function(e) {
             e.preventDefault();
-            
-            const userInputCaptcha = $('#captchaInput').val().trim();
-            
-            // CAPTCHA Validation
-            if (userInputCaptcha.toUpperCase() !== captchaText.toUpperCase()) {
-                showToast('Kode Captcha salah!', 'error');
+            const userInput = $('#captchaInput').val().trim();
+
+            if (userInput.toLowerCase() !== captchaText.toLowerCase()) {
+                showToast('Captcha salah, silakan coba lagi.', 'error');
                 generateCaptcha();
                 return;
             }
 
-            // Pre-filled Login Logic
-            const username = $('#username').val().trim(); // 'admin'
-            const password = $('#password').val().trim(); // '12345'
-            
-            // Find user
-            const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-            
-            if (!user) {
-                showToast('User default tidak ditemukan. Hubungi admin.', 'error');
-                generateCaptcha();
+            // Find admin user
+            const adminUser = users.find(u => u.role === 'admin');
+            if (!adminUser) {
+                showToast('Akun admin default tidak ditemukan. Harap inisialisasi ulang.', 'error');
                 return;
             }
-            
-            // Verify password (compare hashes)
-            const hashedPassword = CryptoJS.SHA256(password).toString();
-            
-            if (hashedPassword !== user.password) {
-                showToast('Password default salah. Hubungi admin.', 'error');
-                generateCaptcha();
-                return;
-            }
-            
-            // Login successful
-            currentUser = user;
+
+            // Automatic login as admin
+            currentUser = adminUser;
             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
             $('#loggedInUser').text(currentUser.name);
             
-            // Update role badge
             updateRoleBadge(currentUser.role);
             
-            $('#loginModal').hide();
+            $('#loginModal').fadeOut();
             $('#mainApp').fadeIn();
                     
-            // Check trial limits and disable features if exceeded
             checkTrialLimits();
             
-            // Show admin panel if user has admin permissions
-            if (currentUser.role === 'admin' || hasPermission(currentUser.role, 'manageProducts')) {
-                $('#adminPanel').show();
-                $('#mainApp').addClass('admin-view');
-                
-                // Hide buttons based on permissions
-                if (!hasPermission(currentUser.role, 'manageCashiers')) {
-                    $('#manageCashiersBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'manageRoles')) {
-                    $('#manageRolesBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'viewProfitReports')) {
-                    $('#profitReportBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'dataManagement')) {
-                    $('#backupDataBtn').hide();
-                    $('#restoreDataBtn').hide();
-                    $('#resetDataBtn').hide();
-                }
-                if (!hasPermission(currentUser.role, 'manageMemos')) {
-                    $('#manageMemosBtn').hide();
-                }
-            }
+            // Show admin panel as all logins are admin now
+            $('#adminPanel').show();
+            $('#mainApp').addClass('admin-view');
             
-            // Load data
+            if (!hasPermission(currentUser.role, 'manageCashiers')) $('#manageCashiersBtn').hide();
+            if (!hasPermission(currentUser.role, 'manageRoles')) $('#manageRolesBtn').hide();
+            if (!hasPermission(currentUser.role, 'viewProfitReports')) $('#profitReportBtn').hide();
+            if (!hasPermission(currentUser.role, 'dataManagement')) {
+                $('#backupDataBtn, #restoreDataBtn, #resetDataBtn').hide();
+            }
+            if (!hasPermission(currentUser.role, 'manageMemos')) $('#manageMemosBtn').hide();
+            
             loadProducts();
             updateCart();
             loadCategories();
@@ -2258,7 +2211,7 @@
             loadMembersForSelect();
             loadActiveMemos();
             
-            showToast('Login berhasil', 'success');
+            showToast('Verifikasi berhasil. Selamat datang, Admin!', 'success');
         });
             
             // Function to check trial limits and disable features
@@ -2321,7 +2274,13 @@
                 e.preventDefault();
                 currentUser = null;
                 localStorage.removeItem(STORAGE_KEYS.USER);
-                location.reload(); // Reload to show initial modal and reset state
+                $('#mainApp').fadeOut(function() {
+                    // Show info modal again on logout
+                    $('#infoModal').css('display', 'flex').hide().fadeIn();
+                });
+                $('#mainApp').removeClass('admin-view');
+                
+                showToast('Anda telah logout', 'info');
             });
             
             // Product search
@@ -2457,7 +2416,7 @@
                     return;
                 }
                 
-                $('#checkoutModal').show();
+                $('#checkoutModal').css('display', 'flex');
                 $('#customerName').val('');
                 $('#paymentAmount').val('');
                 $('#changeContainer').hide();
@@ -2591,7 +2550,7 @@
                 $('#productForm')[0].reset();
                 $('#productId').val('');
                 loadCategoriesForSelect();
-                $('#productModal').show();
+                $('#productModal').css('display', 'flex');
             });
             
             $('#manageCategoriesBtn').click(function() {
@@ -2600,7 +2559,7 @@
                     return;
                 }
                 
-                $('#manageCategoriesModal').show();
+                $('#manageCategoriesModal').css('display', 'flex');
                 loadCategoriesForManagement();
             });
             
@@ -2610,12 +2569,12 @@
                     return;
                 }
                 
-                $('#manageCashiersModal').show();
+                $('#manageCashiersModal').css('display', 'flex');
                 loadCashiers();
             });
             
             $('#manageMembersBtn').click(function() {
-                $('#manageMembersModal').show();
+                $('#manageMembersModal').css('display', 'flex');
                 loadMembers();
             });
             
@@ -2625,7 +2584,7 @@
                     return;
                 }
                 
-                $('#manageRolesModal').show();
+                $('#manageRolesModal').css('display', 'flex');
                 loadRoles();
             });
             
@@ -2635,7 +2594,7 @@
                     return;
                 }
                 
-                $('#reportsModal').show();
+                $('#reportsModal').css('display', 'flex');
                 $('#reportPeriod').val('today');
                 $('#customDateRange').hide();
             });
@@ -2646,7 +2605,7 @@
                     return;
                 }
                 
-                $('#profitReportModal').show();
+                $('#profitReportModal').css('display', 'flex');
                 $('#profitReportPeriod').val('today');
                 $('#profitCustomDateRange').hide();
             });
@@ -2657,7 +2616,7 @@
                     return;
                 }
                 
-                $('#manageStoreInfoModal').show();
+                $('#manageStoreInfoModal').css('display', 'flex');
                 loadStoreInfo();
             });
             
@@ -2720,7 +2679,7 @@
                     return;
                 }
                 
-                $('#manageMemosModal').show();
+                $('#manageMemosModal').css('display', 'flex');
                 loadMemos();
             });
             
@@ -2729,7 +2688,7 @@
                 $('#memoModal .modal-title').text('Tambah Memo Baru');
                 $('#memoForm')[0].reset();
                 $('#memoId').val('');
-                $('#memoModal').show();
+                $('#memoModal').css('display', 'flex');
             });
             
             // Edit memo button
@@ -2758,7 +2717,7 @@
                     $('#memoEndDate').val('');
                 }
                 
-                $('#memoModal').show();
+                $('#memoModal').css('display', 'flex');
             });
             
             // Delete memo button
@@ -2943,7 +2902,7 @@
                 $('#cashierForm')[0].reset();
                 $('#cashierId').val('');
                 loadRolesForSelect();
-                $('#cashierModal').show();
+                $('#cashierModal').css('display', 'flex');
             });
             
             // Edit cashier button
@@ -2961,7 +2920,7 @@
                 $('#cashierConfirmPassword').val('');
                 loadRolesForSelect();
                 $('#cashierRole').val(cashier.role);
-                $('#cashierModal').show();
+                $('#cashierModal').css('display', 'flex');
             });
             
             // Delete cashier button
@@ -2986,7 +2945,7 @@
                 $('#memberModal .modal-title').text('Tambah Member Baru');
                 $('#memberForm')[0].reset();
                 $('#memberId').val('');
-                $('#memberModal').show();
+                $('#memberModal').css('display', 'flex');
             });
             
             // Edit member button
@@ -3002,7 +2961,7 @@
                 $('#memberPhone').val(member.phone);
                 $('#memberAddress').val(member.address);
                 $('#memberEmail').val(member.email || '');
-                $('#memberModal').show();
+                $('#memberModal').css('display', 'flex');
             });
             
             // Add role button
@@ -3010,7 +2969,7 @@
                 $('#roleModal .modal-title').text('Tambah Role Baru');
                 $('#roleForm')[0].reset();
                 $('#roleId').val('');
-                $('#roleModal').show();
+                $('#roleModal').css('display', 'flex');
             });
             
             // Edit role button
@@ -3039,7 +2998,7 @@
                 $('#permDataManagement').prop('checked', role.permissions.dataManagement || false);
                 $('#permManageMemos').prop('checked', role.permissions.manageMemos || false);
                 
-                $('#roleModal').show();
+                $('#roleModal').css('display', 'flex');
             });
             
             // Delete role button
@@ -4042,12 +4001,15 @@
             // Close modal when clicking outside
             $('.modal').click(function(e) {
                 if (e.target === this) {
-                    $(this).hide();
+                    // prevent closing info modal by clicking outside
+                    if ($(this).attr('id') !== 'infoModal') {
+                        $(this).hide();
+                    }
                 }
             });
             
             // Prevent modal content click from closing modal
-            $('.modal-content').click(function(e) {
+            $('.modal-content, .login-container').click(function(e) {
                 e.stopPropagation();
             });
             
@@ -4562,7 +4524,7 @@
                 $('#productPrice').val(product.price);
                 $('#productCost').val(product.cost || '');
                 $('#productStock').val(product.stock);
-                $('#productModal').show();
+                $('#productModal').css('display', 'flex');
             }
             
             function formatCurrency(amount) {
@@ -4621,7 +4583,7 @@
                     action();
                 } else {
                     pendingAdminAction = action;
-                    $('#adminPasswordModal').show();
+                    $('#adminPasswordModal').css('display', 'flex');
                     $('#adminPassword').val('');
                 }
             }
