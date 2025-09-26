@@ -12,7 +12,7 @@
             --secondary-color: #0056b3;
             --background-start: #f4f7fa;
             --background-end: #d6e4f3;
-            --card-background: rgba(255, 255, 255, 0.85);
+            --card-background: rgba(255, 255, 255, 0.8);
             --text-color: #333;
             --text-light: #f8f9fa;
             --shadow-color: rgba(0, 91, 187, 0.15);
@@ -32,11 +32,13 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 20px 0;
+            padding: 40px 0;
             color: var(--text-color);
+            overflow-x: hidden;
         }
 
-        .background-shapes {
+        /* --- Particle Background --- */
+        .particle-background {
             position: fixed;
             top: 0;
             left: 0;
@@ -46,44 +48,54 @@
             overflow: hidden;
         }
 
-        .shape {
+        .particle {
             position: absolute;
             border-radius: 50%;
-            background: rgba(0, 123, 255, 0.1);
-            animation: float 25s ease-in-out infinite;
+            background: rgba(0, 123, 255, 0.2);
+            pointer-events: none;
+            animation: floatUp 25s linear infinite;
         }
-        
-        .shape.s1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s; }
-        .shape.s2 { width: 150px; height: 150px; top: 70%; left: 80%; animation-delay: 5s; }
-        .shape.s3 { width: 100px; height: 100px; top: 30%; left: 90%; animation-delay: 10s; }
-        .shape.s4 { width: 50px; height: 50px; top: 80%; left: 10%; animation-delay: 15s; }
 
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(180deg); }
-            100% { transform: translateY(0) rotate(360deg); }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
         .content {
             position: relative;
             z-index: 2;
             width: 95%;
-            max-width: 520px;
+            max-width: 550px;
             padding: 40px;
             background: var(--card-background);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: 24px;
             box-shadow: 0 16px 48px var(--shadow-color);
             text-align: center;
             border: 1px solid var(--border-color);
-            animation: fadeIn 0.8s ease-out;
+            animation: contentFadeIn 1s ease-out forwards;
+        }
+
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
         
         .logo-container {
             margin-bottom: 35px;
-            animation: fadeInDown 0.8s ease-out;
         }
         
         .logo-img {
@@ -99,12 +111,22 @@
             filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
         }
 
+        /* --- Animated Gradient Text --- */
         .logo-text {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 700;
-            color: var(--primary-color);
             letter-spacing: 0.5px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), #20c997, var(--primary-color));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-animation 6s ease infinite;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
         .button-container {
@@ -131,6 +153,43 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
+            opacity: 0; /* Initially hidden for animation */
+            animation: buttonSlideIn 0.5s ease-out forwards;
+        }
+
+        /* --- Staggered Button Animation --- */
+        .button-container .button:nth-child(1) { animation-delay: 0.3s; }
+        .button-container .button:nth-child(2) { animation-delay: 0.4s; }
+        .button-container .button:nth-child(3) { animation-delay: 0.5s; }
+        .button-container .button:nth-child(4) { animation-delay: 0.6s; }
+        .button-container .button:nth-child(5) { animation-delay: 0.7s; }
+
+        @keyframes buttonSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* --- Shine Effect on Hover --- */
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+            transform: skewX(-25deg);
+        }
+
+        .button:hover::after {
+            left: 150%;
         }
 
         .button:hover {
@@ -153,7 +212,6 @@
             transform: rotate(-5deg) scale(1.1);
         }
 
-        /* Original Button Styles */
         .button.products { background-color: #FFA500; }
         .button.products:hover { background-color: #e69500; }
         
@@ -169,7 +227,6 @@
         .button.whatsapp { background-color: #25D366; }
         .button.whatsapp:hover { background-color: #1ebe58; }
 
-        /* New Section for Apps */
         .divider {
             margin: 30px auto;
             width: 80%;
@@ -194,16 +251,16 @@
             background-color: #5a67d8;
             font-size: 0.9rem;
             padding: 12px 10px;
+            animation-delay: 0.8s; /* Base delay for app buttons */
         }
+        
+        /* Staggered animation for app grid */
+        .app-grid .button:nth-child(odd) { animation-delay: calc(0.8s + (var(--i) * 0.05s)); }
+        .app-grid .button:nth-child(even) { animation-delay: calc(0.85s + (var(--i) * 0.05s)); }
 
-        .button.app-button:hover {
-            background-color: #434190;
-        }
 
-        .button.app-button i {
-            margin-right: 8px;
-            font-size: 1rem;
-        }
+        .button.app-button:hover { background-color: #434190; }
+        .button.app-button i { margin-right: 8px; font-size: 1rem; }
 
         .footer {
             margin-top: 35px;
@@ -211,17 +268,8 @@
             color: #666;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
         @media (max-width: 600px) {
+            body { padding: 20px 0; }
             .content { padding: 30px 20px; }
             .logo-img { max-width: 180px; }
             .logo-text { font-size: 1.8rem; }
@@ -231,12 +279,7 @@
     </style>
 </head>
 <body>
-    <div class="background-shapes">
-        <div class="shape s1"></div>
-        <div class="shape s2"></div>
-        <div class="shape s3"></div>
-        <div class="shape s4"></div>
-    </div>
+    <div class="particle-background" id="particle-container"></div>
     
     <div class="content">
         <div class="logo-container">
@@ -267,48 +310,20 @@
         <div class="sub-heading">Aplikasi Pendukung</div>
         
         <div class="app-grid">
-            <a href="https://www.bantuan.com" target="_blank" class="button app-button">
-                <i class="fas fa-hands-helping"></i> Bantuan BARJAS
-            </a>
-            <a href="https://www.arsip.com" target="_blank" class="button app-button">
-                <i class="fas fa-archive"></i> Arsip Surat
-            </a>
-            <a href="https://www.absen.com" target="_blank" class="button app-button">
-                <i class="fas fa-user-check"></i> Absen Karyawan
-            </a>
-            <a href="https://www.nota.com" target="_blank" class="button app-button">
-                <i class="fas fa-receipt"></i> Nota
-            </a>
-            <a href="https://www.toko.com" target="_blank" class="button app-button">
-                <i class="fas fa-shopping-cart"></i> Toko
-            </a>
-            <a href="https://www.caferesto.com" target="_blank" class="button app-button">
-                <i class="fas fa-utensils"></i> Cafe & Resto
-            </a>
-            <a href="https://www.hotel.com" target="_blank" class="button app-button">
-                <i class="fas fa-concierge-bell"></i> Hotel
-            </a>
-            <a href="https://www.wisata.com" target="_blank" class="button app-button">
-                <i class="fas fa-map-marked-alt"></i> Wisata
-            </a>
-            <a href="https://www.ujian.com" target="_blank" class="button app-button">
-                <i class="fas fa-file-alt"></i> Ujian
-            </a>
-            <a href="https://www.loundry.com" target="_blank" class="button app-button">
-                <i class="fas fa-tshirt"></i> Loundry
-            </a>
-            <a href="https://www.travel.com" target="_blank" class="button app-button">
-                <i class="fas fa-plane"></i> Travel
-            </a>
-            <a href="https://www.catatan.com" target="_blank" class="button app-button">
-                <i class="fas fa-book-open"></i> Catatan Keuangan
-            </a>
-            <a href="https://www.lotre.com" target="_blank" class="button app-button">
-                <i class="fas fa-ticket-alt"></i> Lotre Digital
-            </a>
-            <a href="https://www.aplikasiupdate.com" target="_blank" class="button app-button">
-                <i class="fas fa-plus-circle"></i> Aplikasi Lainnya
-            </a>
+            <a href="https://www.bantuan.com" target="_blank" class="button app-button" style="--i:1;"><i class="fas fa-hands-helping"></i> Bantuan BARJAS</a>
+            <a href="https://www.arsip.com" target="_blank" class="button app-button" style="--i:1;"><i class="fas fa-archive"></i> Arsip Surat</a>
+            <a href="https://www.absen.com" target="_blank" class="button app-button" style="--i:2;"><i class="fas fa-user-check"></i> Absen Karyawan</a>
+            <a href="https://www.nota.com" target="_blank" class="button app-button" style="--i:2;"><i class="fas fa-receipt"></i> Nota</a>
+            <a href="https://www.toko.com" target="_blank" class="button app-button" style="--i:3;"><i class="fas fa-shopping-cart"></i> Toko</a>
+            <a href="https://www.caferesto.com" target="_blank" class="button app-button" style="--i:3;"><i class="fas fa-utensils"></i> Cafe & Resto</a>
+            <a href="https://www.hotel.com" target="_blank" class="button app-button" style="--i:4;"><i class="fas fa-concierge-bell"></i> Hotel</a>
+            <a href="https://www.wisata.com" target="_blank" class="button app-button" style="--i:4;"><i class="fas fa-map-marked-alt"></i> Wisata</a>
+            <a href="https://www.ujian.com" target="_blank" class="button app-button" style="--i:5;"><i class="fas fa-file-alt"></i> Ujian</a>
+            <a href="https://www.loundry.com" target="_blank" class="button app-button" style="--i:5;"><i class="fas fa-tshirt"></i> Loundry</a>
+            <a href="https://www.travel.com" target="_blank" class="button app-button" style="--i:6;"><i class="fas fa-plane"></i> Travel</a>
+            <a href="https://www.catatan.com" target="_blank" class="button app-button" style="--i:6;"><i class="fas fa-book-open"></i> Catatan Keuangan</a>
+            <a href="https://www.lotre.com" target="_blank" class="button app-button" style="--i:7;"><i class="fas fa-ticket-alt"></i> Lotre Digital</a>
+            <a href="https://www.aplikasiupdate.com" target="_blank" class="button app-button" style="--i:7;"><i class="fas fa-plus-circle"></i> Aplikasi Lainnya</a>
         </div>
         
         <div class="footer">
@@ -316,5 +331,31 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('particle-container');
+            const particleCount = 50; // Number of particles
+
+            for (let i = 0; i < particleCount; i++) {
+                let particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 8 + 2; // Size between 2px and 10px
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                const duration = Math.random() * 15 + 10; // Duration between 10s and 25s
+                particle.style.animationDuration = `${duration}s`;
+                
+                const delay = Math.random() * 10;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        });
+    </script>
 </body>
 </html>
