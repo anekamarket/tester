@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APLIKASI MANAJEMEN LAUNDRY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;660;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -84,6 +84,8 @@
         .header-info p { margin: 2px 0; }
         .header-info a { color: var(--white); text-decoration: none; font-weight: 500;}
         .header-info a:hover { text-decoration: underline; }
+        
+        #realTimeClock { font-weight: 500; font-size: 0.9rem; opacity: 0.9; }
 
         .dev-info {
             font-size: 0.75rem;
@@ -185,6 +187,7 @@
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; margin-bottom: 8px; font-weight: 500; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: var(--rounded-sm); font-size: 1rem; }
+        .form-control[readonly] { background-color: #e9ecef; opacity: 1; cursor: not-allowed; user-select: none; }
         .form-check { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
         .form-check-input { width: auto; }
         textarea.form-control { min-height: 80px; resize: vertical; }
@@ -199,6 +202,12 @@
         .login-logo { font-size: 3.5rem; color: var(--primary-gradient-2); margin-bottom: 12px; line-height: 1; }
         .login-title { font-size: 2rem; color: var(--dark); font-weight: 700; }
         .login-header p { color: var(--gray); }
+        .captcha-container { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+        #captchaText { 
+            background: #e9ecef; padding: 12px; border-radius: var(--rounded-sm); font-weight: 600;
+            letter-spacing: 4px; text-decoration: line-through; color: var(--dark); flex-grow: 1; text-align: center;
+        }
+        #refreshCaptcha { cursor: pointer; color: var(--primary-gradient-2); font-size: 1.5rem; }
 
         /* Toast & Empty State */
         .toast {
@@ -360,6 +369,32 @@
             color: var(--dark);
             border: 1px solid #ddd;
         }
+        
+        /* Welcome Splash Screen */
+        #welcomeSplashModal .modal-content {
+            max-width: 550px;
+            border-radius: var(--rounded-lg);
+            border-top: 7px solid var(--primary-gradient-1);
+            background: linear-gradient(160deg, #ffffff, #f0f8ff);
+            animation: slideInUp 0.5s ease-out;
+        }
+        .splash-header { text-align: center; padding: 20px 20px 10px; }
+        .splash-icon {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 15px;
+            background: -webkit-linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .splash-title { font-size: 1.8rem; font-weight: 700; color: var(--dark); }
+        .splash-body { padding: 0 25px 20px; text-align: center; color: var(--gray); font-size: 1rem; }
+        .splash-body .app-description { margin: 15px 0; }
+        .splash-footer { 
+            padding: 15px; background-color: rgba(0,0,0,0.03); 
+            border-top: 1px solid #eee; text-align: center; font-size: 0.85rem; color: var(--gray);
+        }
+        .splash-footer a { color: var(--primary-gradient-2); text-decoration: none; font-weight: 600; }
 
         @media (min-width: 992px) { .app-layout { display: grid; grid-template-columns: 1fr 380px; gap: 16px; } }
         @media (max-width: 600px) {
@@ -383,6 +418,7 @@
 
         /* Animations & Footer */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .d-none { display: none; }
         .app-footer { text-align: center; margin-top: 20px; padding: 10px; color: var(--gray); font-size: 0.8rem; }
     </style>
@@ -400,14 +436,40 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
+                    <input type="text" id="username" class="form-control" value="operator" readonly onpaste="return false;">
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                    <input type="password" id="password" class="form-control" value="operator123" readonly onpaste="return false;">
+                </div>
+                <div class="form-group">
+                    <label for="captchaInput" class="form-label">Verifikasi Keamanan</label>
+                    <div class="captcha-container">
+                        <span id="captchaText"></span>
+                        <i id="refreshCaptcha" class="fas fa-sync-alt"></i>
+                    </div>
+                     <input type="text" id="captchaInput" class="form-control mt-2" placeholder="Masukkan teks di atas" required>
                 </div>
                 <button type="submit" class="btn mt-3">Login</button>
             </form>
+        </div>
+    </div>
+    
+    <div id="welcomeSplashModal" class="modal">
+        <div class="modal-content">
+            <div class="splash-header">
+                <div class="splash-icon"><i class="fas fa-rocket"></i></div>
+                <h2 class="splash-title">Selamat Datang di L-K LAUNDRY!</h2>
+            </div>
+            <div class="splash-body">
+                <p>Login Berhasil!</p>
+                <p class="app-description">
+                    Aplikasi ini dirancang untuk merevolusi manajemen laundry Anda. Nikmati kemudahan dalam mencatat transaksi, mengelola status order, dan memantau laporan keuangan secara real-time.
+                </p>
+            </div>
+            <div class="splash-footer">
+                <p>Powered by <strong>Lentera Karya Situbondo</strong></p>
+            </div>
         </div>
     </div>
 
@@ -418,6 +480,7 @@
                 <div>
                     <h1 class="app-title" id="storeNameHeader">L-K LAUNDRY</h1>
                     <p id="currentDate">Rabu, 24 September 2025</p>
+                    <p id="realTimeClock"></p>
                 </div>
             </div>
             <div class="header-info">
@@ -547,6 +610,26 @@
                 <span class="label">Catat Pengeluaran</span>
                 <span class="icon"><i class="fas fa-file-invoice-dollar"></i></span>
             </div>
+            <div class="option" id="quickActionAddService">
+                <span class="label">Tambah Layanan</span>
+                <span class="icon"><i class="fas fa-tshirt"></i></span>
+            </div>
+             <div class="option" id="quickActionManageCustomers">
+                <span class="label">Kelola Pelanggan</span>
+                <span class="icon"><i class="fas fa-users"></i></span>
+            </div>
+            <div class="option" id="quickActionHistory">
+                <span class="label">Histori Transaksi</span>
+                <span class="icon"><i class="fas fa-history"></i></span>
+            </div>
+            <div class="option" id="quickActionRecap">
+                <span class="label">Laporan Shift</span>
+                <span class="icon"><i class="fas fa-chart-pie"></i></span>
+            </div>
+             <div class="option" id="quickActionControlPanel">
+                <span class="label">Panel Kontrol</span>
+                <span class="icon"><i class="fas fa-user-shield"></i></span>
+            </div>
             <div class="option" id="quickActionNewOrder">
                 <span class="label">Transaksi Baru</span>
                 <span class="icon"><i class="fas fa-plus-circle"></i></span>
@@ -648,6 +731,7 @@
         let services, categories, orders, customers, settings, users, shifts, expenses, currentUser, activeShift;
         let newTransaction = { items: [], customerId: null, total: 0, note: '', dueDate: null };
         let passwordPromptCallback = null;
+        let captchaCode = '';
         
         // --- INITIALIZATION ---
         function initializeData() {
@@ -700,10 +784,13 @@
                 $('#loginModal').hide();
                 $('#mainApp').show();
                 initializeApp();
+            } else {
+                generateCaptcha();
             }
             
             // --- EVENT LISTENERS ---
             $('#loginForm').submit(handleLogin);
+            $('#refreshCaptcha').click(generateCaptcha);
             $('#logoutBtn').click(handleLogout);
             $('.main-tab').click(function() { switchMainTab($(this).data('tab')); });
             $(document).on('click', '.service-card', addServiceToOrder);
@@ -723,7 +810,7 @@
             $('#paymentAmount').on('input', calculateChange);
             
             setupAdminButtonListeners();
-            setupQuickActionMenu(); // NEW
+            setupQuickActionMenu();
 
             $(document).on('submit', '#customerForm', saveCustomer);
             $('#addCustomerBtn').click(() => openCustomerModal(null, true));
@@ -742,6 +829,8 @@
 
         function initializeApp() {
             updateCurrentDate();
+            updateClock();
+            setInterval(updateClock, 1000); // Real-time clock update
             updateStoreInfo();
             applyPermissions(); // Apply UI restrictions based on role
             loadServices();
@@ -752,6 +841,16 @@
         }
         
         // --- AUTH, PERMISSIONS & UI ---
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            captchaCode = result;
+            $('#captchaText').text(captchaCode);
+        }
+
         function checkPermission(permissionKey) {
             if (!currentUser) return false;
             if (currentUser.role === 'admin') return true;
@@ -779,24 +878,43 @@
             }
              // Permissions for quick action menu
             checkPermission('manageExpenses') ? $('#quickActionAddExpense').show() : $('#quickActionAddExpense').hide();
+            checkPermission('manageServices') ? $('#quickActionAddService').show() : $('#quickActionAddService').hide();
+            checkPermission('viewHistory') ? $('#quickActionHistory').show() : $('#quickActionHistory').hide();
+            checkPermission('accessControlPanel') ? $('#quickActionControlPanel').show() : $('#quickActionControlPanel').hide();
         }
 
         function handleLogin(e) {
             e.preventDefault();
             const username = $('#username').val().trim();
             const password = $('#password').val().trim();
+            const captchaInput = $('#captchaInput').val().trim();
+
+            if (captchaInput.toLowerCase() !== captchaCode.toLowerCase()) {
+                showToast('Captcha tidak sesuai', 'error');
+                generateCaptcha();
+                $('#captchaInput').val('');
+                return;
+            }
+
             const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
             
             if (user && CryptoJS.SHA256(password).toString() === user.password) {
                 currentUser = user;
                 localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
-                $('#loggedInUser').text(currentUser.name);
-                $('#loginModal').hide();
-                $('#mainApp').fadeIn();
-                initializeApp();
-                showToast(`Selamat datang, ${currentUser.name}!`, 'success');
+                
+                $('#loginModal').fadeOut(200, () => {
+                    $('#welcomeSplashModal').css('display', 'flex');
+                    setTimeout(() => {
+                        $('#welcomeSplashModal').fadeOut(400, () => {
+                             $('#mainApp').fadeIn(500);
+                             initializeApp();
+                        });
+                    }, 4000); // splash screen visible for 4 seconds
+                });
+
             } else {
-                showToast('Username atau password salah', 'error');
+                showToast('Username atau password internal salah', 'error');
+                generateCaptcha();
             }
         }
 
@@ -816,6 +934,10 @@
             $('.main-tab-content').removeClass('active');
             $(`#${tabId}`).addClass('active');
             window.scrollTo(0, 0); // Scroll to top on tab switch
+        }
+        
+        function updateClock() {
+            $('#realTimeClock').text(moment().format('HH:mm:ss'));
         }
 
         function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY')); }
@@ -1851,26 +1973,29 @@
         function setupQuickActionMenu() {
             const $btn = $('#quickActionBtn');
             const $options = $('#quickActionOptions');
-            $btn.on('click', function() {
+            
+            function closeMenu() {
+                $btn.removeClass('active');
+                $options.removeClass('active');
+            }
+            
+            $btn.on('click', function(e) {
+                e.stopPropagation();
                 $btn.toggleClass('active');
                 $options.toggleClass('active');
             });
 
-            $('#quickActionNewOrder').on('click', () => {
-                switchMainTab('newTransactionTab');
-                $btn.removeClass('active');
-                $options.removeClass('active');
-            });
-             $('#quickActionAddExpense').on('click', () => {
-                openExpenseModal();
-                $btn.removeClass('active');
-                $options.removeClass('active');
-            });
+            $('#quickActionNewOrder').on('click', () => { switchMainTab('newTransactionTab'); closeMenu(); });
+            $('#quickActionAddExpense').on('click', () => { openExpenseModal(); closeMenu(); });
+            $('#quickActionAddService').on('click', () => { openServiceModal(); closeMenu(); });
+            $('#quickActionManageCustomers').on('click', () => { openManageCustomersModal(); closeMenu(); });
+            $('#quickActionHistory').on('click', () => { openHistoryModal(); closeMenu(); });
+            $('#quickActionRecap').on('click', () => { openRecapReportModal(); closeMenu(); });
+            $('#quickActionControlPanel').on('click', () => { openControlPanel(); closeMenu(); });
 
-             $(document).on('click', function(event) {
+            $(document).on('click', function(event) {
                 if (!$(event.target).closest('.quick-action-menu').length) {
-                    $btn.removeClass('active');
-                    $options.removeClass('active');
+                    closeMenu();
                 }
             });
         }
