@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APLIKASI MANAJEMEN LAUNDRY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;660;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary: #17a2b8; /* Warna biru-hijau untuk laundry */
+            --primary: #17a2b8;
+            --primary-gradient-1: #00c6ff; /* New Gradient Color 1 */
+            --primary-gradient-2: #00a4d4; /* New Gradient Color 2 */
+            --primary-gradient-3: #007bff; /* New Gradient Color 3 */
             --primary-light: #d4f8ff;
             --secondary: #138496;
             --success: #28a745;
@@ -34,11 +37,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #f0f2f5;
             color: #212529;
             line-height: 1.5;
             touch-action: manipulation;
+            font-size: 16px; /* Base font size for better mobile readability */
         }
 
         .container {
@@ -47,9 +55,9 @@
             padding: 12px;
         }
 
-        /* Header Styles */
+        /* Header Styles - IMPROVED */
         .app-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-gradient-1), var(--primary-gradient-2), var(--primary-gradient-3)); /* 3-color gradient */
             color: var(--white);
             padding: 12px 16px;
             border-radius: var(--rounded);
@@ -61,17 +69,28 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            flex-wrap: wrap; /* Responsive header */
+            gap: 10px;
         }
         
         .header-title-container { display: flex; align-items: center; gap: 15px; }
         .header-logo {
             width: 50px; height: 50px; border-radius: 50%; background-color: var(--white);
             padding: 5px; box-shadow: var(--shadow-sm); display: flex; align-items: center;
-            justify-content: center; font-size: 1.8rem; color: var(--primary);
+            justify-content: center; font-size: 1.8rem; color: var(--primary-gradient-2);
         }
-        .app-title { font-size: 1.4rem; font-weight: 600; }
-        .header-info { text-align: right; font-size: 0.9rem; }
+        .app-title { font-size: 1.3rem; font-weight: 600; }
+        .header-info { text-align: right; font-size: 0.85rem; }
         .header-info p { margin: 2px 0; }
+        .header-info a { color: var(--white); text-decoration: none; font-weight: 500;}
+        .header-info a:hover { text-decoration: underline; }
+
+        .dev-info {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
         #shiftStatusContainer {
             background-color: rgba(255,255,255,0.2); padding: 5px 8px; border-radius: 20px;
             margin-top: 5px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem;
@@ -88,16 +107,16 @@
         }
 
         /* Service Grid */
-        .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
         .service-card {
             background: var(--white); border-radius: var(--rounded-sm); padding: 12px;
             box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid #eee;
             cursor: pointer; position: relative; display: flex; flex-direction: column;
             align-items: center; text-align: center;
         }
-        .service-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--primary); }
-        .service-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 8px; }
-        .service-name { font-weight: 600; margin-bottom: 4px; }
+        .service-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--primary-gradient-2); }
+        .service-icon { font-size: 2.5rem; color: var(--primary-gradient-2); margin-bottom: 8px; }
+        .service-name { font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
         .service-price { color: var(--dark); font-weight: 500; }
         .service-duration { font-size: 0.8rem; color: var(--gray); }
 
@@ -118,11 +137,11 @@
         .summary-container { margin-top: 16px; padding-top: 16px; border-top: 1px dashed #ddd; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .total-row {
-            font-weight: 600; font-size: 1.1rem; color: var(--primary);
+            font-weight: 600; font-size: 1.1rem; color: var(--primary-gradient-2);
             margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;
         }
         .btn {
-            display: inline-block; padding: 12px 20px; background-color: var(--primary); color: var(--white);
+            display: inline-block; padding: 12px 20px; background-color: var(--primary-gradient-2); color: var(--white);
             border: none; border-radius: var(--rounded-sm); cursor: pointer; font-size: 1rem;
             font-weight: 500; text-align: center; transition: all 0.2s; width: 100%;
         }
@@ -136,13 +155,13 @@
         .btn-info { background-color: var(--info); } .btn-info:hover { background-color: #0056b3; }
 
         /* Tab Styles */
-        .main-tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 16px; background: var(--white); border-radius: var(--rounded) var(--rounded) 0 0; padding: 0 10px; box-shadow: var(--shadow-sm); overflow-x: auto; }
+        .main-tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 16px; background: var(--white); border-radius: var(--rounded) var(--rounded) 0 0; padding: 0 10px; box-shadow: var(--shadow-sm); overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .main-tab { padding: 14px 16px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; text-align: center; font-weight: 500; color: var(--gray); flex-shrink: 0; }
-        .main-tab.active { border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: 600; }
+        .main-tab.active { border-bottom: 3px solid var(--primary-gradient-2); color: var(--primary-gradient-2); font-weight: 600; }
         .main-tab-content { display: none; } .main-tab-content.active { display: block; animation: fadeIn 0.4s; }
         .modal .tabs { display: flex; border-bottom: 1px solid #ddd; }
         .modal .tab { padding: 12px 16px; cursor: pointer; border-bottom: 3px solid transparent; flex: 1; text-align: center; }
-        .modal .tab.active { border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: 600; }
+        .modal .tab.active { border-bottom: 3px solid var(--primary-gradient-2); color: var(--primary-gradient-2); font-weight: 600; }
         .modal .tab-content { display: none; padding-top: 16px; } .modal .tab-content.active { display: block; }
 
         /* Modal Styles */
@@ -160,7 +179,7 @@
         .modal-title { font-size: 1.2rem; font-weight: 600; }
         .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray); }
         .modal-body { padding: 16px; overflow-y: auto; flex-grow: 1; }
-        .modal-footer { padding: 16px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 8px; }
+        .modal-footer { padding: 16px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 
         /* Form & Login Styles */
         .form-group { margin-bottom: 16px; }
@@ -174,10 +193,10 @@
         .login-container {
             width: 100%; max-width: 400px; margin: 0; background: var(--white);
             border-radius: var(--rounded-lg); padding: 32px; box-shadow: var(--shadow);
-            border-top: 5px solid var(--primary); animation: fadeIn 0.4s;
+            border-top: 5px solid var(--primary-gradient-2); animation: fadeIn 0.4s;
         }
         .login-header { text-align: center; margin-bottom: 24px; }
-        .login-logo { font-size: 3.5rem; color: var(--primary); margin-bottom: 12px; line-height: 1; }
+        .login-logo { font-size: 3.5rem; color: var(--primary-gradient-2); margin-bottom: 12px; line-height: 1; }
         .login-title { font-size: 2rem; color: var(--dark); font-weight: 700; }
         .login-header p { color: var(--gray); }
 
@@ -198,7 +217,8 @@
         .search-container { position: relative; margin-bottom: 16px; }
         .search-container i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray); }
         .search-input { width: 100%; padding: 12px 16px 12px 40px; border: 1px solid #ddd; border-radius: var(--rounded-sm); font-size: 1rem; }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem;}
+        .data-table-wrapper { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 600px; }
         .data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
         .data-table th { background-color: var(--light); font-weight: 600; }
         .data-table .action-buttons { display: flex; gap: 8px; }
@@ -208,7 +228,7 @@
         /* Order Management */
         .order-management-container { max-height: 70vh; overflow-y: auto; }
         .order-card {
-            background: #fff; border-left: 5px solid var(--primary); border-radius: var(--rounded-sm);
+            background: #fff; border-left: 5px solid var(--primary-gradient-2); border-radius: var(--rounded-sm);
             padding: 12px; box-shadow: var(--shadow-sm); margin-bottom: 12px;
         }
         .order-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
@@ -258,7 +278,97 @@
         }
         .receipt-terms { font-size: 9px; text-align: center; margin-top: 10px; }
 
+        /* Quick Action Button (FAB) - NEW */
+        .quick-action-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        .quick-action-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-gradient-1), var(--primary-gradient-3));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .quick-action-btn.active { transform: rotate(45deg); }
+        .quick-action-options {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease-in-out;
+        }
+        .quick-action-options.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .quick-action-options .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: right;
+            cursor: pointer;
+        }
+        .quick-action-options .option .label {
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: var(--rounded-sm);
+            box-shadow: var(--shadow-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .quick-action-options .option .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--white);
+            color: var(--primary-gradient-2);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Smart Payment Buttons - NEW */
+        .smart-payment-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .smart-payment-btn {
+            flex-grow: 1;
+            background-color: var(--light);
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+
         @media (min-width: 992px) { .app-layout { display: grid; grid-template-columns: 1fr 380px; gap: 16px; } }
+        @media (max-width: 600px) {
+            .app-header { flex-direction: column; align-items: flex-start; }
+            .header-info { text-align: left; margin-top: 10px; }
+            .main-tab { padding: 12px 10px; font-size: 0.9rem; }
+            .d-grid-2 { grid-template-columns: 1fr; }
+            .modal-footer { justify-content: center; }
+        }
         @media print {
             body, .modal { background: #fff !important; }
             body * { visibility: hidden; }
@@ -316,7 +426,11 @@
                     <span id="shiftStatusBadge">Tidak Ada Shift Aktif</span>
                     <button id="shiftActionBtn" class="btn btn-sm btn-warning">Mulai Shift</button>
                 </div>
-                <p><a href="#" id="logoutBtn" style="color: white; margin-top: 5px; display: inline-block;">Logout</a></p>
+                <div class="dev-info">
+                    <a href="https://www.anekamarket.my.id" target="_blank"><i class="fas fa-globe"></i> www.anekamarket.my.id</a> | 
+                    <a href="https://wa.me/6287865614222" target="_blank"><i class="fab fa-whatsapp"></i> 087865614222</a>
+                </div>
+                <p><a href="#" id="logoutBtn" style="margin-top: 5px; display: inline-block;">Logout</a></p>
             </div>
         </header>
 
@@ -426,6 +540,20 @@
             <p>&copy; <span id="currentYear"></span> L-K LAUNDRY - Powered by Lentera Karya Situbondo</p>
         </footer>
     </div>
+    
+    <div class="quick-action-menu no-print">
+        <div class="quick-action-options" id="quickActionOptions">
+             <div class="option" id="quickActionAddExpense">
+                <span class="label">Catat Pengeluaran</span>
+                <span class="icon"><i class="fas fa-file-invoice-dollar"></i></span>
+            </div>
+            <div class="option" id="quickActionNewOrder">
+                <span class="label">Transaksi Baru</span>
+                <span class="icon"><i class="fas fa-plus-circle"></i></span>
+            </div>
+        </div>
+        <button class="quick-action-btn" id="quickActionBtn"><i class="fas fa-plus"></i></button>
+    </div>
 
     <div id="serviceModal" class="modal"></div>
     <div id="customerModal" class="modal"></div>
@@ -446,11 +574,12 @@
             <div class="modal-header"><h3 class="modal-title">Proses Pembayaran</h3><button class="modal-close">&times;</button></div>
             <div class="modal-body">
                 <input type="hidden" id="paymentOrderId">
-                <div class="text-center mb-3"><p class="mb-0">Sisa Tagihan</p><h2 id="paymentTotal" class="text-primary font-weight-bold">Rp 0</h2></div>
+                <div class="text-center mb-3"><p class="mb-0">Sisa Tagihan</p><h2 id="paymentTotal" class="text-primary font-weight-bold" style="color: var(--primary-gradient-2) !important;">Rp 0</h2></div>
                 <div class="form-group">
                     <label class="form-label">Metode Pembayaran</label>
                     <select id="paymentMethod" class="form-control"><option value="cash">Tunai</option><option value="transfer">Transfer</option></select>
                 </div>
+                 <div id="smartPaymentContainer" class="smart-payment-container"></div>
                 <div class="form-group"><label class="form-label">Jumlah Pembayaran</label><input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah" min="0"></div>
                 <div id="changeContainer" style="display: none;"><div class="summary-row total-row" style="border-top: 1px solid #ddd;"><span>Kembalian:</span><span id="paymentChange">Rp 0</span></div></div>
             </div>
@@ -594,6 +723,7 @@
             $('#paymentAmount').on('input', calculateChange);
             
             setupAdminButtonListeners();
+            setupQuickActionMenu(); // NEW
 
             $(document).on('submit', '#customerForm', saveCustomer);
             $('#addCustomerBtn').click(() => openCustomerModal(null, true));
@@ -603,6 +733,11 @@
             $('#printReceiptBtn').click(() => printElement('#receiptContent'));
             $('#downloadReceiptPdfBtn').click(downloadReceiptAsPdf);
             $('#viewPickedUpHistoryBtn').click(openPickedUpHistoryModal);
+            
+            $(document).on('click', '.smart-payment-btn', function() {
+                const amount = $(this).data('amount');
+                $('#paymentAmount').val(amount).trigger('input');
+            });
         });
 
         function initializeApp() {
@@ -642,6 +777,8 @@
                      $('#resetDataBtn').closest('div').show();
                 }
             }
+             // Permissions for quick action menu
+            checkPermission('manageExpenses') ? $('#quickActionAddExpense').show() : $('#quickActionAddExpense').hide();
         }
 
         function handleLogin(e) {
@@ -678,6 +815,7 @@
             $(`[data-tab="${tabId}"]`).addClass('active');
             $('.main-tab-content').removeClass('active');
             $(`#${tabId}`).addClass('active');
+            window.scrollTo(0, 0); // Scroll to top on tab switch
         }
 
         function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY')); }
@@ -770,17 +908,18 @@
             const $select = $('#customerSelect').empty();
             $select.append('<option value="">-- Pelanggan Umum --</option>');
             customers.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
-                $select.append(`<option value="${c.id}">${c.name} - ${c.phone}</option>`);
+                $select.append(`<option value="${c.id}">${c.name} - ${c.phone} (ID: ${c.id})</option>`);
             });
         }
         
         function openCustomerModal(customer = null, fromOrderPage = false) {
             const modalHTML = `
                 <div class="modal-content">
-                    <div class="modal-header"><h3 class="modal-title">${customer ? 'Edit' : 'Tambah'} Pelanggan</h3><button type="button" class="modal-close">&times;</button></div>
+                    <div class="modal-header"><h3 class="modal-title">${customer ? 'Edit Pelanggan' : 'Tambah Pelanggan Baru'}</h3><button type="button" class="modal-close">&times;</button></div>
                     <form id="customerForm">
                         <div class="modal-body">
                             <input type="hidden" id="customerId" value="${customer ? customer.id : ''}">
+                            ${customer ? `<p><strong>ID Pelanggan:</strong> ${customer.id}</p>` : ''}
                             <div class="form-group"><label class="form-label">Nama</label><input type="text" id="customerName" class="form-control" required value="${customer ? customer.name : ''}"></div>
                             <div class="form-group"><label class="form-label">No. Telepon/WA</label><input type="tel" id="customerPhone" class="form-control" required value="${customer ? customer.phone : ''}"></div>
                             <div class="form-group"><label class="form-label">Alamat</label><textarea id="customerAddress" class="form-control">${customer ? (customer.address || '') : ''}</textarea></div>
@@ -1032,6 +1171,26 @@
         }
         
         // --- PAYMENT ---
+        function getSuggestedPayments(amount) {
+            const suggestions = new Set(); // Use a Set to avoid duplicates
+            const denominations = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
+            
+            // Suggest the next highest denominations
+            for (const denom of denominations) {
+                if (denom > amount) {
+                    suggestions.add(denom);
+                }
+            }
+            
+            // If the amount is small, suggest more options
+            if(amount < 10000) suggestions.add(10000);
+            if(amount < 20000) suggestions.add(20000);
+            if(amount < 50000) suggestions.add(50000);
+
+            // Return sorted suggestions, limited to a few options
+            return Array.from(suggestions).sort((a,b) => a-b).slice(0, 4);
+        }
+
         function openPaymentModal(orderId) {
             const order = orders.find(o => o.id === orderId);
             if(!order) return;
@@ -1041,8 +1200,22 @@
             $('#paymentTotal').text(formatCurrency(remaining));
             $('#paymentAmount').val(remaining).attr('min', 0);
             $('#changeContainer').hide();
+
+            // Smart Payment Buttons Logic - NEW
+            const $smartContainer = $('#smartPaymentContainer').empty();
+            if ($('#paymentMethod').val() === 'cash') {
+                const suggestions = getSuggestedPayments(remaining);
+                if (suggestions.length > 0) {
+                     $smartContainer.append('<label class="form-label" style="width:100%; text-align:center; margin-bottom: 5px;">Uang Pas:</label>');
+                }
+                suggestions.forEach(value => {
+                    $smartContainer.append(`<button class="btn btn-sm smart-payment-btn" data-amount="${value}">${formatCurrency(value, '')}</button>`);
+                });
+            }
+
             $('#paymentModal').css('display', 'flex');
         }
+
 
         function completePayment() {
             const orderId = $('#paymentOrderId').val();
@@ -1109,7 +1282,7 @@
                         <div class="info-row"><span>Tanggal</span> <span>: ${moment(order.date).format('DD/MM/YY HH:mm')}</span></div>
                         <div class="info-row"><span>Selesai</span> <span>: ${order.dueDate ? moment(order.dueDate).format('DD/MM/YY HH:mm') : '-'}</span></div>
                         <div class="info-row"><span>Operator</span> <span>: ${order.operator.name}</span></div>
-                        <div class="info-row"><span>Pelanggan</span> <span>: ${customer ? customer.name : 'Umum'}</span></div>
+                        <div class="info-row"><span>Pelanggan</span> <span>: ${customer ? `${customer.name} (ID: ${customer.id})` : 'Umum'}</span></div>
                     </div>
                     <div id="receiptItemsContainer">${itemsHTML}</div>
                     <div class="receipt-total">
@@ -1149,8 +1322,8 @@
                     <div class="modal-header"><h3 class="modal-title">Manajemen Pengeluaran</h3><button class="modal-close">&times;</button></div>
                     <div class="modal-body" style="padding:0 16px 16px 16px">
                         <div class="tabs">
-                            <div class="tab active" data-tab="addExpense">Tambah Pengeluaran</div>
-                            <div class="tab" data-tab="listExpense">Daftar Pengeluaran</div>
+                            <div class="tab active" data-tab="addExpenseTab">Tambah Pengeluaran</div>
+                            <div class="tab" data-tab="listExpenseTab">Daftar Pengeluaran</div>
                         </div>
                         <div class="tab-content active" id="addExpenseTab">
                             <form id="expenseForm">
@@ -1160,7 +1333,7 @@
                                 <button type="submit" class="btn btn-success">Simpan</button>
                             </form>
                         </div>
-                        <div class="tab-content" id="listExpenseTab"><div id="expenseListContainer" style="max-height: 50vh; overflow-y: auto;"></div></div>
+                        <div class="tab-content" id="listExpenseTab"><div id="expenseListContainer" class="data-table-wrapper" style="max-height: 50vh; overflow-y: auto;"></div></div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-warning modal-close-btn">Tutup</button></div>
                 </div>`;
@@ -1217,7 +1390,7 @@
                     <div class="modal-header"><h3 class="modal-title">Histori Transaksi</h3><button class="modal-close">&times;</button></div>
                     <div class="modal-body">
                          <div class="search-container"><i class="fas fa-search"></i><input type="text" id="historySearchInput" class="search-input" placeholder="Cari No. Nota atau nama pelanggan..."></div>
-                        <div id="historyListContainer" style="max-height: 60vh; overflow-y: auto;"></div>
+                        <div id="historyListContainer" class="data-table-wrapper" style="max-height: 60vh; overflow-y: auto;"></div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-warning modal-close-btn">Tutup</button></div>
                 </div>`;
@@ -1261,9 +1434,9 @@
                         <div class="filter-container">
                              <input type="date" id="pickedUpStartDate" class="form-control">
                              <input type="date" id="pickedUpEndDate" class="form-control">
-                             <button id="filterPickedUpBtn" class="btn btn-sm btn-primary">Filter</button>
+                             <button id="filterPickedUpBtn" class="btn btn-sm">Filter</button>
                         </div>
-                        <div id="pickedUpHistoryContainer" style="max-height: 60vh; overflow-y: auto;"></div>
+                        <div id="pickedUpHistoryContainer" class="data-table-wrapper" style="max-height: 60vh; overflow-y: auto;"></div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-warning modal-close-btn">Tutup</button></div>
                 </div>`;
@@ -1378,7 +1551,7 @@
                             <div class="tab" data-tab="securityTab">Keamanan</div>
                         </div>
                         <div id="usersTab" class="tab-content active">
-                            <div id="usersListContainer" style="max-height: 50vh; overflow-y: auto;"></div>
+                            <div id="usersListContainer" class="data-table-wrapper" style="max-height: 50vh; overflow-y: auto;"></div>
                             <button id="addUserBtn" class="btn btn-success btn-sm mt-3">Tambah Pengguna</button>
                         </div>
                         <div id="rolesTab" class="tab-content">
@@ -1673,6 +1846,34 @@
             $(document).on('click', '.delete-user', function() { deleteUser($(this).data('id')); });
             $(document).on('click', '#saveRolesBtn', saveRoles);
         }
+
+        // --- NEW - QUICK ACTION MENU ---
+        function setupQuickActionMenu() {
+            const $btn = $('#quickActionBtn');
+            const $options = $('#quickActionOptions');
+            $btn.on('click', function() {
+                $btn.toggleClass('active');
+                $options.toggleClass('active');
+            });
+
+            $('#quickActionNewOrder').on('click', () => {
+                switchMainTab('newTransactionTab');
+                $btn.removeClass('active');
+                $options.removeClass('active');
+            });
+             $('#quickActionAddExpense').on('click', () => {
+                openExpenseModal();
+                $btn.removeClass('active');
+                $options.removeClass('active');
+            });
+
+             $(document).on('click', function(event) {
+                if (!$(event.target).closest('.quick-action-menu').length) {
+                    $btn.removeClass('active');
+                    $options.removeClass('active');
+                }
+            });
+        }
         
         function formatCurrency(amount, prefix = 'Rp ') { return prefix + (amount != null ? Math.round(amount) : 0).toLocaleString('id-ID'); }
         function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
@@ -1870,8 +2071,8 @@
                 <div class="modal-content" style="max-width: 700px;">
                     <div class="modal-header"><h3 class="modal-title">Kelola Pelanggan</h3><button class="modal-close">&times;</button></div>
                     <div class="modal-body">
-                        <div class="search-container"><i class="fas fa-search"></i><input type="text" id="customerSearchInput" class="search-input" placeholder="Cari nama atau no. telepon..."></div>
-                        <div id="customersListContainer" style="max-height: 50vh; overflow-y: auto;"></div>
+                        <div class="search-container"><i class="fas fa-search"></i><input type="text" id="customerSearchInput" class="search-input" placeholder="Cari ID, nama, no. telepon, atau alamat..."></div>
+                        <div id="customersListContainer" class="data-table-wrapper" style="max-height: 50vh; overflow-y: auto;"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-warning modal-close-btn">Tutup</button>
@@ -1885,14 +2086,22 @@
         function loadCustomersForManagement(searchTerm = '') {
             const $list = $('#customersListContainer').empty();
             const lowerTerm = searchTerm.toLowerCase();
-            const filtered = customers.filter(c => !searchTerm || c.name.toLowerCase().includes(lowerTerm) || c.phone.includes(lowerTerm));
+            const filtered = customers.filter(c => 
+                !searchTerm || 
+                c.name.toLowerCase().includes(lowerTerm) || 
+                c.phone.includes(lowerTerm) ||
+                c.id.toLowerCase().includes(lowerTerm) || // Search by ID
+                (c.address && c.address.toLowerCase().includes(lowerTerm)) // Smart Search by address
+            );
+
             if (filtered.length === 0) return $list.html('<div class="empty-state"><p>Tidak ada data pelanggan.</p></div>');
-            const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Telepon</th><th>Aksi</th></tr></thead></table>');
+            const table = $('<table class="data-table"><thead><tr><th>ID</th><th>Nama</th><th>Telepon</th><th>Aksi</th></tr></thead></table>');
             const tbody = $('<tbody></tbody>');
             filtered.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
                 const formattedPhone = formatPhoneNumberForWhatsApp(c.phone);
                 tbody.append(`
                     <tr>
+                        <td>${c.id}</td>
                         <td>${c.name}</td>
                         <td><a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link">${c.phone} <i class="fab fa-whatsapp"></i></a></td>
                         <td class="action-buttons">
