@@ -200,6 +200,8 @@
         .data-table th, .data-table td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
         .data-table th { background-color: var(--light); font-weight: 600; }
         .data-table .action-buttons { display: flex; gap: 8px; }
+        .data-table .whatsapp-link { color: var(--success); text-decoration: none; font-weight: 500; }
+        .data-table .whatsapp-link:hover { text-decoration: underline; }
         
         /* Order Management */
         .order-management-container { max-height: 70vh; overflow-y: auto; }
@@ -397,6 +399,7 @@
 
     <div id="serviceModal" class="modal"></div>
     <div id="customerModal" class="modal"></div>
+    <div id="userModal" class="modal"></div>
     <div id="manageCustomersModal" class="modal"></div>
     <div id="manageCategoriesModal" class="modal"></div>
     <div id="expenseModal" class="modal"></div>
@@ -551,6 +554,7 @@
 
             $('#shiftActionBtn').click(handleShiftAction);
             $('#generateReportBtn').click(generateReport);
+            $('#printReceiptBtn').click(() => printElement('#receiptContent'));
         });
 
         function initializeApp() {
@@ -608,7 +612,7 @@
             const $grid = $('#serviceGrid').empty();
             if(services.length === 0) return $grid.html('<div class="empty-state"><i class="fas fa-box-open"></i><p>Belum ada layanan. Tambahkan di menu Pengaturan.</p></div>');
             
-            services.forEach(service => {
+            services.sort((a,b) => a.name.localeCompare(b.name)).forEach(service => {
                 const icon = service.icon || 'fas fa-tshirt';
                 $grid.append(`
                     <div class="service-card" data-id="${service.id}">
@@ -673,7 +677,8 @@
             if (!serviceData.name || !serviceData.price) return showToast('Nama dan Harga wajib diisi', 'error');
 
             if (id) {
-                services[services.findIndex(s => s.id === id)] = serviceData;
+                const serviceIndex = services.findIndex(s => s.id === id);
+                if (serviceIndex > -1) services[serviceIndex] = serviceData;
             } else {
                 services.unshift(serviceData);
             }
@@ -735,7 +740,7 @@
         function loadCustomersForSelect() {
             const $select = $('#customerSelect').empty();
             $select.append('<option value="">-- Pelanggan Umum --</option>');
-            customers.forEach(c => {
+            customers.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
                 $select.append(`<option value="${c.id}">${c.name} - ${c.phone}</option>`);
             });
         }
@@ -748,7 +753,7 @@
                         <div class="modal-body">
                             <input type="hidden" id="customerId" value="${customer ? customer.id : ''}">
                             <div class="form-group"><label class="form-label">Nama</label><input type="text" id="customerName" class="form-control" required value="${customer ? customer.name : ''}"></div>
-                            <div class="form-group"><label class="form-label">No. Telepon</label><input type="tel" id="customerPhone" class="form-control" required value="${customer ? customer.phone : ''}"></div>
+                            <div class="form-group"><label class="form-label">No. Telepon/WA</label><input type="tel" id="customerPhone" class="form-control" required value="${customer ? customer.phone : ''}"></div>
                             <div class="form-group"><label class="form-label">Alamat</label><textarea id="customerAddress" class="form-control">${customer ? (customer.address || '') : ''}</textarea></div>
                         </div>
                         <div class="modal-footer">
@@ -757,22 +762,11 @@
                         </div>
                     </form>
                 </div>`;
-            $('#customerModal').html(modalHTML).css('display', 'flex');
-            
-            if (fromOrderPage) {
-                $('#customerForm').off('submit').on('submit', function(e) {
-                    e.preventDefault();
-                    const newCustomerId = saveCustomer(e, true);
-                    if (newCustomerId) {
-                        loadCustomersForSelect();
-                        $('#customerSelect').val(newCustomerId);
-                        $('#customerModal').hide().empty();
-                    }
-                });
-            }
+            const targetModal = fromOrderPage ? '#customerModal' : '#manageCustomersModal';
+            $(targetModal).html(modalHTML).css('display', 'flex');
         }
 
-        function saveCustomer(e, returnId = false) {
+        function saveCustomer(e) {
             e.preventDefault();
             const id = $('#customerId').val();
             const customerData = {
@@ -782,21 +776,26 @@
             };
             if (!customerData.name || !customerData.phone) {
                 showToast('Nama dan Telepon wajib diisi.', 'error');
-                return null;
+                return;
             }
             if (id) {
-                customers[customers.findIndex(c => c.id === id)] = customerData;
+                const custIndex = customers.findIndex(c => c.id === id);
+                if(custIndex > -1) customers[custIndex] = customerData;
             } else {
                 customers.unshift(customerData);
             }
             saveData(STORAGE_KEYS.CUSTOMERS, customers);
-            if (returnId) return customerData.id;
             
             showToast('Pelanggan berhasil disimpan.', 'success');
-            $('#customerModal').hide().empty();
+            
             if ($('#manageCustomersModal').is(':visible')) {
-                loadCustomersForManagement();
+                openManageCustomersModal(); // Refresh the management list
+            } else {
+                $('#customerModal').hide().empty();
             }
+
+            loadCustomersForSelect();
+            if(!id) $('#customerSelect').val(customerData.id);
         }
 
         function openManageCustomersModal() {
@@ -823,11 +822,12 @@
             if (filtered.length === 0) return $list.html('<div class="empty-state"><p>Tidak ada data pelanggan.</p></div>');
             const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Telepon</th><th>Aksi</th></tr></thead></table>');
             const tbody = $('<tbody></tbody>');
-            filtered.forEach(c => {
+            filtered.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
+                const formattedPhone = formatPhoneNumberForWhatsApp(c.phone);
                 tbody.append(`
                     <tr>
                         <td>${c.name}</td>
-                        <td>${c.phone}</td>
+                        <td><a href="https://wa.me/${formattedPhone}" target="_blank" class="whatsapp-link">${c.phone} <i class="fab fa-whatsapp"></i></a></td>
                         <td class="action-buttons">
                             <button class="btn btn-sm btn-info edit-customer" data-id="${c.id}"><i class="fas fa-edit"></i></button>
                             <button class="btn btn-sm btn-danger delete-customer" data-id="${c.id}"><i class="fas fa-trash"></i></button>
@@ -915,7 +915,7 @@
             
             const newOrder = {
                 id: 'ORD' + Date.now(), date: new Date().toISOString(),
-                ...newTransaction, status: 'antrian', paymentStatus: 'belum-lunas', paidAmount: 0,
+                ...newTransaction, status: 'antrian', paymentStatus: 'belum-lunas', paidAmount: 0, paymentMethod: null,
                 operator: { id: currentUser.id, name: currentUser.name },
                 shiftId: activeShift ? activeShift.id : null
             };
@@ -958,7 +958,7 @@
             
             if (filteredOrders.length === 0) return $list.html('<div class="empty-state"><i class="fas fa-check-circle"></i><p>Tidak ada order aktif.</p></div>');
 
-            filteredOrders.forEach(order => {
+            filteredOrders.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(order => {
                 const customer = customers.find(c => c.id === order.customerId);
                 const paymentStatusClass = order.paymentStatus === 'lunas' ? 'status-lunas' : 'status-belum-lunas';
                 $list.append(`
@@ -1035,6 +1035,7 @@
         function completePayment() {
             const orderId = $('#paymentOrderId').val();
             const amount = parseFloat($('#paymentAmount').val());
+            const method = $('#paymentMethod').val();
             const orderIndex = orders.findIndex(o => o.id === orderId);
             if(orderIndex === -1) return;
             
@@ -1044,6 +1045,7 @@
             
             order.paidAmount = order.total;
             order.paymentStatus = 'lunas';
+            order.paymentMethod = method; // Save payment method
             
             saveData(STORAGE_KEYS.ORDERS, orders);
             loadOrderManagement();
@@ -1122,10 +1124,10 @@
                     <div class="modal-header"><h3 class="modal-title">Manajemen Pengeluaran</h3><button class="modal-close">&times;</button></div>
                     <div class="modal-body" style="padding:0 16px 16px 16px">
                         <div class="tabs">
-                            <div class="tab active" data-tab="add">Tambah Pengeluaran</div>
-                            <div class="tab" data-tab="list">Daftar Pengeluaran</div>
+                            <div class="tab active" data-tab="addExpense">Tambah Pengeluaran</div>
+                            <div class="tab" data-tab="listExpense">Daftar Pengeluaran</div>
                         </div>
-                        <div class="tab-content active" id="addTab">
+                        <div class="tab-content active" id="addExpenseTab">
                             <form id="expenseForm">
                                 <div class="form-group"><label class="form-label">Nama Pengeluaran</label><input type="text" id="expenseName" class="form-control" required></div>
                                 <div class="form-group"><label class="form-label">Jumlah (Rp)</label><input type="number" id="expenseAmount" class="form-control" required></div>
@@ -1133,7 +1135,7 @@
                                 <button type="submit" class="btn btn-success">Simpan</button>
                             </form>
                         </div>
-                        <div class="tab-content" id="listTab"><div id="expenseListContainer" style="max-height: 50vh; overflow-y: auto;"></div></div>
+                        <div class="tab-content" id="listExpenseTab"><div id="expenseListContainer" style="max-height: 50vh; overflow-y: auto;"></div></div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-warning modal-close-btn">Tutup</button></div>
                 </div>`;
@@ -1160,7 +1162,7 @@
             if (expenses.length === 0) return $list.html('<div class="empty-state"><p>Belum ada pengeluaran tercatat.</p></div>');
             const table = $('<table class="data-table"><thead><tr><th>Tanggal</th><th>Nama</th><th>Jumlah</th><th>Aksi</th></tr></thead></table>');
             const tbody = $('<tbody></tbody>');
-            expenses.forEach(exp => {
+            expenses.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(exp => {
                 tbody.append(`
                     <tr>
                         <td>${moment(exp.date).format('DD/MM/YY')}</td>
@@ -1208,7 +1210,7 @@
             
             const table = $('<table class="data-table"><thead><tr><th>Nota</th><th>Tanggal</th><th>Pelanggan</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead></table>');
             const tbody = $('<tbody></tbody>');
-            [...filtered].reverse().forEach(o => { // Show newest first
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(o => { 
                 const customer = customers.find(c => c.id === o.customerId);
                 tbody.append(`
                     <tr>
@@ -1229,10 +1231,10 @@
             const end = moment($('#reportEndDate').val()).endOf('day');
             if (!start.isValid() || !end.isValid()) return showToast('Pilih rentang tanggal yang valid', 'error');
 
-            const revenueOrders = orders.filter(o => o.paymentStatus === 'lunas' && moment(o.date).isBetween(start, end, null, '[]'));
+            const revenueOrders = orders.filter(o => o.paymentStatus === 'lunas' && moment(o.date).isBetween(start, end, undefined, '[]'));
             const totalRevenue = revenueOrders.reduce((sum, o) => sum + o.total, 0);
 
-            const periodExpenses = expenses.filter(e => moment(e.date).isBetween(start, end, null, '[]'));
+            const periodExpenses = expenses.filter(e => moment(e.date).isBetween(start, end, undefined, '[]'));
             const totalExpense = periodExpenses.reduce((sum, e) => sum + e.amount, 0);
 
             const profit = totalRevenue - totalExpense;
@@ -1290,13 +1292,13 @@
                 const modalHTML = `
                 <div class="modal-content" style="max-width: 600px;">
                     <div class="modal-header"><h3 class="modal-title">Panel Kontrol</h3><button class="modal-close">&times;</button></div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="padding:0 16px 16px 16px">
                          <div class="tabs">
                             <div class="tab active" data-tab="users">Pengguna</div>
                             <div class="tab" data-tab="security">Keamanan</div>
                         </div>
                         <div id="usersTab" class="tab-content active">
-                            <div id="usersListContainer"></div>
+                            <div id="usersListContainer" style="max-height: 50vh; overflow-y: auto;"></div>
                             <button id="addUserBtn" class="btn btn-success btn-sm mt-3">Tambah Pengguna</button>
                         </div>
                          <div id="securityTab" class="tab-content">
@@ -1314,8 +1316,111 @@
                 loadUsersForManagement();
             });
         }
+
+        // --- USER MANAGEMENT (IMPROVED) ---
+        function openUserModal(user = null) {
+            const modalHTML = `
+                <div class="modal-content">
+                    <div class="modal-header"><h3 class="modal-title">${user ? 'Edit' : 'Tambah'} Pengguna</h3><button class="modal-close">&times;</button></div>
+                    <form id="userForm">
+                        <div class="modal-body">
+                            <input type="hidden" id="userId" value="${user ? user.id : ''}">
+                            <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="userName" class="form-control" value="${user ? user.name : ''}" required></div>
+                            <div class="form-group"><label class="form-label">Username</label><input type="text" id="userUsername" class="form-control" value="${user ? user.username : ''}" required></div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="userPassword" class="form-control" placeholder="${user ? 'Kosongkan jika tidak diubah' : ''}" ${user ? '' : 'required'}>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <select id="userRole" class="form-control" required>
+                                    <option value="cashier">Cashier</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning modal-close-btn">Batal</button>
+                            <button type="submit" class="btn btn-success">Simpan</button>
+                        </div>
+                    </form>
+                </div>`;
+            $('#userModal').html(modalHTML).css('display', 'flex');
+            if (user) {
+                $('#userRole').val(user.role);
+            }
+        }
         
-        function loadUsersForManagement() { /* similar logic to customers */ }
+        function saveUser(e) {
+            e.preventDefault();
+            const id = $('#userId').val();
+            const username = $('#userUsername').val().trim();
+            const password = $('#userPassword').val();
+            
+            // Check for unique username on new user or when username is changed
+            if (users.some(u => u.username.toLowerCase() === username.toLowerCase() && u.id !== id)) {
+                return showToast('Username sudah digunakan.', 'error');
+            }
+
+            const userData = {
+                id: id || 'U' + Date.now(),
+                name: $('#userName').val().trim(),
+                username: username,
+                role: $('#userRole').val(),
+                password: '' // Placeholder
+            };
+
+            if (id) { // Editing existing user
+                const userIndex = users.findIndex(u => u.id === id);
+                if (userIndex === -1) return showToast('User tidak ditemukan', 'error');
+                
+                if (password) {
+                    userData.password = CryptoJS.SHA256(password).toString();
+                } else {
+                    userData.password = users[userIndex].password; // Keep old password
+                }
+                users[userIndex] = userData;
+            } else { // New user
+                userData.password = CryptoJS.SHA256(password).toString();
+                users.unshift(userData);
+            }
+            
+            saveData(STORAGE_KEYS.USERS, users);
+            showToast('Pengguna berhasil disimpan', 'success');
+            $('#userModal').hide().empty();
+            loadUsersForManagement();
+        }
+        
+        function deleteUser(id) {
+            if (id === currentUser.id) return showToast('Anda tidak dapat menghapus akun Anda sendiri.', 'error');
+            showConfirmation('Hapus Pengguna', 'Anda yakin ingin menghapus pengguna ini?', () => {
+                users = users.filter(u => u.id !== id);
+                saveData(STORAGE_KEYS.USERS, users);
+                loadUsersForManagement();
+            }, 'danger');
+        }
+
+        function loadUsersForManagement() { 
+            const $list = $('#usersListContainer').empty();
+            if (users.length === 0) return $list.html('<div class="empty-state"><p>Tidak ada data pengguna.</p></div>');
+            const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Aksi</th></tr></thead></table>');
+            const tbody = $('<tbody></tbody>');
+            users.forEach(user => {
+                tbody.append(`
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.username}</td>
+                        <td><span style="text-transform: capitalize;">${user.role}</span></td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-info edit-user" data-id="${user.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}" ${user.id === currentUser.id ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`);
+            });
+            table.append(tbody);
+            $list.html(table);
+        }
+        
         function saveSecurityPasswords(e) {
             e.preventDefault();
             const itemPass = $('#itemSecurityCode').val();
@@ -1363,7 +1468,7 @@
         function backupData() {
             const backupData = {};
             Object.values(STORAGE_KEYS).forEach(key => {
-                if (key !== STORAGE_KEYS.USER) { // Don't backup logged in user state
+                if (key !== STORAGE_KEYS.USER) { 
                     backupData[key] = localStorage.getItem(key);
                 }
             });
@@ -1413,6 +1518,7 @@
             $('#historyBtn').click(openHistoryModal);
             $('#manageStoreInfoBtn').click(openManageStoreInfoModal);
             $('#controlPanelBtn').click(openControlPanel);
+            $('#recapReportBtn').click(openRecapReportModal);
             $('#backupDataBtn').click(backupData);
             $('#restoreFile').change(function() { restoreFromFile(this.files[0]); $(this).val(''); });
             $('#resetDataBtn').click(() => {
@@ -1422,6 +1528,7 @@
             });
             
             // Dynamic bindings
+            $(document).on('submit', '#serviceForm', saveService); // <-- FIX: Added this listener
             $(document).on('click', '.modal-close, .modal-close-btn', function() { $(this).closest('.modal').hide().empty(); });
             $(document).on('click', '#addCategoryBtn', addCategory);
             $(document).on('click', '.remove-category', function() { removeCategory($(this).data('id')); });
@@ -1441,6 +1548,10 @@
             $(document).on('submit', '#storeInfoForm', saveStoreInfo);
             $(document).on('submit', '#securityForm', saveSecurityPasswords);
             $(document).on('submit', '#passwordPromptForm', submitPasswordPrompt);
+            $(document).on('click', '#addUserBtn', () => openUserModal());
+            $(document).on('submit', '#userForm', saveUser);
+            $(document).on('click', '.edit-user', function() { openUserModal(users.find(u => u.id === $(this).data('id'))); });
+            $(document).on('click', '.delete-user', function() { deleteUser($(this).data('id')); });
         }
         
         function formatCurrency(amount) { return 'Rp ' + (amount != null ? Math.round(amount) : 0).toLocaleString('id-ID'); }
@@ -1463,6 +1574,18 @@
             else categories.forEach(cat => $select.append(`<option value="${cat.name}">${cat.name}</option>`));
         }
 
+        // --- WHATSAPP HELPER (IMPROVEMENT) ---
+        function formatPhoneNumberForWhatsApp(phone) {
+            let formatted = phone.trim().replace(/[-\s]/g, ''); // Remove dashes and spaces
+            if (formatted.startsWith('0')) {
+                formatted = '62' + formatted.substring(1);
+            } else if (!formatted.startsWith('62')) {
+                formatted = '62' + formatted;
+            }
+            return formatted;
+        }
+
+        // --- SHIFT MANAGEMENT & RECAP (IMPROVEMENT) ---
         function checkActiveShift() {
             activeShift = shifts.find(s => s.userId === currentUser.id && s.status === 'active') || null;
             if (activeShift) {
@@ -1476,20 +1599,85 @@
 
         function handleShiftAction() {
             if (activeShift) {
-                activeShift.status = 'closed';
-                activeShift.endTime = new Date().toISOString();
-                saveData(STORAGE_KEYS.SHIFTS, shifts);
-                activeShift = null;
-                checkActiveShift();
-                showToast('Shift berhasil ditutup.', 'success');
+                showConfirmation('Tutup Shift', 'Anda yakin ingin menutup shift kerja saat ini?', () => {
+                    const shiftIndex = shifts.findIndex(s => s.id === activeShift.id);
+                    if(shiftIndex > -1) {
+                         shifts[shiftIndex].status = 'closed';
+                         shifts[shiftIndex].endTime = new Date().toISOString();
+                    }
+                    saveData(STORAGE_KEYS.SHIFTS, shifts);
+                    openRecapReportModal(activeShift.id); // Show recap for the closed shift
+                    activeShift = null;
+                    checkActiveShift();
+                    showToast('Shift berhasil ditutup.', 'success');
+                });
             } else {
-                const newShift = { id: 'SH' + Date.now(), userId: currentUser.id, startTime: new Date().toISOString(), status: 'active' };
+                const newShift = { id: 'SH' + Date.now(), userId: currentUser.id, name: currentUser.name, startTime: new Date().toISOString(), endTime: null, status: 'active' };
                 shifts.unshift(newShift);
                 saveData(STORAGE_KEYS.SHIFTS, shifts);
                 activeShift = newShift;
                 checkActiveShift();
                 showToast('Shift dimulai.', 'success');
             }
+        }
+
+        function openRecapReportModal(shiftId = null) {
+            const modalHTML = `
+            <div class="modal-content" style="max-width: 450px;">
+                <div class="modal-header"><h3 class="modal-title">Laporan Shift & Rekapitulasi</h3><button class="modal-close">&times;</button></div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Pilih Shift</label>
+                        <select id="recapShiftSelect" class="form-control"></select>
+                    </div>
+                    <div id="recapResultsContainer"></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div>
+            </div>`;
+            $('#recapReportModal').html(modalHTML).css('display', 'flex');
+
+            const $select = $('#recapShiftSelect').empty().append('<option value="all">Semua Shift Hari Ini</option>');
+            const todayShifts = shifts.filter(s => moment(s.startTime).isSame(moment(), 'day'));
+            todayShifts.sort((a,b) => new Date(b.startTime) - new Date(a.startTime)).forEach(s => {
+                $select.append(`<option value="${s.id}">Shift ${s.name} - ${moment(s.startTime).format('HH:mm')}</option>`);
+            });
+
+            if(shiftId) $('#recapShiftSelect').val(shiftId);
+            
+            generateRecapReport(); // Initial generation
+            $('#recapShiftSelect').change(generateRecapReport);
+        }
+
+        function generateRecapReport() {
+            const selectedShiftId = $('#recapShiftSelect').val();
+            let shiftOrders, title;
+            
+            if (selectedShiftId === 'all') {
+                const todayShifts = shifts.filter(s => moment(s.startTime).isSame(moment(), 'day'));
+                const todayShiftIds = todayShifts.map(s => s.id);
+                shiftOrders = orders.filter(o => todayShiftIds.includes(o.shiftId));
+                title = `Rekapitulasi Hari Ini (${moment().format('D MMM YYYY')})`;
+            } else {
+                const selectedShift = shifts.find(s => s.id === selectedShiftId);
+                shiftOrders = orders.filter(o => o.shiftId === selectedShiftId);
+                title = `Laporan Shift ${selectedShift.name} (${moment(selectedShift.startTime).format('D MMM, HH:mm')})`;
+            }
+            
+            const paidOrders = shiftOrders.filter(o => o.paymentStatus === 'lunas');
+            const totalCash = paidOrders.filter(o => o.paymentMethod === 'cash').reduce((sum, o) => sum + o.total, 0);
+            const totalTransfer = paidOrders.filter(o => o.paymentMethod === 'transfer').reduce((sum, o) => sum + o.total, 0);
+            const totalRevenue = totalCash + totalTransfer;
+            
+            const resultsHTML = `
+                <div style="border: 1px solid #ddd; padding: 15px; border-radius: var(--rounded); margin-top: 1rem;">
+                    <h4 class="text-center">${title}</h4>
+                    <hr>
+                    <div class="summary-row"><strong>Total Transaksi Lunas:</strong> <span>${paidOrders.length}</span></div>
+                    <div class="summary-row"><strong>Pendapatan Tunai:</strong> <span>${formatCurrency(totalCash)}</span></div>
+                    <div class="summary-row"><strong>Pendapatan Transfer:</strong> <span>${formatCurrency(totalTransfer)}</span></div>
+                    <div class="summary-row total-row"><strong>Total Pendapatan Shift:</strong><span>${formatCurrency(totalRevenue)}</span></div>
+                </div>`;
+            $('#recapResultsContainer').html(resultsHTML);
         }
 
         function showConfirmation(title, message, onConfirm, type = 'success') {
