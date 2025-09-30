@@ -440,11 +440,11 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" value="operator" readonly onpaste="return false;">
+                    <input type="text" id="username" class="form-control" placeholder="Coba: operator" onpaste="return false;" autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" value="operator123" readonly onpaste="return false;">
+                    <input type="password" id="password" class="form-control" placeholder="Coba: operator123" onpaste="return false;" autocomplete="current-password">
                 </div>
                 <div class="form-group">
                     <label for="captchaInput" class="form-label">Verifikasi Keamanan</label>
@@ -483,7 +483,7 @@
                 <div class="header-logo"><i class="fas fa-tshirt"></i></div>
                 <div>
                     <h1 class="app-title" id="storeNameHeader">L-K LAUNDRY</h1>
-                    <p id="currentDate">Rabu, 24 September 2025</p>
+                    <p id="currentDate"></p>
                     <p id="realTimeClock"></p>
                 </div>
             </div>
@@ -745,9 +745,16 @@
                 itemSecurityCode: CryptoJS.SHA256('1234').toString(),
                 panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
                 roles: {
+                    // PERBAIKAN: Memberikan akses default yang lebih luas untuk peran 'cashier' (operator) pada instalasi baru.
+                    // Ini akan membuat menu Laporan dan Pengaturan terlihat secara default untuk pengalaman trial yang lebih baik.
+                    // Keamanan Panel Kontrol tetap terjaga (`accessControlPanel: false`).
                     cashier: {
-                        accessReports: false, accessSettings: false, manageServices: false,
-                        manageExpenses: true, viewHistory: true, accessControlPanel: false
+                        accessReports: true, 
+                        accessSettings: true, 
+                        manageServices: true,
+                        manageExpenses: true, 
+                        viewHistory: true, 
+                        accessControlPanel: false
                     }
                 }
             };
@@ -759,8 +766,7 @@
             if (!localStorage.getItem(STORAGE_KEYS.USERS)) localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultUsers));
             if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
             
-            // PERBAIKAN: Tambahkan data default jika tidak ada, untuk mengatasi masalah dasbor kosong.
-            // Ini hanya berjalan sekali saat aplikasi pertama kali digunakan atau data dibersihkan.
+            // Menambahkan data default (Layanan & Kategori) jika tidak ada, untuk mengatasi masalah dasbor kosong pada penggunaan pertama.
             if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES) || JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)).length === 0) {
                 const defaultCategories = [
                     { id: 'CAT' + Date.now(), name: 'Pakaian Kiloan' },
@@ -852,7 +858,7 @@
                 $('#paymentAmount').val(amount).trigger('input');
             });
             
-            // PENYEMPURNAAN: Mencegah body scroll saat modal aktif
+            // Mencegah body scroll saat modal aktif
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.attributeName === "style") {
@@ -871,7 +877,7 @@
             updateClock();
             setInterval(updateClock, 1000); // Real-time clock update
             updateStoreInfo();
-            applyPermissions(); // Apply UI restrictions based on role
+            applyPermissions(); // Terapkan pembatasan UI berdasarkan role
             loadServices();
             loadCustomersForSelect();
             updateTransactionSummary();
@@ -898,11 +904,11 @@
         }
 
         function applyPermissions() {
-            // Show/hide main tabs
+            // Tampilkan/sembunyikan menu tab utama
             checkPermission('accessReports') ? $('[data-tab="reportsTab"]').show() : $('[data-tab="reportsTab"]').hide();
             checkPermission('accessSettings') ? $('[data-tab="settingsTab"]').show() : $('[data-tab="settingsTab"]').hide();
             
-            // More granular button disabling within settings
+            // Pengaturan tombol yang lebih detail di dalam tab Pengaturan
             if ($('#settingsTab').length) {
                 $('#addServiceBtn, #manageCategoriesBtn').prop('disabled', !checkPermission('manageServices'));
                 $('#manageExpensesBtn').prop('disabled', !checkPermission('manageExpenses'));
@@ -915,7 +921,7 @@
                      $('#resetDataBtn').closest('div').show();
                 }
             }
-             // Permissions for quick action menu
+             // Hak akses untuk menu cepat (quick action menu)
             checkPermission('manageExpenses') ? $('#quickActionAddExpense').show() : $('#quickActionAddExpense').hide();
             checkPermission('manageServices') ? $('#quickActionAddService').show() : $('#quickActionAddService').hide();
             checkPermission('viewHistory') ? $('#quickActionHistory').show() : $('#quickActionHistory').hide();
@@ -948,7 +954,7 @@
                              $('#mainApp').fadeIn(500);
                              initializeApp();
                         });
-                    }, 4000); // splash screen visible for 4 seconds
+                    }, 2500); // PENYEMPURNAAN: Durasi splash screen dikurangi menjadi 2.5 detik
                 });
 
             } else {
@@ -972,7 +978,7 @@
             $(`[data-tab="${tabId}"]`).addClass('active');
             $('.main-tab-content').removeClass('active');
             $(`#${tabId}`).addClass('active');
-            window.scrollTo(0, 0); // Scroll to top on tab switch
+            window.scrollTo(0, 0); // Gulir ke atas saat ganti tab
         }
         
         function updateClock() {
@@ -1333,22 +1339,22 @@
         
         // --- PAYMENT ---
         function getSuggestedPayments(amount) {
-            const suggestions = new Set(); // Use a Set to avoid duplicates
+            const suggestions = new Set(); // Gunakan Set untuk menghindari duplikat
             const denominations = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
             
-            // Suggest the next highest denominations
+            // Sarankan denominasi tertinggi berikutnya
             for (const denom of denominations) {
-                if (denom > amount) {
+                if (denom >= amount) {
                     suggestions.add(denom);
                 }
             }
             
-            // If the amount is small, suggest more options
+            // Jika jumlahnya kecil, sarankan lebih banyak opsi
             if(amount < 10000) suggestions.add(10000);
             if(amount < 20000) suggestions.add(20000);
             if(amount < 50000) suggestions.add(50000);
 
-            // Return sorted suggestions, limited to a few options
+            // Kembalikan saran yang diurutkan, terbatas pada beberapa opsi
             return Array.from(suggestions).sort((a,b) => a-b).slice(0, 4);
         }
 
@@ -1362,7 +1368,7 @@
             $('#paymentAmount').val(remaining).attr('min', 0);
             $('#changeContainer').hide();
 
-            // Smart Payment Buttons Logic - NEW
+            // Logika Tombol Pembayaran Cerdas
             const $smartContainer = $('#smartPaymentContainer').empty();
             if ($('#paymentMethod').val() === 'cash') {
                 const suggestions = getSuggestedPayments(remaining);
@@ -2175,7 +2181,7 @@
                     </div>
                 </div>`;
             $('#confirmationModal').html(modalHTML).css('display', 'flex');
-            $('#confirmAction').off('click').on('click', () => { // Use .off().on() to prevent multiple bindings
+            $('#confirmAction').off('click').on('click', () => { // Gunakan .off().on() untuk mencegah binding ganda
                 onConfirm();
                 $('#confirmationModal').hide().empty();
             });
@@ -2254,8 +2260,8 @@
                 !searchTerm || 
                 c.name.toLowerCase().includes(lowerTerm) || 
                 c.phone.includes(lowerTerm) ||
-                c.id.toLowerCase().includes(lowerTerm) || // Search by ID
-                (c.address && c.address.toLowerCase().includes(lowerTerm)) // Smart Search by address
+                c.id.toLowerCase().includes(lowerTerm) || // Cari berdasarkan ID
+                (c.address && c.address.toLowerCase().includes(lowerTerm)) // Cari berdasarkan alamat
             );
 
             if (filtered.length === 0) return $list.html('<div class="empty-state"><p>Tidak ada data pelanggan.</p></div>');
