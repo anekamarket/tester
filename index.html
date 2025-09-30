@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fortuna Prime 2.0 - Roda Undian Canggih</title>
+    <title>Fortuna Prime 3.0 - Roda Undian Profesional</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
         :root {
             --bg-color: #1a1a1a;
-            --surface-color: #2c2c2c;
-            --primary-color: #E0B841; /* Gold */
+            --surface-color: #252525;
+            --primary-color: #E0B841;
+            --primary-gradient: linear-gradient(145deg, #F0D8A0, #C89B3F);
             --text-color: #F5F5F5;
             --text-secondary: #AAAAAA;
             --font-display: 'Playfair Display', serif;
             --font-body: 'Inter', sans-serif;
-            --wheel-size: clamp(300px, 90vmin, 500px);
+            --wheel-size: clamp(350px, 90vmin, 550px);
+            --border-color: rgba(224, 184, 65, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,6 +29,7 @@
         body {
             font-family: var(--font-body);
             background-color: var(--bg-color);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -37,11 +41,20 @@
 
         .app-container {
             display: grid;
-            grid-template-columns: var(--wheel-size) 1fr;
+            grid-template-columns: 1fr var(--wheel-size) 1fr;
             gap: 40px;
             align-items: center;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1400px;
+        }
+        
+        /* General Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Wheel Section */
@@ -54,54 +67,65 @@
         #wheel-canvas {
             width: var(--wheel-size);
             height: var(--wheel-size);
-            transition: transform 5s cubic-bezier(0.1, 0.5, 0.2, 1); /* Animasi putaran */
+            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0px 10px 30px rgba(0,0,0,0.5));
         }
         
         .wheel-pointer {
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--primary-color);
+            border-left: 22px solid transparent;
+            border-right: 22px solid transparent;
+            border-top: 44px solid var(--primary-color);
             position: absolute;
-            top: -15px;
+            top: -20px;
             z-index: 10;
-            transform: translateY(-50%);
+            transform-origin: bottom center;
             filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.5));
+            border-radius: 5px;
         }
 
-        /* Controls Section */
-        .controls-section {
+        /* Controls & History Sections Common Styles */
+        .panel {
             background: var(--surface-color);
             padding: 30px;
             border-radius: 16px;
-            border: 1px solid rgba(224, 184, 65, 0.2);
+            border: 1px solid var(--border-color);
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            height: 100%;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
         }
-
-        .controls-section h1 {
+        
+        .panel h1, .panel h2 {
             font-family: var(--font-display);
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 10px;
         }
-
-        .controls-section p {
+        
+        .panel p {
             text-align: center;
             color: var(--text-secondary);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
         }
-        
-        label {
-            display: block;
+
+        /* Controls Section */
+        .controls-section label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
+        #participant-count { font-weight: 500; color: var(--text-color); }
 
         #participants-textarea {
             width: 100%;
-            height: 200px;
+            flex-grow: 1;
             background-color: #1f1f1f;
             border: 1px solid #444;
             border-radius: 8px;
@@ -111,111 +135,99 @@
             resize: vertical;
             margin-bottom: 20px;
         }
+        #participants-textarea::-webkit-scrollbar { width: 8px; }
+        #participants-textarea::-webkit-scrollbar-track { background: #1f1f1f; }
+        #participants-textarea::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        #participants-textarea::-webkit-scrollbar-thumb:hover { background: #777; }
+
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .action-button {
+            padding: 10px; font-size: 0.9rem; background: #333; color: var(--text-secondary);
+            border: 1px solid #444; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .action-button:hover { background: #444; color: var(--text-color); }
+        .action-button i { margin-right: 8px; }
         
         #spin-button {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%; padding: 18px; font-size: 1.3rem; font-weight: 700; color: #1a1a1a;
+            background: var(--primary-gradient); border: none; border-radius: 8px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s ease-out;
+            box-shadow: 0 5px 15px rgba(224, 184, 65, 0.2);
         }
-        
-        #spin-button:disabled {
-            background: #555;
-            cursor: not-allowed;
-            color: #888;
-        }
+        #spin-button:disabled { background: #555; cursor: not-allowed; color: #888; box-shadow: none; }
+        #spin-button:not(:disabled):hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(224, 184, 65, 0.3); }
 
-        #spin-button:not(:disabled):hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(224, 184, 65, 0.2);
+        /* History Section */
+        #history-list {
+            list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        #history-list::-webkit-scrollbar { width: 8px; }
+        #history-list::-webkit-scrollbar-track { background: var(--surface-color); }
+        #history-list::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        #history-list::-webkit-scrollbar-thumb:hover { background: #777; }
+        .history-item {
+            background: #333;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .history-item:hover { transform: translateX(5px); background: #3a3a3a; }
+        .history-item .name { font-weight: 500; }
+        .history-item .timestamp { font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Sound Toggle */
+        #sound-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            background: var(--surface-color); color: var(--text-color);
+            border: 1px solid var(--border-color); border-radius: 50%;
+            width: 45px; height: 45px; cursor: pointer; font-size: 1.2rem;
+            display: grid; place-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         /* Modal & Confetti */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s ease;
         }
-
         .modal-overlay.show { opacity: 1; visibility: visible; }
-        
         .modal-content {
-            background: var(--surface-color);
-            padding: 40px;
-            border-radius: 16px;
-            text-align: center;
-            transform: scale(0.7);
-            transition: transform 0.3s;
-            position: relative;
-            z-index: 1001;
-            border: 1px solid rgba(224, 184, 65, 0.3);
+            background: var(--surface-color); padding: 40px; border-radius: 16px;
+            text-align: center; transform: scale(0.7) translateY(20px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; z-index: 1001; border: 1px solid var(--border-color);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
         }
-
-        .modal-overlay.show .modal-content { transform: scale(1); }
-
-        .modal-content h2 {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-
+        .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
+        .modal-content h2 { color: var(--text-secondary); margin-bottom: 15px; font-weight: 400; font-family: var(--font-body); }
         .winner-name {
-            font-family: var(--font-display);
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 30px;
+            font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--primary-color); margin-bottom: 30px; text-shadow: 0 0 20px rgba(224, 184, 65, 0.5);
         }
-
-        .modal-buttons { display: flex; gap: 15px; }
-        
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
         .modal-button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 2px solid var(--primary-color);
-            background: transparent;
-            color: var(--primary-color);
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            padding: 12px 24px; border-radius: 8px; border: 2px solid var(--primary-color);
+            background: transparent; color: var(--primary-color);
+            font-weight: 700; cursor: pointer; transition: all 0.2s;
         }
-        
-        .modal-button.primary {
-            background: var(--primary-color);
-            color: var(--bg-color);
-        }
-        .modal-button:hover {
-             filter: brightness(1.2);
-        }
+        .modal-button.primary { background: var(--primary-color); color: var(--bg-color); }
+        .modal-button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-        /* Confetti styles */
         #confetti-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 2000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2000;
         }
         .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #f00; /* Will be overridden by JS */
-            opacity: 0;
+            position: absolute; width: 10px; height: 10px; opacity: 0;
             animation: fall 5s linear forwards;
         }
         @keyframes fall {
@@ -224,35 +236,49 @@
         }
 
         /* Responsive Layout */
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .app-container {
                 grid-template-columns: 1fr;
                 gap: 50px;
-                max-width: 500px;
+                max-width: 600px;
             }
-            .controls-section {
-                order: 1; /* Pindah ke bawah */
-            }
-            .wheel-section {
-                order: 0;
-            }
+            .controls-section { order: 1; }
+            .wheel-section { order: 0; }
+            .history-section { order: 2; }
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <section class="wheel-section">
-            <div class="wheel-pointer"></div>
-            <canvas id="wheel-canvas" width="500" height="500"></canvas>
+        <section class="panel controls-section fade-in" style="animation-delay: 0.2s;">
+            <h1>Fortuna Prime</h1>
+            <p>Masukkan Nama Peserta (satu per baris)</p>
+            
+            <label for="participants-textarea">
+                <span>Peserta</span>
+                <span id="participant-count">0</span>
+            </label>
+            <textarea id="participants-textarea" placeholder="Budi Santoso&#10;Ani Wijaya&#10;Citra Lestari&#10;Dewi Anggraini"></textarea>
+            
+            <div class="button-group">
+                <button class="action-button" id="save-button"><i class="fa-solid fa-floppy-disk"></i> Simpan Daftar</button>
+                <button class="action-button" id="clear-button"><i class="fa-solid fa-trash"></i> Hapus Daftar</button>
+            </div>
+            
+            <button id="spin-button">PUTAR RODA</button>
         </section>
 
-        <section class="controls-section">
-            <h1>Fortuna Prime</h1>
-            <p>Roda Undian Interaktif</p>
-            <label for="participants-textarea">Masukkan Nama Peserta (satu per baris)</label>
-            <textarea id="participants-textarea" placeholder="Budi&#10;Ani&#10;Citra&#10;Dewi"></textarea>
-            <button id="spin-button">PUTAR RODA</button>
+        <section class="wheel-section fade-in">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheel-canvas" width="600" height="600"></canvas>
+        </section>
+
+        <section class="panel history-section fade-in" style="animation-delay: 0.4s;">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pemenang</h2>
+            <p>Pemenang sebelumnya akan tampil di sini.</p>
+            <ul id="history-list">
+                </ul>
         </section>
     </div>
 
@@ -266,144 +292,261 @@
             </div>
         </div>
     </div>
+    
+    <button id="sound-toggle">
+        <i class="fa-solid fa-volume-high"></i>
+    </button>
 
     <div id="confetti-container"></div>
     
     <script>
-        const canvas = document.getElementById('wheel-canvas');
-        const ctx = canvas.getContext('2d');
-        const spinButton = document.getElementById('spin-button');
-        const participantsTextarea = document.getElementById('participants-textarea');
-        const modal = document.getElementById('winner-modal');
-        const winnerNameDisplay = document.getElementById('winner-name-display');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const removeWinnerBtn = document.getElementById('remove-winner-btn');
-        const confettiContainer = document.getElementById('confetti-container');
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const canvas = document.getElementById('wheel-canvas');
+            const ctx = canvas.getContext('2d');
+            const spinButton = document.getElementById('spin-button');
+            const participantsTextarea = document.getElementById('participants-textarea');
+            const modal = document.getElementById('winner-modal');
+            const winnerNameDisplay = document.getElementById('winner-name-display');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const removeWinnerBtn = document.getElementById('remove-winner-btn');
+            const confettiContainer = document.getElementById('confetti-container');
+            const participantCountDisplay = document.getElementById('participant-count');
+            const saveButton = document.getElementById('save-button');
+            const clearButton = document.getElementById('clear-button');
+            const historyList = document.getElementById('history-list');
+            const soundToggle = document.getElementById('sound-toggle');
 
-        let participants = [];
-        let currentRotation = 0;
-        let isSpinning = false;
-        
-        // Palet warna yang mewah
-        const colors = ["#8E44AD", "#3498DB", "#1ABC9C", "#F1C40F", "#E74C3C", "#9B59B6", "#2980B9", "#16A085", "#F39C12", "#C0392B"];
-        
-        const getParticipants = () => {
-            const lines = participantsTextarea.value.trim().split('\n').filter(p => p.trim() !== '');
-            return lines;
-        };
-        
-        const drawWheel = () => {
-            participants = getParticipants();
-            const numSegments = participants.length;
-            if (numSegments === 0) {
-                 // Gambar roda kosong jika tidak ada peserta
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                ctx.arc(250, 250, 250, 0, 2 * Math.PI);
-                ctx.fillStyle = '#333';
-                ctx.fill();
-                ctx.fillStyle = '#fff';
-                ctx.font = '20px Inter';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Masukkan nama peserta', 250, 250);
-                return;
+            // --- State ---
+            let participants = [];
+            let winnerHistory = [];
+            let currentRotation = 0;
+            let isSpinning = false;
+            let lastWinner = '';
+            let soundEnabled = true;
+            let tickInterval;
+
+            // --- Audio ---
+            const tickSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-A...');//_Tick Sound
+            const winSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV...');//_Win Sound
+            tickSound.volume = 0.5;
+            
+            // --- Colors ---
+            const colors = ["#8E44AD", "#3498DB", "#1ABC9C", "#F1C40F", "#E74C3C", "#9B59B6", "#2980B9", "#16A085", "#F39C12", "#C0392B"];
+            
+            // --- Functions ---
+            const getParticipants = () => {
+                const lines = participantsTextarea.value.trim().split('\n')
+                                                .map(p => p.trim())
+                                                .filter(p => p !== '');
+                return [...new Set(lines)]; // Remove duplicates
             };
 
-            const arcSize = (2 * Math.PI) / numSegments;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let i = 0; i < numSegments; i++) {
-                const angle = i * arcSize;
+            const updateParticipantCount = () => {
+                participantCountDisplay.textContent = getParticipants().length;
+            };
+
+            const drawWheel = () => {
+                participants = getParticipants();
+                const numSegments = participants.length;
+                const canvasSize = canvas.width;
+                const radius = canvasSize / 2;
+
+                ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+                if (numSegments === 0) {
+                    ctx.beginPath();
+                    ctx.arc(radius, radius, radius - 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#333';
+                    ctx.fill();
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '20px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Masukkan nama peserta', radius, radius);
+                    updateParticipantCount();
+                    return;
+                }
+
+                const arcSize = (2 * Math.PI) / numSegments;
+                
+                for (let i = 0; i < numSegments; i++) {
+                    const angle = i * arcSize;
+                    ctx.beginPath();
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.moveTo(radius, radius);
+                    ctx.arc(radius, radius, radius - 10, angle, angle + arcSize);
+                    ctx.lineTo(radius, radius);
+                    ctx.fill();
+
+                    ctx.save();
+                    ctx.translate(radius, radius);
+                    ctx.rotate(angle + arcSize / 2);
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px Inter';
+                    ctx.shadowColor = "rgba(0,0,0,0.5)";
+                    ctx.shadowBlur = 6;
+                    const text = participants[i].length > 15 ? participants[i].substring(0, 13) + '...' : participants[i];
+                    ctx.fillText(text, radius - 25, 10);
+                    ctx.restore();
+                }
+
+                // Add center pin and borders for professional look
+                ctx.fillStyle = '#444';
                 ctx.beginPath();
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.moveTo(250, 250);
-                ctx.arc(250, 250, 250, angle, angle + arcSize);
-                ctx.lineTo(250, 250);
+                ctx.arc(radius, radius, 20, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = var(--primary-color);
+                ctx.beginPath();
+                ctx.arc(radius, radius, 15, 0, 2 * Math.PI);
                 ctx.fill();
 
-                // Draw text
-                ctx.save();
-                ctx.translate(250, 250);
-                ctx.rotate(angle + arcSize / 2);
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 16px Inter';
-                ctx.shadowColor = "rgba(0,0,0,0.4)";
-                ctx.shadowBlur = 5;
-                const text = participants[i].length > 15 ? participants[i].substring(0, 13) + '...' : participants[i];
-                ctx.fillText(text, 230, 10);
-                ctx.restore();
-            }
-        };
+                updateParticipantCount();
+            };
 
-        participantsTextarea.addEventListener('input', drawWheel);
+            const spin = () => {
+                if (isSpinning || getParticipants().length < 2) return;
+                isSpinning = true;
+                spinButton.disabled = true;
 
-        spinButton.addEventListener('click', () => {
-            if (isSpinning || getParticipants().length < 2) return;
-            isSpinning = true;
-            spinButton.disabled = true;
+                const totalSpins = Math.floor(Math.random() * 5) + 8; // 8-12 full spins
+                const randomStopAngle = Math.random() * 2 * Math.PI;
+                const totalRotation = (totalSpins * 2 * Math.PI) + randomStopAngle;
 
-            const totalSpins = Math.floor(Math.random() * 5) + 5; // 5-9 putaran penuh
-            const randomStopAngle = Math.random() * 2 * Math.PI; // Posisi berhenti acak
-            const totalRotation = (totalSpins * 2 * Math.PI) + randomStopAngle;
+                const style = window.getComputedStyle(canvas);
+                const matrix = new DOMMatrix(style.transform);
+                const currentRad = Math.atan2(matrix.b, matrix.a);
+                
+                if (soundEnabled) {
+                    tickInterval = setInterval(() => tickSound.play(), 100);
+                }
+                
+                canvas.style.transition = 'transform 7s cubic-bezier(0.25, 1, 0.5, 1)';
+                canvas.style.transform = `rotate(${currentRad + totalRotation}rad)`;
+
+                canvas.addEventListener('transitionend', handleSpinEnd, { once: true });
+            };
             
-            // Simpan rotasi saat ini
-            const style = window.getComputedStyle(canvas);
-            const matrix = new DOMMatrix(style.transform);
-            currentRotation = Math.atan2(matrix.b, matrix.a);
+            const handleSpinEnd = () => {
+                clearInterval(tickInterval);
+                const style = window.getComputedStyle(canvas);
+                const matrix = new DOMMatrix(style.transform);
+                const finalRad = Math.atan2(matrix.b, matrix.a);
 
-            canvas.style.transition = 'transform 6s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            canvas.style.transform = `rotate(${currentRotation + totalRotation}rad)`;
-
-            canvas.addEventListener('transitionend', () => {
-                const actualRotation = (currentRotation + totalRotation) % (2 * Math.PI);
-                const winningSegment = Math.floor((participants.length * (2 * Math.PI - actualRotation)) / (2 * Math.PI)) % participants.length;
+                const normalizedRad = (finalRad + Math.PI/2) % (2*Math.PI);
+                const winningSegment = Math.floor(participants.length * normalizedRad / (2*Math.PI));
                 
                 showWinner(participants[winningSegment]);
                 
-                // Reset untuk putaran selanjutnya
                 canvas.style.transition = 'none';
-                canvas.style.transform = `rotate(${actualRotation}rad)`;
+                currentRotation = finalRad;
                 isSpinning = false;
                 spinButton.disabled = false;
-            }, { once: true });
-        });
-        
-        let lastWinner = '';
-        const showWinner = (winner) => {
-            lastWinner = winner;
-            winnerNameDisplay.textContent = winner;
-            modal.classList.add('show');
-            launchConfetti();
-        };
+            };
+            
+            const showWinner = (winner) => {
+                if (soundEnabled) winSound.play();
+                lastWinner = winner;
+                winnerNameDisplay.textContent = winner;
+                modal.classList.add('show');
+                launchConfetti();
+                
+                // Add to history
+                const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit' });
+                winnerHistory.unshift({ name: winner, timestamp });
+                updateWinnerHistory();
+                saveWinnerHistory();
+            };
 
-        closeModalBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-        });
+            const updateWinnerHistory = () => {
+                historyList.innerHTML = '';
+                if (winnerHistory.length === 0) {
+                     historyList.innerHTML = '<li style="text-align: center; color: var(--text-secondary); font-size: 0.9em;">Belum ada pemenang.</li>';
+                } else {
+                    winnerHistory.forEach(winner => {
+                        const li = document.createElement('li');
+                        li.className = 'history-item';
+                        li.innerHTML = `
+                            <span class="name">${winner.name}</span>
+                            <span class="timestamp">${winner.timestamp}</span>
+                        `;
+                        historyList.appendChild(li);
+                    });
+                }
+            };
 
-        removeWinnerBtn.addEventListener('click', () => {
-            const currentParticipants = getParticipants();
-            const newParticipants = currentParticipants.filter(p => p !== lastWinner);
-            participantsTextarea.value = newParticipants.join('\n');
+            const launchConfetti = () => {
+                confettiContainer.innerHTML = '';
+                for (let i = 0; i < 150; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    confetti.style.animationDelay = `${Math.random() * 2}s`;
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+                    confetti.style.height = `${Math.random() * 15 + 5}px`;
+                    confettiContainer.appendChild(confetti);
+                }
+            };
+
+            // --- Local Storage Functions ---
+            const saveParticipants = () => {
+                localStorage.setItem('fortunaPrimeParticipants', participantsTextarea.value);
+            };
+            const loadParticipants = () => {
+                const saved = localStorage.getItem('fortunaPrimeParticipants');
+                if (saved) {
+                    participantsTextarea.value = saved;
+                }
+            };
+            const clearParticipants = () => {
+                participantsTextarea.value = '';
+                localStorage.removeItem('fortunaPrimeParticipants');
+                drawWheel();
+            };
+            const saveWinnerHistory = () => {
+                localStorage.setItem('fortunaPrimeWinnerHistory', JSON.stringify(winnerHistory));
+            };
+            const loadWinnerHistory = () => {
+                const saved = localStorage.getItem('fortunaPrimeWinnerHistory');
+                if (saved) {
+                    winnerHistory = JSON.parse(saved);
+                }
+            };
+
+            // --- Event Listeners ---
+            participantsTextarea.addEventListener('input', () => {
+                drawWheel();
+                saveParticipants();
+            });
+            spinButton.addEventListener('click', spin);
+            saveButton.addEventListener('click', saveParticipants);
+            clearButton.addEventListener('click', clearParticipants);
+
+            closeModalBtn.addEventListener('click', () => modal.classList.remove('show'));
+            removeWinnerBtn.addEventListener('click', () => {
+                const currentParticipants = getParticipants();
+                const newParticipants = currentParticipants.filter(p => p !== lastWinner);
+                participantsTextarea.value = newParticipants.join('\n');
+                saveParticipants();
+                drawWheel();
+                modal.classList.remove('show');
+            });
+
+            soundToggle.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                soundToggle.innerHTML = soundEnabled 
+                    ? '<i class="fa-solid fa-volume-high"></i>' 
+                    : '<i class="fa-solid fa-volume-xmark"></i>';
+            });
+            
+            // --- Initial Load ---
+            loadParticipants();
+            loadWinnerHistory();
             drawWheel();
-            modal.classList.remove('show');
+            updateWinnerHistory();
         });
-
-        const launchConfetti = () => {
-            confettiContainer.innerHTML = '';
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.animationDelay = `${Math.random() * 2}s`;
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confettiContainer.appendChild(confetti);
-            }
-        };
-
-        // Initial draw
-        drawWheel();
     </script>
 
 </body>
