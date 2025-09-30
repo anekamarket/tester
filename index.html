@@ -395,13 +395,37 @@
         
         /* Print Styles */
         @media print {
-            html, body { width: 100%; height: auto; margin: 0 !important; padding: 0 !important; overflow: visible !important; box-shadow: none; }
+            html, body {
+                width: 100%; height: auto; margin: 0 !important; padding: 0 !important; 
+                overflow: visible !important; box-shadow: none !important;
+                background: #fff !important;
+            }
             body * { visibility: hidden; }
-            #print-container, #print-container * { visibility: visible; box-sizing: border-box !important; }
-            #print-container { position: absolute; left: 0; top: 0; width: 100%; height: auto; margin: 0; padding: 0; display: block !important; }
-            .printable-area { margin: 0 !important; padding: 5px !important; box-shadow: none !important; border: none !important; display: block !important; color: #000 !important; background: #fff !important; width: 100% !important; font-size: 11pt !important; page-break-inside: avoid; }
-            .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .login-container { display: none !important; }
-            @page { size: auto; margin: 10mm; }
+            #print-container, #print-container * {
+                visibility: visible;
+                box-sizing: border-box !important;
+            }
+            #print-container {
+                position: absolute; left: 0; top: 0; width: 100%; height: auto;
+                margin: 0 !important; padding: 5px !important; display: block !important;
+            }
+            .printable-area {
+                margin: 0 auto !important; padding: 10px !important; box-shadow: none !important;
+                border: 1px solid #ccc !important; display: block !important; color: #000 !important;
+                background: #fff !important; width: 100% !important; font-size: 10pt !important;
+                page-break-inside: avoid;
+            }
+            .no-print, .modal-footer, .modal-header, .app-header, .app-footer, .login-container, .main-actions, #adminPanel {
+                display: none !important;
+            }
+            .data-table th, .data-table td { color: #000 !important; }
+            .text-danger { color: #dc3545 !important; }
+            .text-success { color: #28a745 !important; }
+            a { text-decoration: none; color: #000 !important; }
+            @page {
+                size: auto;
+                margin: 10mm;
+            }
         }
 
         /* Utility Classes */
@@ -554,7 +578,10 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header"><h3 class="modal-title">Manajemen Pinjaman</h3><button class="modal-close">&times;</button></div>
             <div class="modal-body">
-                <button id="showAddLoanFormBtn" class="btn btn-sm btn-loan mb-3">Buat Pinjaman Baru</button>
+                 <div class="d-flex gap-2 mb-3">
+                    <button id="showAddLoanFormBtn" class="btn btn-sm btn-loan">Buat Pinjaman Baru</button>
+                    <button id="exportLoansExcelBtn" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
+                </div>
                 <div id="loansListContainer" class="data-table-container"></div>
             </div>
             <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div>
@@ -600,7 +627,10 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header"><h3 class="modal-title">Manajemen Agunan (Gadai)</h3><button class="modal-close">&times;</button></div>
             <div class="modal-body">
-                 <button id="showAddPawnFormBtn" class="btn btn-sm btn-pawn mb-3">Tambah Agunan Baru</button>
+                 <div class="d-flex gap-2 mb-3">
+                    <button id="showAddPawnFormBtn" class="btn btn-sm btn-pawn">Tambah Agunan Baru</button>
+                    <button id="exportPawnsExcelBtn" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
+                </div>
                  <div id="pawnListContainer" class="data-table-container"></div>
             </div>
             <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div>
@@ -633,8 +663,11 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header"><h3 class="modal-title">Kelola Anggota</h3><button class="modal-close">&times;</button></div>
             <div class="modal-body">
-                <button id="showAddMemberFormBtn" class="btn btn-sm mb-3">Tambah Anggota Baru</button>
-                <div class="search-container mb-3"><i class="fas fa-search"></i><input type="text" id="manageMemberSearchInput" class="search-input" placeholder="Cari anggota (nama, ID, No. HP)..."></div>
+                <div class="d-flex gap-2 mb-3">
+                    <button id="showAddMemberFormBtn" class="btn btn-sm">Tambah Anggota Baru</button>
+                    <button id="exportMembersExcelBtn" class="btn btn-sm btn-success"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
+                </div>
+                <div class="search-container mb-3"><input type="text" id="manageMemberSearchInput" class="form-control" placeholder="Cari anggota (nama, ID, No. HP)..."></div>
                 <div class="member-form" id="memberFormContainer" style="display:none;">
                     <h4 id="memberFormTitle">Tambah Anggota Baru</h4>
                     <form id="memberForm">
@@ -667,7 +700,10 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header"><h3 class="modal-title">Histori Transaksi</h3><button class="modal-close">&times;</button></div>
             <div class="modal-body">
-                <div class="search-container"><i class="fas fa-search"></i><input type="text" id="historySearchInput" class="search-input" placeholder="Cari berdasarkan ID, nama anggota, atau tipe..."></div>
+                <div class="d-flex gap-2 mb-3">
+                    <input type="text" id="historySearchInput" class="form-control" placeholder="Cari berdasarkan ID, nama anggota, atau tipe...">
+                    <button id="exportHistoryExcelBtn" class="btn btn-sm btn-success" style="width: auto;"><i class="fas fa-file-excel"></i> Ekspor</button>
+                </div>
                 <div id="historyResultsContainer" class="data-table-container"></div>
             </div>
             <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div>
@@ -689,7 +725,7 @@
                     <div class="tab" data-tab="cashFlowRecap"><i class="fas fa-exchange-alt"></i> Arus Kas</div>
                     <div class="tab" data-tab="portfolioRecap"><i class="fas fa-chart-line"></i> Portofolio Pinjaman</div>
                 </div>
-                <div id="recapReportResults" class="mt-3 printable-area"><div class="empty-state"><i class="fas fa-file-alt"></i><p>Pilih periode dan generate laporan untuk melihat data.</p></div></div>
+                <div id="recapReportResults" class="mt-3"><div class="printable-area"><div class="empty-state"><i class="fas fa-file-alt"></i><p>Pilih periode dan generate laporan untuk melihat data.</p></div></div></div>
             </div>
             <div class="modal-footer no-print">
                 <button class="btn btn-warning modal-close-btn">Tutup</button>
@@ -802,6 +838,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         moment.locale('id');
         const { jsPDF } = window.jspdf;
@@ -842,7 +879,7 @@
                 const initialSettings = {
                     koperasiName: 'KOPERASI DIGITAL', koperasiAddress: 'Jl. Digital No. 1, Kota Maya',
                     koperasiPhone: '081234567890', koperasiEmail: 'info@koperasi.com',
-                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
+                    panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(), // Default password
                     roles: {
                         admin: { label: "Admin", isEditable: false, permissions: getPermissionKeys(true) },
                         manager: { label: "Manajer", isEditable: true, permissions: {...getPermissionKeys(false), canManageLoans: true, canManagePawns: true, canViewReports: true, canAccessControlPanel: true } },
@@ -895,11 +932,11 @@
             $('#recapReportBtn').click(() => { if (checkPermission('canViewReports')) openRecapReportModal(); });
             $('#historyBtn').click(openHistoryModal);
             $('#manageKoperasiInfoBtn').click(() => { if (checkPermission('canManageKoperasiInfo')) openManageKoperasiInfoModal(); });
-            $('#controlPanelBtn').click(() => { if (checkPermission('canAccessControlPanel')) openControlPanel(); });
+            // [FIXED] Implement password protection for Control Panel
+            $('#controlPanelBtn').click(() => { if (checkPermission('canAccessControlPanel')) promptForPassword('panel', openControlPanel); });
 
             // Modals & Forms
             $('.modal-close, .modal-close-btn').click(function() { $(this).closest('.modal').hide(); });
-            // Corrected selector for modal tabs
             $(document).on('click', '.modal-body .tabs .tab', function() {
                 switchModalTab($(this).closest('.modal'), $(this).data('tab'));
             });
@@ -915,12 +952,14 @@
             $('#saveLoanBtn').click(saveLoan);
             $(document).on('click', '.view-loan-details', function() { openLoanDetailsModal($(this).data('id')); });
             $('#payInstallmentBtn').click(payInstallment);
+            $('#exportLoansExcelBtn').click(exportLoansToExcel);
 
             // Pawns
             $('#showAddPawnFormBtn').click(() => { resetPawnForm(); $('#addPawnModal').css('display', 'flex'); });
             $('#pawnMemberSearch').on('input', function() { handleMemberSearch(this, '#pawnMemberResults', selectMemberForPawn); });
             $('#savePawnBtn').click(savePawn);
             $(document).on('click', '.redeem-pawn-btn', function(e) { e.stopPropagation(); redeemPawn($(this).data('id')); });
+            $('#exportPawnsExcelBtn').click(exportPawnsToExcel);
 
             // Members
             $('#showAddMemberFormBtn, #cancelMemberFormBtn').click(() => {$('#memberFormContainer').slideToggle(); resetMemberForm();});
@@ -930,6 +969,7 @@
             $(document).on('click', '.kta-member', function() { openKtaModal($(this).data('id')); });
             $(document).on('click', '.profile-member', function() { openMemberProfileModal($(this).data('id')); });
             $('#downloadKtaPdfBtn').click(downloadKtaAsPdf);
+            $('#exportMembersExcelBtn').click(exportMembersToExcel);
 
             // Control Panel
             $('#saveKoperasiInfoBtn').click(saveKoperasiInfo);
@@ -944,12 +984,13 @@
 
             // Reports & History
             $('#historySearchInput').on('input', function() { loadTransactionHistory($(this).val()); });
+            $('#exportHistoryExcelBtn').click(exportHistoryToExcel);
             $('#recapReportPeriod').change(function() {
                 const isCustom = $(this).val() === 'custom';
                 $('#recapCustomDateContainer, #recapCustomDateContainer2').toggle(isCustom);
             });
             $('#generateRecapReportBtn').click(generateRecapReport);
-            $('#printRecapBtn').click(() => printElement('#recapReportResults'));
+            $('#printRecapBtn').click(() => printElement('#recapReportResults .printable-area'));
             $('#downloadRecapPdfBtn').click(downloadRecapAsPdf);
 
             // Data Management
@@ -985,7 +1026,6 @@
             $('#recapReportBtn').toggle(checkPermission('canViewReports'));
             $('#manageKoperasiInfoBtn').toggle(checkPermission('canManageKoperasiInfo'));
             $('#controlPanelBtn').toggle(checkPermission('canAccessControlPanel'));
-            // Correctly check multiple permissions for backup/restore/reset section
             const canManageData = checkPermission('canBackupRestore') || checkPermission('canResetData');
             $('#adminPanel .backup-actions').parent().toggle(canManageData);
             $('#backupDataBtn').toggle(checkPermission('canBackupRestore'));
@@ -1056,7 +1096,6 @@
                 $('#mainApp').fadeOut(() => {
                     $('#loginModal').css('display', 'flex');
                     $('#username, #password, #captchaInput').val('');
-                    // Re-fill the locked admin credentials
                     $('#username').val('Admin');
                     $('#password').val('Gratis12345');
                     generateCaptcha();
@@ -1074,7 +1113,6 @@
             ctx.fillStyle = '#f0f2f5';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Add some distortion for better security
             for (let i = 0; i < 5; i++) {
                 ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.2})`;
                 ctx.beginPath();
@@ -1136,7 +1174,7 @@
                             <td class="d-flex gap-2">
                                 <button class="btn btn-sm btn-info edit-member" data-id="${m.id}"><i class="fas fa-pencil-alt"></i></button>
                                 <button class="btn btn-sm profile-member" style="background-color: #6c757d;" data-id="${m.id}"><i class="fas fa-address-book"></i></button>
-                                <button class="btn btn-sm kta-member" style="background-color: #6f42c1;" data-id="${m.id}"><i class="fas fa-id-card"></i></button>
+                                <button class="btn btn-sm kta-member" style="background-color: var(--loan-color);" data-id="${m.id}"><i class="fas fa-id-card"></i></button>
                             </td>
                         </tr>
                     `);
@@ -1210,13 +1248,15 @@
         function processSavingsTransaction(e) {
             e.preventDefault();
             const memberId = $('#savingsMemberDetails').data('member-id');
-            const type = $('#savingsType').val(); // deposit or withdrawal
-            const category = $('#savingsCategory').val(); // pokok, wajib, sukarela
+            const type = $('#savingsType').val();
+            const category = $('#savingsCategory').val();
             let amount = parseFloat($('#savingsAmount').val());
 
             if(!memberId || !amount || amount <= 0) return showToast('Data tidak valid', 'error');
+            
             const memberSavings = savings.filter(s => s.memberId === memberId && s.category === category);
             const currentBalance = memberSavings.reduce((sum, s) => sum + s.amount, 0);
+            
             if(type === 'withdrawal' && amount > currentBalance) return showToast(`Saldo ${category} tidak mencukupi untuk penarikan.`, 'error');
             
             if(type === 'withdrawal') amount = -amount;
@@ -1233,31 +1273,30 @@
 
         // --- LOAN MANAGEMENT ---
         /**
-         * [REVISED] Checks all active loans and updates their status to 'overdue' if necessary.
+         * [IMPROVED] Checks loan statuses with more accurate logic.
+         * A loan is overdue if the due date for the *next expected payment* has passed.
          */
         function updateLoanStatuses() {
             let changed = false;
-            const today = moment().startOf('day');
+            const today = moment();
             loans.forEach(loan => {
-                // Only check loans that are currently active
                 if (loan.status !== 'active') return;
 
-                const applicationDate = moment(loan.applicationDate);
-                // Calculate how many monthly payments were expected up to today
-                const monthsPassed = Math.floor(today.diff(applicationDate, 'months', true));
+                const expectedPaymentsCount = loan.payments.length + 1;
+                if (expectedPaymentsCount > loan.tenor) return; // Already fully paid in terms of count
 
-                if (monthsPassed > loan.payments.length) {
-                    // This implies at least one payment was missed. Mark as overdue.
+                const nextDueDate = moment(loan.applicationDate).add(expectedPaymentsCount, 'months');
+                
+                if (today.isAfter(nextDueDate)) {
                     loan.status = 'overdue';
                     changed = true;
                 }
             });
-            // Save to localStorage only if a change occurred
             if (changed) saveData('loans');
         }
 
         function openLoansModal() {
-            updateLoanStatuses(); // Update statuses before showing the list
+            updateLoanStatuses();
             loadLoansList();
             $('#loansModal').css('display', 'flex');
         }
@@ -1268,9 +1307,8 @@
             
             const table = $('<table class="data-table"><thead><tr><th>ID Pinjaman</th><th>Anggota</th><th>Jumlah</th><th>Sisa Pokok</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>');
             const tbody = table.find('tbody');
-            // Sort loans to show active/overdue ones first
             const sortedLoans = [...loans].sort((a, b) => {
-                const statusOrder = { 'active': 1, 'overdue': 2, 'paid_off': 3 };
+                const statusOrder = { 'overdue': 1, 'active': 2, 'paid_off': 3 };
                 return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
             });
 
@@ -1300,7 +1338,7 @@
             $('#loanCalculationPreview').hide();
         }
         
-        function selectMemberForLoan(memberId) { /* No specific action needed on select */ }
+        function selectMemberForLoan(memberId) { }
 
         function calculateLoanPreview() {
             const amount = parseFloat($('#loanAmount').val()) || 0;
@@ -1308,7 +1346,6 @@
             const interestRate = parseFloat($('#loanInterest').val()) || 0;
             if (amount <= 0 || tenor <= 0 || interestRate < 0) return $('#loanCalculationPreview').hide();
 
-            // Simple flat interest calculation
             const monthlyInterest = amount * (interestRate / 100);
             const monthlyPrincipal = amount / tenor;
             const monthlyInstallment = monthlyPrincipal + monthlyInterest;
@@ -1409,13 +1446,12 @@
                 
                 const principalPayment = loan.amount / loan.tenor;
                 loan.outstandingPrincipal -= principalPayment;
-                if (loan.outstandingPrincipal < 1) loan.outstandingPrincipal = 0; // handle rounding errors
+                if (loan.outstandingPrincipal < 1) loan.outstandingPrincipal = 0;
 
                 if (loan.payments.length >= loan.tenor) {
                     loan.status = 'paid_off';
                     loan.outstandingPrincipal = 0;
                 } else {
-                    // If it was overdue, check if it's now up-to-date
                     loan.status = 'active'; // Set back to active, updateLoanStatuses will re-check if needed
                 }
 
@@ -1423,7 +1459,7 @@
                 logTransaction(loan.memberId, 'Bayar Angsuran', paymentAmount, loan.id);
                 saveData('loans');
                 showToast('Pembayaran angsuran berhasil.', 'success');
-                openLoanDetailsModal(loanId); // Refresh details
+                openLoanDetailsModal(loanId);
                 loadLoansList();
                 loadDashboard();
             });
@@ -1445,14 +1481,15 @@
                 const member = members.find(m => m.id === pawn.memberId);
                 const isOverdue = moment(pawn.dueDate).isBefore(moment(), 'day') && pawn.status === 'active';
                 let statusClass = pawn.status === 'redeemed' ? 'text-success' : (isOverdue ? 'text-danger' : '');
-
+                let statusText = isOverdue ? 'JATUH TEMPO' : pawn.status.toUpperCase();
+                
                 tbody.append(`
                     <tr>
                         <td>${member ? member.name : 'N/A'}</td>
                         <td>${pawn.itemName}</td>
                         <td>${formatCurrency(pawn.loanAmount)}</td>
                         <td>${moment(pawn.dueDate).format('DD MMM YYYY')}</td>
-                        <td><strong class="${statusClass}">${isOverdue ? 'JATUH TEMPO' : pawn.status.toUpperCase()}</strong></td>
+                        <td><strong class="${statusClass}">${statusText}</strong></td>
                         <td>
                             ${pawn.status === 'active' ? `<button class="btn btn-sm btn-success redeem-pawn-btn" data-id="${pawn.id}">Tebus</button>` : '-'}
                         </td>
@@ -1529,7 +1566,7 @@
             
             const table = $('<table class="data-table"><thead><tr><th>Tanggal</th><th>Anggota</th><th>Deskripsi</th><th>Jumlah</th><th>Ref ID</th></tr></thead><tbody></tbody></table>');
             const tbody = table.find('tbody');
-            filteredTransactions.slice(0, 200).forEach(t => { // Limit to 200 for performance
+            filteredTransactions.slice(0, 200).forEach(t => {
                 const member = members.find(m => m.id === t.memberId);
                 const amountClass = t.amount > 0 ? 'text-success' : 'text-danger';
                 tbody.append(`
@@ -1547,7 +1584,7 @@
         
         function openRecapReportModal() {
             $('#recapReportModal').css('display', 'flex');
-            $('#recapReportResults').html('<div class="empty-state"><i class="fas fa-file-alt"></i><p>Pilih periode dan generate laporan untuk melihat data.</p></div>');
+            $('#recapReportResults').html('<div class="printable-area"><div class="empty-state"><i class="fas fa-file-alt"></i><p>Pilih periode dan generate laporan untuk melihat data.</p></div></div>');
             $('#downloadRecapPdfBtn, #printRecapBtn').hide();
         }
 
@@ -1561,17 +1598,15 @@
 
             if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) return showToast('Rentang tanggal tidak valid', 'error');
             
-            // Run status update to get latest NPL data
             updateLoanStatuses();
 
             const activeTab = $('#recapReportModal .tabs .tab.active').data('tab');
             const filteredTransactions = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, null, '[]'));
             const loansInPeriod = loans.filter(l => moment(l.applicationDate).isBetween(startDate, endDate, null, '[]'));
             
-            let html = `<div class="text-center mb-3"><h3>${settings.koperasiName}</h3><h4>Laporan ${activeTab === 'profitLossRecap' ? 'Laba Rugi' : (activeTab === 'cashFlowRecap' ? 'Arus Kas' : 'Portofolio Pinjaman')}</h4><p>Periode: ${startDate.format('D MMM YYYY')} - ${endDate.format('D MMM YYYY')}</p></div>`;
+            let html = `<div class="printable-area"><div class="text-center mb-3"><h3>${settings.koperasiName}</h3><h4>Laporan ${activeTab === 'profitLossRecap' ? 'Laba Rugi' : (activeTab === 'cashFlowRecap' ? 'Arus Kas' : 'Portofolio Pinjaman')}</h4><p>Periode: ${startDate.format('D MMM YYYY')} - ${endDate.format('D MMM YYYY')}</p></div>`;
             
             if (activeTab === 'profitLossRecap') {
-                // [REVISED] Calculate interest income based on payments made within the period
                 let interestIncome = 0;
                 loans.forEach(loan => {
                     const paymentsInPeriod = loan.payments.filter(p => moment(p.date).isBetween(startDate, endDate, null, '[]'));
@@ -1581,7 +1616,7 @@
                     }
                 });
 
-                const operationalCost = 0; // Placeholder for future feature
+                const operationalCost = 0;
                 const netProfit = interestIncome - operationalCost;
 
                 html += `
@@ -1611,6 +1646,7 @@
                     <div class="recap-summary-card" style="border-color: var(--danger);"><div class="title">NPL (Non-Performing Loan)</div><div class="value">${nplRatio.toFixed(2)} % (${formatCurrency(nplAmount)})</div></div>
                 `;
             }
+            html += '</div>'; // close printable-area
             $('#recapReportResults').html(html);
             $('#downloadRecapPdfBtn, #printRecapBtn').show();
         }
@@ -1694,17 +1730,7 @@
         function loadUsersList() {const $list = $('#usersList').empty();const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Aksi</th></tr></thead><tbody></tbody></table>');const tbody = table.find('tbody');users.forEach(user => {tbody.append(`<tr><td>${user.name}</td><td>${user.username}</td><td>${settings.roles[user.role]?.label || user.role}</td><td>${user.id !== DEFAULT_ADMIN.id ? `<button class="btn btn-sm btn-info edit-user" data-id="${user.id}">Edit</button> <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Hapus</button>` : 'Default Admin'}</td></tr>`);});$list.append(table);}
         function resetUserForm() {$('#userForm')[0].reset();$('#userIdInput').val('');$('#userFormTitle').text('Tambah Pengguna');}
         function editUser(id) {const user = users.find(u => u.id === id);if (!user) return;resetUserForm();$('#userFormTitle').text('Edit Pengguna');$('#userIdInput').val(user.id);$('#userName').val(user.name);$('#userUsername').val(user.username).prop('disabled', true);$('#userRole').val(user.role);$('#userFormContainer').slideDown();}
-        function saveUser(e) {e.preventDefault();const id = $('#userIdInput').val() || 'U' + Date.now();const password = $('#userPassword').val();const existingUser = users.find(u => u.id === id);if (existingUser) { // Editing existing user
-                if (password) existingUser.password = CryptoJS.SHA256(password).toString();
-                existingUser.name = $('#userName').val();
-                existingUser.role = $('#userRole').val();
-                showToast('Data pengguna diperbarui', 'success');
-            } else { // Adding new user
-                if(!password) return showToast('Password wajib diisi untuk pengguna baru.', 'error');
-                const newUserData = {id,name: $('#userName').val(),username: $('#userUsername').val(),role: $('#userRole').val(), password: CryptoJS.SHA256(password).toString()};
-                users.push(newUserData);
-                showToast('Pengguna baru ditambahkan', 'success');
-            }saveData('users');loadUsersList();resetUserForm();$('#userUsername').prop('disabled', false);$('#userFormContainer').slideUp();}
+        function saveUser(e) {e.preventDefault();const id = $('#userIdInput').val() || 'U' + Date.now();const password = $('#userPassword').val();const existingUser = users.find(u => u.id === id);if (existingUser) { if (password) existingUser.password = CryptoJS.SHA256(password).toString(); existingUser.name = $('#userName').val(); existingUser.role = $('#userRole').val(); showToast('Data pengguna diperbarui', 'success');} else { if(!password) return showToast('Password wajib diisi untuk pengguna baru.', 'error'); const newUserData = {id,name: $('#userName').val(),username: $('#userUsername').val(),role: $('#userRole').val(), password: CryptoJS.SHA256(password).toString()}; users.push(newUserData); showToast('Pengguna baru ditambahkan', 'success');}saveData('users');loadUsersList();resetUserForm();$('#userUsername').prop('disabled', false);$('#userFormContainer').slideUp();}
         function deleteUser(id) {if(users.length <= 1) return showToast('Tidak dapat menghapus satu-satunya pengguna.', 'error'); if(id === currentUser.id) return showToast('Tidak dapat menghapus akun Anda sendiri.', 'error');promptForPassword('panel', () => {showConfirmation('Hapus Pengguna', 'Yakin ingin menghapus pengguna ini?', 'danger', () => {users = users.filter(u => u.id !== id);saveData('users');loadUsersList();showToast('Pengguna dihapus', 'success');});});}
         function changeSecurityCode(e) {e.preventDefault();const newCode = $('#panelSecurityCode').val();if(newCode.length < 6) return showToast('Password keamanan minimal 6 karakter.', 'error');settings.panelSecurityCode = CryptoJS.SHA256(newCode).toString();saveData('settings');showToast('Password keamanan berhasil diubah.', 'success');$(e.target).find('input').val('');}
         function changeOwnPassword(e) {e.preventDefault();const currentPwd = $('#currentPassword').val();const newPwd = $('#newPassword').val();if(newPwd.length < 6) return showToast('Password baru minimal 6 karakter.', 'error');if (CryptoJS.SHA256(currentPwd).toString() !== currentUser.password) return showToast('Password saat ini salah.', 'error');const userIndex = users.findIndex(u => u.id === currentUser.id);users[userIndex].password = CryptoJS.SHA256(newPwd).toString();currentUser.password = users[userIndex].password;sessionStorage.setItem('coop_current_user', JSON.stringify(currentUser));saveData('users');showToast('Password Anda berhasil diubah.', 'success');$('#changeOwnPasswordForm')[0].reset();}
@@ -1712,8 +1738,8 @@
         function loadRolePermissions(role) {const $container = $('#rolePermissionsContainer').empty().data('current-role', role);const roleData = settings.roles[role];if (!roleData) return;const structure = getPermissionStructure();Object.entries(structure).forEach(([groupName, permissions]) => {let groupHtml = `<div class="permission-group"><div class="permission-group-title">${groupName}</div>`;Object.entries(permissions).forEach(([key, label]) => {const isChecked = roleData.permissions[key] ? 'checked' : '';const isDisabled = !roleData.isEditable ? 'disabled' : '';groupHtml += `<div class="permission-item"><label><input type="checkbox" class="permission-checkbox" data-key="${key}" ${isChecked} ${isDisabled}> ${label}</label></div>`;});groupHtml += '</div>';$container.append(groupHtml);});}
         function saveRolePermissions() {const role = $('#rolePermissionsContainer').data('current-role');if (!settings.roles[role] || !settings.roles[role].isEditable) return showToast('Role ini tidak dapat diubah.', 'error');$('.permission-checkbox').each(function() {const key = $(this).data('key');settings.roles[role].permissions[key] = $(this).is(':checked');});saveData('settings');showToast(`Hak akses untuk ${settings.roles[role].label} berhasil disimpan.`, 'success');}
         function populateRolesDropdown(selector) { const $select = $(selector).empty(); Object.entries(settings.roles).forEach(([key, val]) => $select.append(`<option value="${key}">${val.label}</option>`));}
-        function promptForPassword(type, callback) { passwordPromptCallback = callback; const title = type === 'panel' ? 'Akses Terbatas' : ''; $('#passwordPromptTitle').text(title); $('#passwordPromptInput').val('').focus(); $('#passwordPromptModal').css('display', 'flex'); }
-        function submitPasswordPrompt() { const password = $('#passwordPromptInput').val(); const correctHash = settings.panelSecurityCode; if (CryptoJS.SHA256(password).toString() === correctHash) { if (passwordPromptCallback) passwordPromptCallback(); $('#passwordPromptModal').hide(); } else { showToast('Password keamanan salah.', 'error'); } }
+        function promptForPassword(type, callback) { passwordPromptCallback = callback; const title = type === 'panel' ? 'Akses Terbatas' : ''; $('#passwordPromptTitle').text(title); $('#passwordPromptMessage').text('Masukkan password keamanan untuk melanjutkan.'); $('#passwordPromptInput').val('').focus(); $('#passwordPromptModal').css('display', 'flex'); }
+        function submitPasswordPrompt() { const password = $('#passwordPromptInput').val(); const correctHash = settings.panelSecurityCode; if (CryptoJS.SHA256(password).toString() === correctHash) { if (passwordPromptCallback) passwordPromptCallback(); passwordPromptCallback=null; $('#passwordPromptModal').hide(); } else { showToast('Password keamanan salah.', 'error'); } }
         
         // Data Backup, Restore, Reset
         function backupData() {
@@ -1752,23 +1778,79 @@
         }
         function resetAllData() { showConfirmation('RESET SEMUA DATA', 'ANDA YAKIN? Tindakan ini tidak dapat diurungkan dan akan menghapus semua data anggota, transaksi, dan pengaturan.', 'danger', () => { Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key)); sessionStorage.clear(); showToast('Semua data telah direset. Aplikasi akan dimulai ulang.', 'success'); setTimeout(() => location.reload(), 2000); }); }
         
-        // PDF & Print
+        // --- PDF, Print & [NEW] Excel Export ---
         async function downloadPdf(elementId, fileName) {
             const element = document.querySelector(elementId);
             if (!element) return;
             showToast('Mempersiapkan PDF...', 'info');
             try {
-                const canvas = await html2canvas(element, { scale: 2 });
+                const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null });
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width, canvas.height] });
                 pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
                 pdf.save(fileName);
             } catch (e) { showToast('Gagal membuat PDF: ' + e.message, 'error'); }
         }
-        function printElement(elementId) { const content = $(elementId).clone(); $('#print-container').html(content).show(); window.print(); $('#print-container').empty().hide(); }
+        function printElement(elementId) { const content = $(elementId).clone(); $('#print-container').html(content).show(); setTimeout(() => { window.print(); $('#print-container').empty().hide(); }, 250); }
         function openKtaModal(memberId) { const member = members.find(m => m.id === memberId); if(!member) return; $('#ktaKoperasiName').text(settings.koperasiName); $('#ktaKoperasiContact').text(`${settings.koperasiAddress}, ${settings.koperasiPhone}`); $('#ktaMemberName').text(member.name); $('#ktaMemberId').text(`ID: ${member.id}`); const qrContainer = document.getElementById('ktaQrcodeImg'); qrContainer.innerHTML = ''; new QRCode(qrContainer, { text: JSON.stringify({id: member.id, name: member.name}), width: 150, height: 150, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); $('#ktaModal').css('display', 'flex'); }
         function downloadKtaAsPdf() { downloadPdf('#ktaCard', `KTA-${$('#ktaMemberName').text().replace(/ /g,"_")}.pdf`); }
-        function downloadRecapAsPdf() { downloadPdf('#recapReportResults', `Laporan-Keuangan-${moment().format('YYYY-MM-DD')}.pdf`); }
+        function downloadRecapAsPdf() { downloadPdf('#recapReportResults .printable-area', `Laporan-Keuangan-${moment().format('YYYY-MM-DD')}.pdf`); }
+        
+        // [NEW] Excel Export Functions
+        function exportToExcel(data, fileName) {
+            try {
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+                XLSX.writeFile(workbook, `${fileName}_${moment().format('YYYYMMDD')}.xlsx`);
+                showToast('Ekspor Excel berhasil.', 'success');
+            } catch (e) {
+                showToast('Gagal mengekspor Excel: ' + e.message, 'error');
+            }
+        }
+        function exportMembersToExcel() {
+            const dataToExport = members.map(m => ({
+                'ID Anggota': m.id, 'Nama': m.name, 'Telepon': m.phone, 'Alamat': m.address,
+                'Tanggal Bergabung': moment(m.joinDate).format('YYYY-MM-DD')
+            }));
+            exportToExcel(dataToExport, 'Daftar_Anggota');
+        }
+        function exportLoansToExcel() {
+            const dataToExport = loans.map(l => {
+                const member = members.find(m => m.id === l.memberId);
+                return {
+                    'ID Pinjaman': l.id, 'Nama Anggota': member ? member.name : 'N/A', 'Jumlah Pinjaman': l.amount,
+                    'Sisa Pokok': l.outstandingPrincipal, 'Tenor (Bulan)': l.tenor, 'Bunga (%)': l.interestRate,
+                    'Angsuran / Bulan': l.monthlyInstallment, 'Status': l.status.toUpperCase(),
+                    'Tanggal Pengajuan': moment(l.applicationDate).format('YYYY-MM-DD')
+                };
+            });
+            exportToExcel(dataToExport, 'Daftar_Pinjaman');
+        }
+        function exportPawnsToExcel() {
+            const dataToExport = pawns.map(p => {
+                const member = members.find(m => m.id === p.memberId);
+                return {
+                    'ID Gadai': p.id, 'Nama Anggota': member ? member.name : 'N/A', 'Nama Barang': p.itemName,
+                    'Nilai Taksiran': p.itemValue, 'Jumlah Pinjaman': p.loanAmount, 'Status': p.status.toUpperCase(),
+                    'Tanggal Gadai': moment(p.pawnDate).format('YYYY-MM-DD'),
+                    'Jatuh Tempo': moment(p.dueDate).format('YYYY-MM-DD'),
+                    'Tanggal Tebus': p.redeemDate ? moment(p.redeemDate).format('YYYY-MM-DD') : ''
+                };
+            });
+            exportToExcel(dataToExport, 'Daftar_Agunan_Gadai');
+        }
+        function exportHistoryToExcel() {
+            const dataToExport = transactions.map(t => {
+                const member = members.find(m => m.id === t.memberId);
+                return {
+                    'ID Transaksi': t.id, 'Tanggal': moment(t.date).format('YYYY-MM-DD HH:mm:ss'),
+                    'Nama Anggota': member ? member.name : 'N/A', 'ID Anggota': t.memberId,
+                    'Deskripsi': t.description, 'Jumlah': t.amount, 'ID Referensi': t.refId
+                };
+            });
+            exportToExcel(dataToExport, 'Histori_Transaksi');
+        }
     </script>
 </body>
 </html>
