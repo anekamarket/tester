@@ -48,6 +48,10 @@
             touch-action: manipulation;
             font-size: 16px; /* Base font size for better mobile readability */
         }
+        
+        body.modal-open {
+            overflow: hidden;
+        }
 
         .container {
             max-width: 100%;
@@ -754,6 +758,28 @@
 
             if (!localStorage.getItem(STORAGE_KEYS.USERS)) localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultUsers));
             if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(defaultSettings));
+            
+            // PERBAIKAN: Tambahkan data default jika tidak ada, untuk mengatasi masalah dasbor kosong.
+            // Ini hanya berjalan sekali saat aplikasi pertama kali digunakan atau data dibersihkan.
+            if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES) || JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)).length === 0) {
+                const defaultCategories = [
+                    { id: 'CAT' + Date.now(), name: 'Pakaian Kiloan' },
+                    { id: 'CAT' + (Date.now()+1), name: 'Barang Satuan' }
+                ];
+                localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(defaultCategories));
+            }
+
+            if (!localStorage.getItem(STORAGE_KEYS.SERVICES) || JSON.parse(localStorage.getItem(STORAGE_KEYS.SERVICES)).length === 0) {
+                const defaultServices = [
+                    { id: 'S' + Date.now(), name: 'Cuci Kering Setrika', category: 'Pakaian Kiloan', unit: 'Kg', price: 7000, duration: 2, durationUnit: 'hari', icon: 'fas fa-tshirt' },
+                    { id: 'S' + (Date.now()+1), name: 'Setrika Saja', category: 'Pakaian Kiloan', unit: 'Kg', price: 5000, duration: 1, durationUnit: 'hari', icon: 'fas fa-undo-alt' },
+                    { id: 'S' + (Date.now()+2), name: 'Cuci Kering Cepat', category: 'Pakaian Kiloan', unit: 'Kg', price: 12000, duration: 5, durationUnit: 'jam', icon: 'fas fa-shipping-fast' },
+                    { id: 'S' + (Date.now()+3), name: 'Selimut Tebal', category: 'Barang Satuan', unit: 'Pcs', price: 15000, duration: 3, durationUnit: 'hari', icon: 'fas fa-bed' },
+                    { id: 'S' + (Date.now()+4), name: 'Bed Cover', category: 'Barang Satuan', unit: 'Pcs', price: 25000, duration: 3, durationUnit: 'hari', icon: 'fas fa-bed' }
+                ];
+                localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(defaultServices));
+            }
+
             Object.values(STORAGE_KEYS).forEach(key => {
                 if (!localStorage.getItem(key) && key !== STORAGE_KEYS.USER) {
                     localStorage.setItem(key, JSON.stringify([]));
@@ -824,6 +850,19 @@
             $(document).on('click', '.smart-payment-btn', function() {
                 const amount = $(this).data('amount');
                 $('#paymentAmount').val(amount).trigger('input');
+            });
+            
+            // PENYEMPURNAAN: Mencegah body scroll saat modal aktif
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === "style") {
+                        const modalIsVisible = Array.from($('.modal')).some(modal => $(modal).css('display') === 'flex');
+                        $('body').toggleClass('modal-open', modalIsVisible);
+                    }
+                });
+            });
+            $('.modal').each(function() {
+                observer.observe(this, { attributes: true });
             });
         });
 
