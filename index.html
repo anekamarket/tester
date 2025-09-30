@@ -899,7 +899,10 @@
 
             // Modals & Forms
             $('.modal-close, .modal-close-btn').click(function() { $(this).closest('.modal').hide(); });
-            $('.modal-body .tabs .tab').click(function() { switchModalTab($(this).closest('.modal'), $(this).data('tab')); });
+            // Corrected selector for modal tabs
+            $(document).on('click', '.modal-body .tabs .tab', function() {
+                switchModalTab($(this).closest('.modal'), $(this).data('tab'));
+            });
 
             // Savings
             $('#savingsMemberSearch').on('input', function() { handleMemberSearch(this, '#savingsMemberResults', selectMemberForSavings); });
@@ -963,6 +966,7 @@
         function initializeApp() {
             updateKoperasiInfo();
             configureUIAccess();
+            updateLoanStatuses(); // Check for overdue loans on app start
             loadDashboard();
             updateCurrentDate();
         }
@@ -981,12 +985,17 @@
             $('#recapReportBtn').toggle(checkPermission('canViewReports'));
             $('#manageKoperasiInfoBtn').toggle(checkPermission('canManageKoperasiInfo'));
             $('#controlPanelBtn').toggle(checkPermission('canAccessControlPanel'));
-            $('#adminPanel [class*="backup-actions"], #adminPanel #resetDataBtn').parent().toggle(checkPermission('canBackupRestore') || checkPermission('canResetData'));
+            // Correctly check multiple permissions for backup/restore/reset section
+            const canManageData = checkPermission('canBackupRestore') || checkPermission('canResetData');
+            $('#adminPanel .backup-actions').parent().toggle(canManageData);
+            $('#backupDataBtn').toggle(checkPermission('canBackupRestore'));
+            $('.file-label').toggle(checkPermission('canBackupRestore'));
+            $('#resetDataBtn').toggle(checkPermission('canResetData'));
         }
         
         function loadDashboard() {
             const totalSavings = savings.reduce((sum, s) => sum + s.amount, 0);
-            const totalActiveLoans = loans.filter(l => l.status === 'active').reduce((sum, l) => sum + l.outstandingPrincipal, 0);
+            const totalActiveLoans = loans.filter(l => l.status === 'active' || l.status === 'overdue').reduce((sum, l) => sum + l.outstandingPrincipal, 0);
             const totalAssets = totalSavings; // Simplified for now
             const totalMembers = members.length;
             
@@ -1013,7 +1022,6 @@
         // --- LOGIN, LOGOUT & AUTHENTICATION ---
         function handleLogin(e) {
             e.preventDefault();
-            const $loginBtn = $(this).find('button[type="submit"]');
             
             if ($('#captchaInput').val().trim().toLowerCase() !== captchaText.toLowerCase()) {
                 showToast('Kode verifikasi (CAPTCHA) salah.', 'error');
@@ -1063,6 +1071,15 @@
             ctx.fillStyle = '#f0f2f5';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Add some distortion for better security
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.2})`;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
             ctx.font = 'bold 24px Poppins';
             ctx.fillStyle = '#333';
             ctx.textAlign = 'center';
@@ -1145,9 +1162,15 @@
             const id = $('#memberIdInput').val() || 'M' + moment().format('YYMMDDHHmmss');
             const newMemberData = { id, name: $('#memberName').val(), phone: $('#memberPhone').val(), address: $('#memberAddress').val() };
             
-            const existingMember = members.find(m => m.id === id);
-            if(existingMember) { Object.assign(existingMember, newMemberData); showToast('Data anggota berhasil diperbarui', 'success'); } 
-            else { newMemberData.joinDate = new Date().toISOString(); members.push(newMemberData); showToast('Anggota baru berhasil ditambahkan', 'success'); }
+            const existingMemberIndex = members.findIndex(m => m.id === id);
+            if(existingMemberIndex > -1) { 
+                members[existingMemberIndex] = { ...members[existingMemberIndex], ...newMemberData };
+                showToast('Data anggota berhasil diperbarui', 'success'); 
+            } else { 
+                newMemberData.joinDate = new Date().toISOString(); 
+                members.push(newMemberData); 
+                showToast('Anggota baru berhasil ditambahkan', 'success'); 
+            }
             
             saveData('members');
             loadMembersList();
@@ -1206,7 +1229,32 @@
         }
 
         // --- LOAN MANAGEMENT ---
+        /**
+         * [REVISED] Checks all active loans and updates their status to 'overdue' if necessary.
+         */
+        function updateLoanStatuses() {
+            let changed = false;
+            const today = moment().startOf('day');
+            loans.forEach(loan => {
+                // Only check loans that are currently active
+                if (loan.status !== 'active') return;
+
+                const applicationDate = moment(loan.applicationDate);
+                // Calculate how many monthly payments were expected up to today
+                const monthsPassed = Math.floor(today.diff(applicationDate, 'months', true));
+
+                if (monthsPassed > loan.payments.length) {
+                    // This implies at least one payment was missed. Mark as overdue.
+                    loan.status = 'overdue';
+                    changed = true;
+                }
+            });
+            // Save to localStorage only if a change occurred
+            if (changed) saveData('loans');
+        }
+
         function openLoansModal() {
+            updateLoanStatuses(); // Update statuses before showing the list
             loadLoansList();
             $('#loansModal').css('display', 'flex');
         }
@@ -1217,7 +1265,13 @@
             
             const table = $('<table class="data-table"><thead><tr><th>ID Pinjaman</th><th>Anggota</th><th>Jumlah</th><th>Sisa Pokok</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>');
             const tbody = table.find('tbody');
-            loans.forEach(loan => {
+            // Sort loans to show active/overdue ones first
+            const sortedLoans = [...loans].sort((a, b) => {
+                const statusOrder = { 'active': 1, 'overdue': 2, 'paid_off': 3 };
+                return (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
+            });
+
+            sortedLoans.forEach(loan => {
                 const member = members.find(m => m.id === loan.memberId);
                 let statusClass = '';
                 if(loan.status === 'paid_off') statusClass = 'text-success';
@@ -1271,7 +1325,7 @@
             const tenor = parseInt($('#loanTenor').val());
             const interestRate = parseFloat($('#loanInterest').val());
             const collateral = $('#loanCollateral').val();
-            if (!memberId || !amount || !tenor || isNaN(interestRate)) return showToast('Harap lengkapi semua data pinjaman.', 'error');
+            if (!memberId || !(amount > 0) || !(tenor > 0) || isNaN(interestRate)) return showToast('Harap lengkapi semua data pinjaman dengan benar.', 'error');
             
             const monthlyInterest = amount * (interestRate / 100);
             const monthlyPrincipal = amount / tenor;
@@ -1308,7 +1362,7 @@
             }
             
             const isPaidOff = loan.status === 'paid_off';
-            $('#payInstallmentBtn').data('id', loanId).toggle(!isPaidOff);
+            $('#payInstallmentBtn').data('id', loanId).toggle(!isPaidOff).prop('disabled', !checkPermission('canReceiveInstallments'));
 
             $('#loanDetailsBody').html(`
                 <h4>Pinjaman: ${loan.id}</h4>
@@ -1320,7 +1374,7 @@
                     <div class="summary-row"><span>Angsuran Terbayar:</span><span>${loan.payments.length} / ${loan.tenor}</span></div>
                 </div>
                 <h5 class="mt-3">Riwayat Pembayaran</h5>
-                <div class="data-table-container">
+                <div class="data-table-container" style="max-height: 25vh;">
                     <table class="data-table amortization-table">
                         <thead><tr><th>Deskripsi</th><th>Tanggal Bayar</th><th>Jumlah</th><th>Petugas</th></tr></thead>
                         <tbody>${paymentsHtml}</tbody>
@@ -1331,6 +1385,9 @@
         }
 
         function payInstallment() {
+            if (!checkPermission('canReceiveInstallments')) {
+                return showToast('Anda tidak memiliki hak akses untuk menerima angsuran.', 'error');
+            }
             const loanId = $(this).data('id');
             const loanIndex = loans.findIndex(l => l.id === loanId);
             if (loanIndex === -1) return;
@@ -1354,6 +1411,9 @@
                 if (loan.payments.length >= loan.tenor) {
                     loan.status = 'paid_off';
                     loan.outstandingPrincipal = 0;
+                } else {
+                    // If it was overdue, check if it's now up-to-date
+                    loan.status = 'active'; // Set back to active, updateLoanStatuses will re-check if needed
                 }
 
                 loans[loanIndex] = loan;
@@ -1412,7 +1472,7 @@
             const itemValue = parseFloat($('#pawnItemValue').val());
             const loanAmount = parseFloat($('#pawnLoanAmount').val());
             const dueDate = $('#pawnDueDate').val();
-            if (!memberId || !itemName || !itemValue || !loanAmount || !dueDate) return showToast('Harap lengkapi semua data agunan.', 'error');
+            if (!memberId || !itemName || !(itemValue > 0) || !(loanAmount > 0) || !dueDate) return showToast('Harap lengkapi semua data agunan.', 'error');
 
             const newPawn = {
                 id: 'PAWN' + moment().format('x'), memberId, itemName, itemValue, loanAmount, dueDate,
@@ -1493,27 +1553,36 @@
             const period = $('#recapReportPeriod').val();
             if (period === 'this_month') { startDate = moment().startOf('month'); endDate = moment().endOf('month'); }
             else if (period === 'last_month') { startDate = moment().subtract(1, 'months').startOf('month'); endDate = moment().subtract(1, 'months').endOf('month'); }
-            else if (period === 'this_year') { startDate = moment().startOf('year'); endDate = moment().endOf('year'); }
+            else if (period === 'this_year') { startDate = moment().startOf('year'); endDate = moment().endOf('month'); }
             else { startDate = moment($('#recapStartDate').val()); endDate = moment($('#recapEndDate').val()).endOf('day'); }
 
             if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) return showToast('Rentang tanggal tidak valid', 'error');
             
+            // Run status update to get latest NPL data
+            updateLoanStatuses();
+
             const activeTab = $('#recapReportModal .tabs .tab.active').data('tab');
             const filteredTransactions = transactions.filter(t => moment(t.date).isBetween(startDate, endDate, null, '[]'));
-            const filteredLoans = loans.filter(l => moment(l.applicationDate).isBetween(startDate, endDate, null, '[]'));
+            const loansInPeriod = loans.filter(l => moment(l.applicationDate).isBetween(startDate, endDate, null, '[]'));
             
             let html = `<div class="text-center mb-3"><h3>${settings.koperasiName}</h3><h4>Laporan ${activeTab === 'profitLossRecap' ? 'Laba Rugi' : (activeTab === 'cashFlowRecap' ? 'Arus Kas' : 'Portofolio Pinjaman')}</h4><p>Periode: ${startDate.format('D MMM YYYY')} - ${endDate.format('D MMM YYYY')}</p></div>`;
             
             if (activeTab === 'profitLossRecap') {
-                const interestIncome = filteredLoans.reduce((sum, loan) => {
-                    const monthlyInterest = loan.amount * (loan.interestRate / 100);
-                    return sum + (monthlyInterest * loan.tenor);
-                }, 0);
+                // [REVISED] Calculate interest income based on payments made within the period
+                let interestIncome = 0;
+                loans.forEach(loan => {
+                    const paymentsInPeriod = loan.payments.filter(p => moment(p.date).isBetween(startDate, endDate, null, '[]'));
+                    if (paymentsInPeriod.length > 0) {
+                        const monthlyInterest = loan.amount * (loan.interestRate / 100);
+                        interestIncome += monthlyInterest * paymentsInPeriod.length;
+                    }
+                });
+
                 const operationalCost = 0; // Placeholder for future feature
                 const netProfit = interestIncome - operationalCost;
 
                 html += `
-                    <div class="recap-summary-card"><div class="title">Total Pendapatan Bunga</div><div class="value">${formatCurrency(interestIncome)}</div></div>
+                    <div class="recap-summary-card"><div class="title">Total Pendapatan Bunga (Realisasi)</div><div class="value">${formatCurrency(interestIncome)}</div></div>
                     <div class="recap-summary-card" style="border-color: var(--danger);"><div class="title">Biaya Operasional</div><div class="value">${formatCurrency(operationalCost)}</div></div>
                     <div class="recap-summary-card" style="border-color: var(--success);"><div class="title">Laba Bersih</div><div class="value">${formatCurrency(netProfit)}</div></div>
                 `;
@@ -1527,14 +1596,16 @@
                     <div class="recap-summary-card"><div class="title">Arus Kas Bersih</div><div class="value ${netCashFlow < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(netCashFlow)}</div></div>
                 `;
             } else { // portfolioRecap
-                const totalDisbursed = filteredLoans.reduce((sum, l) => sum + l.amount, 0);
-                const nplLoans = loans.filter(l => l.status === 'overdue'); // Placeholder, overdue logic needs implementation
+                const totalDisbursedInPeriod = loansInPeriod.reduce((sum, l) => sum + l.amount, 0);
+                const activeLoans = loans.filter(l => l.status === 'active' || l.status === 'overdue');
+                const nplLoans = loans.filter(l => l.status === 'overdue');
+                const totalOutstanding = activeLoans.reduce((sum, l) => sum + l.outstandingPrincipal, 0);
                 const nplAmount = nplLoans.reduce((sum, l) => sum + l.outstandingPrincipal, 0);
-                const nplRatio = totalDisbursed > 0 ? (nplAmount / totalDisbursed) * 100 : 0;
+                const nplRatio = totalOutstanding > 0 ? (nplAmount / totalOutstanding) * 100 : 0;
                 html += `
-                    <div class="recap-summary-card"><div class="title">Total Pinjaman Disalurkan</div><div class="value">${formatCurrency(totalDisbursed)}</div></div>
-                    <div class="recap-summary-card"><div class="title">Jumlah Pinjaman Aktif</div><div class="value">${loans.filter(l=>l.status === 'active').length}</div></div>
-                    <div class="recap-summary-card" style="border-color: var(--danger);"><div class="title">NPL (Non-Performing Loan)</div><div class="value">${nplRatio.toFixed(2)} %</div></div>
+                    <div class="recap-summary-card"><div class="title">Pinjaman Disalurkan (Periode Ini)</div><div class="value">${formatCurrency(totalDisbursedInPeriod)}</div></div>
+                    <div class="recap-summary-card"><div class="title">Total Pinjaman Aktif (Outstanding)</div><div class="value">${formatCurrency(totalOutstanding)}</div></div>
+                    <div class="recap-summary-card" style="border-color: var(--danger);"><div class="title">NPL (Non-Performing Loan)</div><div class="value">${nplRatio.toFixed(2)} % (${formatCurrency(nplAmount)})</div></div>
                 `;
             }
             $('#recapReportResults').html(html);
@@ -1561,14 +1632,13 @@
         
         function openMemberProfileModal(memberId) {
             const member = members.find(m => m.id === memberId); if (!member) return;
-            loadMemberSavingsSummary(memberId);
             
             const memberLoans = loans.filter(l => l.memberId === memberId);
-            const loansHtml = memberLoans.length > 0 ? memberLoans.map(l => `<div class="summary-row"><span>${l.id} (${l.status})</span><span>${formatCurrency(l.outstandingPrincipal)}</span></div>`).join('') : '<p>Tidak ada pinjaman aktif.</p>';
+            const loansHtml = memberLoans.length > 0 ? memberLoans.map(l => `<div class="summary-row"><span>${l.id} (<strong class="${l.status === 'overdue' ? 'text-danger' : (l.status === 'paid_off' ? 'text-success' : '')}">${l.status.toUpperCase()}</strong>)</span><span>Sisa: ${formatCurrency(l.outstandingPrincipal)}</span></div>`).join('') : '<p>Tidak ada pinjaman aktif.</p>';
             
             $('#memberProfileBody').html(`
                 <h3>${member.name}</h3>
-                <p>${member.phone} | ${member.address}</p>
+                <p>${member.phone || 'No phone'} | ${member.address || 'No address'}</p>
                 <hr>
                 <h4 class="mt-3">Ringkasan Simpanan</h4>
                 <div class="member-financial-summary">
@@ -1597,7 +1667,7 @@
         function formatCurrency(amount) { return 'Rp ' + (amount != null ? amount : 0).toLocaleString('id-ID'); }
         function showToast(message, type = 'info', duration = 3000) { const $toast = $('#toast'); $toast.removeClass('success error warning info').addClass(type); $('#toast-message').text(message); $toast.addClass('show'); setTimeout(() => $toast.removeClass('show'), duration); }
         function showConfirmation(title, message, type = 'success', onConfirm) { $('#confirmTitle').text(title); $('#confirmMessage').text(message); const $confirmBtn = $('#confirmAction'); $confirmBtn.off('click').on('click', () => { onConfirm(); $('#confirmationModal').hide(); }); $confirmBtn.removeClass('btn-success btn-danger btn-warning').addClass(`btn-${type}`); $('#confirmationModal').css('display', 'flex'); }
-        function switchModalTab($modal, tabId) { $modal.find('.tabs .tab').removeClass('active'); $modal.find(`.tabs .tab[data-tab="${tabId}"]`).addClass('active'); $modal.find('.tab-content').removeClass('active'); $modal.find(`#${tabId}Tab, #${tabId}ReportTab, #${tabId}`).addClass('active'); }
+        function switchModalTab($modal, tabId) { $modal.find('.tabs .tab').removeClass('active'); $modal.find(`.tabs .tab[data-tab="${tabId}"]`).addClass('active'); $modal.find('.tab-content').removeClass('active').hide(); $modal.find(`#${tabId}Tab, #${tabId}`).addClass('active').show(); }
         function logTransaction(memberId, description, amount, refId = '') {
             transactions.unshift({
                 id: 'TRX' + moment().format('x'),
@@ -1618,19 +1688,28 @@
         function getPermissionKeys(isFullAccess = false) { const permissions = {}; Object.values(getPermissionStructure()).forEach(group => Object.keys(group).forEach(key => permissions[key] = isFullAccess)); return permissions; }
         function checkPermission(permissionName) { if (!currentUser) return false; if (currentUser.role === 'admin') return true; return settings.roles[currentUser.role]?.permissions?.[permissionName] || false; }
         
-        // Include user and role management functions from the original script
-        function loadUsersList() {const $list = $('#usersList').empty();const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Aksi</th></tr></thead><tbody></tbody></table>');const tbody = table.find('tbody');users.forEach(user => {tbody.append(`<tr><td>${user.name}</td><td>${user.username}</td><td>${settings.roles[user.role]?.label || user.role}</td><td><button class="btn btn-sm btn-info edit-user" data-id="${user.id}">Edit</button> <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Hapus</button></td></tr>`);});$list.append(table);}
+        function loadUsersList() {const $list = $('#usersList').empty();const table = $('<table class="data-table"><thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Aksi</th></tr></thead><tbody></tbody></table>');const tbody = table.find('tbody');users.forEach(user => {tbody.append(`<tr><td>${user.name}</td><td>${user.username}</td><td>${settings.roles[user.role]?.label || user.role}</td><td>${user.id !== DEFAULT_ADMIN.id ? `<button class="btn btn-sm btn-info edit-user" data-id="${user.id}">Edit</button> <button class="btn btn-sm btn-danger delete-user" data-id="${user.id}">Hapus</button>` : 'Default Admin'}</td></tr>`);});$list.append(table);}
         function resetUserForm() {$('#userForm')[0].reset();$('#userIdInput').val('');$('#userFormTitle').text('Tambah Pengguna');}
-        function editUser(id) {const user = users.find(u => u.id === id);if (!user) return;resetUserForm();$('#userFormTitle').text('Edit Pengguna');$('#userIdInput').val(user.id);$('#userName').val(user.name);$('#userUsername').val(user.username);$('#userRole').val(user.role);$('#userFormContainer').slideDown();}
-        function saveUser(e) {e.preventDefault();const id = $('#userIdInput').val() || 'U' + Date.now();const password = $('#userPassword').val();const newUserData = {id,name: $('#userName').val(),username: $('#userUsername').val(),role: $('#userRole').val(),};const existingUser = users.find(u => u.id === id);if(existingUser) {if (password) existingUser.password = CryptoJS.SHA256(password).toString();Object.assign(existingUser, newUserData);showToast('Data pengguna diperbarui', 'success');} else {if(!password) return showToast('Password wajib diisi untuk pengguna baru.', 'error');newUserData.password = CryptoJS.SHA256(password).toString();users.push(newUserData);showToast('Pengguna baru ditambahkan', 'success');}saveData('users');loadUsersList();resetUserForm();$('#userFormContainer').slideUp();}
-        function deleteUser(id) {if(users.length <= 1) return showToast('Tidak dapat menghapus satu-satunya pengguna.', 'error');promptForPassword('panel', () => {showConfirmation('Hapus Pengguna', 'Yakin ingin menghapus pengguna ini?', 'danger', () => {users = users.filter(u => u.id !== id);saveData('users');loadUsersList();showToast('Pengguna dihapus', 'success');});});}
-        function changeSecurityCode(e) {e.preventDefault();const formId = $(this).attr('id');const newCode = (formId === 'panelSecurityForm') ? $('#panelSecurityCode').val() : '';if(formId === 'panelSecurityForm') settings.panelSecurityCode = CryptoJS.SHA256(newCode).toString();saveData('settings');showToast('Password keamanan berhasil diubah.', 'success');$(this).find('input').val('');}
-        function changeOwnPassword(e) {e.preventDefault();const currentPwd = $('#currentPassword').val();const newPwd = $('#newPassword').val();if (CryptoJS.SHA256(currentPwd).toString() !== currentUser.password) return showToast('Password saat ini salah.', 'error');const userIndex = users.findIndex(u => u.id === currentUser.id);users[userIndex].password = CryptoJS.SHA256(newPwd).toString();currentUser.password = users[userIndex].password;sessionStorage.setItem('coop_current_user', JSON.stringify(currentUser));saveData('users');showToast('Password Anda berhasil diubah.', 'success');$('#changeOwnPasswordForm')[0].reset();}
+        function editUser(id) {const user = users.find(u => u.id === id);if (!user) return;resetUserForm();$('#userFormTitle').text('Edit Pengguna');$('#userIdInput').val(user.id);$('#userName').val(user.name);$('#userUsername').val(user.username).prop('disabled', true);$('#userRole').val(user.role);$('#userFormContainer').slideDown();}
+        function saveUser(e) {e.preventDefault();const id = $('#userIdInput').val() || 'U' + Date.now();const password = $('#userPassword').val();const existingUser = users.find(u => u.id === id);if (existingUser) { // Editing existing user
+                if (password) existingUser.password = CryptoJS.SHA256(password).toString();
+                existingUser.name = $('#userName').val();
+                existingUser.role = $('#userRole').val();
+                showToast('Data pengguna diperbarui', 'success');
+            } else { // Adding new user
+                if(!password) return showToast('Password wajib diisi untuk pengguna baru.', 'error');
+                const newUserData = {id,name: $('#userName').val(),username: $('#userUsername').val(),role: $('#userRole').val(), password: CryptoJS.SHA256(password).toString()};
+                users.push(newUserData);
+                showToast('Pengguna baru ditambahkan', 'success');
+            }saveData('users');loadUsersList();resetUserForm();$('#userUsername').prop('disabled', false);$('#userFormContainer').slideUp();}
+        function deleteUser(id) {if(users.length <= 1) return showToast('Tidak dapat menghapus satu-satunya pengguna.', 'error'); if(id === currentUser.id) return showToast('Tidak dapat menghapus akun Anda sendiri.', 'error');promptForPassword('panel', () => {showConfirmation('Hapus Pengguna', 'Yakin ingin menghapus pengguna ini?', 'danger', () => {users = users.filter(u => u.id !== id);saveData('users');loadUsersList();showToast('Pengguna dihapus', 'success');});});}
+        function changeSecurityCode(e) {e.preventDefault();const newCode = $('#panelSecurityCode').val();if(newCode.length < 6) return showToast('Password keamanan minimal 6 karakter.', 'error');settings.panelSecurityCode = CryptoJS.SHA256(newCode).toString();saveData('settings');showToast('Password keamanan berhasil diubah.', 'success');$(e.target).find('input').val('');}
+        function changeOwnPassword(e) {e.preventDefault();const currentPwd = $('#currentPassword').val();const newPwd = $('#newPassword').val();if(newPwd.length < 6) return showToast('Password baru minimal 6 karakter.', 'error');if (CryptoJS.SHA256(currentPwd).toString() !== currentUser.password) return showToast('Password saat ini salah.', 'error');const userIndex = users.findIndex(u => u.id === currentUser.id);users[userIndex].password = CryptoJS.SHA256(newPwd).toString();currentUser.password = users[userIndex].password;sessionStorage.setItem('coop_current_user', JSON.stringify(currentUser));saveData('users');showToast('Password Anda berhasil diubah.', 'success');$('#changeOwnPasswordForm')[0].reset();}
         function openRoleManagementModal() {const $tabs = $('#roleTabsContainer').empty();const $permissions = $('#rolePermissionsContainer').empty();Object.entries(settings.roles).forEach(([role, data], index) => {$tabs.append(`<div class="tab ${index === 0 ? 'active' : ''}" data-tab="${role}">${data.label}</div>`);});loadRolePermissions(Object.keys(settings.roles)[0]);$('#roleTabsContainer').off('click').on('click', '.tab', function() {$('#roleTabsContainer .tab').removeClass('active');$(this).addClass('active');loadRolePermissions($(this).data('tab'));});$('#roleManagementModal').css('display', 'flex');}
         function loadRolePermissions(role) {const $container = $('#rolePermissionsContainer').empty().data('current-role', role);const roleData = settings.roles[role];if (!roleData) return;const structure = getPermissionStructure();Object.entries(structure).forEach(([groupName, permissions]) => {let groupHtml = `<div class="permission-group"><div class="permission-group-title">${groupName}</div>`;Object.entries(permissions).forEach(([key, label]) => {const isChecked = roleData.permissions[key] ? 'checked' : '';const isDisabled = !roleData.isEditable ? 'disabled' : '';groupHtml += `<div class="permission-item"><label><input type="checkbox" class="permission-checkbox" data-key="${key}" ${isChecked} ${isDisabled}> ${label}</label></div>`;});groupHtml += '</div>';$container.append(groupHtml);});}
         function saveRolePermissions() {const role = $('#rolePermissionsContainer').data('current-role');if (!settings.roles[role] || !settings.roles[role].isEditable) return showToast('Role ini tidak dapat diubah.', 'error');$('.permission-checkbox').each(function() {const key = $(this).data('key');settings.roles[role].permissions[key] = $(this).is(':checked');});saveData('settings');showToast(`Hak akses untuk ${settings.roles[role].label} berhasil disimpan.`, 'success');}
         function populateRolesDropdown(selector) { const $select = $(selector).empty(); Object.entries(settings.roles).forEach(([key, val]) => $select.append(`<option value="${key}">${val.label}</option>`));}
-        function promptForPassword(type, callback) { passwordPromptCallback = callback; const title = type === 'panel' ? 'Akses Kontrol Panel' : ''; $('#passwordPromptTitle').text(title); $('#passwordPromptInput').val(''); $('#passwordPromptModal').css('display', 'flex'); }
+        function promptForPassword(type, callback) { passwordPromptCallback = callback; const title = type === 'panel' ? 'Akses Terbatas' : ''; $('#passwordPromptTitle').text(title); $('#passwordPromptInput').val('').focus(); $('#passwordPromptModal').css('display', 'flex'); }
         function submitPasswordPrompt() { const password = $('#passwordPromptInput').val(); const correctHash = settings.panelSecurityCode; if (CryptoJS.SHA256(password).toString() === correctHash) { if (passwordPromptCallback) passwordPromptCallback(); $('#passwordPromptModal').hide(); } else { showToast('Password keamanan salah.', 'error'); } }
         
         // Data Backup, Restore, Reset
@@ -1656,9 +1735,10 @@
                 showConfirmation('Restore Data', 'Ini akan menimpa semua data saat ini. Lanjutkan?', 'danger', () => {
                     try {
                         const decrypted = CryptoJS.AES.decrypt(e.target.result, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
+                        if(!decrypted) throw new Error("Decryption failed. Invalid key or corrupt file.");
                         const restoredData = JSON.parse(decrypted);
                         Object.keys(restoredData).forEach(key => { localStorage.setItem(key, JSON.stringify(restoredData[key])); });
-                        showToast('Data berhasil dipulihkan. Harap logout dan login kembali.', 'success');
+                        showToast('Data berhasil dipulihkan. Aplikasi akan dimulai ulang.', 'success');
                         setTimeout(() => location.reload(), 2000);
                     } catch (err) {
                         showToast('File backup tidak valid atau rusak.', 'error');
@@ -1667,7 +1747,7 @@
             };
             reader.readAsText(file);
         }
-        function resetAllData() { showConfirmation('RESET SEMUA DATA', 'ANDA YAKIN? Tindakan ini tidak dapat diurungkan dan akan menghapus semua data anggota, transaksi, dan pengaturan.', 'danger', () => { Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key)); sessionStorage.clear(); showToast('Semua data telah direset.', 'success'); setTimeout(() => location.reload(), 2000); }); }
+        function resetAllData() { showConfirmation('RESET SEMUA DATA', 'ANDA YAKIN? Tindakan ini tidak dapat diurungkan dan akan menghapus semua data anggota, transaksi, dan pengaturan.', 'danger', () => { Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key)); sessionStorage.clear(); showToast('Semua data telah direset. Aplikasi akan dimulai ulang.', 'success'); setTimeout(() => location.reload(), 2000); }); }
         
         // PDF & Print
         async function downloadPdf(elementId, fileName) {
@@ -1683,8 +1763,8 @@
             } catch (e) { showToast('Gagal membuat PDF: ' + e.message, 'error'); }
         }
         function printElement(elementId) { const content = $(elementId).clone(); $('#print-container').html(content).show(); window.print(); $('#print-container').empty().hide(); }
-        function openKtaModal(memberId) { const member = members.find(m => m.id === memberId); if(!member) return; $('#ktaKoperasiName').text(settings.koperasiName); $('#ktaKoperasiContact').text(`${settings.koperasiAddress}, ${settings.koperasiPhone}`); $('#ktaMemberName').text(member.name); $('#ktaMemberId').text(`ID: ${member.id}`); const qrContainer = document.getElementById('ktaQrcodeImg'); qrContainer.innerHTML = ''; new QRCode(qrContainer, { text: JSON.stringify({id: member.id, name: member.name}), width: 150, height: 150 }); $('#ktaModal').css('display', 'flex'); }
-        function downloadKtaAsPdf() { downloadPdf('#ktaCard', `KTA-${$('#ktaMemberName').text()}.pdf`); }
+        function openKtaModal(memberId) { const member = members.find(m => m.id === memberId); if(!member) return; $('#ktaKoperasiName').text(settings.koperasiName); $('#ktaKoperasiContact').text(`${settings.koperasiAddress}, ${settings.koperasiPhone}`); $('#ktaMemberName').text(member.name); $('#ktaMemberId').text(`ID: ${member.id}`); const qrContainer = document.getElementById('ktaQrcodeImg'); qrContainer.innerHTML = ''; new QRCode(qrContainer, { text: JSON.stringify({id: member.id, name: member.name}), width: 150, height: 150, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); $('#ktaModal').css('display', 'flex'); }
+        function downloadKtaAsPdf() { downloadPdf('#ktaCard', `KTA-${$('#ktaMemberName').text().replace(/ /g,"_")}.pdf`); }
         function downloadRecapAsPdf() { downloadPdf('#recapReportResults', `Laporan-Keuangan-${moment().format('YYYY-MM-DD')}.pdf`); }
     </script>
 </body>
