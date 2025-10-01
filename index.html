@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMPEG Ultimate - Sistem Informasi Kepegawaian</title>
+    <title>SIMPEG Ultimate Pro - Sistem Informasi Kepegawaian Canggih</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -22,89 +22,109 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); font-size: 15px; }
-        .app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; grid-template-rows: var(--header-height) 1fr; grid-template-areas: "sidebar header" "sidebar main"; height: 100vh; }
-        .app-sidebar { grid-area: sidebar; background-color: var(--white-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.5rem 0; transition: all var(--transition-speed); }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); font-size: 15px; overflow-x: hidden; }
+        .app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; grid-template-rows: var(--header-height) 1fr; grid-template-areas: "sidebar header" "sidebar main"; height: 100vh; transition: grid-template-columns var(--transition-speed); }
+        .app-sidebar { grid-area: sidebar; background-color: var(--white-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-top: 1rem; transition: transform var(--transition-speed); z-index: 100; }
         .sidebar-header { padding: 0 1.5rem 1.5rem 1.5rem; display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 600; color: var(--primary-color); }
-        .sidebar-menu { list-style: none; }
-        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.5rem; color: var(--gray-color); text-decoration: none; font-weight: 500; transition: all var(--transition-speed); border-right: 3px solid transparent; }
+        .sidebar-menu { list-style: none; flex-grow: 1; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.5rem; color: var(--gray-color); text-decoration: none; font-weight: 500; transition: all var(--transition-speed); border-left: 4px solid transparent; }
         .sidebar-menu a:hover { background-color: var(--primary-light-color); color: var(--primary-color); }
-        .sidebar-menu a.active { background-color: var(--primary-light-color); color: var(--primary-color); border-right-color: var(--primary-color); font-weight: 600; }
-        .sidebar-menu a i { width: 20px; text-align: center; }
+        .sidebar-menu a.active { background-color: var(--primary-light-color); color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600; }
+        .sidebar-menu a i { width: 20px; text-align: center; font-size: 1.1rem; }
         .app-header { grid-area: header; background-color: var(--white-color); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; transition: all var(--transition-speed); z-index: 10; }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-color); }
         .header-title h1 { font-size: 1.5rem; font-weight: 600; }
         .header-actions { display: flex; align-items: center; gap: 1.5rem; }
         .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--gray-color); }
-        .user-profile { display: flex; align-items: center; gap: 10px; }
         .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .app-main { grid-area: main; overflow-y: auto; padding: 2rem; }
         .page { display: none; } .page.active { display: block; animation: pageFadeIn 0.5s ease; } @keyframes pageFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
         .panel { background-color: var(--white-color); border-radius: var(--rounded); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all var(--transition-speed); }
-        .panel-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .panel-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
         .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-        .kpi-card { background-color: var(--light-color); padding: 1.5rem; border-radius: var(--rounded); text-align: center; }
+        .kpi-card { background-color: var(--light-color); padding: 1.5rem; border-radius: var(--rounded); text-align: center; border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.2s; }
+        .kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
         .kpi-card i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
         .kpi-card .value { font-size: 2rem; font-weight: 700; }
         .kpi-card .label { font-size: 0.9rem; color: var(--gray-color); }
-        .activity-log ul { list-style: none; max-height: 200px; overflow-y: auto; }
-        .activity-log li { padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
-        .activity-log li:last-child { border-bottom: none; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background-color: var(--light-color); font-weight: 600; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; text-transform: capitalize; }
         .status-hadir { background-color: var(--success-color); } .status-cuti { background-color: var(--warning-color); color: var(--dark-color); } .status-belum-hadir { background-color: var(--gray-color); }
-        .progress-bar { width: 100%; background-color: var(--border-color); border-radius: 5px; overflow: hidden; }
-        .progress-bar-inner { height: 20px; width: 0%; background-color: var(--primary-color); transition: width 0.5s ease; text-align: center; color: white; line-height: 20px; }
-        .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; gap: 8px; }
-        .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; animation: fadeIn 0.3s; }
+        .status-disetujui, .status-paid { background-color: var(--success-color); } .status-ditolak { background-color: var(--danger-color); } .status-menunggu { background-color: var(--info-color); }
+        .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; opacity: 0.7; }
+        .btn-primary { background-color: var(--primary-color); color: white; } .btn-primary:hover:not(:disabled) { background-color: var(--secondary-color); }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; animation: fadeIn 0.3s; }
         .modal.show { display: flex; }
-        .modal-content { background-color: var(--white-color); border-radius: var(--rounded); width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; animation: slideIn 0.3s; }
+        .modal-content { background-color: var(--white-color); border-radius: var(--rounded); width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; animation: slideIn 0.3s; box-shadow: var(--shadow); }
         .modal-body { padding: 1.5rem; overflow-y: auto; }
         .modal-header, .modal-footer { padding: 1rem 1.5rem; }
         .modal-header { border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .modal-footer { border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
         .modal-title { font-size: 1.25rem; font-weight: 600; }
         .modal-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--gray-color); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        #notificationToast { position: fixed; bottom: 20px; right: 20px; padding: 15px 20px; border-radius: 0.35rem; box-shadow: var(--shadow); transform: translateY(200%); transition: transform 0.5s ease-in-out; z-index: 2000; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-30px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        #notificationToast { position: fixed; bottom: 20px; right: 20px; padding: 15px 20px; border-radius: 0.5rem; box-shadow: var(--shadow); transform: translateY(200%); transition: transform 0.5s ease-in-out; z-index: 2000; color: white; font-weight: 500; }
         #notificationToast.show { transform: translateY(0); }
         .form-group { margin-bottom: 1rem; }
         .form-label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
-        .form-control { width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background-color: var(--bg-color); color: var(--text-color); }
-        /* Placeholder for employee grid etc. */
-        .employee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-        .employee-card { background: var(--white-color); border-radius: 0.35rem; padding: 16px; box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid var(--border-color); cursor: pointer; text-align: center; }
-        .employee-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--primary-color); }
-        .employee-photo img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; }
+        .form-control { width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background-color: var(--bg-color); color: var(--text-color); transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-light-color); }
+        .employee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+        .employee-card { background: var(--white-color); border-radius: var(--rounded); padding: 16px; box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid var(--border-color); cursor: pointer; text-align: center; }
+        .employee-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary-color); }
+        .employee-photo img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid var(--border-color); }
         .employee-name { font-weight: 600; } .employee-position { font-size: 0.9rem; color: var(--primary-color); }
-        .empty-state { text-align: center; padding: 2rem; color: var(--gray-color); border: 2px dashed var(--border-color); border-radius: var(--rounded); }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray-color); border: 2px dashed var(--border-color); border-radius: var(--rounded); background-color: var(--light-color); }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .filters { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .filters .form-control { max-width: 300px; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px 16px; }
+        .detail-grid dt { font-weight: 600; color: var(--gray-color); } .detail-grid dd { margin: 0; }
+        @media (max-width: 992px) {
+            :root { --sidebar-width: 220px; }
+        }
+        @media (max-width: 768px) {
+            .app-container { grid-template-columns: 1fr; grid-template-areas: "header" "main"; }
+            .app-sidebar { position: fixed; transform: translateX(-100%); height: 100vh; }
+            .app-container.sidebar-open .app-sidebar { transform: translateX(0); box-shadow: var(--shadow); }
+            .mobile-menu-btn { display: block; }
+            .header-title h1 { font-size: 1.2rem; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .filters { flex-direction: column; } .filters .form-control { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
         <aside class="app-sidebar">
-            <div class="sidebar-header"><i class="fas fa-users-cog"></i><span>SIMPEG Ultimate</span></div>
+            <div class="sidebar-header"><i class="fas fa-users-cog"></i><span>SIMPEG Pro</span></div>
             <ul class="sidebar-menu">
                 <li><a href="#" class="active" data-page="dashboardPage"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="#" data-page="karyawanPage"><i class="fas fa-users"></i> Karyawan</a></li>
                 <li><a href="#" data-page="absensiPage"><i class="fas fa-clock"></i> Absensi</a></li>
                 <li><a href="#" data-page="penggajianPage"><i class="fas fa-file-invoice-dollar"></i> Penggajian</a></li>
+                <li><a href="#" data-page="cutiPage"><i class="fas fa-calendar-alt"></i> Cuti</a></li>
+                <li><a href="#" data-page="kinerjaPage"><i class="fas fa-chart-line"></i> Kinerja</a></li>
                 <li><a href="#" data-page="laporanPage"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                <li><a href="#" data-page="pengaturanPage"><i class="fas fa-cog"></i> Pengaturan</a></li>
             </ul>
         </aside>
 
         <header class="app-header">
-            <div class="header-title"><h1 id="headerTitle">Dashboard</h1></div>
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+                <div class="header-title"><h1 id="headerTitle">Dashboard</h1></div>
+            </div>
             <div class="header-actions">
                 <i class="fas fa-sun theme-switcher" id="themeSwitcher"></i>
-                <div class="user-profile">
-                    <img src="https://i.pravatar.cc/150?u=admin" alt="Admin Avatar">
-                </div>
+                <div class="user-profile"><img src="https://i.pravatar.cc/150?u=admin" alt="Admin Avatar"></div>
             </div>
         </header>
 
@@ -112,74 +132,61 @@
             <div id="dashboardPage" class="page active">
                 <div class="kpi-grid" id="kpiGrid"></div>
                 <div class="main-grid" style="margin-top: 1.5rem;">
-                    <div class="panel">
-                        <h3 class="panel-title">Distribusi Departemen</h3>
-                        <canvas id="departmentChart"></canvas>
-                    </div>
-                    <div class="panel">
-                        <h3 class="panel-title">Aktivitas Terkini</h3>
-                        <div class="activity-log">
-                            <ul id="activityLog"></ul>
-                        </div>
-                    </div>
+                    <div class="panel"><h3 class="panel-title">Distribusi Departemen</h3><canvas id="departmentChart"></canvas></div>
+                    <div class="panel"><h3 class="panel-title">Aktivitas Terkini</h3><ul id="activityLog" style="list-style: none; max-height: 250px; overflow-y: auto;"></ul></div>
                 </div>
             </div>
 
             <div id="karyawanPage" class="page">
                 <section class="panel">
                     <div class="panel-title"><span>Database Karyawan</span><span id="employeeCount">(0)</span></div>
-                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                        <input type="text" id="employeeSearch" class="form-control" placeholder="Cari nama atau NIP..." style="max-width: 400px;">
-                        <button id="addEmployeeBtn" class="btn btn-primary"><i class="fas fa-user-plus"></i> Tambah Karyawan</button>
+                     <div class="filters">
+                        <input type="text" id="employeeSearch" class="form-control" placeholder="Cari nama atau NIP...">
+                        <select id="departmentFilter" class="form-control"></select>
+                        <select id="statusFilter" class="form-control"><option value="">Semua Status</option><option value="Permanen">Permanen</option><option value="Kontrak">Kontrak</option><option value="Magang">Magang</option></select>
+                        <button id="addEmployeeBtn" class="btn btn-primary" style="margin-left: auto;"><i class="fas fa-user-plus"></i> Tambah Karyawan</button>
                     </div>
                     <div class="employee-grid" id="employeeGrid"></div>
                 </section>
             </div>
 
             <div id="absensiPage" class="page">
-                <div class="panel">
-                    <div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div>
-                    <div style="display:flex; gap:1rem; margin-bottom: 1.5rem;">
-                        <button id="clockInBtn" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Clock In</button>
-                        <button id="clockOutBtn" class="btn btn-primary" disabled><i class="fas fa-sign-out-alt"></i> Clock Out</button>
-                        <div id="clockStatus" style="align-self: center;"></div>
-                    </div>
-                    <div class="table-container">
-                        <table id="attendanceTable">
-                            <thead><tr><th>Nama Karyawan</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+                 <div class="panel"><div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div><div class="table-container"><table id="attendanceTable"><thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
             </div>
 
             <div id="penggajianPage" class="page">
+                 <div class="panel"><div class="panel-title">Proses Penggajian</div></div>
+            </div>
+
+            <div id="cutiPage" class="page">
                 <div class="panel">
-                    <div class="panel-title">Proses Penggajian</div>
-                     <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
-                        <select id="payrollMonth" class="form-control" style="width: auto;"></select>
-                        <select id="payrollYear" class="form-control" style="width: auto;"></select>
-                        <button id="runPayrollBtn" class="btn btn-success"><i class="fas fa-play-circle"></i> Jalankan Penggajian</button>
+                    <div class="panel-title"><span>Manajemen Cuti</span><button class="btn btn-primary" id="addLeaveBtn"><i class="fas fa-plus"></i> Ajukan Cuti</button></div>
+                    <div class="table-container">
+                        <table id="leaveTable"><thead><tr><th>Nama Karyawan</th><th>Tanggal Mulai</th><th>Tanggal Selesai</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
                     </div>
-                    <div id="payrollProgressContainer" style="margin-bottom: 1.5rem; display: none;">
-                        <div class="progress-bar"><div id="payrollProgressBar" class="progress-bar-inner"></div></div>
-                    </div>
-                    <table>
-                        <thead><tr><th>Nama Karyawan</th><th>NIP</th><th>Jabatan</th><th>Status Pembayaran</th></tr></thead>
-                        <tbody id="payrollTableBody"></tbody>
-                    </table>
                 </div>
             </div>
 
+            <div id="kinerjaPage" class="page">
+                <div class="panel"><div class="panel-title"><span>Review Kinerja Karyawan</span><button class="btn btn-primary" id="addPerformanceReviewBtn"><i class="fas fa-plus"></i> Tambah Review</button></div></div>
+            </div>
+            
             <div id="laporanPage" class="page">
-                <div class="main-grid">
-                    <div class="panel">
-                        <h3 class="panel-title">Laporan Status Karyawan</h3>
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                     <div class="panel">
-                        <h3 class="panel-title">Laporan Komposisi Gender</h3>
-                        <canvas id="genderChart"></canvas>
+                 <div class="main-grid"><div class="panel"><h3 class="panel-title">Laporan Status Karyawan</h3><canvas id="statusChart"></canvas></div><div class="panel"><h3 class="panel-title">Laporan Komposisi Gender</h3><canvas id="genderChart"></canvas></div></div>
+            </div>
+            
+            <div id="pengaturanPage" class="page">
+                <div class="panel">
+                    <div class="panel-title">Pengaturan Aplikasi</div>
+                    <div class="settings-group">
+                        <h4>Manajemen Data</h4>
+                        <p style="margin-bottom: 1rem; color: var(--gray-color);">Simpan data Anda secara lokal atau pulihkan dari file cadangan.</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button id="backupDataBtn" class="btn btn-primary"><i class="fas fa-download"></i> Backup Data</button>
+                            <label for="restoreDataInput" class="btn btn-success"><i class="fas fa-upload"></i> Restore Data</label>
+                            <input type="file" id="restoreDataInput" accept=".json" style="display: none;">
+                            <button id="resetDataBtn" class="btn btn-danger" style="margin-left: auto;"><i class="fas fa-trash-alt"></i> Reset Semua Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -187,22 +194,19 @@
     </div>
 
     <div id="notificationToast"></div>
-    <div id="employeeModal" class="modal">
+
+    <div id="employeeFormModal" class="modal">
         <div class="modal-content">
              <div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div>
-             <div class="modal-body">
-                <form id="employeeForm">
-                    <input type="hidden" id="employeeId">
-                    <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="employeeName" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="employeeEmail" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required></select></div>
-                    <div class="form-group"><label class="form-label">Jabatan</label><input type="text" id="employeePosition" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Gender</label><select id="employeeGender" class="form-control" required><option value="Pria">Pria</option><option value="Wanita">Wanita</option></select></div>
-                    <div class="form-group"><label class="form-label">Status</label><select id="employeeStatus" class="form-control" required><option value="Permanen">Permanen</option><option value="Kontrak">Kontrak</option><option value="Magang">Magang</option></select></div>
-                </form>
-             </div>
-             <div class="modal-footer"><button class="btn" id="cancelEmployeeBtn">Batal</button><button class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
+             <div class="modal-body"><form id="employeeForm"></form></div>
+             <div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
         </div>
+    </div>
+    <div id="employeeDetailModal" class="modal">
+        <div class="modal-content"><div class="modal-header"><h3 class="modal-title">Detail Karyawan</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="employeeDetailBody"></div><div class="modal-footer" id="employeeDetailFooter"></div></div>
+    </div>
+    <div id="confirmModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;"><div class="modal-header"><h3 class="modal-title" id="confirmModalTitle">Konfirmasi</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn" id="confirmModalBtn">Ya</button></div></div>
     </div>
     
     <script>
@@ -221,15 +225,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const defaultDb = {
         employees: [],
         departments: ['Teknologi', 'Produk', 'Manajemen', 'SDM', 'Pemasaran', 'Keuangan'],
-        attendance: {}, // Keyed by date
-        payroll: {}, // Keyed by month-year
+        attendance: {},
+        payroll: {},
         activities: [],
-        user: { id: null, clockedIn: null } // Simulating logged in user
+        leaves: [], // {id, employeeId, startDate, endDate, reason, status: 'Menunggu'}
+        performance: [], // {id, employeeId, date, review, rating}
     };
+    
+    function seedData() {
+        db.employees = [
+            {id: 1, name: 'Budi Santoso', email: 'budi@example.com', department: 'Teknologi', position: 'Frontend Developer', gender: 'Pria', status: 'Permanen'},
+            {id: 2, name: 'Citra Lestari', email: 'citra@example.com', department: 'Produk', position: 'Product Manager', gender: 'Wanita', status: 'Permanen'},
+            {id: 3, name: 'Agus Wijaya', email: 'agus@example.com', department: 'Pemasaran', position: 'Digital Marketer', gender: 'Pria', status: 'Kontrak'},
+            {id: 4, name: 'Dewi Anggraini', email: 'dewi@example.com', department: 'SDM', position: 'HR Generalist', gender: 'Wanita', status: 'Permanen'},
+            {id: 5, name: 'Eko Prasetyo', email: 'eko@example.com', department: 'Teknologi', position: 'Backend Developer', gender: 'Pria', status: 'Kontrak'},
+            {id: 6, name: 'Fitriani', email: 'fitri@example.com', department: 'Keuangan', position: 'Accountant', gender: 'Wanita', status: 'Magang'},
+        ];
+        db.leaves = [
+            {id: 1, employeeId: 3, startDate: '2025-10-05', endDate: '2025-10-06', reason: 'Acara keluarga', status: 'Disetujui'},
+            {id: 2, employeeId: 5, startDate: '2025-10-10', endDate: '2025-10-10', reason: 'Sakit', status: 'Menunggu'},
+        ];
+        addActivity('Data dummy berhasil dimuat untuk demo.', true);
+        saveDb();
+    }
 
     function loadDb() {
         const data = localStorage.getItem('simpegUltimateDb');
-        db = data ? JSON.parse(data) : JSON.parse(JSON.stringify(defaultDb));
+        if (data) {
+            db = JSON.parse(data);
+        } else {
+            db = JSON.parse(JSON.stringify(defaultDb));
+            seedData();
+        }
         if (!db.attendance[today]) db.attendance[today] = [];
     }
 
@@ -237,31 +264,41 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('simpegUltimateDb', JSON.stringify(db));
     }
     
-    function addActivity(text) {
+    function addActivity(text, silent = false) {
         db.activities.unshift({ text, time: new Date() });
-        if (db.activities.length > 10) db.activities.pop();
-        saveDb();
+        if (db.activities.length > 15) db.activities.pop();
+        if (!silent) saveDb();
         if(document.getElementById('dashboardPage').classList.contains('active')) render.activityLog();
     }
-
+    
     // =================================================================================
-    // UI ELEMENT SELECTORS
+    // UI UTILITIES
     // =================================================================================
-    const ui = {
-        headerTitle: document.getElementById('headerTitle'),
-        sidebarMenu: document.querySelector('.sidebar-menu'),
-        pages: document.querySelectorAll('.page'),
-        // Add all other selectors here as needed...
+    const uiUtils = {
+        showToast: (message, type = 'success') => {
+            const toast = document.getElementById('notificationToast');
+            toast.textContent = message;
+            toast.style.backgroundColor = `var(--${type}-color)`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        },
+        showConfirm: (title, body, onConfirm, confirmClass = 'btn-danger') => {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalBody').innerHTML = `<p>${body}</p>`;
+            const confirmBtn = document.getElementById('confirmModalBtn');
+            confirmBtn.className = `btn ${confirmClass}`;
+            confirmBtn.onclick = () => {
+                onConfirm();
+                document.getElementById('confirmModal').classList.remove('show');
+            };
+            document.getElementById('confirmModal').classList.add('show');
+        }
     };
 
     // =================================================================================
     // RENDER FUNCTIONS
     // =================================================================================
     const render = {
-        all: () => {
-            const activePage = document.querySelector('.page.active')?.id || 'dashboardPage';
-            render.page(activePage);
-        },
         page: (pageId) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId)?.classList.add('active');
@@ -270,202 +307,171 @@ document.addEventListener('DOMContentLoaded', function() {
             const activeLink = document.querySelector(`.sidebar-menu a[data-page="${pageId}"]`);
             if (activeLink) {
                 activeLink.classList.add('active');
-                ui.headerTitle.textContent = activeLink.textContent.trim();
+                document.getElementById('headerTitle').textContent = activeLink.textContent.trim();
             }
+            if (window.innerWidth <= 768) document.getElementById('appContainer').classList.remove('sidebar-open');
 
-            // Page-specific render functions
-            switch (pageId) {
-                case 'dashboardPage': render.dashboard(); break;
-                case 'karyawanPage': render.karyawan(); break;
-                case 'absensiPage': render.absensi(); break;
-                case 'penggajianPage': render.penggajian(); break;
-                case 'laporanPage': render.laporan(); break;
-            }
+            const renderMap = {
+                dashboardPage: render.dashboard,
+                karyawanPage: render.karyawan,
+                absensiPage: render.absensi,
+                laporanPage: render.laporan,
+                cutiPage: render.cuti
+            };
+            renderMap[pageId]?.();
         },
         dashboard: () => {
             render.kpi();
             render.activityLog();
             render.charts.department();
         },
-        karyawan: (filter = '') => {
+        karyawan: () => {
             const grid = document.getElementById('employeeGrid');
-            grid.innerHTML = '';
-            const filtered = db.employees.filter(e => e.name.toLowerCase().includes(filter.toLowerCase()));
-            if(filtered.length === 0) {
-                grid.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-users"></i><p>Belum ada data karyawan.</p></div>`;
-            } else {
-                filtered.forEach(emp => {
-                    const card = document.createElement('div');
-                    card.className = 'employee-card';
-                    card.innerHTML = `<div class="employee-photo"><img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}"></div>
-                                      <div class="employee-name">${emp.name}</div>
-                                      <div class="employee-position">${emp.position}</div>`;
-                    grid.appendChild(card);
-                });
-            }
+            const search = document.getElementById('employeeSearch').value.toLowerCase();
+            const deptFilter = document.getElementById('departmentFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filtered = db.employees.filter(e => 
+                (e.name.toLowerCase().includes(search) || `NIP${e.id.toString().padStart(3,'0')}`.toLowerCase().includes(search)) &&
+                (!deptFilter || e.department === deptFilter) &&
+                (!statusFilter || e.status === statusFilter)
+            );
+
+            grid.innerHTML = filtered.length === 0 
+                ? `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada karyawan yang cocok dengan kriteria.</p></div>`
+                : filtered.map(emp => `
+                    <div class="employee-card" data-id="${emp.id}">
+                        <div class="employee-photo"><img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}"></div>
+                        <div class="employee-name">${emp.name}</div>
+                        <div class="employee-position">${emp.position}</div>
+                    </div>`).join('');
+            
             document.getElementById('employeeCount').textContent = `(${db.employees.length})`;
+            
+            // Populate department filter if empty
+            const deptFilterEl = document.getElementById('departmentFilter');
+            if(deptFilterEl.options.length <= 1) {
+                deptFilterEl.innerHTML = '<option value="">Semua Departemen</option>';
+                db.departments.forEach(d => deptFilterEl.add(new Option(d, d)));
+            }
         },
         absensi: () => {
             document.getElementById('currentDateText').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' });
             const tableBody = document.querySelector('#attendanceTable tbody');
-            tableBody.innerHTML = '';
-            db.employees.forEach(emp => {
-                const attendanceRecord = db.attendance[today].find(a => a.id === emp.id);
-                const status = attendanceRecord ? (attendanceRecord.status || 'Hadir') : 'Belum Hadir';
-                const clockIn = attendanceRecord?.clockIn ? new Date(attendanceRecord.clockIn).toLocaleTimeString('id-ID') : '-';
-                const clockOut = attendanceRecord?.clockOut ? new Date(attendanceRecord.clockOut).toLocaleTimeString('id-ID') : '-';
-                
-                const row = `<tr>
+            tableBody.innerHTML = db.employees.map(emp => {
+                const record = db.attendance[today]?.find(a => a.id === emp.id);
+                const status = record ? 'Hadir' : 'Belum Hadir';
+                return `<tr>
                     <td>${emp.name}</td><td>${'NIP' + emp.id.toString().padStart(3, '0')}</td><td>${emp.department}</td>
-                    <td>${clockIn}</td><td>${clockOut}</td>
+                    <td>${record?.clockIn ? new Date(record.clockIn).toLocaleTimeString('id-ID') : '-'}</td>
+                    <td>${record?.clockOut ? new Date(record.clockOut).toLocaleTimeString('id-ID') : '-'}</td>
                     <td><span class="status-badge status-${status.toLowerCase().replace(' ', '-')}">${status}</span></td>
                 </tr>`;
-                tableBody.insertAdjacentHTML('beforeend', row);
-            });
-            // Update user clock-in status
-            const clockInBtn = document.getElementById('clockInBtn');
-            const clockOutBtn = document.getElementById('clockOutBtn');
-            if (db.user.clockedIn) {
-                clockInBtn.disabled = true;
-                clockOutBtn.disabled = false;
-                document.getElementById('clockStatus').textContent = `Anda masuk pada: ${new Date(db.user.clockedIn).toLocaleTimeString('id-ID')}`;
-            } else {
-                clockInBtn.disabled = false;
-                clockOutBtn.disabled = true;
-                document.getElementById('clockStatus').textContent = '';
-            }
+            }).join('');
         },
-        penggajian: () => {
-             // Populate dropdowns
-            const monthSelect = document.getElementById('payrollMonth');
-            const yearSelect = document.getElementById('payrollYear');
-            if(monthSelect.options.length === 0) {
-                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                months.forEach((m, i) => monthSelect.add(new Option(m, i)));
-                monthSelect.value = new Date().getMonth();
-                for (let y = new Date().getFullYear(); y >= 2020; y--) yearSelect.add(new Option(y, y));
+        cuti: () => {
+            const tableBody = document.querySelector('#leaveTable tbody');
+            if (db.leaves.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="text-align:center; padding:2rem; color: var(--gray-color);">Belum ada pengajuan cuti.</td></tr>`;
+                return;
             }
-            render.payrollTable();
-        },
-        payrollTable: () => {
-            const month = document.getElementById('payrollMonth').value;
-            const year = document.getElementById('payrollYear').value;
-            const period = `${month}-${year}`;
-            const payrollData = db.payroll[period] || [];
-            const tableBody = document.getElementById('payrollTableBody');
-            tableBody.innerHTML = '';
-            db.employees.forEach(emp => {
-                const isPaid = payrollData.includes(emp.id);
-                const status = isPaid ? '<span style="color:var(--success-color)">Sudah Dibayar</span>' : 'Belum Diproses';
-                 tableBody.insertAdjacentHTML('beforeend', `<tr><td>${emp.name}</td><td>${'NIP' + emp.id.toString().padStart(3, '0')}</td><td>${emp.position}</td><td>${status}</td></tr>`);
-            });
+            tableBody.innerHTML = db.leaves.map(leave => {
+                const employee = db.employees.find(e => e.id === leave.employeeId);
+                return `<tr>
+                    <td>${employee?.name || 'N/A'}</td>
+                    <td>${new Date(leave.startDate).toLocaleDateString('id-ID')}</td>
+                    <td>${new Date(leave.endDate).toLocaleDateString('id-ID')}</td>
+                    <td>${leave.reason}</td>
+                    <td><span class="status-badge status-${leave.status.toLowerCase()}">${leave.status}</span></td>
+                    <td>${leave.status === 'Menunggu' ? `
+                        <button class="btn btn-success btn-sm" onclick="actions.updateLeaveStatus(${leave.id}, 'Disetujui')"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="actions.updateLeaveStatus(${leave.id}, 'Ditolak')"><i class="fas fa-times"></i></button>
+                    ` : '-'}</td>
+                </tr>`;
+            }).join('');
         },
         laporan: () => {
             render.charts.status();
             render.charts.gender();
         },
         kpi: () => {
+            const onLeave = db.leaves.filter(l => l.status === 'Disetujui' && new Date(l.startDate) <= new Date() && new Date(l.endDate) >= new Date()).length;
             const total = db.employees.length;
-            const onLeave = 0; // Placeholder
-            const active = total - onLeave;
             const men = db.employees.filter(e => e.gender === 'Pria').length;
-            const women = total - men;
-            
-            const kpiGrid = document.getElementById('kpiGrid');
-            kpiGrid.innerHTML = `
+            document.getElementById('kpiGrid').innerHTML = `
                 <div class="kpi-card"><i class="fas fa-users"></i><div class="value">${total}</div><div class="label">Total Karyawan</div></div>
-                <div class="kpi-card"><i class="fas fa-user-check"></i><div class="value">${active}</div><div class="label">Karyawan Aktif</div></div>
+                <div class="kpi-card"><i class="fas fa-user-check"></i><div class="value">${total - onLeave}</div><div class="label">Karyawan Aktif</div></div>
                 <div class="kpi-card"><i class="fas fa-user-clock"></i><div class="value">${onLeave}</div><div class="label">Sedang Cuti</div></div>
-                <div class="kpi-card"><i class="fas fa-venus-mars"></i><div class="value">${men} P / ${women} W</div><div class="label">Rasio Gender</div></div>
-            `;
+                <div class="kpi-card"><i class="fas fa-venus-mars"></i><div class="value">${men} P / ${total-men} W</div><div class="label">Rasio Gender</div></div>`;
         },
         activityLog: () => {
             const logUl = document.getElementById('activityLog');
-            logUl.innerHTML = '';
-            if(db.activities.length === 0) {
-                logUl.innerHTML = '<li>Tidak ada aktivitas.</li>';
-            } else {
-                db.activities.forEach(act => {
-                    logUl.insertAdjacentHTML('beforeend', `<li>${act.text} <small style="color: var(--gray-color)">(${new Date(act.time).toLocaleTimeString('id-ID')})</small></li>`);
-                });
-            }
+            logUl.innerHTML = db.activities.length === 0 
+                ? '<li>Tidak ada aktivitas.</li>'
+                : db.activities.map(act => `<li>${act.text} <small style="color: var(--gray-color)">(${new Date(act.time).toLocaleTimeString('id-ID')})</small></li>`).join('');
         },
         charts: {
-            destroy: (chartId) => {
-                if(charts[chartId]) { charts[chartId].destroy(); delete charts[chartId]; }
-            },
+            destroy: (chartId) => { if(charts[chartId]) { charts[chartId].destroy(); delete charts[chartId]; } },
             department: () => {
                 render.charts.destroy('dept');
-                const ctx = document.getElementById('departmentChart').getContext('2d');
-                const data = db.departments.map(dept => ({
-                    dept,
-                    count: db.employees.filter(e => e.department === dept).length
-                }));
-                charts['dept'] = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: data.map(d => d.dept),
-                        datasets: [{ label: 'Karyawan', data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d'] }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+                const data = db.departments.map(dept => ({ dept, count: db.employees.filter(e => e.department === dept).length }));
+                charts['dept'] = new Chart(document.getElementById('departmentChart').getContext('2d'), { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d'] }] }, options: { responsive: true, maintainAspectRatio: false } });
             },
             status: () => {
                 render.charts.destroy('status');
-                const ctx = document.getElementById('statusChart').getContext('2d');
                 const statuses = ['Permanen', 'Kontrak', 'Magang'];
                 const data = statuses.map(s => db.employees.filter(e => e.status === s).length);
-                 charts['status'] = new Chart(ctx, {
-                    type: 'bar',
-                    data: { labels: statuses, datasets: [{ label: 'Jumlah Karyawan', data: data, backgroundColor: ['#0052cc', '#ffc107', '#17a2b8'] }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-                });
+                charts['status'] = new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'bar', data: { labels: statuses, datasets: [{ label: 'Jumlah Karyawan', data: data, backgroundColor: ['#0052cc', '#ffc107', '#17a2b8'] }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
             },
             gender: () => {
-                 render.charts.destroy('gender');
-                const ctx = document.getElementById('genderChart').getContext('2d');
+                render.charts.destroy('gender');
                 const men = db.employees.filter(e => e.gender === 'Pria').length;
-                const women = db.employees.length - men;
-                 charts['gender'] = new Chart(ctx, {
-                    type: 'pie',
-                    data: { labels: ['Pria', 'Wanita'], datasets: [{ data: [men, women], backgroundColor: ['#0052cc', '#dc3545'] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+                charts['gender'] = new Chart(document.getElementById('genderChart').getContext('2d'), { type: 'pie', data: { labels: ['Pria', 'Wanita'], datasets: [{ data: [men, db.employees.length - men], backgroundColor: ['#0052cc', '#dc3545'] }] }, options: { responsive: true, maintainAspectRatio: false } });
             }
         },
         employeeForm: (id = null) => {
-             const modal = document.getElementById('employeeModal');
-            const title = document.getElementById('employeeModalTitle');
             const form = document.getElementById('employeeForm');
-            form.reset();
-            document.getElementById('employeeId').value = id || '';
-            
-            const deptSelect = document.getElementById('employeeDepartment');
-            deptSelect.innerHTML = '';
-            db.departments.forEach(d => deptSelect.add(new Option(d, d)));
-
-            if(id) {
-                title.textContent = 'Edit Karyawan';
-                const emp = db.employees.find(e => e.id === id);
-                document.getElementById('employeeName').value = emp.name;
-                document.getElementById('employeeEmail').value = emp.email;
-                document.getElementById('employeeDepartment').value = emp.department;
-                document.getElementById('employeePosition').value = emp.position;
-                document.getElementById('employeeGender').value = emp.gender;
-                document.getElementById('employeeStatus').value = emp.status;
-            } else {
-                title.textContent = 'Tambah Karyawan Baru';
-            }
-            modal.classList.add('show');
+            const emp = id ? db.employees.find(e => e.id === id) : {};
+            form.innerHTML = `
+                <input type="hidden" id="employeeId" value="${id || ''}">
+                <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="employeeName" class="form-control" required value="${emp.name || ''}"></div>
+                <div class="form-group"><label class="form-label">Email</label><input type="email" id="employeeEmail" class="form-control" required value="${emp.email || ''}"></div>
+                <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required>${db.departments.map(d => `<option value="${d}" ${emp.department === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
+                <div class="form-group"><label class="form-label">Jabatan</label><input type="text" id="employeePosition" class="form-control" required value="${emp.position || ''}"></div>
+                <div class="form-group"><label class="form-label">Gender</label><select id="employeeGender" class="form-control" required><option value="Pria" ${emp.gender === 'Pria' ? 'selected' : ''}>Pria</option><option value="Wanita" ${emp.gender === 'Wanita' ? 'selected' : ''}>Wanita</option></select></div>
+                <div class="form-group"><label class="form-label">Status</label><select id="employeeStatus" class="form-control" required><option value="Permanen" ${emp.status === 'Permanen' ? 'selected' : ''}>Permanen</option><option value="Kontrak" ${emp.status === 'Kontrak' ? 'selected' : ''}>Kontrak</option><option value="Magang" ${emp.status === 'Magang' ? 'selected' : ''}>Magang</option></select></div>
+            `;
+            document.getElementById('employeeModalTitle').textContent = id ? 'Edit Karyawan' : 'Tambah Karyawan Baru';
+            document.getElementById('employeeFormModal').classList.add('show');
+        },
+        employeeDetail: (id) => {
+            const emp = db.employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById('employeeDetailBody').innerHTML = `
+                <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
+                    <img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;">
+                    <div><h3 style="margin:0;">${emp.name}</h3><p style="color:var(--primary-color);">${emp.position}</p></div>
+                </div>
+                <dl class="detail-grid">
+                    <dt>NIP</dt><dd>NIP${emp.id.toString().padStart(3,'0')}</dd>
+                    <dt>Email</dt><dd>${emp.email}</dd>
+                    <dt>Departemen</dt><dd>${emp.department}</dd>
+                    <dt>Gender</dt><dd>${emp.gender}</dd>
+                    <dt>Status</dt><dd>${emp.status}</dd>
+                </dl>`;
+            document.getElementById('employeeDetailFooter').innerHTML = `
+                <button class="btn btn-danger" onclick="actions.deleteEmployee(${emp.id})"><i class="fas fa-trash"></i> Hapus</button>
+                <button class="btn btn-primary" onclick="render.employeeForm(${emp.id})"><i class="fas fa-edit"></i> Edit</button>`;
+            document.getElementById('employeeDetailModal').classList.add('show');
         }
     };
 
     // =================================================================================
     // ACTIONS
     // =================================================================================
-    const actions = {
+    window.actions = { // Make it globally accessible for inline onclick
         saveEmployee: () => {
-            const id = parseInt(document.getElementById('employeeId').value);
+            const id = parseInt(document.getElementById('employeeId').value) || null;
             const data = {
                 name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
                 department: document.getElementById('employeeDepartment').value, position: document.getElementById('employeePosition').value,
@@ -478,73 +484,85 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 const newId = db.employees.length > 0 ? Math.max(...db.employees.map(e => e.id)) + 1 : 1;
                 db.employees.push({ id: newId, ...data });
-                 addActivity(`${data.name} ditambahkan sebagai karyawan baru.`);
+                addActivity(`${data.name} ditambahkan sebagai karyawan baru.`);
             }
             saveDb();
             render.karyawan();
-            document.getElementById('employeeModal').classList.remove('show');
+            uiUtils.showToast(`Data karyawan berhasil ${id ? 'diperbarui' : 'disimpan'}.`);
+            document.getElementById('employeeFormModal').classList.remove('show');
         },
-        clockIn: () => {
-            if (db.user.clockedIn) return;
-            const now = new Date();
-            db.user.clockedIn = now;
-            // For demo, assume user is the first employee if exists
-            const userId = db.employees.length > 0 ? db.employees[0].id : 0;
-            if (userId > 0 && !db.attendance[today].find(a => a.id === userId)) {
-                db.attendance[today].push({ id: userId, clockIn: now });
+        deleteEmployee: (id) => {
+            const emp = db.employees.find(e => e.id === id);
+            uiUtils.showConfirm('Hapus Karyawan', `Apakah Anda yakin ingin menghapus data <strong>${emp.name}</strong>? Tindakan ini tidak dapat diurungkan.`, () => {
+                db.employees = db.employees.filter(e => e.id !== id);
+                saveDb();
+                addActivity(`Data ${emp.name} telah dihapus.`);
+                uiUtils.showToast('Data karyawan berhasil dihapus.', 'danger');
+                document.getElementById('employeeDetailModal').classList.remove('show');
+                render.karyawan();
+            });
+        },
+        updateLeaveStatus: (leaveId, newStatus) => {
+            const leaveIndex = db.leaves.findIndex(l => l.id === leaveId);
+            if(leaveIndex > -1) {
+                db.leaves[leaveIndex].status = newStatus;
+                const emp = db.employees.find(e => e.id === db.leaves[leaveIndex].employeeId);
+                addActivity(`Pengajuan cuti ${emp.name} telah ${newStatus.toLowerCase()}.`);
+                saveDb();
+                render.cuti();
+                uiUtils.showToast('Status cuti berhasil diperbarui.');
             }
-            saveDb();
-            render.absensi();
-            addActivity(`Anda melakukan clock in.`);
         },
-        clockOut: () => {
-            if (!db.user.clockedIn) return;
-            const now = new Date();
-            db.user.clockedIn = null;
-            // For demo, assume user is the first employee if exists
-            const userId = db.employees.length > 0 ? db.employees[0].id : 0;
-            if (userId > 0) {
-                const record = db.attendance[today].find(a => a.id === userId);
-                if (record) record.clockOut = now;
-            }
-            saveDb();
-            render.absensi();
-            addActivity(`Anda melakukan clock out.`);
+        backupData: () => {
+            const dataStr = JSON.stringify(db, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `simpeg_backup_${new Date().toISOString().slice(0,10)}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            addActivity('Backup data berhasil dibuat.');
+            uiUtils.showToast('Data berhasil di-backup.');
         },
-        runPayroll: () => {
-            const month = document.getElementById('payrollMonth').value;
-            const year = document.getElementById('payrollYear').value;
-            const period = `${month}-${year}`;
-            if (!db.payroll[period]) db.payroll[period] = [];
-
-            const toPay = db.employees.filter(emp => !db.payroll[period].includes(emp.id));
-            if(toPay.length === 0) { alert('Semua karyawan sudah dibayar untuk periode ini.'); return; }
-            
-            document.getElementById('payrollProgressContainer').style.display = 'block';
-            let progress = 0;
-            const progressBar = document.getElementById('payrollProgressBar');
-            
-            const interval = setInterval(() => {
-                progress += 100 / toPay.length;
-                progressBar.style.width = Math.min(progress, 100) + '%';
-                progressBar.textContent = Math.round(Math.min(progress, 100)) + '%';
-
-                if(progress >= 100) {
-                    clearInterval(interval);
-                    db.payroll[period] = db.employees.map(e => e.id);
-                    saveDb();
-                    render.payrollTable();
-                    addActivity(`Penggajian untuk periode ${month}/${year} selesai.`);
-                    setTimeout(() => { document.getElementById('payrollProgressContainer').style.display = 'none'; }, 1000);
+        restoreData: (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const restoredDb = JSON.parse(e.target.result);
+                    // Basic validation
+                    if (restoredDb.employees && restoredDb.departments) {
+                        db = restoredDb;
+                        saveDb();
+                        addActivity('Data berhasil dipulihkan dari backup.');
+                        uiUtils.showToast('Data berhasil di-restore. Halaman akan dimuat ulang.');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        throw new Error('Invalid file structure');
+                    }
+                } catch (error) {
+                    uiUtils.showToast('Gagal me-restore data. File tidak valid.', 'danger');
+                } finally {
+                    event.target.value = ''; // Reset file input
                 }
-            }, 200);
+            };
+            reader.readAsText(file);
+        },
+        resetData: () => {
+             uiUtils.showConfirm('Reset Semua Data', 'Anda yakin ingin menghapus SEMUA data dan mengembalikan aplikasi ke keadaan awal? Tindakan ini tidak dapat diurungkan.', () => {
+                localStorage.removeItem('simpegUltimateDb');
+                addActivity('Seluruh data aplikasi telah di-reset.');
+                uiUtils.showToast('Data berhasil di-reset. Halaman akan dimuat ulang.', 'danger');
+                setTimeout(() => location.reload(), 1500);
+            });
         }
     };
-
+    
     // =================================================================================
     // EVENT LISTENERS
     // =================================================================================
-    ui.sidebarMenu.addEventListener('click', e => {
+    document.querySelector('.sidebar-menu').addEventListener('click', e => {
         const link = e.target.closest('a');
         if (link?.dataset.page) { e.preventDefault(); render.page(link.dataset.page); }
     });
@@ -552,18 +570,23 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.toggle('dark-mode');
         this.classList.toggle('fa-sun'); this.classList.toggle('fa-moon');
     });
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('appContainer').classList.toggle('sidebar-open');
+    });
     // Karyawan Page
     document.getElementById('addEmployeeBtn').addEventListener('click', () => render.employeeForm());
     document.getElementById('saveEmployeeBtn').addEventListener('click', actions.saveEmployee);
-    document.getElementById('cancelEmployeeBtn').addEventListener('click', () => document.getElementById('employeeModal').classList.remove('show'));
-    document.getElementById('employeeSearch').addEventListener('input', (e) => render.karyawan(e.target.value));
-     // Absensi Page
-    document.getElementById('clockInBtn').addEventListener('click', actions.clockIn);
-    document.getElementById('clockOutBtn').addEventListener('click', actions.clockOut);
-    // Penggajian Page
-    document.getElementById('runPayrollBtn').addEventListener('click', actions.runPayroll);
-    document.getElementById('payrollMonth').addEventListener('change', render.payrollTable);
-    document.getElementById('payrollYear').addEventListener('change', render.payrollTable);
+    document.getElementById('employeeGrid').addEventListener('click', (e) => {
+        const card = e.target.closest('.employee-card');
+        if (card) render.employeeDetail(parseInt(card.dataset.id));
+    });
+    ['employeeSearch', 'departmentFilter', 'statusFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', render.karyawan);
+    });
+    // Pengaturan Page
+    document.getElementById('backupDataBtn').addEventListener('click', actions.backupData);
+    document.getElementById('restoreDataInput').addEventListener('change', actions.restoreData);
+    document.getElementById('resetDataBtn').addEventListener('click', actions.resetData);
 
     // General Modal Close
     document.querySelectorAll('.modal-close').forEach(btn => {
@@ -575,10 +598,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // =================================================================================
     function init() {
         loadDb();
-        render.all();
+        render.page('dashboardPage');
     }
     init();
-
 });
 </script>
 </body>
