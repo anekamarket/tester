@@ -396,7 +396,7 @@
 
     <div class="modal-overlay" id="winner-modal">
         <div class="modal-content">
-            <h2 id="winner-title">🎉 Selamat Kepada Pemenang 🎉</h2>
+            <h2 id="winner-title">🎊 Selamat Kepada Pemenang 🎊</h2>
             <p class="winner-name" id="winner-name-display"></p>
             <div class="modal-buttons">
                  <button class="modal-button primary" id="close-modal-btn">Tutup</button>
@@ -667,21 +667,28 @@
                  return;
              }
              
-            const spinDuration = 8000;
+            // --- PERUBAHAN --- Durasi diperpanjang untuk memberi waktu bagi perlambatan
+            const spinDuration = 12000; // Durasi lebih lama, misal 12 detik
+            const startRotation = currentRotation;
             const start = performance.now();
             let lastTickAngle = currentRotation;
-            const targetAngle = currentRotation + (Math.random() * 5 + 8) * (2 * Math.PI);
+
+            // --- PERUBAHAN --- Menambah jumlah putaran minimum agar lebih terasa
+            const totalSpins = (Math.random() * 4 + 10) * (2 * Math.PI); // Minimum 10 putaran
+            const targetAngle = startRotation + totalSpins;
 
             function spinLoop(now) {
                 const elapsed = now - start;
                 const progress = Math.min(elapsed / spinDuration, 1);
-                const easedProgress = 1 - Math.pow(1 - progress, 4);
+                
+                // --- PERUBAHAN --- Menggunakan fungsi easing 'easeOutQuint' untuk perlambatan yang halus
+                const easedProgress = 1 - Math.pow(1 - progress, 5);
 
-                currentRotation = easedProgress * (targetAngle - currentRotation) + currentRotation;
+                currentRotation = startRotation + (targetAngle - startRotation) * easedProgress;
                 drawWheel();
                 
                 const totalSegmentsForTick = participants.reduce((acc, p) => acc + p.weight, 0);
-                if (currentRotation - lastTickAngle > (2 * Math.PI) / (totalSegmentsForTick * 2)) { // More ticks
+                if (currentRotation - lastTickAngle > (2 * Math.PI) / (totalSegmentsForTick * 2)) {
                     playSound(tickSound);
                     wheelPointer.classList.add('tick');
                     setTimeout(() => wheelPointer.classList.remove('tick'), 100);
@@ -691,6 +698,7 @@
                 if (progress < 1) {
                     animationFrameId = requestAnimationFrame(spinLoop);
                 } else {
+                    currentRotation = targetAngle; // Pastikan berhenti di posisi yang tepat
                     handleSpinEnd();
                 }
             }
@@ -699,23 +707,33 @@
         
         const handleSpinEnd = () => {
             const finalAngle = currentRotation % (2 * Math.PI);
-            const activeParticipants = participants.filter(p => !inactiveWinners.has(p.name));
-            const totalWeight = activeParticipants.reduce((sum, p) => sum + p.weight, 0);
-            const pointerAngle = (2 * Math.PI - finalAngle) % (2 * Math.PI);
             
-            let cumulativePercent = 0;
-            let winner = activeParticipants[activeParticipants.length - 1].name;
-            for (const participant of activeParticipants) {
-                const segmentAngle = (participant.weight / totalWeight) * 2 * Math.PI;
-                cumulativePercent += segmentAngle;
-                if (pointerAngle < cumulativePercent) {
-                    winner = participant.name;
-                    break;
-                }
-            }
+            // --- PERUBAHAN --- Logika ini sekarang sudah benar karena `currentRotation` telah ditetapkan
+            const winner = getWinnerByAngle(finalAngle);
+            
+            // --- PERUBAHAN --- Langsung panggil `showWinner` tanpa penundaan
             showWinner(winner);
         };
-        
+
+        const getWinnerByAngle = (angle) => {
+            const activeParticipants = participants.filter(p => !inactiveWinners.has(p.name));
+            const totalWeight = activeParticipants.reduce((sum, p) => sum + p.weight, 0);
+            
+            // Pointer berada di atas, jadi kita cari segmen yang sesuai dengan sudut 0 (setelah rotasi)
+            const pointerAngle = (2 * Math.PI - (angle % (2 * Math.PI)) + (Math.PI / 2) ) % (2 * Math.PI);
+            let cumulativePercent = 0;
+            
+            for (const participant of participants) {
+                const segmentAngle = (participant.weight / totalWeight) * 2 * Math.PI;
+                if (pointerAngle >= cumulativePercent && pointerAngle < cumulativePercent + segmentAngle) {
+                    return participant.name;
+                }
+                cumulativePercent += segmentAngle;
+            }
+            // Fallback jika terjadi error
+            return participants[0].name;
+        };
+
         const showWinner = (winner) => {
             playSound(winSound);
             lastWinner = winner;
@@ -727,8 +745,8 @@
             const totalWinners = parseInt(multiWinnerCountInput.value) || 1;
             const currentWinnerNum = totalWinners - multiWinnerQueue + 1;
             winnerTitle.textContent = totalWinners > 1
-                ? `🎉 Pemenang ${currentWinnerNum} dari ${totalWinners} 🎉`
-                : `🎉 Selamat Kepada Pemenang 🎉`;
+                ? `🎊 Pemenang ${currentWinnerNum} dari ${totalWinners} 🎊`
+                : `🎊 Selamat Kepada Pemenang 🎊`;
 
             modal.classList.add('show');
             launchConfetti();
@@ -928,7 +946,26 @@
                 }
             }
         });
-        
+
+        // --- PERUBAHAN --- Logika penentuan pemenang yang lebih akurat
+        const getWinnerByAngleLegacy = (finalAngle) => {
+            const activeParticipants = participants.filter(p => !inactiveWinners.has(p.name));
+            const totalWeight = activeParticipants.reduce((sum, p) => sum + p.weight, 0);
+            const pointerAngle = (2 * Math.PI - finalAngle) % (2 * Math.PI);
+            
+            let cumulativePercent = 0;
+            let winner = activeParticipants[activeParticipants.length - 1].name;
+            for (const participant of activeParticipants) {
+                const segmentAngle = (participant.weight / totalWeight) * 2 * Math.PI;
+                cumulativePercent += segmentAngle;
+                if (pointerAngle < cumulativePercent) {
+                    winner = participant.name;
+                    break;
+                }
+            }
+            return winner;
+        };
+
         // --- Initial Load ---
         loadData();
         parseParticipants();
