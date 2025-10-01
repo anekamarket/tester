@@ -3,1162 +3,2236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMPEG Ultimate Pro - Sistem Informasi Kepegawaian Cerdas</title>
+    <title>APLIKASI MANAJEMEN TRAVEL</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-color: #0052cc; --primary-light-color: #e6f0ff; --secondary-color: #003380;
-            --success-color: #28a745; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #17a2b8;
-            --light-color: #f8f9fa; --dark-color: #343a40; --gray-color: #6c757d; --white-color: #ffffff;
-            --text-color: #333; --bg-color: #f4f7fc; --border-color: #dee2e6;
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05); --shadow: 0 5px 15px rgba(0,0,0,0.1);
-            --rounded: 0.75rem; --sidebar-width: 260px; --header-height: 70px; --transition-speed: 0.3s ease;
+            --primary: #0D47A1; /* Warna biru tua untuk travel */
+            --primary-light: #E3F2FD;
+            --secondary: #1565C0;
+            --success: #2E7D32;
+            --danger: #C62828;
+            --warning: #FF8F00;
+            --info: #0277BD;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --shadow-sm: 0 0.15rem 0.35rem rgba(0,0,0,0.1);
+            --shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            --rounded-sm: 0.35rem;
+            --rounded: 0.75rem;
+            --rounded-lg: 1rem;
         }
-        body.dark-mode {
-            --light-color: #2a2a35; --dark-color: #f8f9fa; --gray-color: #a0a0a0; --white-color: #1f1f29;
-            --text-color: #e0e0e0; --bg-color: #12121a; --border-color: #3a3a4a;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); font-size: 15px; overflow-x: hidden; }
-        .app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; grid-template-rows: var(--header-height) 1fr; grid-template-areas: "sidebar header" "sidebar main"; height: 100vh; transition: grid-template-columns var(--transition-speed); }
-        .app-sidebar { grid-area: sidebar; background-color: var(--white-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-top: 1rem; transition: transform var(--transition-speed); z-index: 100; }
-        .sidebar-header { padding: 0 1.5rem 1.5rem 1.5rem; display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 600; color: var(--primary-color); }
-        .sidebar-menu { list-style: none; flex-grow: 1; }
-        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.5rem; color: var(--gray-color); text-decoration: none; font-weight: 500; transition: all var(--transition-speed); border-left: 4px solid transparent; }
-        .sidebar-menu a:hover { background-color: var(--primary-light-color); color: var(--primary-color); }
-        .sidebar-menu a.active { background-color: var(--primary-light-color); color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600; }
-        .sidebar-menu a i { width: 20px; text-align: center; font-size: 1.1rem; }
-        .app-header { grid-area: header; background-color: var(--white-color); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; transition: all var(--transition-speed); z-index: 10; }
-        .header-left { display: flex; align-items: center; gap: 1rem; }
-        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-color); }
-        .header-title h1 { font-size: 1.5rem; font-weight: 600; }
-        .header-actions { display: flex; align-items: center; gap: 1.5rem; }
-        .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--gray-color); }
-        .user-profile i { font-size: 2.2rem; color: var(--primary-color); }
-        .app-main { grid-area: main; overflow-y: auto; padding: 2rem; }
-        .page { display: none; } .page.active { display: block; animation: pageFadeIn 0.5s ease; } @keyframes pageFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .panel { background-color: var(--white-color); border-radius: var(--rounded); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all var(--transition-speed); }
-        .panel-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-        .kpi-card { background-color: var(--light-color); padding: 1.5rem; border-radius: var(--rounded); text-align: center; border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.2s; }
-        .kpi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .kpi-card i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .kpi-card .value { font-size: 2rem; font-weight: 700; }
-        .kpi-card .label { font-size: 0.9rem; color: var(--gray-color); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th { background-color: var(--light-color); font-weight: 600; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; text-transform: capitalize; }
-        .status-hadir { background-color: var(--success-color); }
-        .status-terlambat { background-color: var(--warning-color); color: var(--dark-color);}
-        .status-cuti { background-color: var(--info-color); }
-        .status-belum-hadir { background-color: var(--gray-color); }
-        .status-selesai { background-color: var(--primary-color); }
-        .status-disetujui, .status-paid { background-color: var(--success-color); } .status-ditolak { background-color: var(--danger-color); } .status-menunggu { background-color: var(--info-color); }
-        .text-danger { color: var(--danger-color); font-weight: 500; }
-        .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-        .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; opacity: 0.7; }
-        .btn-primary { background-color: var(--primary-color); color: white; } .btn-primary:hover:not(:disabled) { background-color: var(--secondary-color); }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-success { background-color: var(--success-color); color: white; }
-        .btn-warning { background-color: var(--warning-color); color: var(--dark-color); }
-        .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; animation: fadeIn 0.3s; }
-        .modal.show { display: flex; }
-        .modal-content { background-color: var(--white-color); border-radius: var(--rounded); width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; animation: slideIn 0.3s; box-shadow: var(--shadow); }
-        .modal-body { padding: 1.5rem; overflow-y: auto; }
-        .modal-header, .modal-footer { padding: 1rem 1.5rem; }
-        .modal-header { border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .modal-footer { border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
-        .modal-title { font-size: 1.25rem; font-weight: 600; }
-        .modal-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--gray-color); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-30px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        #notificationToast { position: fixed; bottom: 20px; right: 20px; padding: 15px 20px; border-radius: 0.5rem; box-shadow: var(--shadow); transform: translateY(200%); transition: transform 0.5s ease-in-out; z-index: 2000; color: white; font-weight: 500; }
-        #notificationToast.show { transform: translateY(0); }
-        .form-group { margin-bottom: 1rem; }
-        .form-label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
-        .form-control { width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background-color: var(--bg-color); color: var(--text-color); transition: border-color 0.2s, box-shadow 0.2s; }
-        .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-light-color); }
-        .employee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
-        .employee-card { background: var(--white-color); border-radius: var(--rounded); padding: 16px; box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid var(--border-color); cursor: pointer; text-align: center; }
-        .employee-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--primary-color); }
-        .employee-photo img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid var(--border-color); }
-        .employee-name { font-weight: 600; } .employee-position { font-size: 0.9rem; color: var(--primary-color); }
-        .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray-color); border: 2px dashed var(--border-color); border-radius: var(--rounded); background-color: var(--light-color); }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
-        .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .filters .form-control, .filters .btn { min-width: 180px; }
-        .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px 16px; }
-        .detail-grid dt { font-weight: 600; color: var(--gray-color); } .detail-grid dd { margin: 0; }
-        hr.dashed { border: none; border-top: 2px dashed var(--border-color); margin: 2rem 0; }
-        .app-footer { text-align: center; padding: 1rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--gray-color); }
-        .app-footer a { color: var(--primary-color); text-decoration: none; }
-        .app-footer a:hover { text-decoration: underline; }
-        @media (max-width: 992px) {
-            :root { --sidebar-width: 220px; }
+
+        body {
+            background-color: #f0f2f5;
+            color: #212529;
+            line-height: 1.5;
+            touch-action: manipulation;
         }
-        @media (max-width: 768px) {
-            .app-container { grid-template-columns: 1fr; grid-template-areas: "header" "main"; }
-            .app-sidebar { position: fixed; transform: translateX(-100%); height: 100vh; }
-            .app-container.sidebar-open .app-sidebar { transform: translateX(0); box-shadow: var(--shadow); }
-            .mobile-menu-btn { display: block; }
-            .header-title h1 { font-size: 1.2rem; }
-            .kpi-grid { grid-template-columns: 1fr 1fr; }
-            .filters { flex-direction: column; align-items: stretch; } .filters .form-control { max-width: 100%; }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 12px;
         }
+
+        /* Header Styles */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 12px 16px;
+            border-radius: var(--rounded);
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--white);
+            padding: 5px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .header-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .header-info p {
+            margin: 2px 0;
+        }
+        
+        #shiftStatusContainer {
+            background-color: rgba(255,255,255,0.2);
+            padding: 5px 8px;
+            border-radius: 20px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+        #shiftStatusBadge {
+            font-weight: 500;
+        }
+        #shiftStatusBadge.active {
+            color: #aeffae;
+        }
+        #shiftActionBtn {
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            width: auto !important;
+            border-radius: 15px;
+        }
+
+        /* Main Content Layout */
+        .app-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Panel Styles */
+        .panel {
+            background: var(--white);
+            border-radius: var(--rounded);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            color: var(--dark);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Vehicle Grid */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .vehicle-card {
+            background: var(--white);
+            border-radius: var(--rounded-sm);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            border: 1px solid #eee;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+        }
+        
+        .vehicle-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .vehicle-card.disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow-sm);
+            border-color: #eee;
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 120px;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vehicle-image i {
+            font-size: 3rem;
+            color: var(--gray);
+        }
+        
+        .vehicle-details {
+            padding: 12px;
+        }
+
+        .vehicle-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .vehicle-plate {
+            color: var(--primary);
+            font-weight: 700;
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            border: 1px solid #ddd;
+        }
+
+        .vehicle-info {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+        
+        .vehicle-status {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--white);
+            padding: 3px 8px;
+            border-radius: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .vehicle-status.available { background-color: var(--success); }
+        .vehicle-status.in_use { background-color: var(--warning); color: #000; }
+        .vehicle-status.maintenance { background-color: var(--danger); }
+
+        .vehicle-type {
+            font-size: 0.7rem;
+            color: var(--gray);
+            background-color: var(--light);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
+
+        /* Search and Filter */
+        .search-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded-sm);
+            font-size: 1rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-chip {
+            padding: 8px 12px;
+            background: var(--light);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .filter-chip.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Booking Styles */
+        .booking-details-container {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .total-row {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--rounded-sm);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn .fa-spinner {
+            margin-right: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #218838; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-warning { background-color: var(--warning); color: #000; }
+        .btn-warning:hover { background-color: #e0a800; }
+        .btn-info { background-color: var(--info); }
+        .btn-info:hover { background-color: #138496; }
+        
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            text-align: center;
+            flex: 1;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--rounded-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body { padding: 16px; }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Form Styles */
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--rounded-sm);
+            font-size: 1rem;
+        }
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Login Design */
+        #loginModal {
+            background: linear-gradient(45deg, #f0f2f5, #e6e9ed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0;
+            background: var(--white);
+            border-radius: var(--rounded-lg);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border-top: 5px solid var(--primary);
+            animation: fadeIn 0.4s;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-logo {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: var(--dark);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .login-header p { color: var(--gray); }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            background-color: var(--dark);
+            color: var(--white);
+            border-radius: var(--rounded-sm);
+            box-shadow: var(--shadow);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            transform: translateX(200%);
+            transition: transform 0.3s;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--danger); }
+        .toast.warning { background-color: var(--warning); color: #000; }
+        .toast i { margin-right: 8px; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 24px;
+            color: var(--gray);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 12px;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background-color: var(--light);
+            border-radius: var(--rounded);
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .data-table th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+        .data-table tr:hover { background-color: #f9f9f9; }
+        .data-table-container {
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+
+        /* vehicle Actions */
+        .vehicle-actions {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: none;
+            gap: 4px;
+        }
+        .vehicle-card:hover .vehicle-actions { display: flex; }
+        .action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: white;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .edit-btn { background-color: var(--info); }
+        .delete-btn { background-color: var(--danger); }
+
+        /* Booking Confirmation Modal */
+        .payment-total-display {
+            background: var(--primary-light);
+            border-radius: var(--rounded);
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .payment-total-display p {
+            font-size: 1rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+        .payment-total-display h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .app-content { flex-direction: row; }
+            .vehicle-panel { flex: 2; }
+            .booking-panel { flex: 1; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+        
+        /* Ticket & Print Styles */
+        #ticketContent {
+            font-family: 'Courier New', Courier, monospace;
+            width: 320px;
+            margin: 0 auto;
+            padding: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #000;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .ticket-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        .ticket-info {
+            margin-bottom: 10px;
+            font-size: 11px;
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 8px 0;
+        }
+        .ticket-info div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        .ticket-section-title {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 3px;
+        }
+        .ticket-details p {
+            display: flex;
+            justify-content: space-between;
+        }
+        .ticket-details p strong { flex-basis: 40%; }
+        .ticket-details p span { flex-basis: 60%; text-align: right; }
+
+        .ticket-total {
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #000;
+        }
+        .ticket-footer {
+            margin-top: 15px;
+            font-size: 10px;
+            text-align: center;
+        }
+        
         @media print {
+            html, body {
+                width: 100%; height: auto; margin: 0 !important; padding: 0 !important;
+                overflow: visible !important; box-shadow: none;
+            }
             body * { visibility: hidden; }
-            #reportOutput, #reportOutput * { visibility: visible; }
-            #reportOutput { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
-            #reportTitle { font-size: 24px; margin-bottom: 20px; text-align: center; }
-            table { font-size: 12px; }
-            th, td { padding: 8px; }
-            .status-badge { color: black !important; border: 1px solid #ccc; background-color: transparent !important;}
-            /* Perbaikan Warna Font Laporan Cetak */
-            .print-status-hadir { color: #28a745 !important; }
-            .print-status-terlambat { color: #ff8c00 !important; } /* Orange a bit darker for print */
-            .print-status-alpha { color: #dc3545 !important; }
+            #print-container, #print-container * {
+                visibility: visible; box-sizing: border-box !important;
+            }
+            #print-container {
+                position: absolute; left: 0; top: 0; width: 100%; height: auto;
+                margin: 0; padding: 0; display: block !important;
+            }
+            #print-container .printable-area, #print-container #ticketContent {
+                margin: 0 !important; padding: 5px !important; box-shadow: none !important;
+                border: none !important; display: block !important; color: #000 !important;
+                background: #fff !important; width: 100% !important; 
+                font-size: 10pt !important; page-break-inside: avoid;
+            }
+            .no-print { display: none !important; }
+            @page { size: auto; margin: 10mm; }
+        }
+
+        /* Backup Restore Styles */
+        .backup-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .backup-btn { flex: 1; }
+        .file-input { display: none; }
+        .file-label {
+            display: block;
+            padding: 12px;
+            background-color: var(--info);
+            color: white;
+            border-radius: var(--rounded-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-label:hover { background-color: #138496; }
+        
+        /* Driver KTA Card Design */
+        #ktaCard {
+            width: 320px;
+            height: 500px;
+            margin: 0 auto;
+            border-radius: 20px;
+            background: radial-gradient(circle at top left, #1a237e, #0d47a1, #01579b);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #ktaCard::before, #ktaCard::after {
+            content: ''; position: absolute; background: rgba(255,255,255,0.1);
+            border-radius: 50%; filter: blur(10px);
+        }
+        #ktaCard::before { top: -80px; left: -80px; width: 200px; height: 200px; }
+        #ktaCard::after { bottom: -100px; right: -60px; width: 250px; height: 250px; }
+        
+        .kta-header {
+            text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px; margin-bottom: 15px; z-index: 1;
+        }
+        .kta-store-info h3 { font-size: 18px; margin: 0; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+        .kta-store-info p { font-size: 11px; margin: 0; opacity: 0.9; }
+        .kta-body {
+            flex-grow: 1; display: flex; flex-direction: column; 
+            align-items: center; text-align: center; z-index: 1;
+        }
+        #ktaDriverPhoto {
+            width: 120px; height: 120px; border-radius: 50%; border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 15px; object-fit: cover;
+        }
+        #ktaDriverName { font-size: 24px; font-weight: 600; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+        #ktaDriverId {
+            font-family: 'Courier New', monospace; font-size: 12px; background-color: rgba(0,0,0,0.3);
+            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px; letter-spacing: 1px;
+        }
+        .kta-driver-details {
+            font-size: 11px; text-align: left; width: 100%; margin-bottom: 10px;
+        }
+        .kta-driver-details p { margin-bottom: 4px; }
+        .kta-driver-details strong { min-width: 60px; display: inline-block;}
+        .kta-qrcode {
+            background: white; padding: 5px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-top: auto;
+        }
+        .kta-qrcode img { width: 90px; height: 90px; display: block; }
+        .kta-footer {
+            text-align: center; font-size: 11px; opacity: 0.8; padding-top: 10px;
+            margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="app-container" id="appContainer">
-        <aside class="app-sidebar">
-            <div class="sidebar-header"><i class="fas fa-users-cog"></i><span>SIMPEG Pro</span></div>
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" data-page="dashboardPage"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="#" data-page="karyawanPage"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="#" data-page="departemenPage"><i class="fas fa-building"></i> Departemen</a></li>
-                <li><a href="#" data-page="absensiPage"><i class="fas fa-clock"></i> Absensi</a></li>
-                <li><a href="#" data-page="cutiPage"><i class="fas fa-calendar-alt"></i> Cuti</a></li>
-                <li><a href="#" data-page="laporanPage"><i class="fas fa-file-alt"></i> Laporan</a></li>
-                <li><a href="#" data-page="pengaturanPage"><i class="fas fa-cog"></i> Pengaturan</a></li>
-            </ul>
-        </aside>
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toast-message">Notification message</span>
+    </div>
 
-        <header class="app-header">
-            <div class="header-left">
-                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
-                <div class="header-title"><h1 id="headerTitle">Dashboard</h1></div>
+    <div id="loginModal" class="modal" style="display: flex;">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <h1 class="login-title">TRAVEL JAYA</h1>
+                <p>Aplikasi Manajemen Transportasi</p>
             </div>
-            <div class="header-actions">
-                <i class="fas fa-sun theme-switcher" id="themeSwitcher"></i>
-                <div class="user-profile"><i class="fas fa-user-circle"></i></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Masukkan username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="captcha" class="form-label">Verifikasi Keamanan</label>
+                    <div class="d-flex align-center gap-2">
+                        <canvas id="captchaCanvas" width="150" height="40" style="border: 1px solid #ddd; border-radius: var(--rounded-sm);"></canvas>
+                        <button type="button" id="reloadCaptchaBtn" class="btn btn-sm" style="width: auto; background-color: var(--gray);"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <input type="text" id="captchaInput" class="form-control mt-2" placeholder="Masukkan kode di atas" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn mt-3">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
+        <header class="app-header">
+            <div class="header-title-container">
+                <div class="header-logo">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <div>
+                    <h1 class="app-title" id="storeNameHeader">TRAVEL JAYA</h1>
+                    <p id="currentDate">Rabu, 24 September 2025</p>
+                </div>
+            </div>
+            <div class="header-info">
+                <p>Operator: <span id="loggedInUser">Admin</span></p>
+                <div id="shiftStatusContainer">
+                    <span id="shiftStatusBadge">Tidak Ada Shift Aktif</span>
+                    <button id="shiftActionBtn" class="btn btn-sm btn-warning">Mulai Shift</button>
+                </div>
+                <p><a href="#" id="logoutBtn" style="color: white; margin-top: 5px; display: inline-block;">Logout</a></p>
             </div>
         </header>
 
-        <main class="app-main">
-            <div id="dashboardPage" class="page active">
-                <div class="kpi-grid" id="kpiGrid"></div>
-                <div class="main-grid" style="margin-top: 1.5rem;">
-                    <div class="panel"><h3 class="panel-title">Distribusi Departemen</h3><canvas id="departmentChart"></canvas></div>
-                    <div class="panel"><h3 class="panel-title">Aktivitas Terkini</h3><ul id="activityLog" style="list-style: none; max-height: 250px; overflow-y: auto; padding: 5px;"></ul></div>
+        <main class="app-content">
+            <section class="panel vehicle-panel">
+                <h2 class="panel-title">
+                    <span><i class="fas fa-car-alt"></i> Armada Kendaraan</span>
+                    <span id="vehicleCount">(0 kendaraan)</span>
+                </h2>
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="vehicleSearch" class="search-input" placeholder="Cari nama atau nopol kendaraan...">
                 </div>
-                 <div class="panel" style="margin-top: 1.5rem;">
-                    <p style="text-align: center; color: var(--gray-color); font-size: 0.9rem;">
-                        Hak Cipta © 2025 <strong>Lentera Karya Situbondo</strong>.<br>
-                        <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a> | 
-                        <a href="https://wa.me/6287865614222" target="_blank">WhatsApp: 087865614222</a>
-                    </p>
+                <div class="filter-row">
+                    <div class="filter-chip active" data-category="all">Semua</div>
                 </div>
-            </div>
+                <div class="vehicle-grid" id="vehicleGrid"></div>
 
-            <div id="karyawanPage" class="page">
-                <section class="panel">
-                    <div class="panel-title"><span>Database Karyawan</span><span id="employeeCount">(0)</span></div>
-                     <div class="filters">
-                        <input type="text" id="employeeSearch" class="form-control" placeholder="Cari nama atau NIP...">
-                        <select id="departmentFilter" class="form-control"></select>
-                        <select id="statusFilter" class="form-control"><option value="">Semua Status</option><option value="Permanen">Permanen</option><option value="Kontrak">Kontrak</option><option value="Magang">Magang</option></select>
-                        <button id="addEmployeeBtn" class="btn btn-primary" style="margin-left: auto;"><i class="fas fa-user-plus"></i> Tambah Karyawan</button>
+                <div id="adminPanel" class="admin-panel">
+                    <h3 class="panel-title">Admin Panel</h3>
+                    <div class="admin-grid">
+                        <button id="addVehicleBtn" class="btn btn-sm"><i class="fas fa-plus"></i> Tambah Kendaraan</button>
+                        <button id="manageCategoriesBtn" class="btn btn-sm"><i class="fas fa-tags"></i> Kelola Tipe Kendaraan</button>
+                        <button id="manageDriversBtn" class="btn btn-sm"><i class="fas fa-id-card-alt"></i> Kelola Pengemudi</button>
+                        <button id="manageMaintenanceBtn" class="btn btn-sm"><i class="fas fa-tools"></i> Catatan Servis</button>
+                        <button id="cancelBookingBtn" class="btn btn-sm"><i class="fas fa-ban"></i> Pembatalan Booking</button>
+                        <button id="viewReportsBtn" class="btn btn-sm"><i class="fas fa-chart-line"></i> Laporan</button>
+                        <button id="historyBtn" class="btn btn-sm"><i class="fas fa-history"></i> Histori Booking</button>
+                        <button id="manageStoreInfoBtn" class="btn btn-sm"><i class="fas fa-building"></i> Info Perusahaan</button>
+                        <button id="controlPanelBtn" class="btn btn-sm btn-warning"><i class="fas fa-cogs"></i> Kontrol Panel</button>
                     </div>
-                    <div class="employee-grid" id="employeeGrid"></div>
-                </section>
-            </div>
-            
-            <div id="departemenPage" class="page">
-                <section class="panel">
-                    <div class="panel-title">Manajemen Departemen</div>
-                    <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-                        <input type="text" id="newDepartmentInput" class="form-control" placeholder="Nama departemen baru...">
-                        <button id="addDepartmentBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah</button>
-                    </div>
-                    <div class="table-container">
-                        <table id="departmentTable">
-                            <thead><tr><th>Nama Departemen</th><th style="width: 100px;">Aksi</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </section>
-            </div>
-
-            <div id="absensiPage" class="page">
-                 <div class="panel">
-                     <div class="panel-title">Rekap Absensi Karyawan</div>
-                     <div class="filters">
-                         <input type="date" id="attendanceDateFilter" class="form-control">
-                         <select id="attendanceDeptFilter" class="form-control"></select>
-                     </div>
-                     <div class="table-container" style="overflow-x: auto;">
-                         <table id="attendanceTable">
-                             <thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Durasi Kerja</th><th>Status</th><th>Aksi</th></tr></thead>
-                             <tbody></tbody>
-                         </table>
-                     </div>
-                </div>
-            </div>
-
-            <div id="cutiPage" class="page">
-                <div class="panel">
-                    <div class="panel-title"><span>Manajemen Cuti</span><button class="btn btn-primary" id="addLeaveBtn"><i class="fas fa-plus"></i> Ajukan Cuti</button></div>
-                    <div class="table-container" style="overflow-x: auto;">
-                        <table id="leaveTable"><thead><tr><th>Nama Karyawan</th><th>Tanggal Mulai</th><th>Tanggal Selesai</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="laporanPage" class="page">
-                 <div class="panel">
-                     <div class="panel-title">Generator Laporan</div>
-                     <div class="filters">
-                         <div class="form-group">
-                             <label for="reportType" class="form-label">Jenis Laporan</label>
-                             <select id="reportType" class="form-control">
-                                 <option value="attendance">Laporan Absensi Karyawan</option>
-                                 <option value="employee_status">Laporan Status Karyawan</option>
-                             </select>
-                         </div>
-                         <div class="form-group">
-                             <label for="reportStartDate" class="form-label">Tanggal Mulai</label>
-                             <input type="date" id="reportStartDate" class="form-control">
-                         </div>
-                         <div class="form-group">
-                             <label for="reportEndDate" class="form-label">Tanggal Selesai</label>
-                             <input type="date" id="reportEndDate" class="form-control">
-                         </div>
-                         <div class="form-group">
-                             <label for="reportDeptFilter" class="form-label">Departemen</label>
-                             <select id="reportDeptFilter" class="form-control"></select>
-                         </div>
-                     </div>
-                     <button id="generateReportBtn" class="btn btn-primary" style="width: 100%;"><i class="fas fa-print"></i> Buat & Cetak Laporan</button>
-                </div>
-                <div id="reportOutput" class="panel" style="margin-top: 1.5rem; border-color: var(--primary-color);"></div>
-            </div>
-            
-            <div id="pengaturanPage" class="page">
-                <div class="panel">
-                    <div class="panel-title">Pengaturan Aplikasi</div>
-                    
-                    <div class="settings-group">
-                        <h4>Pengaturan Jam Kerja</h4>
-                        <p style="margin-bottom: 1rem; color: var(--gray-color);">Atur jam kerja standar untuk perhitungan status absensi.</p>
-                        <div class="main-grid">
-                            <div class="form-group">
-                                <label for="settingJamMasuk" class="form-label">Jam Masuk Standar</label>
-                                <input type="time" id="settingJamMasuk" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="settingJamPulang" class="form-label">Jam Pulang Standar</label>
-                                <input type="time" id="settingJamPulang" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="settingToleransi" class="form-label">Toleransi Keterlambatan (menit)</label>
-                                <input type="number" id="settingToleransi" class="form-control" min="0">
-                            </div>
+                    <div class="mt-3">
+                        <h4 class="panel-title">Backup & Restore</h4>
+                        <div class="backup-actions">
+                            <button id="backupDataBtn" class="btn btn-sm backup-btn">Backup Data</button>
+                            <label for="restoreFile" class="file-label"><i class="fas fa-upload"></i> Restore Data</label>
+                            <input type="file" id="restoreFile" class="file-input" accept=".json,.travelbackup">
                         </div>
-                        <button id="saveWorkHoursBtn" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Pengaturan Jam</button>
-                    </div>
-
-                    <hr class="dashed">
-
-                    <div class="settings-group">
-                        <h4>Manajemen Data</h4>
-                        <p style="margin-bottom: 1rem; color: var(--gray-color);">Simpan data Anda secara lokal atau pulihkan dari file cadangan.</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <button id="backupDataBtn" class="btn btn-primary"><i class="fas fa-download"></i> Backup Data</button>
-                            <label for="restoreDataInput" class="btn btn-success"><i class="fas fa-upload"></i> Restore Data</label>
-                            <input type="file" id="restoreDataInput" accept=".json" style="display: none;">
-                            <button id="resetDataBtn" class="btn btn-danger" style="margin-left: auto;"><i class="fas fa-trash-alt"></i> Reset Semua Data</button>
-                        </div>
-                    </div>
-
-                    <hr class="dashed">
-
-                    <div class="settings-group">
-                        <h4>Panel Keamanan</h4>
-                        <p style="margin-bottom: 1rem; color: var(--gray-color);">Atur kata sandi untuk fitur-fitur sensitif di dalam aplikasi.</p>
-                        <button id="openSecurityPanelBtn" class="btn btn-primary"><i class="fas fa-shield-alt"></i> Buka Panel Keamanan</button>
-                        <div id="securityPanel" style="display: none; margin-top: 1.5rem; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--rounded); background-color: var(--light-color);">
-                            </div>
+                        <button id="resetDataBtn" class="btn btn-sm btn-danger mt-2" style="width: 100%;">Reset Data</button>
                     </div>
                 </div>
-            </div>
-             <footer class="app-footer">
-                Hak Cipta © 2025 <strong>Lentera Karya Situbondo</strong>.
-                <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a> | 
-                <a href="https://wa.me/6287865614222" target="_blank">WhatsApp: 087865614222</a>
-            </footer>
+            </section>
+
+            <section class="panel booking-panel">
+                <h2 class="panel-title">
+                    <span><i class="fas fa-calendar-alt"></i> Detail Booking</span>
+                </h2>
+                <div id="bookingFormContainer">
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <label class="form-label">Kendaraan Dipilih</label>
+                            <input type="text" id="selectedVehicle" class="form-control" placeholder="Pilih kendaraan dari daftar" disabled>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Nama Penumpang</label>
+                            <input type="text" id="passengerName" class="form-control" placeholder="Masukkan nama lengkap" required>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Nomor WhatsApp</label>
+                            <input type="tel" id="passengerPhone" class="form-control" placeholder="e.g. 08123456789" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Titik Penjemputan</label>
+                            <textarea id="pickupLocation" class="form-control" placeholder="Masukkan alamat lengkap penjemputan" style="min-height: 60px;"></textarea>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Titik Tujuan</label>
+                            <textarea id="destination" class="form-control" placeholder="Masukkan alamat lengkap tujuan" style="min-height: 60px;"></textarea>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Tanggal & Jam Keberangkatan</label>
+                            <input type="datetime-local" id="departureDate" class="form-control" required>
+                        </div>
+                         <div class="form-group">
+                            <label class="form-label">Estimasi Biaya</label>
+                            <input type="number" id="tripFare" class="form-control" placeholder="Masukkan biaya perjalanan" required min="0">
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="bookingSummary" class="booking-details-container">
+                    <div class="summary-row total-row">
+                        <span>Total Biaya:</span>
+                        <span id="bookingTotal">Rp 0</span>
+                    </div>
+                </div>
+                
+                <button id="createBookingBtn" class="btn btn-success mt-3" disabled><i class="fas fa-check-circle"></i> Buat Booking</button>
+            </section>
         </main>
+
+        <footer class="app-footer">
+            <p>&copy; <span id="currentYear"></span> TRAVEL JAYA - Ditenagai oleh Lentera Karya Situbondo</p>
+        </footer>
     </div>
 
-    <div id="notificationToast"></div>
-
-    <div id="employeeFormModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div><div class="modal-body"><form id="employeeForm" onsubmit="event.preventDefault(); actions.saveEmployee();"></form></div><div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="employeeForm" class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div></div></div>
-    <div id="employeeDetailModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Detail Karyawan</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="employeeDetailBody"></div><div class="modal-footer" id="employeeDetailFooter"></div></div></div>
-    <div id="leaveFormModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Formulir Pengajuan Cuti</h3><button class="modal-close">&times;</button></div><div class="modal-body"><form id="leaveForm" onsubmit="event.preventDefault(); actions.saveLeave();"></form></div><div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="leaveForm" class="btn btn-primary">Ajukan</button></div></div></div>
-    <div id="confirmModal" class="modal"><div class="modal-content" style="max-width: 450px;"><div class="modal-header"><h3 class="modal-title" id="confirmModalTitle">Konfirmasi</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn" id="confirmModalBtn">Ya</button></div></div></div>
-    <div id="passwordPromptModal" class="modal"><div class="modal-content" style="max-width: 400px;"><div class="modal-header"><h3 class="modal-title" id="passwordPromptTitle">Masukkan Kata Sandi</h3><button class="modal-close">&times;</button></div><div class="modal-body"><p id="passwordPromptText" style="margin-bottom: 1rem;"></p><div class="form-group"><label for="passwordPromptInput" class="form-label">Kata Sandi</label><input type="password" id="passwordPromptInput" class="form-control" autofocus></div></div><div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button class="btn btn-primary" id="passwordPromptBtn">OK</button></div></div></div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-// Prevent flash of unstyled content
-document.body.style.display = 'none';
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.style.display = 'block';
-
-    // =================================================================================
-    // DATABASE & STATE MANAGEMENT
-    // =================================================================================
-    let db;
-    let charts = {};
-    const defaultDb = {
-        employees: [],
-        departments: ['Teknologi', 'Produk', 'Manajemen', 'SDM', 'Pemasaran', 'Keuangan'],
-        attendance: {}, // Key is YYYY-MM-DD
-        activities: [],
-        leaves: [], // {id, employeeNip, startDate, endDate, reason, status: 'Menunggu'}
-        settings: {
-            jamMasuk: '08:00',
-            jamPulang: '17:00',
-            toleransi: 15, // in minutes
-            passwords: {
-                leaveApproval: '17081945',
-                settings: '12091988',
-                securityPanel: 'LKS.1945'
-            }
-        }
-    };
-    
-    function seedData() {
-        addActivity('Aplikasi siap digunakan. Silakan tambahkan data karyawan.', true);
-        saveDb();
-    }
-
-    function loadDb() {
-        const data = localStorage.getItem('simpegUltimateDb');
-        if (data) {
-            db = JSON.parse(data);
-            // Ensure settings and passwords object exists for backward compatibility
-            if (!db.settings) {
-                db.settings = JSON.parse(JSON.stringify(defaultDb.settings));
-            }
-            if (!db.settings.passwords) {
-                 db.settings.passwords = JSON.parse(JSON.stringify(defaultDb.settings.passwords));
-            }
-        } else {
-            db = JSON.parse(JSON.stringify(defaultDb));
-            seedData();
-        }
-    }
-
-    function saveDb() {
-        localStorage.setItem('simpegUltimateDb', JSON.stringify(db));
-    }
-    
-    function addActivity(text, silent = false) {
-        db.activities.unshift({ text, time: new Date() });
-        if (db.activities.length > 20) db.activities.pop();
-        if (!silent) saveDb();
-        if(document.getElementById('dashboardPage').classList.contains('active')) render.activityLog();
-    }
-    
-    // =================================================================================
-    // UI UTILITIES
-    // =================================================================================
-    const uiUtils = {
-        showToast: (message, type = 'success') => {
-            const toast = document.getElementById('notificationToast');
-            toast.textContent = message;
-            toast.style.backgroundColor = `var(--${type}-color)`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        },
-        showConfirm: (title, body, onConfirm, confirmClass = 'btn-danger') => {
-            document.getElementById('confirmModalTitle').textContent = title;
-            document.getElementById('confirmModalBody').innerHTML = `<p>${body}</p>`;
-            const confirmBtn = document.getElementById('confirmModalBtn');
-            confirmBtn.className = `btn ${confirmClass}`;
-            confirmBtn.onclick = () => {
-                onConfirm();
-                document.getElementById('confirmModal').classList.remove('show');
-            };
-            document.getElementById('confirmModal').classList.add('show');
-        },
-        showPasswordPrompt: (title, text, onConfirm) => {
-            const modal = document.getElementById('passwordPromptModal');
-            document.getElementById('passwordPromptTitle').textContent = title;
-            document.getElementById('passwordPromptText').textContent = text;
-            const input = document.getElementById('passwordPromptInput');
-            const confirmBtn = document.getElementById('passwordPromptBtn');
-            input.value = '';
-            
-            const confirmHandler = () => {
-                onConfirm(input.value);
-                modal.classList.remove('show');
-                confirmBtn.removeEventListener('click', confirmHandler);
-                input.removeEventListener('keydown', keydownHandler);
-            };
-
-            const keydownHandler = (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    confirmHandler();
-                }
-            };
-            
-            confirmBtn.addEventListener('click', confirmHandler);
-            input.addEventListener('keydown', keydownHandler);
-
-            modal.classList.add('show');
-            setTimeout(() => input.focus(), 100);
-        },
-        getTodayString: () => new Date().toISOString().slice(0, 10),
-        populateDeptFilter: (elementId, withAllOption = true) => {
-            const selectEl = document.getElementById(elementId);
-            const currentVal = selectEl.value;
-            selectEl.innerHTML = withAllOption ? '<option value="">Semua Departemen</option>' : '';
-            db.departments.forEach(d => selectEl.add(new Option(d, d)));
-            selectEl.value = currentVal;
-        }
-    };
-
-    // =================================================================================
-    // RENDER FUNCTIONS
-    // =================================================================================
-    const render = {
-        page: (pageId) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId)?.classList.add('active');
-            
-            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
-            const activeLink = document.querySelector(`.sidebar-menu a[data-page="${pageId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-                document.getElementById('headerTitle').textContent = activeLink.textContent.trim();
-            }
-            if (window.innerWidth <= 768) document.getElementById('appContainer').classList.remove('sidebar-open');
-
-            const renderMap = {
-                dashboardPage: render.dashboard,
-                karyawanPage: render.karyawan,
-                departemenPage: render.departemen,
-                absensiPage: render.absensi,
-                cutiPage: render.cuti,
-                laporanPage: render.laporan,
-                pengaturanPage: render.pengaturan
-            };
-            renderMap[pageId]?.();
-        },
-        dashboard: () => {
-            render.kpi();
-            render.activityLog();
-            render.charts.department();
-        },
-        karyawan: () => {
-            const grid = document.getElementById('employeeGrid');
-            const search = document.getElementById('employeeSearch').value.toLowerCase();
-            const deptFilter = document.getElementById('departmentFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            const filtered = db.employees.filter(e => 
-                (e.name.toLowerCase().includes(search) || e.nip.toLowerCase().includes(search)) &&
-                (!deptFilter || e.department === deptFilter) &&
-                (!statusFilter || e.status === statusFilter)
-            );
-
-            grid.innerHTML = filtered.length === 0 
-                ? `<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data karyawan. Silakan tambahkan karyawan baru.</p></div>`
-                : filtered.map(emp => {
-                    const photoSrc = emp.photoUrl || `https://i.pravatar.cc/150?u=${emp.nip}`;
-                    return `
-                    <div class="employee-card" data-nip="${emp.nip}">
-                        <div class="employee-photo"><img src="${photoSrc}" alt="${emp.name}" onerror="this.src='https://i.pravatar.cc/150?u=placeholder'"></div>
-                        <div class="employee-name">${emp.name}</div>
-                        <div class="employee-position">${emp.position}</div>
-                    </div>`}).join('');
-            
-            document.getElementById('employeeCount').textContent = `(${db.employees.length})`;
-            uiUtils.populateDeptFilter('departmentFilter');
-        },
-        departemen: () => {
-            const tableBody = document.querySelector('#departmentTable tbody');
-            tableBody.innerHTML = db.departments.length === 0
-                ? `<tr><td colspan="2" class="empty-state" style="padding: 2rem;">Belum ada departemen.</td></tr>`
-                : db.departments.map(dept => `
-                    <tr>
-                        <td>${dept}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="actions.deleteDepartment('${dept}')"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                `).join('');
-        },
-        absensi: () => {
-            const date = document.getElementById('attendanceDateFilter').value;
-            const dept = document.getElementById('attendanceDeptFilter').value;
-            const tableBody = document.querySelector('#attendanceTable tbody');
-
-            const filteredEmployees = db.employees.filter(emp => !dept || emp.department === dept);
-
-            if (filteredEmployees.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="padding: 2rem;">Belum ada karyawan untuk diabsen.</td></tr>`;
-                return;
-            }
-
-            tableBody.innerHTML = filteredEmployees.map(emp => {
-                const record = db.attendance[date]?.find(a => a.nip === emp.nip);
-                let status = 'Belum Hadir';
-                let statusClass = 'belum-hadir';
-                let actionButton = `<button class="btn btn-success" onclick="actions.clockIn('${emp.nip}')">Clock In</button>`;
-                let duration = '-';
-                let clockInTimeStr = '-';
-                let clockOutTimeStr = '-';
-                let clockInClass = '';
-                let clockOutClass = '';
-
-                if (record) {
-                    const clockInTime = new Date(record.clockIn);
-                    const standardMasuk = new Date(`${date}T${db.settings.jamMasuk}`);
-                    standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
-
-                    clockInTimeStr = clockInTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-
-                    if (clockInTime > standardMasuk) {
-                         status = 'Terlambat'; statusClass = 'terlambat'; clockInClass = 'text-danger';
-                    } else {
-                        status = 'Hadir'; statusClass = 'hadir';
-                    }
-
-                    if (record.clockIn && !record.clockOut) {
-                        actionButton = `<button class="btn btn-primary" onclick="actions.clockOut('${emp.nip}')">Clock Out</button>`;
-                    } else if (record.clockIn && record.clockOut) {
-                        status = 'Selesai'; statusClass = 'selesai';
-                        actionButton = `-`;
-                        const clockOutTime = new Date(record.clockOut);
-                        const standardPulang = new Date(`${date}T${db.settings.jamPulang}`);
-                        
-                        clockOutTimeStr = clockOutTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-                        
-                        if (clockOutTime < standardPulang) {
-                            clockOutClass = 'text-danger';
-                        }
-
-                        const diff = clockOutTime - clockInTime;
-                        const hours = Math.floor(diff / 3600000);
-                        const mins = Math.floor((diff % 3600000) / 60000);
-                        duration = `${hours} jam ${mins} mnt`;
-                    }
-                }
-
-                return `<tr>
-                    <td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td>
-                    <td class="${clockInClass}">${clockInTimeStr}</td>
-                    <td class="${clockOutClass}">${clockOutTimeStr}</td>
-                    <td>${duration}</td>
-                    <td><span class="status-badge status-${statusClass}">${status}</span></td>
-                    <td>${actionButton}</td>
-                </tr>`;
-            }).join('');
-        },
-        cuti: () => {
-            const tableBody = document.querySelector('#leaveTable tbody');
-            if (db.leaves.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state" style="padding: 2rem;">Belum ada pengajuan cuti.</td></tr>`;
-                return;
-            }
-            // Sort by most recent
-            const sortedLeaves = [...db.leaves].sort((a,b) => new Date(b.id) - new Date(a.id));
-
-            tableBody.innerHTML = sortedLeaves.map(leave => {
-                const employee = db.employees.find(e => e.nip === leave.employeeNip);
-                return `<tr>
-                    <td>${employee?.name || 'N/A'}</td>
-                    <td>${new Date(leave.startDate).toLocaleDateString('id-ID')}</td>
-                    <td>${new Date(leave.endDate).toLocaleDateString('id-ID')}</td>
-                    <td>${leave.reason}</td>
-                    <td><span class="status-badge status-${leave.status.toLowerCase()}">${leave.status}</span></td>
-                    <td>
-                        ${leave.status === 'Menunggu' ? `
-                        <button class="btn btn-success btn-sm" title="Setujui" onclick="actions.updateLeaveStatus(${leave.id}, 'Disetujui')"><i class="fas fa-check"></i></button>
-                        <button class="btn btn-danger btn-sm" title="Tolak" onclick="actions.updateLeaveStatus(${leave.id}, 'Ditolak')"><i class="fas fa-times"></i></button>
-                        ` : ''}
-                        <button class="btn btn-danger btn-sm" title="Hapus" onclick="actions.deleteLeave(${leave.id})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            }).join('');
-        },
-        laporan: () => {
-            uiUtils.populateDeptFilter('reportDeptFilter');
-            document.getElementById('reportOutput').innerHTML = '<p style="text-align: center; color: var(--gray-color);">Pilih filter di atas dan klik "Buat Laporan" untuk melihat hasil.</p>';
-        },
-        pengaturan: () => {
-            document.getElementById('settingJamMasuk').value = db.settings.jamMasuk;
-            document.getElementById('settingJamPulang').value = db.settings.jamPulang;
-            document.getElementById('settingToleransi').value = db.settings.toleransi;
-            document.getElementById('securityPanel').style.display = 'none'; // Ensure panel is closed on page load
-        },
-        kpi: () => {
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            const onLeave = db.leaves.filter(l => l.status === 'Disetujui' && new Date(l.startDate) <= today && new Date(l.endDate) >= today).length;
-            const total = db.employees.length;
-            const men = db.employees.filter(e => e.gender === 'Pria').length;
-            document.getElementById('kpiGrid').innerHTML = `
-                <div class="kpi-card"><i class="fas fa-users"></i><div class="value">${total}</div><div class="label">Total Karyawan</div></div>
-                <div class="kpi-card"><i class="fas fa-user-check"></i><div class="value">${total - onLeave}</div><div class="label">Karyawan Aktif</div></div>
-                <div class="kpi-card"><i class="fas fa-user-clock"></i><div class="value">${onLeave}</div><div class="label">Sedang Cuti</div></div>
-                <div class="kpi-card"><i class="fas fa-venus-mars"></i><div class="value">${men} P / ${total-men} W</div><div class="label">Rasio Gender</div></div>`;
-        },
-        activityLog: () => {
-            const logUl = document.getElementById('activityLog');
-            logUl.innerHTML = db.activities.length === 0 
-                ? '<li>Tidak ada aktivitas.</li>'
-                : db.activities.map(act => `<li style="padding: 4px 0; border-bottom: 1px solid var(--border-color);">${act.text} <small style="display:block; color: var(--gray-color)">${new Date(act.time).toLocaleString('id-ID')}</small></li>`).join('');
-        },
-        charts: {
-            destroy: (chartId) => { if(charts[chartId]) { charts[chartId].destroy(); delete charts[chartId]; } },
-            department: () => {
-                render.charts.destroy('dept');
-                const ctx = document.getElementById('departmentChart')?.getContext('2d');
-                if (!ctx) return;
-                const data = db.departments.map(dept => ({ dept, count: db.employees.filter(e => e.department === dept).length }));
-                charts['dept'] = new Chart(ctx, { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d', '#343a40'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-            },
-        },
-        employeeForm: (nip = null) => {
-            const form = document.getElementById('employeeForm');
-            const emp = nip ? db.employees.find(e => e.nip === nip) : {};
-            form.innerHTML = `
-                <input type="hidden" id="employeeNipOriginal" value="${nip || ''}">
-                <div class="form-group">
-                    <label class="form-label">NIP / ID Karyawan</label>
-                    <input type="text" id="employeeNip" class="form-control" required value="${emp.nip || ''}" ${nip ? 'readonly' : ''} placeholder="Contoh: 112233">
+    <div id="bookingConfirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Konfirmasi Pembayaran</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-total-display">
+                    <p>Total Tagihan</p>
+                    <h3 id="paymentTotal">Rp 0</h3>
                 </div>
-                <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="employeeName" class="form-control" required value="${emp.name || ''}"></div>
-                <div class="form-group"><label class="form-label">Email</label><input type="email" id="employeeEmail" class="form-control" required value="${emp.email || ''}"></div>
-                <div class="form-group"><label class="form-label">No. WhatsApp</label><input type="tel" id="employeeWhatsapp" class="form-control" value="${emp.whatsapp || ''}" placeholder="Contoh: 081234567890"></div>
-                <div class="form-group"><label class="form-label">URL Foto (Opsional)</label><input type="url" id="employeePhotoUrl" class="form-control" value="${emp.photoUrl || ''}" placeholder="https://example.com/foto.jpg"></div>
-                <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required>${db.departments.length === 0 ? '<option value="">--Buat departemen dulu--</option>' : db.departments.map(d => `<option value="${d}" ${emp.department === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
-                <div class="form-group"><label class="form-label">Jabatan</label><input type="text" id="employeePosition" class="form-control" required value="${emp.position || ''}"></div>
-                <div class="form-group"><label class="form-label">Gender</label><select id="employeeGender" class="form-control" required><option value="Pria" ${emp.gender === 'Pria' ? 'selected' : ''}>Pria</option><option value="Wanita" ${emp.gender === 'Wanita' ? 'selected' : ''}>Wanita</option></select></div>
-                <div class="form-group"><label class="form-label">Status</label><select id="employeeStatus" class="form-control" required><option value="Permanen" ${emp.status === 'Permanen' ? 'selected' : ''}>Permanen</option><option value="Kontrak" ${emp.status === 'Kontrak' ? 'selected' : ''}>Kontrak</option><option value="Magang" ${emp.status === 'Magang' ? 'selected' : ''}>Magang</option></select></div>
-            `;
-            document.getElementById('employeeModalTitle').textContent = nip ? 'Edit Karyawan' : 'Tambah Karyawan Baru';
-            document.getElementById('employeeFormModal').classList.add('show');
-        },
-        employeeDetail: (nip) => {
-            const emp = db.employees.find(e => e.nip === nip);
-            if (!emp) return;
-            const formatWhatsappLink = (number) => {
-                if (!number) return null;
-                let cleanNumber = String(number).replace(/\D/g, '');
-                if (cleanNumber.startsWith('0')) {
-                    cleanNumber = '62' + cleanNumber.substring(1);
-                } else if (!cleanNumber.startsWith('62')) {
-                    cleanNumber = '62' + cleanNumber;
-                }
-                return `https://wa.me/${cleanNumber}`;
-            };
-            const photoSrc = emp.photoUrl || `https://i.pravatar.cc/150?u=${emp.nip}`;
-            document.getElementById('employeeDetailBody').innerHTML = `
-                <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
-                    <img src="${photoSrc}" alt="${emp.name}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;" onerror="this.src='https://i.pravatar.cc/150?u=placeholder'">
-                    <div><h3 style="margin:0;">${emp.name}</h3><p style="color:var(--primary-color);">${emp.position}</p></div>
-                </div>
-                <dl class="detail-grid">
-                    <dt>NIP</dt><dd>${emp.nip}</dd>
-                    <dt>Email</dt><dd>${emp.email}</dd>
-                    <dt>No. WhatsApp</dt><dd>${emp.whatsapp ? `<a href="${formatWhatsappLink(emp.whatsapp)}" target="_blank" style="text-decoration:none; color:inherit;">${emp.whatsapp} <i class="fab fa-whatsapp" style="color:var(--success-color)"></i></a>` : '-'}</dd>
-                    <dt>Departemen</dt><dd>${emp.department}</dd>
-                    <dt>Gender</dt><dd>${emp.gender}</dd>
-                    <dt>Status</dt><dd>${emp.status}</dd>
-                </dl>`;
-            document.getElementById('employeeDetailFooter').innerHTML = `
-                <button class="btn btn-danger" onclick="actions.deleteEmployee('${emp.nip}')"><i class="fas fa-trash"></i> Hapus</button>
-                <button class="btn btn-primary" onclick="render.employeeForm('${emp.nip}')"><i class="fas fa-edit"></i> Edit</button>`;
-            document.getElementById('employeeDetailModal').classList.add('show');
-        },
-        leaveForm: () => {
-            const form = document.getElementById('leaveForm');
-            if(db.employees.length === 0) {
-                uiUtils.showToast('Tidak bisa mengajukan cuti, belum ada data karyawan.', 'danger');
-                return;
-            }
-            form.innerHTML = `
                 <div class="form-group">
-                    <label class="form-label" for="leaveEmployee">Pilih Karyawan</label>
-                    <select id="leaveEmployee" class="form-control" required>
-                        ${db.employees.map(e => `<option value="${e.nip}">${e.name} (${e.nip})</option>`).join('')}
+                    <label class="form-label">Metode Pembayaran</label>
+                    <select id="paymentMethod" class="form-control">
+                        <option value="cash">Tunai</option>
+                        <option value="transfer">Transfer Bank</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="leaveStartDate">Tanggal Mulai</label>
-                    <input type="date" id="leaveStartDate" class="form-control" required>
+                    <label class="form-label">Jumlah Pembayaran</label>
+                    <input type="number" id="paymentAmount" class="form-control" placeholder="Masukkan jumlah" min="0">
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="leaveEndDate">Tanggal Selesai</label>
-                    <input type="date" id="leaveEndDate" class="form-control" required>
+                <div id="changeContainer" style="display: none;">
+                    <div class="summary-row total-row" style="border-top: 1px solid #ddd;">
+                        <span>Kembalian:</span>
+                        <span id="paymentChange">Rp 0</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="leaveReason">Alasan Cuti</label>
-                    <textarea id="leaveReason" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Batal</button>
+                <button id="completePaymentBtn" class="btn btn-success"><i class="fas fa-check-circle"></i> Selesaikan Pembayaran</button>
+            </div>
+        </div>
+    </div>
+    <div id="vehicleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Tambah Kendaraan Baru</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="vehicleForm">
+                    <input type="hidden" id="vehicleId">
+                    <div class="form-group">
+                        <label class="form-label">Nama Kendaraan (e.g. Toyota Avanza)</label>
+                        <input type="text" id="vehicleName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipe Kendaraan</label>
+                        <select id="vehicleCategory" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nomor Polisi</label>
+                        <input type="text" id="vehiclePlate" class="form-control" placeholder="e.g. L 1234 ABC" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kapasitas Penumpang</label>
+                        <input type="number" id="vehicleCapacity" class="form-control" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status Kendaraan</label>
+                         <select id="vehicleStatus" class="form-control" required>
+                            <option value="available">Tersedia</option>
+                            <option value="in_use">Sedang Jalan</option>
+                            <option value="maintenance">Dalam Perbaikan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Foto Kendaraan (URL)</label>
+                        <input type="text" id="vehicleImage" class="form-control" placeholder="Masukkan URL gambar">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Batal</button>
+                <button class="btn btn-success" id="saveVehicleBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+    <div id="manageCategoriesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Kelola Tipe Kendaraan</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="categoriesList"></div>
+                <div class="form-group mt-3 d-flex gap-2">
+                    <input type="text" id="newCategoryName" class="form-control" placeholder="e.g. MPV, SUV, Minibus" required>
                 </div>
-            `;
-            document.getElementById('leaveFormModal').classList.add('show');
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+                <button class="btn btn-success" id="addCategoryBtn">Tambah Tipe</button>
+            </div>
+        </div>
+    </div>
+    <div id="reportsModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Laporan Booking</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mt-3">
+                    <label class="form-label">Periode</label>
+                    <select id="reportPeriod" class="form-control">
+                        <option value="today">Hari Ini</option>
+                        <option value="week">Minggu Ini</option>
+                        <option value="month">Bulan Ini</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div id="customDateRange" style="display: none;">
+                    <div class="form-group"><label class="form-label">Dari Tanggal</label><input type="date" id="reportStartDate" class="form-control"></div>
+                    <div class="form-group"><label class="form-label">Sampai Tanggal</label><input type="date" id="reportEndDate" class="form-control"></div>
+                </div>
+                <div id="reportResults" class="mt-3 printable-area"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+                <button class="btn btn-success" id="generateReportBtn">Generate Laporan</button>
+            </div>
+        </div>
+    </div>
+    <div id="historyModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header"><h3 class="modal-title">Histori Booking</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <div class="search-container"><i class="fas fa-search"></i><input type="text" id="historySearchInput" class="search-input" placeholder="Cari berdasarkan Kode Booking atau Nama Penumpang..."></div>
+                <div id="historyResultsContainer" style="max-height: 50vh; overflow-y: auto;">
+                    <div id="historyResults" class="printable-area"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+            </div>
+        </div>
+    </div>
+    <div id="manageDriversModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 class="modal-title">Kelola Pengemudi</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <button id="showAddDriverFormBtn" class="btn btn-sm mb-3">Tambah Pengemudi Baru</button>
+                <div class="search-container mb-3"><i class="fas fa-search"></i><input type="text" id="manageDriverSearchInput" class="search-input" placeholder="Cari pengemudi (nama, ID, NIK)..."></div>
+                <div class="driver-form" id="driverFormContainer" style="display:none;">
+                    <h4 id="driverFormTitle">Tambah Pengemudi Baru</h4>
+                    <form id="driverForm">
+                        <input type="hidden" id="driverIdInput">
+                        <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="driverName" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">NIK</label><input type="text" id="driverNik" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Nomor SIM</label><input type="text" id="driverSimId" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Jenis SIM</label>
+                            <select id="driverSimType" class="form-control" required>
+                                <option value="A">A</option><option value="A Umum">A Umum</option><option value="B1">B1</option><option value="B1 Umum">B1 Umum</option><option value="B2">B2</option><option value="B2 Umum">B2 Umum</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label class="form-label">Nomor WhatsApp</label><input type="tel" id="driverPhone" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Alamat</label><textarea id="driverAddress" class="form-control"></textarea></div>
+                        <div class="form-group"><label class="form-label">Foto Diri (URL)</label><input type="text" id="driverPhotoUrl" class="form-control" placeholder="Masukkan URL foto" required></div>
+                        <div class="d-flex gap-2">
+                             <button type="button" class="btn btn-warning" id="cancelDriverFormBtn">Batal</button>
+                             <button type="submit" class="btn btn-success" id="saveDriverBtn">Simpan Pengemudi</button>
+                        </div>
+                    </form>
+                    <hr class="mt-3 mb-3">
+                </div>
+                <div id="driversList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+                <button class="btn btn-danger" id="deleteDriverBtn" style="display: none;">Hapus Pengemudi</button>
+            </div>
+        </div>
+    </div>
+    <div id="manageStoreInfoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 class="modal-title">Kelola Info Perusahaan</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body">
+                <form id="storeInfoForm">
+                    <div class="form-group"><label class="form-label">Nama Perusahaan/Travel</label><input type="text" id="storeName" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Alamat</label><textarea id="storeAddress" class="form-control" required></textarea></div>
+                    <div class="form-group"><label class="form-label">Nomor Telepon/WA</label><input type="text" id="storePhone" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Website</label><input type="text" id="storeEmail" class="form-control" placeholder="Contoh: www.traveljaya.com"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning modal-close-btn">Batal</button>
+                <button class="btn btn-success" id="saveStoreInfoBtn">Simpan</button>
+            </div>
+        </div>
+    </div>
+    <div id="controlPanelModal" class="modal">
+         <div class="modal-content">
+            <div class="modal-header"><h3 class="modal-title">Kontrol Panel</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body" style="padding: 0 16px 16px 16px;">
+                <div class="tabs">
+                    <div class="tab active" data-tab="users"><i class="fas fa-users-cog"></i> Pengguna</div>
+                    <div class="tab" data-tab="security"><i class="fas fa-shield-alt"></i> Keamanan</div>
+                </div>
+                <div class="tab-content active" id="usersTab">
+                    <h4 class="mt-3">Manajemen Pengguna (Operator)</h4>
+                    <button id="showAddUserFormBtn" class="btn btn-sm mt-2 mb-3">Tambah Pengguna Baru</button>
+                    <div id="userFormContainer" style="display:none; background: #f9f9f9; padding: 12px; border-radius: var(--rounded-sm); margin-bottom: 16px;">
+                        <h5 id="userFormTitle">Tambah Pengguna</h5>
+                        <form id="userForm">
+                            <input type="hidden" id="userIdInput">
+                            <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="userName" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Username</label><input type="text" id="userUsername" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Password</label><input type="password" id="userPassword" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah"></div>
+                            <div class="form-group"><label class="form-label">Hak Akses (Role)</label>
+                                <select id="userRole" class="form-control">
+                                    <option value="operator">Operator</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-2"><button type="button" class="btn btn-warning" id="cancelUserFormBtn">Batal</button><button type="submit" class="btn btn-success" id="saveUserBtn">Simpan</button></div>
+                        </form>
+                    </div>
+                    <div id="usersList"></div>
+                </div>
+                <div class="tab-content" id="securityTab">
+                    <h4 class="mt-3">Pengaturan Keamanan</h4>
+                    <form id="itemSecurityForm" class="mt-2"><div class="form-group"><label class="form-label">Password Keamanan Edit/Hapus Data</label><input type="password" id="itemSecurityCode" class="form-control" required></div><button type="submit" class="btn btn-sm btn-info">Ubah Password</button></form>
+                    <hr class="mt-3 mb-3">
+                    <form id="panelSecurityForm" class="mt-2"><div class="form-group"><label class="form-label">Password Keamanan Kontrol Panel</label><input type="password" id="panelSecurityCode" class="form-control" required></div><button type="submit" class="btn btn-sm btn-info">Ubah Password</button></form>
+                    <hr class="mt-3 mb-3">
+                    <h4 class="mt-3">Ubah Password Login Anda</h4>
+                    <form id="changeOwnPasswordForm" class="mt-2">
+                        <div class="form-group"><label class="form-label">Password Saat Ini</label><input type="password" id="currentPassword" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Password Baru</label><input type="password" id="newPassword" class="form-control" required></div>
+                        <button type="submit" class="btn btn-sm btn-success">Simpan Password Baru</button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Tutup</button></div>
+        </div>
+    </div>
+    <div id="passwordPromptModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header"><h3 class="modal-title" id="passwordPromptTitle">Masukkan Password Keamanan</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body"><form id="passwordPromptForm"><div class="form-group"><label class="form-label" id="passwordPromptMessage">Untuk melanjutkan, masukkan password.</label><input type="password" id="passwordPromptInput" class="form-control" required></div></form></div>
+            <div class="modal-footer"><button class="btn btn-warning modal-close-btn">Batal</button><button class="btn btn-success" id="passwordPromptSubmit">Lanjutkan</button></div>
+        </div>
+    </div>
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header"><h3 class="modal-title" id="confirmTitle">Konfirmasi</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body"><p id="confirmMessage">Apakah Anda yakin?</p></div>
+            <div class="modal-footer"><button class="btn btn-warning modal-close-btn" id="confirmCancel">Batal</button><button class="btn" id="confirmAction">Lanjutkan</button></div>
+        </div>
+    </div>
+    <div id="ticketModal" class="modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header no-print"><h3 class="modal-title">Tiket Perjalanan</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body" id="ticketModalBody" style="background: #eee;"></div>
+            <div class="modal-footer no-print">
+                <button class="btn btn-warning modal-close-btn">Tutup</button>
+                <button class="btn btn-info" id="downloadTicketPdfBtn"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
+                <button class="btn btn-success" id="printTicketBtn"><i class="fas fa-print"></i> Cetak</button>
+            </div>
+        </div>
+    </div>
+    <div id="ktaModal" class="modal">
+        <div class="modal-content" style="max-width: 380px; padding: 0; background: transparent; box-shadow: none;">
+             <div class="modal-header no-print" style="background: white; border-radius: var(--rounded-lg) var(--rounded-lg) 0 0;"><h3 class="modal-title">Kartu Tanda Anggota Pengemudi</h3><button class="modal-close">&times;</button></div>
+            <div class="modal-body" id="ktaModalBody" style="padding: 20px 0;">
+                <div id="ktaCard">
+                    <div class="kta-header">
+                        <div class="kta-store-info">
+                            <h3 id="ktaStoreName">NAMA TRAVEL</h3>
+                            <p id="ktaStoreContact">Alamat, No. WA, Website</p>
+                        </div>
+                    </div>
+                    <div class="kta-body">
+                        <img id="ktaDriverPhoto" src="https://via.placeholder.com/120" alt="Foto Pengemudi">
+                        <h2 id="ktaDriverName">Nama Pengemudi</h2>
+                        <p id="ktaDriverId">ID: DRV250924103000</p>
+                        <div class="kta-driver-details">
+                            <p><strong>NIK</strong>: <span id="ktaDriverNik"></span></p>
+                            <p><strong>SIM</strong>: <span id="ktaDriverSim"></span></p>
+                            <p><strong>Kontak</strong>: <span id="ktaDriverWhatsapp"></span></p>
+                        </div>
+                        <div class="kta-qrcode" id="ktaQrcodeImg"></div>
+                    </div>
+                    <div class="kta-footer">Kartu ini adalah identitas resmi pengemudi.</div>
+                </div>
+            </div>
+            <div class="modal-footer no-print" style="background: white; border-radius: 0 0 var(--rounded-lg) var(--rounded-lg);"><button class="btn btn-warning modal-close-btn">Tutup</button><button class="btn btn-info" id="downloadKtaPdfBtn"><i class="fas fa-file-pdf"></i> Unduh PDF</button></div>
+        </div>
+    </div>
+    <div id="startShiftModal" class="modal"></div>
+    <div id="endShiftModal" class="modal"></div>
+    <div id="recapReportModal" class="modal"></div>
+    <div id="stockManagementModal" class="modal"></div>
+    <div id="manageSuppliersModal" class="modal"></div>
+    <div id="processReturnModal" class="modal"></div>
+
+    <div id="print-container" style="display:none;"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/id.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    
+    <script>
+        moment.locale('id');
+        const { jsPDF } = window.jspdf;
+        
+        const STORAGE_KEYS = {
+            VEHICLES: 'travel_vehicles',
+            CATEGORIES: 'travel_vehicle_types',
+            BOOKINGS: 'travel_bookings',
+            USER: 'travel_user',
+            CURRENT_BOOKING: 'travel_current_booking',
+            SETTINGS: 'travel_settings',
+            USERS: 'travel_users',
+            DRIVERS: 'travel_drivers',
+        };
+
+        const ENCRYPTION_KEY = 'LenteraKaryaSitubondo-Travel-2025';
+
+        const DEFAULT_ADMIN = { id: 'U001', username: 'Admin', password: CryptoJS.SHA256('Admin.1945').toString(), name: 'Administrator', role: 'admin' };
+        const DEFAULT_OPERATOR = { id: 'U002', username: 'operator', password: CryptoJS.SHA256('operator123').toString(), name: 'Operator', role: 'operator' };
+        
+        let vehicles, categories, bookings, settings, users, drivers, currentUser, currentBooking;
+        let passwordPromptCallback = null;
+        let captchaText = '';
+        
+        function initializeData() {
+            let users_init = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
+            if (!users_init.find(u => u.username === 'Admin')) users_init.push(DEFAULT_ADMIN);
+            if (!users_init.find(u => u.username === 'operator')) users_init.push(DEFAULT_OPERATOR);
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users_init));
+            
+            if (!localStorage.getItem(STORAGE_KEYS.VEHICLES)) localStorage.setItem(STORAGE_KEYS.VEHICLES, JSON.stringify([]));
+            if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify([]));
+            if (!localStorage.getItem(STORAGE_KEYS.DRIVERS)) localStorage.setItem(STORAGE_KEYS.DRIVERS, JSON.stringify([]));
+            if (!localStorage.getItem(STORAGE_KEYS.BOOKINGS)) localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify([]));
+            
+            if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) {
+                const initialSettings = {
+                    storeName: 'TRAVEL JAYA', storeAddress: 'Jl. Raya No. 1, Kota Maju',
+                    storePhone: '081234567890', storeEmail: 'www.traveljaya.com',
+                    itemSecurityCode: CryptoJS.SHA256('17081945').toString(), panelSecurityCode: CryptoJS.SHA256('LKS.1945').toString(),
+                };
+                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(initialSettings));
+            }
         }
-    };
+        
+        $(document).ready(function() {
+            initializeData();
+            
+            vehicles = JSON.parse(localStorage.getItem(STORAGE_KEYS.VEHICLES)) || [];
+            categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES)) || [];
+            bookings = JSON.parse(localStorage.getItem(STORAGE_KEYS.BOOKINGS)) || [];
+            settings = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS)) || {};
+            users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || [];
+            drivers = JSON.parse(localStorage.getItem(STORAGE_KEYS.DRIVERS)) || [];
+            currentUser = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER)) || null;
+            
+            resetBooking();
 
-    // =================================================================================
-    // ACTIONS
-    // =================================================================================
-    window.actions = { // Make it globally accessible for inline onclick
-        _verifyPassword: (passwordType, onSuccess) => {
-            const passwordMap = {
-                leaveApproval: { title: 'Persetujuan Cuti', text: 'Masukkan kata sandi untuk menyetujui cuti.', pass: db.settings.passwords.leaveApproval },
-                settings: { title: 'Aksi Dilindungi', text: 'Masukkan kata sandi pengaturan untuk melanjutkan.', pass: db.settings.passwords.settings },
-                securityPanel: { title: 'Panel Keamanan', text: 'Masukkan kata sandi untuk membuka panel keamanan.', pass: db.settings.passwords.securityPanel }
-            };
-            const promptInfo = passwordMap[passwordType];
-            uiUtils.showPasswordPrompt(promptInfo.title, promptInfo.text, (enteredPassword) => {
-                if (enteredPassword === promptInfo.pass) {
-                    onSuccess();
-                } else if(enteredPassword) {
-                    uiUtils.showToast('Kata sandi salah.', 'danger');
-                }
-            });
-        },
-        saveEmployee: () => {
-            const originalNip = document.getElementById('employeeNipOriginal').value;
-            const isEditing = !!originalNip;
-            const nip = document.getElementById('employeeNip').value.trim();
-
-            if (!nip) { uiUtils.showToast('NIP / ID Karyawan wajib diisi.', 'danger'); return; }
-            if (!isEditing && db.employees.some(e => e.nip === nip)) { uiUtils.showToast('NIP / ID Karyawan sudah digunakan.', 'danger'); return; }
-            if (db.departments.length === 0){ uiUtils.showToast('Anda harus membuat departemen terlebih dahulu.', 'danger'); return; }
-
-            const data = {
-                nip: nip, name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
-                whatsapp: document.getElementById('employeeWhatsapp').value,
-                photoUrl: document.getElementById('employeePhotoUrl').value, department: document.getElementById('employeeDepartment').value,
-                position: document.getElementById('employeePosition').value, gender: document.getElementById('employeeGender').value,
-                status: document.getElementById('employeeStatus').value
-            };
-
-            if(isEditing) {
-                const index = db.employees.findIndex(e => e.nip === originalNip);
-                db.employees[index] = { ...db.employees[index], ...data };
-                addActivity(`Data ${data.name} diperbarui.`);
+            $('#currentYear').text(new Date().getFullYear());
+            
+            if (currentUser) {
+                $('#loggedInUser').text(currentUser.name);
+                $('#loginModal').hide();
+                $('#mainApp').show();
+                initializeApp();
             } else {
-                db.employees.push(data);
-                addActivity(`${data.name} ditambahkan sebagai karyawan baru.`);
-            }
-            saveDb();
-            render.karyawan();
-            uiUtils.showToast(`Data karyawan berhasil ${isEditing ? 'diperbarui' : 'disimpan'}.`);
-            document.getElementById('employeeFormModal').classList.remove('show');
-        },
-        deleteEmployee: (nip) => {
-            const emp = db.employees.find(e => e.nip === nip);
-            uiUtils.showConfirm('Hapus Karyawan', `Apakah Anda yakin ingin menghapus data <strong>${emp.name}</strong>? Tindakan ini tidak dapat diurungkan.`, () => {
-                db.employees = db.employees.filter(e => e.nip !== nip);
-                saveDb();
-                addActivity(`Data ${emp.name} telah dihapus.`);
-                uiUtils.showToast('Data karyawan berhasil dihapus.', 'danger');
-                document.getElementById('employeeDetailModal').classList.remove('show');
-                render.karyawan();
-            });
-        },
-        addDepartment: () => {
-            const input = document.getElementById('newDepartmentInput');
-            const newDept = input.value.trim();
-            if (newDept && !db.departments.some(d => d.toLowerCase() === newDept.toLowerCase())) {
-                db.departments.push(newDept);
-                saveDb();
-                addActivity(`Departemen baru '${newDept}' ditambahkan.`);
-                uiUtils.showToast('Departemen berhasil ditambahkan.');
-                render.departemen();
-                input.value = '';
-            } else if (!newDept) {
-                 uiUtils.showToast('Nama departemen tidak boleh kosong.', 'warning');
-            } else {
-                 uiUtils.showToast('Nama departemen sudah ada.', 'warning');
-            }
-        },
-        deleteDepartment: (deptName) => {
-            const isUsed = db.employees.some(emp => emp.department === deptName);
-            if (isUsed) {
-                uiUtils.showToast('Departemen tidak bisa dihapus karena masih digunakan oleh karyawan.', 'danger');
-                return;
-            }
-            uiUtils.showConfirm('Hapus Departemen', `Yakin ingin menghapus departemen <strong>${deptName}</strong>?`, () => {
-                db.departments = db.departments.filter(d => d !== deptName);
-                saveDb();
-                addActivity(`Departemen '${deptName}' telah dihapus.`);
-                uiUtils.showToast('Departemen berhasil dihapus.', 'danger');
-                render.departemen();
-            });
-        },
-        clockIn: (nip) => {
-            const date = document.getElementById('attendanceDateFilter').value;
-            if (!db.attendance[date]) db.attendance[date] = [];
-            db.attendance[date].push({ nip: nip, clockIn: new Date(), clockOut: null });
-            const emp = db.employees.find(e => e.nip === nip);
-            addActivity(`${emp.name} melakukan clock in.`);
-            saveDb();
-            render.absensi();
-        },
-        clockOut: (nip) => {
-            const date = document.getElementById('attendanceDateFilter').value;
-            const recordIndex = db.attendance[date].findIndex(a => a.nip === nip);
-            if (recordIndex > -1) {
-                const clockOutTime = new Date();
-                db.attendance[date][recordIndex].clockOut = clockOutTime;
-                
-                const standardPulang = new Date(`${date}T${db.settings.jamPulang}`);
-                if(clockOutTime < standardPulang) {
-                    uiUtils.showToast('Absensi pulang tidak sesuai (lebih awal).', 'warning');
-                }
-
-                const emp = db.employees.find(e => e.nip === nip);
-                addActivity(`${emp.name} melakukan clock out.`);
-                saveDb();
-                render.absensi();
-            }
-        },
-        saveLeave: () => {
-            const employeeNip = document.getElementById('leaveEmployee').value;
-            const startDate = document.getElementById('leaveStartDate').value;
-            const endDate = document.getElementById('leaveEndDate').value;
-            const reason = document.getElementById('leaveReason').value.trim();
-            if(!employeeNip || !startDate || !endDate || !reason) {
-                uiUtils.showToast('Semua field wajib diisi.', 'danger');
-                return;
-            }
-            if(new Date(endDate) < new Date(startDate)) {
-                uiUtils.showToast('Tanggal selesai tidak boleh sebelum tanggal mulai.', 'danger');
-                return;
-            }
-            const newLeave = {
-                id: Date.now(), employeeNip, startDate, endDate, reason, status: 'Menunggu'
-            };
-            db.leaves.push(newLeave);
-            const emp = db.employees.find(e => e.nip === employeeNip);
-            addActivity(`Pengajuan cuti baru dari ${emp.name}.`);
-            saveDb();
-            render.cuti();
-            document.getElementById('leaveFormModal').classList.remove('show');
-            uiUtils.showToast('Pengajuan cuti berhasil disimpan.');
-        },
-        updateLeaveStatus: (leaveId, newStatus) => {
-            const doUpdate = () => {
-                const leaveIndex = db.leaves.findIndex(l => l.id === leaveId);
-                if(leaveIndex > -1) {
-                    db.leaves[leaveIndex].status = newStatus;
-                    const emp = db.employees.find(e => e.nip === db.leaves[leaveIndex].employeeNip);
-                    addActivity(`Pengajuan cuti ${emp.name} telah ${newStatus.toLowerCase()}.`);
-                    saveDb();
-                    render.cuti();
-                    uiUtils.showToast('Status cuti berhasil diperbarui.');
-                }
-            };
-            if (newStatus === 'Disetujui') {
-                actions._verifyPassword('leaveApproval', doUpdate);
-            } else {
-                doUpdate();
-            }
-        },
-        deleteLeave: (leaveId) => {
-             uiUtils.showConfirm('Hapus Pengajuan Cuti', `Yakin ingin menghapus data pengajuan cuti ini?`, () => {
-                db.leaves = db.leaves.filter(l => l.id !== leaveId);
-                saveDb();
-                addActivity(`Satu data pengajuan cuti telah dihapus.`);
-                uiUtils.showToast('Data cuti berhasil dihapus.', 'danger');
-                render.cuti();
-            });
-        },
-        saveWorkHours: () => {
-            actions._verifyPassword('settings', () => {
-                db.settings.jamMasuk = document.getElementById('settingJamMasuk').value;
-                db.settings.jamPulang = document.getElementById('settingJamPulang').value;
-                db.settings.toleransi = parseInt(document.getElementById('settingToleransi').value, 10) || 0;
-                saveDb();
-                addActivity('Pengaturan jam kerja telah diperbarui.');
-                uiUtils.showToast('Pengaturan jam kerja berhasil disimpan.');
-            });
-        },
-        openSecurityPanel: () => {
-            const panel = document.getElementById('securityPanel');
-            if (panel.style.display === 'block') {
-                panel.style.display = 'none';
-                return;
-            }
-            actions._verifyPassword('securityPanel', () => {
-                panel.innerHTML = `
-                    <h5 style="margin-bottom: 1rem; font-weight: 600;">Ubah Kata Sandi</h5>
-                    <div class="form-group">
-                        <label for="passLeaveApproval" class="form-label">Kata Sandi Persetujuan Cuti</label>
-                        <input type="password" id="passLeaveApproval" class="form-control" placeholder="Biarkan kosong jika tidak diubah">
-                    </div>
-                    <div class="form-group">
-                        <label for="passSettings" class="form-label">Kata Sandi Pengaturan & Reset Data</label>
-                        <input type="password" id="passSettings" class="form-control" placeholder="Biarkan kosong jika tidak diubah">
-                    </div>
-                    <div class="form-group">
-                        <label for="passSecurityPanel" class="form-label">Kata Sandi Panel Keamanan</label>
-                        <input type="password" id="passSecurityPanel" class="form-control" placeholder="Biarkan kosong jika tidak diubah">
-                    </div>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
-                        <button onclick="actions.savePasswords()" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Kata Sandi</button>
-                        <button onclick="actions.resetPasswords()" class="btn btn-warning" style="margin-left: auto;"><i class="fas fa-undo"></i> Reset ke Default</button>
-                    </div>
-                `;
-                panel.style.display = 'block';
-            });
-        },
-        savePasswords: () => {
-            const passLeave = document.getElementById('passLeaveApproval').value;
-            const passSettings = document.getElementById('passSettings').value;
-            const passSecurity = document.getElementById('passSecurityPanel').value;
-            let changed = false;
-
-            if (passLeave) { db.settings.passwords.leaveApproval = passLeave; changed = true; }
-            if (passSettings) { db.settings.passwords.settings = passSettings; changed = true; }
-            if (passSecurity) { db.settings.passwords.securityPanel = passSecurity; changed = true; }
-
-            if (changed) {
-                saveDb();
-                addActivity('Kata sandi keamanan telah diperbarui.');
-                uiUtils.showToast('Kata sandi berhasil disimpan.');
-                document.getElementById('securityPanel').style.display = 'none';
-            } else {
-                uiUtils.showToast('Tidak ada perubahan kata sandi.', 'info');
-            }
-        },
-        resetPasswords: () => {
-            uiUtils.showConfirm('Reset Kata Sandi', 'Anda yakin ingin mengembalikan semua kata sandi ke pengaturan awal?', () => {
-                db.settings.passwords = JSON.parse(JSON.stringify(defaultDb.settings.passwords));
-                saveDb();
-                addActivity('Semua kata sandi telah di-reset ke default.');
-                uiUtils.showToast('Kata sandi berhasil di-reset.', 'warning');
-                document.getElementById('securityPanel').style.display = 'none';
-            }, 'btn-warning');
-        },
-        generateReport: () => {
-            const type = document.getElementById('reportType').value;
-            const startDate = document.getElementById('reportStartDate').value;
-            const endDate = document.getElementById('reportEndDate').value;
-            const dept = document.getElementById('reportDeptFilter').value;
-            const output = document.getElementById('reportOutput');
-
-            if (!startDate || !endDate) {
-                uiUtils.showToast('Silakan tentukan rentang tanggal laporan.', 'warning');
-                return;
-            }
-            if (new Date(endDate) < new Date(startDate)) {
-                uiUtils.showToast('Tanggal selesai tidak boleh sebelum tanggal mulai.', 'warning');
-                return;
+                generateCaptcha();
             }
             
-            let html = '';
-            if (type === 'attendance') {
-                html = actions.generateAttendanceReport(startDate, endDate, dept);
-            } else if (type === 'employee_status') {
-                html = actions.generateEmployeeStatusReport(dept);
-            }
-            output.innerHTML = html;
+            // Event Listeners
+            setInterval(updateCurrentDate, 60000);
             
+            $('#loginForm').submit(handleLogin);
+            $('#reloadCaptchaBtn').click(generateCaptcha);
+            $('#logoutBtn').click(handleLogout);
+            $('#vehicleSearch').on('input', function() { loadVehicles($(this).val(), $('.filter-chip.active').data('category')); });
+            $(document).on('click', '.vehicle-card:not(.disabled)', handleVehicleSelect);
+            $(document).on('click', '.edit-vehicle', handleEditVehicleClick);
+            $(document).on('click', '.delete-vehicle', handleDeleteVehicleClick);
+            $('#tripFare').on('input', updateBookingSummary);
+
+            // Modals & Forms
+            $('#createBookingBtn').click(openBookingConfirmationModal);
+            $('#paymentAmount').on('input', calculateChange);
+            $('#completePaymentBtn').click(confirmBooking);
+            $('.modal-close, .modal-close-btn').click(function() { $(this).closest('.modal').hide(); });
+
+            // Admin Panel Buttons
+            $('#addVehicleBtn').click(openEditVehicleModal);
+            $('#manageCategoriesBtn').click(openManageCategoriesModal);
+            $('#viewReportsBtn').click(openReportsModal);
+            $('#historyBtn').click(openHistoryModal);
+            $('#manageDriversBtn').click(openManageDriversModal);
+            $('#manageStoreInfoBtn').click(openManageStoreInfoModal);
+            $('#controlPanelBtn').click(openControlPanel);
+            
+            // Save/Update actions
+            $('#saveVehicleBtn').click(saveVehicle);
+            $('#addCategoryBtn').click(addCategory);
+            $(document).on('click', '.remove-category', removeCategory);
+            $('#driverForm').submit(saveDriver);
+            $('#saveStoreInfoBtn').click(saveStoreInfo);
+            $('#userForm').submit(saveUser);
+            $('#itemSecurityForm, #panelSecurityForm').submit(changeSecurityCode);
+            $('#changeOwnPasswordForm').submit(changeOwnPassword);
+
+            // Backup/Restore
+            $('#backupDataBtn').click(() => showConfirmation('Backup Data', 'Data akan di-backup ke file terenkripsi (.travelbackup). Lanjutkan?', backupData));
+            $('#restoreFile').change(function() { promptForPassword('panel', () => { restoreFromFile(this.files[0]); $(this).val(''); }); });
+            $('#resetDataBtn').click(() => promptForPassword('panel', () => showConfirmation('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', resetAllData, 'danger')));
+            
+            // Other UI interactions
+            $(document).on('click', '.filter-chip', function() {
+                $('.filter-chip').removeClass('active');
+                $(this).addClass('active');
+                loadVehicles($('#vehicleSearch').val(), $(this).data('category'));
+            });
+            $('#showAddDriverFormBtn, #cancelDriverFormBtn').click(() => $('#driverFormContainer').slideToggle(resetDriverForm));
+            $(document).on('click', '.edit-driver', function() { editDriver($(this).data('id')); });
+            $('#deleteDriverBtn').click(function() { deleteDriver($(this).data('id')); });
+            $(document).on('click', '.kta-driver', function() { openDriverIdCardModal($(this).data('id')); });
+            $('#downloadKtaPdfBtn').click(downloadKtaAsPdf);
+            $('#showAddUserFormBtn, #cancelUserFormBtn').click(() => $('#userFormContainer').slideToggle(resetUserForm));
+            $(document).on('click', '.edit-user', function() { editUser($(this).data('id')); });
+            $(document).on('click', '.delete-user', function() { deleteUser($(this).data('id')); });
+            
+            // Report, History, Ticket actions
+            $('#generateReportBtn').click(generateReport);
+            $('#historySearchInput').on('input', function() { loadBookingHistory($(this).val()); });
+            $(document).on('click', '.reprint-ticket', function() {
+                const booking = bookings.find(b => b.id === $(this).data('id'));
+                if (booking) showTicketModal(booking);
+            });
+            $('#printTicketBtn').on('click', () => printElement('#ticketModalBody #ticketContent'));
+            $('#downloadTicketPdfBtn').on('click', downloadTicketAsPdf);
+
+            // Password Prompt
+            $('#passwordPromptForm').submit(e => e.preventDefault());
+            $('#passwordPromptSubmit').click(submitPasswordPrompt);
+        });
+
+        // --- CORE APP FLOW ---
+        function initializeApp() {
+            loadVehicles(); 
+            loadCategories(); 
+            updateCurrentDate();
+            updateStoreInfo();
+            configureUIAccess();
+            resetBookingUI();
+        }
+        
+        function configureUIAccess() {
+            const isAdmin = currentUser.role === 'admin';
+            $('#adminPanel').toggle(isAdmin);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const $loginBtn = $(this).find('button[type="submit"]');
+            const originalText = $loginBtn.html();
+            setButtonLoading($loginBtn, true);
+
             setTimeout(() => {
-                if (html.includes("Tidak ada data")) {
-                    uiUtils.showToast('Tidak ada data untuk dilaporkan pada filter yang dipilih.', 'info');
-                } else {
-                    window.print();
-                }
-            }, 100);
-        },
-        generateAttendanceReport: (start, end, dept) => {
-            let rows = '';
-            const filteredEmployees = db.employees.filter(e => !dept || e.department === dept);
-
-            for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
-                const dateStr = d.toISOString().slice(0, 10);
-                const attendanceRecords = db.attendance[dateStr] || [];
-                
-                filteredEmployees.forEach(emp => {
-                    const record = attendanceRecords.find(r => r.nip === emp.nip);
-                    let status = 'Alpha';
-                    let statusClass = 'print-status-alpha';
-                    let clockIn = '-';
-                    let clockOut = '-';
-                    let duration = '-';
-
-                    if (record) {
-                        const clockInTime = new Date(record.clockIn);
-                        const standardMasuk = new Date(`${dateStr}T${db.settings.jamMasuk}`);
-                        standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
-                        
-                        if (clockInTime > standardMasuk) {
-                            status = 'Terlambat';
-                            statusClass = 'print-status-terlambat';
-                        } else {
-                            status = 'Hadir';
-                            statusClass = 'print-status-hadir';
-                        }
-                        clockIn = clockInTime.toLocaleTimeString('id-ID');
-                        
-                        if (record.clockOut) {
-                            const clockOutTime = new Date(record.clockOut);
-                            clockOut = clockOutTime.toLocaleTimeString('id-ID');
-                            const diff = clockOutTime - clockInTime;
-                            const hours = Math.floor(diff / 3600000);
-                            const mins = Math.floor((diff % 3600000) / 60000);
-                            duration = `${hours} jam ${mins} mnt`;
-                        }
+                try {
+                    if ($('#captchaInput').val().trim().toLowerCase() !== captchaText.toLowerCase()) {
+                        showToast('Kode verifikasi (CAPTCHA) salah.', 'error');
+                        generateCaptcha(); $('#captchaInput').val('');
+                        return setButtonLoading($loginBtn, false, originalText);
                     }
-                    rows += `<tr><td>${dateStr}</td><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${clockIn}</td><td>${clockOut}</td><td>${duration}</td><td class="${statusClass}">${status}</td></tr>`;
+                    const username = $('#username').val().trim();
+                    const password = $('#password').val().trim();
+                    const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+                    
+                    if (user && CryptoJS.SHA256(password).toString() === user.password) {
+                        currentUser = user;
+                        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+                        $('#loggedInUser').text(currentUser.name);
+                        $('#loginModal').hide();
+                        $('#mainApp').fadeIn();
+                        initializeApp();
+                        showToast(`Selamat datang, ${currentUser.name}!`, 'success');
+                    } else {
+                        showToast('Username atau password salah', 'error');
+                        generateCaptcha(); $('#captchaInput').val('');
+                    }
+                } catch (err) {
+                    showToast('Error: Gagal memuat library penting. Cek koneksi internet.', 'error');
+                } finally {
+                    if ($loginBtn.prop('disabled')) setButtonLoading($loginBtn, false, originalText);
+                }
+            }, 500);
+        }
+
+        function handleLogout(e) {
+            e.preventDefault();
+            currentUser = null;
+            localStorage.removeItem(STORAGE_KEYS.USER);
+            $('#mainApp').fadeOut(() => {
+                $('#loginModal').css('display', 'flex');
+                $('#username, #password, #captchaInput').val('');
+                generateCaptcha();
+            });
+            showToast('Anda telah logout', 'info');
+        }
+
+        function handleVehicleSelect() {
+            const vehicle = vehicles.find(v => v.id === $(this).data('id'));
+            if (!vehicle) return;
+
+            currentBooking.vehicle = vehicle;
+            $('#selectedVehicle').val(`${vehicle.name} (${vehicle.licensePlate})`);
+            $('#createBookingBtn').prop('disabled', false);
+            showToast(`${vehicle.name} dipilih.`, 'info');
+        }
+
+        function confirmBooking() {
+            const paymentAmount = parseFloat($('#paymentAmount').val()) || 0;
+            if (paymentAmount < currentBooking.total) return showToast('Jumlah pembayaran kurang', 'error');
+
+            const vehicle = vehicles.find(v => v.id === currentBooking.vehicle.id);
+            if (!vehicle || vehicle.status !== 'available') {
+                return showToast(`Kendaraan ${vehicle.name} tidak tersedia.`, 'error');
+            }
+             const availableDrivers = drivers.filter(d => {
+                // Logic to check driver availability, for now just pick one
+                return true; 
+            });
+
+            if (availableDrivers.length === 0) {
+                 return showToast(`Tidak ada pengemudi yang tersedia saat ini.`, 'error');
+            }
+            
+            const $btn = $(this), originalText = $btn.html();
+            setButtonLoading($btn, true);
+
+            setTimeout(() => {
+                try {
+                    const booking = {
+                        id: 'BOOK' + moment().format('YYYYMMDDHHmmss'),
+                        creationDate: new Date().toISOString(),
+                        ...currentBooking,
+                        paymentMethod: $('#paymentMethod').val(),
+                        paymentAmount,
+                        change: paymentAmount - currentBooking.total,
+                        operator: currentUser.name,
+                        status: 'booked',
+                        driver: availableDrivers[0] // Assign first available driver
+                    };
+                    
+                    // Update vehicle status
+                    const vehicleIndex = vehicles.findIndex(v => v.id === booking.vehicle.id);
+                    if(vehicleIndex > -1) {
+                        vehicles[vehicleIndex].status = 'in_use';
+                        saveVehicles();
+                        loadVehicles();
+                    }
+                    
+                    bookings.unshift(booking);
+                    saveBookings();
+                    
+                    showTicketModal(booking);
+                    resetBookingUI();
+                    $('#bookingConfirmationModal').hide();
+                    showToast('Booking berhasil dikonfirmasi', 'success');
+                } finally {
+                    setButtonLoading($btn, false, originalText);
+                }
+            }, 500);
+        }
+
+        function updateBookingSummary() {
+            currentBooking.passengerName = $('#passengerName').val();
+            currentBooking.passengerPhone = $('#passengerPhone').val();
+            currentBooking.pickupLocation = $('#pickupLocation').val();
+            currentBooking.destination = $('#destination').val();
+            currentBooking.departureDate = $('#departureDate').val();
+            currentBooking.total = parseFloat($('#tripFare').val()) || 0;
+            
+            $('#bookingTotal').text(formatCurrency(currentBooking.total));
+        }
+        
+        function resetBooking() {
+            currentBooking = {
+                vehicle: null, passengerName: '', passengerPhone: '', 
+                pickupLocation: '', destination: '', departureDate: '', 
+                total: 0
+            };
+        }
+
+        function resetBookingUI() {
+            resetBooking();
+            $('#bookingForm')[0].reset();
+            $('#selectedVehicle').val('');
+            $('#bookingTotal').text('Rp 0');
+            $('#createBookingBtn').prop('disabled', true);
+        }
+
+        // --- VEHICLE & CATEGORY MANAGEMENT ---
+        function loadVehicles(searchTerm = '', category = 'all') {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            let filteredVehicles = vehicles.filter(v => 
+                (category === 'all' || v.category === category) && 
+                (!searchTerm || v.name.toLowerCase().includes(lowerSearchTerm) || v.licensePlate.toLowerCase().includes(lowerSearchTerm))
+            );
+            $('#vehicleCount').text(`(${filteredVehicles.length} kendaraan)`);
+            const $vehicleGrid = $('#vehicleGrid').empty();
+            if (filteredVehicles.length === 0) {
+                $vehicleGrid.html('<div class="empty-state"><i class="fas fa-car"></i><p>Belum ada kendaraan. Tambahkan melalui Admin Panel.</p></div>');
+            } else {
+                const isAdmin = currentUser.role === 'admin';
+                filteredVehicles.forEach(vehicle => {
+                    const statusText = { available: 'Tersedia', in_use: 'Sedang Jalan', maintenance: 'Perbaikan' };
+                    const adminActions = isAdmin ? `
+                        <div class="vehicle-actions">
+                            <div class="action-btn edit-btn edit-vehicle" data-id="${vehicle.id}"><i class="fas fa-edit"></i></div>
+                            <div class="action-btn delete-btn delete-vehicle" data-id="${vehicle.id}"><i class="fas fa-trash"></i></div>
+                        </div>` : '';
+                    
+                    $vehicleGrid.append(`
+                        <div class="vehicle-card ${vehicle.status !== 'available' ? 'disabled' : ''}" data-id="${vehicle.id}">
+                            ${adminActions}
+                            <div class="vehicle-image">
+                                ${vehicle.image ? `<img src="${vehicle.image}" alt="${vehicle.name}" onerror="this.parentElement.innerHTML = '<i class=\\'fas fa-car-crash\\'></i>';">` : `<i class="fas fa-car"></i>`}
+                            </div>
+                            <div class="vehicle-details">
+                                <div class="vehicle-name">${vehicle.name}</div>
+                                <div class="vehicle-plate">${vehicle.licensePlate}</div>
+                                <div class="vehicle-info"><i class="fas fa-users"></i> Kapasitas: ${vehicle.capacity} orang</div>
+                                <div class="vehicle-type">${vehicle.category}</div>
+                            </div>
+                            <div class="vehicle-status ${vehicle.status}">${statusText[vehicle.status]}</div>
+                        </div>`);
                 });
             }
-
-            if (!rows) return '<p class="empty-state" style="grid-column: 1 / -1;">Tidak ada data absensi pada rentang tanggal dan departemen yang dipilih.</p>';
+        }
+        
+        function openEditVehicleModal(vehicle = null) {
+            $('#vehicleModal .modal-title').text(vehicle ? 'Edit Kendaraan' : 'Tambah Kendaraan Baru');
+            $('#vehicleForm')[0].reset();
+            $('#vehicleId').val(vehicle ? vehicle.id : '');
+            if (vehicle) {
+                $('#vehicleName').val(vehicle.name); 
+                $('#vehiclePlate').val(vehicle.licensePlate);
+                $('#vehicleCapacity').val(vehicle.capacity);
+                $('#vehicleImage').val(vehicle.image || '');
+                $('#vehicleCategory').val(vehicle.category);
+                $('#vehicleStatus').val(vehicle.status);
+            }
+            loadCategoriesForSelect();
+            $('#vehicleModal').css('display', 'flex');
+        }
+        
+        function saveVehicle() {
+            const id = $('#vehicleId').val(), name = $('#vehicleName').val().trim(), category = $('#vehicleCategory').val(),
+                  plate = $('#vehiclePlate').val().trim().toUpperCase(), capacity = parseInt($('#vehicleCapacity').val()) || 0, 
+                  image = $('#vehicleImage').val().trim(), status = $('#vehicleStatus').val();
+            if (!name || !category || !plate || capacity <= 0) return showToast('Semua kolom wajib diisi dengan valid', 'error');
             
-            return `<h3 id="reportTitle">Laporan Absensi Karyawan</h3>
-                    <p style="text-align:center; margin-bottom:1.5rem;">Periode: ${start} s/d ${end} | Departemen: ${dept || 'Semua'}</p>
-                    <table><thead><tr><th>Tanggal</th><th>Nama</th><th>NIP</th><th>Departemen</th><th>Masuk</th><th>Pulang</th><th>Durasi</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
-        },
-        generateEmployeeStatusReport: (dept) => {
-            const filteredEmployees = db.employees.filter(e => !dept || e.department === dept);
-            if(filteredEmployees.length === 0) return '<p class="empty-state">Tidak ada data karyawan pada departemen yang dipilih.</p>';
+            const action = () => {
+                if (id) {
+                    const index = vehicles.findIndex(v => v.id === id);
+                    if (index > -1) vehicles[index] = { ...vehicles[index], name, category, licensePlate: plate, capacity, image, status };
+                } else {
+                    const newVehicle = { id: 'V' + moment().format('x'), name, category, licensePlate: plate, capacity, image, status };
+                    vehicles.unshift(newVehicle);
+                }
+                saveVehicles(); loadVehicles(); $('#vehicleModal').hide();
+                showToast(`Kendaraan ${id ? 'diperbarui' : 'disimpan'}`, 'success');
+            };
             
-            const rows = filteredEmployees.map(emp => `
-                <tr><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${emp.position}</td><td>${emp.gender}</td><td>${emp.status}</td></tr>
-            `).join('');
+            promptForPassword('item', action);
+        }
 
-            return `<h3 id="reportTitle">Laporan Status Karyawan</h3>
-                    <p style="text-align:center; margin-bottom:1.5rem;">Departemen: ${dept || 'Semua'}</p>
-                    <table><thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jabatan</th><th>Gender</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
-        },
-        backupData: () => {
-            const dataStr = JSON.stringify(db, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `simpeg_backup_${uiUtils.getTodayString()}.json`;
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            addActivity('Backup data berhasil dibuat.');
-            uiUtils.showToast('Data berhasil di-backup.');
-        },
-        restoreData: (event) => {
-            const file = event.target.files[0];
+        function handleEditVehicleClick(e) { e.stopPropagation(); openEditVehicleModal(vehicles.find(v => v.id === $(this).data('id'))); }
+        function handleDeleteVehicleClick(e) {
+            e.stopPropagation();
+            const vehicleId = $(this).data('id');
+            promptForPassword('item', () => showConfirmation('Hapus Kendaraan', 'Yakin ingin menghapus kendaraan ini?', () => {
+                vehicles = vehicles.filter(v => v.id !== vehicleId);
+                saveVehicles(); loadVehicles(); showToast('Kendaraan berhasil dihapus', 'success');
+            }));
+        }
+
+        // DRIVER MANAGEMENT
+        function openManageDriversModal() {
+            resetDriverForm();
+            loadDriversForManagement();
+            $('#manageDriversModal').css('display', 'flex');
+        }
+
+        function loadDriversForManagement(searchTerm = '') {
+            const $list = $('#driversList').empty();
+            const filtered = drivers.filter(d => !searchTerm || d.name.toLowerCase().includes(searchTerm.toLowerCase()) || d.id.toLowerCase().includes(searchTerm.toLowerCase()) || d.nik.includes(searchTerm));
+            if (filtered.length === 0) return $list.html('<div class="empty-state"><p>Belum ada pengemudi terdaftar.</p></div>');
+            filtered.forEach(d => {
+                $list.append(`
+                    <div class="order-item" style="align-items: center;">
+                        <img src="${d.photoUrl}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/40'">
+                        <div class="order-item-info">
+                            <div class="order-item-name" style="font-weight: 600;">${d.name} <span style="font-size: 0.7rem; color: var(--gray); font-weight: 400;">(${d.id})</span></div>
+                            <div class="order-item-price" style="font-size: 0.8rem;">${d.phone} | SIM: ${d.simType}</div>
+                        </div>
+                        <div class="order-item-qty gap-2" style="display: flex; gap: 12px;">
+                            <i class="fas fa-id-card kta-driver" style="cursor:pointer; color: var(--success); font-size: 1.2rem;" data-id="${d.id}" title="Cetak KTA"></i>
+                            <i class="fas fa-edit edit-driver" style="cursor:pointer; color: var(--info); font-size: 1.2rem;" data-id="${d.id}" title="Edit Data"></i>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function resetDriverForm() {
+            $('#driverForm')[0].reset();
+            $('#driverIdInput').val('');
+            $('#driverFormTitle').text('Tambah Pengemudi Baru');
+            $('#deleteDriverBtn').hide();
+        }
+
+        function saveDriver(e) {
+            e.preventDefault();
+            const id = $('#driverIdInput').val();
+            const driverData = {
+                name: $('#driverName').val().trim(),
+                nik: $('#driverNik').val().trim(),
+                simId: $('#driverSimId').val().trim(),
+                simType: $('#driverSimType').val(),
+                phone: $('#driverPhone').val().trim(),
+                address: $('#driverAddress').val().trim(),
+                photoUrl: $('#driverPhotoUrl').val().trim()
+            };
+            if (!driverData.name || !driverData.nik || !driverData.simId || !driverData.phone || !driverData.photoUrl) return showToast('Semua kolom wajib diisi.', 'error');
+            
+            if (id) {
+                const index = drivers.findIndex(d => d.id === id);
+                if (index > -1) drivers[index] = { ...drivers[index], ...driverData };
+            } else {
+                drivers.unshift({
+                    id: 'DRV' + moment().format('YYMMDDHHmmss'),
+                    ...driverData,
+                    joinDate: new Date().toISOString()
+                });
+            }
+            saveDrivers();
+            loadDriversForManagement();
+            $('#driverFormContainer').slideUp();
+            showToast(`Data pengemudi berhasil ${id ? 'diperbarui' : 'disimpan'}.`, 'success');
+        }
+
+        function editDriver(id) {
+            const driver = drivers.find(d => d.id === id);
+            if (!driver) return;
+            resetDriverForm();
+            $('#driverFormTitle').text('Edit Data Pengemudi');
+            $('#driverIdInput').val(driver.id);
+            $('#driverName').val(driver.name);
+            $('#driverNik').val(driver.nik);
+            $('#driverSimId').val(driver.simId);
+            $('#driverSimType').val(driver.simType);
+            $('#driverPhone').val(driver.phone);
+            $('#driverAddress').val(driver.address || '');
+            $('#driverPhotoUrl').val(driver.photoUrl || '');
+            
+            $('#deleteDriverBtn').data('id', driver.id).show();
+            $('#driverFormContainer').slideDown();
+        }
+
+        function deleteDriver(id) {
+            promptForPassword('item', () => {
+                showConfirmation('Hapus Pengemudi', 'Yakin ingin menghapus data pengemudi ini?', () => {
+                    drivers = drivers.filter(d => d.id !== id);
+                    saveDrivers();
+                    loadDriversForManagement();
+                    resetDriverForm();
+                    $('#driverFormContainer').slideUp();
+                    showToast('Data pengemudi berhasil dihapus.', 'success');
+                }, 'danger');
+            });
+        }
+
+        // KTA (ID Card) Generation
+        function openDriverIdCardModal(driverId) {
+            const driver = drivers.find(d => d.id === driverId);
+            if (!driver) return;
+            $('#ktaStoreName').text(settings.storeName);
+            $('#ktaStoreContact').text(`${settings.storeAddress} | ${settings.storePhone} | ${settings.storeEmail}`);
+            $('#ktaDriverPhoto').attr('src', driver.photoUrl).on('error', function() { $(this).attr('src', 'https://via.placeholder.com/120'); });
+            $('#ktaDriverName').text(driver.name);
+            $('#ktaDriverId').text(`ID: ${driver.id}`);
+            $('#ktaDriverNik').text(driver.nik);
+            $('#ktaDriverSim').text(`${driver.simId} (${driver.simType})`);
+            $('#ktaDriverWhatsapp').text(driver.phone);
+
+            const qrData = JSON.stringify({id: driver.id, name: driver.name, sim: driver.simType, phone: driver.phone});
+            const $qrContainer = $('#ktaQrcodeImg').empty();
+            new QRCode($qrContainer[0], { text: qrData, width: 80, height: 80 });
+            $('#ktaModal').css('display', 'flex');
+        }
+        
+        function downloadKtaAsPdf() {
+            const element = document.getElementById('ktaCard');
+            const driverName = $('#ktaDriverName').text();
+            const filename = `KTA_${driverName.replace(/ /g, '_')}.pdf`;
+            showToast('Mengunduh KTA PDF...', 'info');
+            html2canvas(element, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height]});
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                pdf.save(filename);
+            }).catch(err => { showToast('Gagal mengunduh PDF: ' + err, 'error'); });
+        }
+        
+        // --- OTHER UTILITIES & HELPERS ---
+        function generateTicketHTML(booking) {
+            const vehicle = booking.vehicle;
+            const driver = booking.driver;
+            return `
+            <div id="ticketContent">
+                <div class="ticket-header">
+                    <div class="ticket-title">${settings.storeName}</div>
+                    <div>${settings.storeAddress}</div>
+                    <div>Telp: ${settings.storePhone}</div>
+                </div>
+                <div class="ticket-info">
+                    <div><span>Tanggal:</span> <span>${moment(booking.creationDate).format('DD/MM/YY HH:mm')}</span></div>
+                    <div><span>No. Booking:</span> <span>${booking.id}</span></div>
+                    <div><span>Operator:</span> <span>${booking.operator}</span></div>
+                </div>
+                
+                <div class="ticket-section-title">DETAIL PENUMPANG</div>
+                <div class="ticket-details">
+                    <p><strong>Nama</strong>: <span>${booking.passengerName}</span></p>
+                    <p><strong>Kontak</strong>: <span>${booking.passengerPhone}</span></p>
+                </div>
+
+                <div class="ticket-section-title">DETAIL PERJALANAN</div>
+                <div class="ticket-details">
+                    <p><strong>Berangkat</strong>: <span>${moment(booking.departureDate).format('dddd, D MMM YYYY, HH:mm')}</span></p>
+                    <p><strong>Dari</strong>: <span>${booking.pickupLocation}</span></p>
+                    <p><strong>Tujuan</strong>: <span>${booking.destination}</span></p>
+                    <p><strong>Armada</strong>: <span>${vehicle.name} (${vehicle.licensePlate})</span></p>
+                    <p><strong>Pengemudi</strong>: <span>${driver.name}</span></p>
+                </div>
+
+                <div class="ticket-total">
+                    <div class="ticket-details">
+                        <p style="font-size: 14px;"><strong>TOTAL BIAYA</strong>: <span>${formatCurrency(booking.total)}</span></p>
+                        <p><span>${{ cash: 'Tunai', transfer: 'Transfer' }[booking.paymentMethod]}</span> <span>${formatCurrency(booking.paymentAmount)}</span></p>
+                        <p><span>Kembali</span> <span>${formatCurrency(booking.change)}</span></p>
+                    </div>
+                </div>
+                <div class="ticket-footer">
+                    <p>Terima kasih telah menggunakan jasa kami. Hati-hati di jalan.</p>
+                    <p style="margin-top: 5px;">${settings.storeEmail}</p>
+                </div>
+            </div>`;
+        }
+        
+        function openBookingConfirmationModal() {
+            if (!currentBooking.vehicle) return showToast('Pilih kendaraan terlebih dahulu', 'warning');
+            const { passengerName, passengerPhone, pickupLocation, destination, departureDate, total } = currentBooking;
+            if(!passengerName || !passengerPhone || !pickupLocation || !destination || !departureDate || total <= 0) {
+                return showToast('Lengkapi semua detail booking dan biaya perjalanan.', 'error');
+            }
+            updateBookingSummary();
+            
+            $('#paymentTotal').text(formatCurrency(currentBooking.total));
+            $('#paymentAmount').val(currentBooking.total).trigger('input');
+            $('#bookingConfirmationModal').css('display', 'flex');
+        }
+
+        function calculateChange() {
+            const amount = parseFloat($('#paymentAmount').val()) || 0;
+            const change = amount - currentBooking.total;
+            $('#changeContainer').toggle(change >= 0);
+            $('#paymentChange').text(formatCurrency(change));
+        }
+
+        function openManageCategoriesModal() { loadCategoriesForManagement(); $('#manageCategoriesModal').css('display', 'flex'); }
+        function loadCategories() {
+            const $filterRow = $('.filter-row').html('<div class="filter-chip active" data-category="all">Semua</div>');
+            categories.forEach(category => $filterRow.append(`<div class="filter-chip" data-category="${category.name}">${category.name}</div>`));
+        }
+        function loadCategoriesForSelect() {
+            const $select = $('#vehicleCategory').empty();
+            if (categories.length === 0) $select.append('<option value="" disabled selected>Tidak ada tipe</option>');
+            else categories.forEach(category => $select.append(`<option value="${category.name}">${category.name}</option>`));
+        }
+        function loadCategoriesForManagement() {
+            const $list = $('#categoriesList').empty();
+            if (categories.length === 0) $list.html('<div class="empty-state"><i class="fas fa-tags"></i><p>Belum ada tipe</p></div>');
+            else {
+                categories.forEach(category => {
+                    const vehicleCount = vehicles.filter(v => v.category === category.name).length;
+                    $list.append(`<div class="order-item"><div class="order-item-info"><div class="order-item-name">${category.name}</div><div class="order-item-price">${vehicleCount} kendaraan</div></div><div class="order-item-qty"><i class="fas fa-trash remove-item remove-category" data-id="${category.id}" style="cursor:pointer; color: var(--danger);"></i></div></div>`);
+                });
+            }
+        }
+        function addCategory() {
+            const name = $('#newCategoryName').val().trim();
+            if (!name) return showToast('Nama tipe harus diisi', 'error');
+            if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())) return showToast('Tipe sudah ada', 'error');
+            categories.unshift({ id: 'C' + moment().format('x'), name });
+            saveCategories(); loadCategories(); loadCategoriesForManagement(); $('#newCategoryName').val(''); showToast('Tipe ditambahkan', 'success');
+        }
+        function removeCategory() {
+            const categoryId = $(this).data('id'), category = categories.find(c => c.id === categoryId);
+            if (vehicles.some(v => v.category === category.name)) return showToast('Tipe sedang digunakan', 'error');
+            promptForPassword('item', () => {
+                categories = categories.filter(c => c.id !== categoryId);
+                saveCategories(); loadCategories(); loadCategoriesForManagement(); showToast('Tipe dihapus', 'success');
+            });
+        }
+        function backupData() {
+            try {
+                const backup = { vehicles, categories, bookings, settings, users, drivers, backupDate: new Date().toISOString() };
+                const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(backup), ENCRYPTION_KEY).toString();
+                const linkElement = document.createElement('a');
+                linkElement.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(encryptedData);
+                linkElement.download = `backup_travel_${moment().format('YYYYMMDD_HHmmss')}.travelbackup`;
+                linkElement.click();
+                showToast('Backup data terenkripsi berhasil', 'success');
+            } catch (err) { showToast('Gagal membuat backup terenkripsi', 'error'); }
+        }
+        function restoreFromFile(file) {
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 try {
-                    const restoredDb = JSON.parse(e.target.result);
-                    if (restoredDb.employees && restoredDb.departments) {
-                        db = restoredDb;
-                        saveDb();
-                        addActivity('Data berhasil dipulihkan dari backup.');
-                        uiUtils.showToast('Data berhasil di-restore. Halaman akan dimuat ulang.');
-                        setTimeout(() => location.reload(), 1500);
-                    } else { throw new Error('Invalid file structure'); }
-                } catch (error) {
-                    uiUtils.showToast('Gagal me-restore data. File tidak valid.', 'danger');
-                } finally {
-                    event.target.value = '';
-                }
+                    const bytes = CryptoJS.AES.decrypt(e.target.result, ENCRYPTION_KEY);
+                    const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+                    if (!decryptedString) throw new Error("Decryption failed.");
+                    const data = JSON.parse(decryptedString);
+                    if (data.vehicles && data.categories && data.bookings && data.settings) {
+                        showConfirmation('Restore Data', 'Data saat ini akan diganti oleh file backup. Lanjutkan?', () => restoreData(data));
+                    } else throw new Error("Invalid backup file.");
+                } catch (err) { showToast('Gagal memproses file backup.', 'error'); }
             };
             reader.readAsText(file);
-        },
-        resetData: () => {
-             uiUtils.showConfirm('Reset Semua Data', 'Anda yakin ingin menghapus SEMUA data dan mengembalikan aplikasi ke keadaan awal? Tindakan ini akan meminta kata sandi.', () => {
-                actions._verifyPassword('settings', () => {
-                    localStorage.removeItem('simpegUltimateDb');
-                    uiUtils.showToast('Data berhasil di-reset. Halaman akan dimuat ulang.', 'danger');
-                    setTimeout(() => location.reload(), 1500);
-                });
+        }
+        function restoreData(data) {
+            try {
+                localStorage.setItem(STORAGE_KEYS.VEHICLES, JSON.stringify(data.vehicles || []));
+                localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(data.categories || []));
+                localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(data.bookings || []));
+                localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(data.users || []));
+                localStorage.setItem(STORAGE_KEYS.DRIVERS, JSON.stringify(data.drivers || []));
+                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings));
+                showToast('Data berhasil direstore. Aplikasi akan dimuat ulang.', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } catch (e) { showToast('Gagal melakukan restore data', 'error'); }
+        }
+        function resetAllData() { Object.values(STORAGE_KEYS).forEach(key => { if (key !== STORAGE_KEYS.USER) localStorage.removeItem(key); }); showToast('Semua data berhasil direset. Aplikasi akan dimuat ulang.', 'success'); setTimeout(() => location.reload(), 1500); }
+        function promptForPassword(type, callback) {
+            const title = type === 'item' ? 'Password Edit/Hapus' : 'Password Kontrol Panel';
+            $('#passwordPromptTitle').text(title);
+            $('#passwordPromptMessage').text(`Masukkan ${title} untuk melanjutkan.`);
+            passwordPromptCallback = callback;
+            $('#passwordPromptInput').val('');
+            $('#passwordPromptModal').css('display', 'flex').find('input').focus();
+        }
+        function submitPasswordPrompt() {
+            const password = $('#passwordPromptInput').val();
+            const type = $('#passwordPromptTitle').text().includes('Kontrol Panel') ? 'panel' : 'item';
+            const correctHash = type === 'panel' ? settings.panelSecurityCode : settings.itemSecurityCode;
+            if (CryptoJS.SHA256(password).toString() === correctHash) {
+                $('#passwordPromptModal').hide();
+                if (passwordPromptCallback) passwordPromptCallback();
+                passwordPromptCallback = null;
+            } else {
+                showToast('Password keamanan salah.', 'error');
+            }
+        }
+
+        function showTicketModal(booking) {
+            const ticketHTML = generateTicketHTML(booking);
+            $('#ticketModalBody').html(ticketHTML);
+            $('#downloadTicketPdfBtn').data('booking', booking);
+            $('#ticketModal').css('display', 'flex');
+        }
+        function downloadTicketAsPdf() {
+            const booking = $('#downloadTicketPdfBtn').data('booking'); if (!booking) return;
+            const element = document.getElementById('ticketModalBody').querySelector('#ticketContent');
+            const filename = `Tiket-${booking.id}-${booking.passengerName.replace(/ /g, '_')}.pdf`; showToast('Mengunduh PDF...', 'info');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width, canvas.height] });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height); pdf.save(filename);
+            }).catch(err => { showToast('Gagal mengunduh PDF', 'error'); });
+        }
+        function formatCurrency(amount) { return 'Rp ' + (amount != null ? amount : 0).toLocaleString('id-ID'); }
+        function showToast(message, type = 'info', duration = 3000) {
+            const $toast = $('#toast');
+            $toast.removeClass('success error warning info').addClass(type);
+            $('#toast-message').text(message); $toast.addClass('show');
+            setTimeout(() => $toast.removeClass('show'), duration);
+        }
+        function setButtonLoading($button, isLoading, originalText = 'Login') {
+            if (isLoading) $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Memproses...');
+            else $button.prop('disabled', false).html(originalText);
+        }
+        function showConfirmation(title, message, onConfirm, type = 'success') {
+            $('#confirmTitle').text(title); $('#confirmMessage').text(message);
+            const $confirmBtn = $('#confirmAction');
+            $confirmBtn.off('click').on('click', () => { onConfirm(); $('#confirmationModal').hide(); });
+            $confirmBtn.removeClass('btn-success btn-danger').addClass(type === 'danger' ? 'btn-danger' : 'btn-success');
+            $('#confirmationModal').css('display', 'flex');
+        }
+        function updateCurrentDate() { $('#currentDate').text(moment().format('dddd, D MMMM YYYY'));
+        }
+
+        function openReportsModal() {
+            $('#reportPeriod').val('today').trigger('change');
+            $('#reportResults').empty();
+            $('#reportsModal').css('display', 'flex');
+        }
+
+        function generateReport() {
+            let startDate, endDate;
+            const period = $('#reportPeriod').val();
+            if (period === 'today') { startDate = moment().startOf('day'); endDate = moment().endOf('day'); }
+            else if (period === 'week') { startDate = moment().startOf('week'); endDate = moment().endOf('week'); }
+            else if (period === 'month') { startDate = moment().startOf('month'); endDate = moment().endOf('month'); }
+            else if (period === 'custom') {
+                startDate = moment($('#reportStartDate').val());
+                endDate = moment($('#reportEndDate').val()).endOf('day');
+                if (!startDate.isValid() || !endDate.isValid() || endDate.isBefore(startDate)) return showToast('Rentang tanggal tidak valid', 'error');
+            }
+
+            const filteredBookings = bookings.filter(b => moment(b.creationDate).isBetween(startDate, endDate));
+            if (filteredBookings.length === 0) return $('#reportResults').html('<div class="empty-state"><p>Tidak ada data booking pada periode ini.</p></div>');
+            
+            let totalRevenue = 0, totalBookings = filteredBookings.length;
+            let topVehicles = {};
+            filteredBookings.forEach(booking => {
+                totalRevenue += booking.total;
+                topVehicles[booking.vehicle.name] = (topVehicles[booking.vehicle.name] || 0) + 1;
+            });
+            const sortedVehicles = Object.entries(topVehicles).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+            let reportHTML = `
+                <div style="text-align:center;"><h4>Laporan Periode: ${startDate.format('D MMM YYYY')} - ${endDate.format('D MMM YYYY')}</h4></div>
+                <div class="summary-container mt-3">
+                    <div class="summary-row"><span>Total Booking:</span> <span>${totalBookings}</span></div>
+                    <div class="summary-row total-row"><span>Total Pendapatan:</span> <span>${formatCurrency(totalRevenue)}</span></div>
+                </div>
+                <h5 class="mt-3">Armada Paling Sering Dipesan</h5>
+                <ul class="list-group">${sortedVehicles.map(v => `<li class="list-group-item">${v[0]} (${v[1]} kali)</li>`).join('') || '<li>Tidak ada data</li>'}</ul>
+            `;
+            $('#reportResults').html(reportHTML);
+        }
+        
+        function openHistoryModal() {
+            loadBookingHistory();
+            $('#historyModal').css('display', 'flex');
+        }
+
+        function loadBookingHistory(searchTerm = '') {
+            const $results = $('#historyResults').empty();
+            const filtered = bookings.filter(b => !searchTerm || b.id.toLowerCase().includes(searchTerm.toLowerCase()) || b.passengerName.toLowerCase().includes(searchTerm.toLowerCase()));
+            if (filtered.length === 0) return $results.html('<div class="empty-state"><p>Tidak ada histori booking.</p></div>');
+            
+            let tableHTML = `<table class="data-table"><thead><tr><th>Kode</th><th>Tanggal</th><th>Penumpang</th><th>Tujuan</th><th>Total</th><th>Aksi</th></tr></thead><tbody>`;
+            filtered.slice(0, 100).forEach(booking => {
+                tableHTML += `
+                    <tr>
+                        <td>${booking.id}</td>
+                        <td>${moment(booking.creationDate).format('DD/MM/YY HH:mm')}</td>
+                        <td>${booking.passengerName}</td>
+                        <td>${booking.destination}</td>
+                        <td>${formatCurrency(booking.total)}</td>
+                        <td><button class="btn btn-sm reprint-ticket" data-id="${booking.id}">Cetak Ulang</button></td>
+                    </tr>
+                `;
+            });
+            tableHTML += `</tbody></table>`;
+            $results.html(tableHTML);
+        }
+        
+        function openManageStoreInfoModal() {
+            $('#storeName').val(settings.storeName);
+            $('#storeAddress').val(settings.storeAddress);
+            $('#storePhone').val(settings.storePhone);
+            $('#storeEmail').val(settings.storeEmail);
+            $('#manageStoreInfoModal').css('display', 'flex');
+        }
+        
+        function updateStoreInfo() {
+            $('#storeNameHeader').text(settings.storeName || 'TRAVEL');
+        }
+
+        function saveStoreInfo() {
+            settings.storeName = $('#storeName').val().trim();
+            settings.storeAddress = $('#storeAddress').val().trim();
+            settings.storePhone = $('#storePhone').val().trim();
+            settings.storeEmail = $('#storeEmail').val().trim();
+            saveSettings();
+            updateStoreInfo();
+            $('#manageStoreInfoModal').hide();
+            showToast('Info perusahaan berhasil diperbarui.', 'success');
+        }
+
+        function openControlPanel() {
+            promptForPassword('panel', () => {
+                loadUsers();
+                $('#controlPanelModal').css('display', 'flex');
             });
         }
-    };
-    
-    // =================================================================================
-    // EVENT LISTENERS
-    // =================================================================================
-    document.querySelector('.sidebar-menu').addEventListener('click', e => {
-        const link = e.target.closest('a');
-        if (link?.dataset.page) { e.preventDefault(); render.page(link.dataset.page); }
-    });
-    document.getElementById('themeSwitcher').addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        this.classList.toggle('fa-sun'); this.classList.toggle('fa-moon');
-    });
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-        document.getElementById('appContainer').classList.toggle('sidebar-open');
-    });
-    // Karyawan Page
-    document.getElementById('addEmployeeBtn').addEventListener('click', () => render.employeeForm());
-    document.getElementById('employeeGrid').addEventListener('click', (e) => {
-        const card = e.target.closest('.employee-card');
-        if (card) render.employeeDetail(card.dataset.nip);
-    });
-    ['employeeSearch', 'departmentFilter', 'statusFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('input', render.karyawan);
-    });
-    // Departemen Page
-    document.getElementById('addDepartmentBtn').addEventListener('click', actions.addDepartment);
-    // Absensi Page
-    document.getElementById('attendanceDateFilter').addEventListener('change', render.absensi);
-    document.getElementById('attendanceDeptFilter').addEventListener('change', render.absensi);
-    // Cuti Page
-    document.getElementById('addLeaveBtn').addEventListener('click', render.leaveForm);
-    // Laporan Page
-    document.getElementById('generateReportBtn').addEventListener('click', actions.generateReport);
-    // Pengaturan Page
-    document.getElementById('saveWorkHoursBtn').addEventListener('click', actions.saveWorkHours);
-    document.getElementById('openSecurityPanelBtn').addEventListener('click', actions.openSecurityPanel);
-    document.getElementById('backupDataBtn').addEventListener('click', actions.backupData);
-    document.getElementById('restoreDataInput').addEventListener('change', actions.restoreData);
-    document.getElementById('resetDataBtn').addEventListener('click', actions.resetData);
-
-    // General Modal Close
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
-                this.classList.remove('show');
-            }
-        });
-    });
-    document.querySelectorAll('.modal-close').forEach(btn => {
-        btn.addEventListener('click', () => btn.closest('.modal').classList.remove('show'));
-    });
-
-    // =================================================================================
-    // INITIALIZATION
-    // =================================================================================
-    function init() {
-        loadDb();
-        // Setup initial values
-        document.getElementById('attendanceDateFilter').value = uiUtils.getTodayString();
-        const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
-        document.getElementById('reportStartDate').value = firstDayOfMonth;
-        document.getElementById('reportEndDate').value = uiUtils.getTodayString();
         
-        render.page('dashboardPage');
-    }
-    init();
-});
-</script>
+        function loadUsers() {
+            const $list = $('#usersList').empty();
+            users.forEach(u => {
+                $list.append(`
+                    <div class="order-item">
+                        <div class="order-item-info">
+                            <div class="order-item-name">${u.name}</div>
+                            <div class="order-item-price">${u.username} | ${u.role}</div>
+                        </div>
+                        <div class="order-item-qty gap-2">
+                            ${u.username !== 'Admin' ? `
+                            <i class="fas fa-edit edit-user" style="cursor:pointer; color: var(--info);" data-id="${u.id}"></i>
+                            <i class="fas fa-trash delete-user" style="cursor:pointer; color: var(--danger);" data-id="${u.id}"></i>
+                            ` : ''}
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function resetUserForm() {
+            $('#userForm')[0].reset();
+            $('#userIdInput').val('');
+            $('#userFormTitle').text('Tambah Pengguna');
+        }
+
+        function saveUser(e) {
+            e.preventDefault();
+            const id = $('#userIdInput').val();
+            const name = $('#userName').val().trim();
+            const username = $('#userUsername').val().trim();
+            let password = $('#userPassword').val().trim();
+            const role = $('#userRole').val();
+
+            if (!name || !username) return showToast('Nama dan Username wajib diisi.', 'error');
+            
+            if (id) {
+                const index = users.findIndex(u => u.id === id);
+                if (index > -1) {
+                    if (password) users[index].password = CryptoJS.SHA256(password).toString();
+                    users[index] = {...users[index], name, username, role };
+                }
+            } else {
+                if (!password) return showToast('Password wajib diisi untuk pengguna baru.', 'error');
+                if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) return showToast('Username sudah ada.', 'error');
+                users.push({
+                    id: 'U' + moment().format('x'), name, username,
+                    password: CryptoJS.SHA256(password).toString(), role
+                });
+            }
+            saveUsers();
+            loadUsers();
+            $('#userFormContainer').slideUp();
+            showToast(`Pengguna berhasil ${id ? 'diperbarui' : 'disimpan'}.`, 'success');
+        }
+        
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+            resetUserForm();
+            $('#userFormTitle').text('Edit Pengguna');
+            $('#userIdInput').val(user.id);
+            $('#userName').val(user.name);
+            $('#userUsername').val(user.username);
+            $('#userRole').val(user.role);
+            $('#userPassword').val('');
+            $('#userFormContainer').slideDown();
+        }
+
+        function deleteUser(id) {
+            showConfirmation('Hapus Pengguna', 'Yakin ingin menghapus pengguna ini?', () => {
+                users = users.filter(u => u.id !== id);
+                saveUsers();
+                loadUsers();
+                showToast('Pengguna berhasil dihapus.', 'success');
+            }, 'danger');
+        }
+        
+        function changeSecurityCode(e) {
+            e.preventDefault();
+            const formId = $(this).attr('id');
+            const newPassword = formId === 'itemSecurityForm' ? $('#itemSecurityCode').val() : $('#panelSecurityCode').val();
+            if (newPassword.length < 4) return showToast('Password minimal 4 karakter.', 'error');
+            
+            if (formId === 'itemSecurityForm') settings.itemSecurityCode = CryptoJS.SHA256(newPassword).toString();
+            else settings.panelSecurityCode = CryptoJS.SHA256(newPassword).toString();
+            
+            saveSettings();
+            $(this)[0].reset();
+            showToast('Password keamanan berhasil diubah.', 'success');
+        }
+
+        function changeOwnPassword(e) {
+            e.preventDefault();
+            const currentPass = $('#currentPassword').val();
+            const newPass = $('#newPassword').val();
+            if (newPass.length < 6) return showToast('Password baru minimal 6 karakter.', 'error');
+            if (CryptoJS.SHA256(currentPass).toString() !== currentUser.password) return showToast('Password saat ini salah.', 'error');
+            
+            currentUser.password = CryptoJS.SHA256(newPass).toString();
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if(userIndex > -1) users[userIndex] = currentUser;
+            
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+            saveUsers();
+            $(this)[0].reset();
+            showToast('Password login Anda berhasil diubah.', 'success');
+        }
+
+        function printElement(selector) {
+            const content = $(selector).html();
+            const $printContainer = $('#print-container');
+            $printContainer.html(content).show();
+            window.print();
+            $printContainer.hide().empty();
+        }
+        
+        function generateCaptcha() {
+            const canvas = document.getElementById('captchaCanvas');
+            const ctx = canvas.getContext('2d');
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            captchaText = '';
+            for (let i = 0; i < 6; i++) captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f0f2f5';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '24px Poppins';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(captchaText, canvas.width / 2, canvas.height / 2);
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.strokeStyle = '#ccc';
+                ctx.stroke();
+            }
+        }
+        
+        // --- DATA SAVING FUNCTIONS ---
+        function saveVehicles() { localStorage.setItem(STORAGE_KEYS.VEHICLES, JSON.stringify(vehicles)); }
+        function saveCategories() { localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories)); }
+        function saveBookings() { localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings)); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); }
+        function saveUsers() { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
+        function saveDrivers() { localStorage.setItem(STORAGE_KEYS.DRIVERS, JSON.stringify(drivers)); }
+
+    </script>
 </body>
 </html>
