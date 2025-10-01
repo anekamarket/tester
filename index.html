@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lentera Prime 5.0 - Quantum Edition</title>
+    <title>Lentera Prime 6.0 - Cosmic Edition</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,14 +12,14 @@
 
     <style>
         :root {
-            /* Ethereal Indigo Theme (Default) */
-            --bg-color: #F4F7FC;
-            --surface-color: #FFFFFF;
-            --primary-color: #6366F1;
-            --primary-gradient: linear-gradient(45deg, #4F46E5, #818CF8);
-            --text-color: #1F2937;
-            --text-secondary: #6B7281;
-            --border-color: #E5E7EB;
+            /* Cosmic Dark Theme (Default) */
+            --bg-color: #0d1117;
+            --surface-color: #161b22;
+            --primary-color: #8957e5;
+            --primary-gradient: linear-gradient(45deg, #e040fb, #8957e5);
+            --text-color: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
             --wheel-size: clamp(350px, 90vmin, 550px);
             --font-body: 'Inter', sans-serif;
         }
@@ -58,7 +58,7 @@
         }
         @keyframes shimmer {
             0% { box-shadow: 0 0 10px rgba(255,255,255,0), 0 0 10px inset rgba(255,255,255,0); }
-            50% { box-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 20px inset rgba(255,255,255,0.7); }
+            50% { box-shadow: 0 0 40px var(--primary-color), 0 0 25px inset var(--primary-color); }
             100% { box-shadow: 0 0 10px rgba(255,255,255,0), 0 0 10px inset rgba(255,255,255,0); }
         }
 
@@ -73,8 +73,7 @@
         #wheel-canvas {
             width: var(--wheel-size);
             height: var(--wheel-size);
-            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
-            filter: drop-shadow(0px 15px 35px rgba(0,0,0,0.1));
+            filter: drop-shadow(0px 15px 35px rgba(0,0,0,0.2));
         }
         .wheel-canvas-winner {
             animation: shimmer 1.5s ease-in-out;
@@ -83,16 +82,19 @@
         .wheel-pointer {
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--primary-color);
+            border-left: 22px solid transparent;
+            border-right: 22px solid transparent;
+            border-top: 44px solid var(--primary-color);
             position: absolute;
-            top: -20px;
+            top: -22px;
             z-index: 10;
-            transition: border-top-color 0.4s ease;
+            transition: border-top-color 0.4s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-origin: bottom center;
-            filter: drop-shadow(0px 4px 10px rgba(0,0,0, 0.2));
+            filter: drop-shadow(0px 4px 10px rgba(0,0,0, 0.3));
             border-radius: 4px;
+        }
+        .wheel-pointer.tick {
+            transform: rotate(-10deg) scale(0.95);
         }
 
         /* Panels (Controls & History) */
@@ -101,7 +103,7 @@
             padding: 30px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
             display: flex;
             flex-direction: column;
             transition: background-color 0.4s ease, border-color 0.4s ease;
@@ -138,7 +140,7 @@
 
         #participants-textarea {
             width: 100%; min-height: 200px;
-            background-color: #F9FAFB; border: 1px solid var(--border-color);
+            background-color: var(--bg-color); border: 1px solid var(--border-color);
             border-radius: 12px; padding: 15px; color: var(--text-color);
             font-size: 1rem; resize: vertical; margin-bottom: 15px;
             transition: all 0.2s;
@@ -150,17 +152,17 @@
 
         .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .action-button {
-            padding: 10px; font-size: 0.9rem; font-weight: 600; background: #F3F4F6;
+            padding: 10px; font-size: 0.9rem; font-weight: 600; background: color-mix(in srgb, var(--surface-color) 50%, var(--bg-color));
             color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 10px;
             cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
         }
-        .action-button:hover { background: #E5E7EB; color: var(--text-color); }
+        .action-button:hover { background: color-mix(in srgb, var(--surface-color) 20%, var(--bg-color)); color: var(--text-color); }
         .action-button i { margin-right: 8px; }
 
         .input-group { margin-bottom: 15px; }
         .input-group input, .input-group select {
             width: 100%; padding: 10px; border-radius: 10px;
-            border: 1px solid var(--border-color); background: #F9FAFB;
+            border: 1px solid var(--border-color); background: var(--bg-color);
             font-size: 0.9rem; color: var(--text-color);
         }
         
@@ -170,7 +172,7 @@
             text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s ease-out;
             box-shadow: 0 5px 20px color-mix(in srgb, var(--primary-color) 30%, transparent);
         }
-        #spin-button:disabled { background: #D1D5DB; cursor: not-allowed; color: #9CA3AF; box-shadow: none; }
+        #spin-button:disabled { background: #30363d; cursor: not-allowed; color: #8b949e; box-shadow: none; }
         #spin-button:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 8px 25px color-mix(in srgb, var(--primary-color) 40%, transparent); }
         
         /* Sub-panel for advanced features */
@@ -178,7 +180,26 @@
             border: 1px solid var(--border-color);
             margin-top: 20px; padding: 15px; border-radius: 12px;
         }
-        .sub-panel h3 { font-size: 1rem; margin-bottom: 10px; text-align: center; }
+        .sub-panel h3 { font-size: 1rem; margin-bottom: 10px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;}
+
+        /* Smart Features Toggle */
+        .toggle-switch {
+            display: flex; align-items: center; justify-content: space-between; padding: 8px 0;
+        }
+        .toggle-switch label { margin: 0; font-weight: 600; font-size: 0.95rem; }
+        .toggle-switch input { display: none; }
+        .toggle-slider {
+            width: 40px; height: 22px; background-color: #30363d; border-radius: 11px;
+            position: relative; cursor: pointer; transition: background-color 0.2s;
+        }
+        .toggle-slider::before {
+            content: ""; position: absolute; left: 3px; top: 3px;
+            width: 16px; height: 16px; background-color: white;
+            border-radius: 50%; transition: transform 0.2s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background-color: var(--primary-color); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
 
         /* History & Saved Groups Section */
         .scrollable-list {
@@ -187,19 +208,19 @@
         }
         .scrollable-list::-webkit-scrollbar { width: 6px; }
         .scrollable-list::-webkit-scrollbar-track { background: transparent; }
-        .scrollable-list::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        .scrollable-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
         .scrollable-list-item {
-            background: #F9FAFB; padding: 10px 15px; border-radius: 10px;
+            background: var(--bg-color); padding: 10px 15px; border-radius: 10px;
             margin-bottom: 8px; display: flex; justify-content: space-between;
             align-items: center; border: 1px solid transparent;
             transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
-            animation: staggerFadeIn 0.5s ease-in-out forwards; opacity: 0;
+            animation: staggerFadeIn 0.5s ease-in-out forwards; opacity: 0; transform: translateX(-10px);
         }
         @keyframes staggerFadeIn {
             to { opacity: 1; transform: translateX(0); }
         }
         .scrollable-list-item:hover {
-            transform: translateY(-2px); background-color: #F3F4F6;
+            transform: translateY(-2px); background-color: color-mix(in srgb, var(--surface-color) 20%, var(--bg-color));
         }
         .item-name { font-weight: 600; color: var(--text-color); }
         .item-meta { font-size: 0.8rem; color: var(--text-secondary); }
@@ -208,13 +229,13 @@
             font-size: 0.9rem; margin-left: 10px; transition: color 0.2s;
         }
         .item-actions button:hover { color: var(--primary-color); }
-        .item-actions .delete-btn:hover { color: #EF4444; }
+        .item-actions .delete-btn:hover { color: #f87171; }
 
 
-        /* Modal & Confetti (largely unchanged) */
+        /* Modal & Confetti */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(8px);
+            background: rgba(13, 17, 23, 0.7); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center; z-index: 1000;
             opacity: 0; visibility: hidden; transition: all 0.4s ease;
         }
@@ -232,6 +253,11 @@
             font-family: var(--font-body); font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem);
             color: var(--text-color); margin-bottom: 30px;
             background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: letter-reveal 0.8s cubic-bezier(0.215, 0.61, 0.355, 1) both;
+        }
+        @keyframes letter-reveal {
+            from { opacity: 0; transform: translateY(20px); letter-spacing: 1em; }
+            to { opacity: 1; transform: translateY(0); letter-spacing: normal; }
         }
         .modal-buttons { display: flex; flex-direction: column; gap: 15px; justify-content: center; width: 100%; }
         .modal-button {
@@ -256,9 +282,9 @@
             background: var(--surface-color); color: var(--text-secondary);
             border: 1px solid var(--border-color); border-radius: 50%; width: 45px; height: 45px;
             cursor: pointer; font-size: 1.1rem; display: grid; place-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.2s;
         }
-        .fixed-btn:hover { color: var(--text-color); border-color: #D1D5DB; }
+        .fixed-btn:hover { color: var(--text-color); border-color: #484f58; }
 
         /* Responsive */
         @media (max-width: 1200px) {
@@ -273,14 +299,14 @@
 
     <div class="app-container">
         <section class="panel controls-section fade-in" style="animation-delay: 0.2s;">
-            <h1>Lentera Prime 5.0</h1>
+            <h1>Lentera Prime 6.0</h1>
             <p class="subtitle">Roda undian cerdas dengan fitur kustomisasi.</p>
             
             <div class="label-group">
                 <label for="participants-textarea">Nama Peserta</label>
                 <span id="participant-count">0</span>
             </div>
-            <textarea id="participants-textarea" placeholder="Satu nama per baris..."></textarea>
+            <textarea id="participants-textarea" placeholder="Satu nama per baris...&#10;Contoh Bobot: John (x3)"></textarea>
             
             <div class="button-group">
                 <button class="action-button" id="shuffle-button"><i class="fa-solid fa-shuffle"></i> Acak</button>
@@ -295,6 +321,22 @@
             <button id="spin-button">PUTAR RODA</button>
 
             <div class="sub-panel">
+                 <h3><i class="fa-solid fa-brain"></i> Fitur Cerdas</h3>
+                 <div class="toggle-switch">
+                    <label for="fair-mode-toggle">Mode Adil (Anti-Menang Ganda)</label>
+                    <input type="checkbox" id="fair-mode-toggle">
+                    <span class="toggle-slider"></span>
+                 </div>
+                 <p class="subtitle" style="font-size: 0.8rem; margin: 5px 0 15px 0; text-align: left;">Pemenang akan dinonaktifkan untuk putaran berikutnya dalam sesi ini.</p>
+                 
+                 <div class="toggle-switch">
+                    <label for="weighted-mode-toggle">Mode Bobot (Contoh: Budi x3)</label>
+                    <input type="checkbox" id="weighted-mode-toggle" checked>
+                    <span class="toggle-slider"></span>
+                 </div>
+                 <p class="subtitle" style="font-size: 0.8rem; margin: 5px 0 0 0; text-align: left;">Beri kesempatan menang lebih besar dengan menambahkan `(x[angka])` setelah nama.</p>
+            </div>
+             <div class="sub-panel" style="margin-top: 10px;">
                  <h3><i class="fa-solid fa-cogs"></i> Opsi Lanjutan</h3>
                  <div class="button-group">
                     <button class="action-button" id="import-button"><i class="fa-solid fa-file-import"></i> Import (.txt)</button>
@@ -304,6 +346,7 @@
                  <div class="input-group">
                     <label for="theme-selector">Pilih Tema</label>
                     <select id="theme-selector">
+                        <option value="cosmic">Cosmic Dark (Baru!)</option>
                         <option value="indigo">Ethereal Indigo</option>
                         <option value="neon">Quantum Neon</option>
                         <option value="solar">Solaris Flare</option>
@@ -326,7 +369,7 @@
             <div class="sub-panel">
                 <h3><i class="fa-solid fa-users"></i> Grup Peserta Tersimpan</h3>
                 <div class="button-group">
-                    <input type="text" id="save-group-name" placeholder="Nama grup baru..." style="width:100%; border-radius:10px; border:1px solid var(--border-color); padding: 0 10px;">
+                    <input type="text" id="save-group-name" placeholder="Nama grup baru..." style="width:100%; border-radius:10px; border:1px solid var(--border-color); padding: 0 10px; background: var(--bg-color);">
                     <button id="save-group-button" class="action-button"><i class="fa-solid fa-save"></i> Simpan Grup</button>
                 </div>
                 <ul id="saved-groups-list" class="scrollable-list" style="max-height: 150px;"></ul>
@@ -379,26 +422,41 @@
         const saveGroupNameInput = document.getElementById('save-group-name');
         const saveGroupButton = document.getElementById('save-group-button');
         const savedGroupsList = document.getElementById('saved-groups-list');
+        const fairModeToggle = document.getElementById('fair-mode-toggle');
+        const weightedModeToggle = document.getElementById('weighted-mode-toggle');
+        const wheelPointer = document.querySelector('.wheel-pointer');
 
         // --- State ---
-        let participants = [];
+        let participants = []; // Array of { name, weight } objects
+        let weightedParticipants = []; // Expanded array of names for spinning
+        let inactiveWinners = [];
         let winnerHistory = [];
         let savedGroups = {};
         let currentRotation = 0;
         let isSpinning = false;
         let lastWinner = '';
         let soundEnabled = true;
-        let tickInterval;
         let multiWinnerQueue = 0;
+        let spinVelocity = 0;
+        let animationFrameId;
 
-        // --- Audio ---
-        const tickSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-');
-        const winSound = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
-        const clickSound = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAEw//3/3//7/f/p/9f/s/9v/z//v/3v+3//L/8//d/7f/y//f/4v/xf/f/w//3/z//L/9//p/9v/z//f/+//e/8=');
-        tickSound.volume = 0.5;
+        // --- Audio (Fixed & Improved) ---
+        // Using higher quality, reliable audio sources.
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const tickSound = new Audio("https://cdn.jsdelivr.net/gh/PixelGuy/assets@main/sounds/tick.mp3");
+        const winSound = new Audio("https://cdn.jsdelivr.net/gh/PixelGuy/assets@main/sounds/tada.mp3");
+        const clickSound = new Audio("https://cdn.jsdelivr.net/gh/PixelGuy/assets@main/sounds/click.mp3");
+        tickSound.volume = 0.4;
+        clickSound.volume = 0.6;
         
         // --- THEME COLORS ---
         const themes = {
+            cosmic: { // New Theme!
+                '--bg-color': '#0d1117', '--surface-color': '#161b22', '--primary-color': '#8957e5',
+                '--primary-gradient': 'linear-gradient(45deg, #e040fb, #8957e5)', '--text-color': '#c9d1d9',
+                '--text-secondary': '#8b949e', '--border-color': '#30363d',
+                'wheelColors': ['#8957e5', '#e040fb', '#2196f3', '#4caf50', '#ff9800', '#f44336', '#00bcd4', '#9c27b0']
+            },
             indigo: {
                 '--bg-color': '#F4F7FC', '--surface-color': '#FFFFFF', '--primary-color': '#6366F1',
                 '--primary-gradient': 'linear-gradient(45deg, #4F46E5, #818CF8)', '--text-color': '#1F2937',
@@ -424,19 +482,53 @@
                 'wheelColors': ['#06b6d4', '#0ea5e9', '#6366f1', '#14b8a6', '#34d399', '#60a5fa', '#2dd4bf', '#3b82f6']
             }
         };
-        let activeTheme = 'indigo';
+        let activeTheme = 'cosmic';
 
         // --- Functions ---
-        const playSound = (sound) => { if (soundEnabled) sound.play(); };
+        const playSound = (sound) => { 
+            if (soundEnabled && audioContext.state === 'running') {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.error("Audio playback failed:", e));
+            }
+        };
+        // Unlock audio context on first user interaction
+        const unlockAudio = () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            document.body.removeEventListener('click', unlockAudio);
+        };
+        document.body.addEventListener('click', unlockAudio);
 
-        const getParticipants = () => {
+        const parseParticipants = () => {
             const lines = participantsTextarea.value.trim().split('\n')
                 .map(p => p.trim()).filter(p => p !== '');
-            return [...new Set(lines)];
+            
+            const uniqueLines = [...new Set(lines)];
+            
+            participants = uniqueLines.map(line => {
+                if (weightedModeToggle.checked) {
+                    const match = line.match(/^(.*)\s*[x(](\d+)[)]?$/i);
+                    if (match) {
+                        return { name: match[1].trim(), weight: parseInt(match[2], 10) || 1 };
+                    }
+                }
+                return { name: line, weight: 1 };
+            });
+
+            weightedParticipants = [];
+            participants.forEach(p => {
+                for(let i=0; i < p.weight; i++) {
+                    weightedParticipants.push(p.name);
+                }
+            });
+
+            updateParticipantCount();
+            drawWheel();
         };
 
         const updateParticipantCount = () => {
-            participantCountDisplay.textContent = getParticipants().length;
+            participantCountDisplay.textContent = participants.length;
         };
         
         const applyTheme = (themeName) => {
@@ -447,92 +539,134 @@
                     document.documentElement.style.setProperty(key, value);
                 }
             }
-            localStorage.setItem('LenteraPrimeTheme_v5', themeName);
+            localStorage.setItem('LenteraPrimeTheme_v6', themeName);
             drawWheel();
         };
 
         const drawWheel = () => {
-            participants = getParticipants();
             const numSegments = participants.length;
             const canvasSize = canvas.width;
             const radius = canvasSize / 2;
             const wheelColors = themes[activeTheme].wheelColors;
+            const totalWeight = participants.reduce((sum, p) => sum + p.weight, 0);
 
             ctx.clearRect(0, 0, canvasSize, canvasSize);
-
-            if (numSegments === 0) {
+            ctx.save();
+            ctx.translate(radius, radius);
+            ctx.rotate(currentRotation);
+            ctx.translate(-radius, -radius);
+            
+            if (numSegments === 0 || totalWeight === 0) {
+                ctx.restore(); // Restore context before drawing placeholder
                 ctx.beginPath();
                 ctx.arc(radius, radius, radius - 5, 0, 2 * Math.PI);
-                ctx.fillStyle = '#F3F4F6';
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-color');
                 ctx.fill();
-                ctx.fillStyle = '#9CA3AF';
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+                ctx.stroke();
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
                 ctx.font = '600 20px Inter';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('Masukkan nama peserta', radius, radius);
-                updateParticipantCount();
                 spinButton.disabled = true;
                 return;
             }
             spinButton.disabled = false;
             
-            const arcSize = (2 * Math.PI) / numSegments;
+            let startAngle = 0;
             
             for (let i = 0; i < numSegments; i++) {
-                const angle = i * arcSize;
+                const participant = participants[i];
+                const arcSize = (participant.weight / totalWeight) * 2 * Math.PI;
+                const endAngle = startAngle + arcSize;
+
                 ctx.beginPath();
                 
-                // Create gradient for each segment
-                const grad = ctx.createRadialGradient(radius, radius, 0, radius, radius, radius);
-                grad.addColorStop(0, wheelColors[i % wheelColors.length]);
-                grad.addColorStop(1, colorMix(wheelColors[i % wheelColors.length], '#000000', 0.2));
+                const grad = ctx.createRadialGradient(radius, radius, 50, radius, radius, radius);
+                const color = wheelColors[i % wheelColors.length];
+                grad.addColorStop(0, color);
+                grad.addColorStop(1, colorMix(color, '#000000', 0.4));
                 
                 ctx.fillStyle = grad;
+                // Fair Mode: Grey out inactive winners
+                if (fairModeToggle.checked && inactiveWinners.includes(participant.name)) {
+                    ctx.fillStyle = '#444';
+                }
+
                 ctx.moveTo(radius, radius);
-                ctx.arc(radius, radius, radius - 10, angle, angle + arcSize);
+                ctx.arc(radius, radius, radius - 10, startAngle, endAngle);
                 ctx.lineTo(radius, radius);
                 ctx.fill();
 
+                // Add segment border
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface-color');
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw Text
                 ctx.save();
                 ctx.translate(radius, radius);
-                ctx.rotate(angle + arcSize / 2);
+                ctx.rotate(startAngle + arcSize / 2);
                 ctx.textAlign = 'right';
                 ctx.fillStyle = '#fff';
                 ctx.font = 'bold 15px Inter';
-                ctx.shadowColor = "rgba(0,0,0,0.4)";
+                ctx.shadowColor = "rgba(0,0,0,0.5)";
                 ctx.shadowBlur = 5;
-                const text = participants[i].length > 15 ? participants[i].substring(0, 13) + '...' : participants[i];
+                let text = participant.name;
+                if (participant.weight > 1) { text += ` (x${participant.weight})`; }
+                if (text.length > 15) text = text.substring(0, 13) + '...';
+                
+                if (fairModeToggle.checked && inactiveWinners.includes(participant.name)) {
+                     ctx.fillStyle = '#aaa';
+                     ctx.shadowColor = "transparent";
+                }
+
                 ctx.fillText(text, radius - 25, 5);
                 ctx.restore();
+
+                startAngle = endAngle;
             }
-            updateParticipantCount();
+            
+            // Draw center circle
+            ctx.beginPath();
+            ctx.arc(radius, radius, 30, 0, 2 * Math.PI);
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+            ctx.fill();
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface-color');
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            ctx.restore();
         };
 
-        // Helper to darken colors for gradient
-        function colorMix(color1, color2, weight) {
-            function d2h(d) { return d.toString(16); }
-            function h2d(h) { return parseInt(h, 16); }
-            weight = (typeof(weight) !== 'undefined') ? weight : 0.5;
-            var color = "#";
-            for(var i = 0; i <= 5; i += 2) {
-                var v1 = h2d(color1.substr(i+1, 2));
-                var v2 = h2d(color2.substr(i+1, 2));
-                var val = d2h(Math.floor(v2 + (v1 - v2) * (1 - weight)));
-                while(val.length < 2) { val = '0' + val; }
-                color += val;
+        function colorMix(color1, color2, weight = 0.5) {
+            const d2h = d => d.toString(16).padStart(2, '0');
+            const h2d = h => parseInt(h, 16);
+            let color = "#";
+            for(let i = 1; i <= 5; i += 2) {
+                const v1 = h2d(color1.substr(i, 2));
+                const v2 = h2d(color2.substr(i, 2));
+                const val = Math.floor(v2 + (v1 - v2) * (1 - weight));
+                color += d2h(val);
             }
             return color;
         };
         
         const spin = () => {
-            if (isSpinning || getParticipants().length < 2) return;
+            let availableParticipants = weightedParticipants;
+            if (fairModeToggle.checked) {
+                availableParticipants = weightedParticipants.filter(p => !inactiveWinners.includes(p));
+            }
+            if (isSpinning || availableParticipants.length < 1) return;
+            
             isSpinning = true;
             spinButton.disabled = true;
             canvas.classList.remove('wheel-canvas-winner');
             
             multiWinnerQueue = parseInt(multiWinnerCountInput.value) || 1;
-            if (getParticipants().length < multiWinnerQueue) {
-                alert('Jumlah peserta lebih sedikit dari jumlah pemenang yang diminta.');
+            if (availableParticipants.length < multiWinnerQueue) {
+                alert('Jumlah peserta aktif lebih sedikit dari jumlah pemenang yang diminta.');
                 isSpinning = false;
                 spinButton.disabled = false;
                 return;
@@ -546,41 +680,76 @@
                  spinButton.disabled = false;
                  return;
              }
+             
+            // requestAnimationFrame based spin for dynamic speed
+            const spinDuration = 8000; // 8 seconds
+            const start = performance.now();
+            let lastTickAngle = currentRotation;
 
-            const totalSpins = Math.floor(Math.random() * 5) + 8;
-            const randomStopAngle = Math.random() * 2 * Math.PI;
-            const totalRotation = (totalSpins * 2 * Math.PI) + randomStopAngle;
+            const targetAngle = currentRotation + (Math.random() * 5 + 8) * (2 * Math.PI);
 
-            if (soundEnabled) {
-                tickInterval = setInterval(() => tickSound.play(), 100);
+            function spinLoop(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / spinDuration, 1);
+                // Ease-out function: starts fast, slows down
+                const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+                currentRotation = easedProgress * (targetAngle - currentRotation) + currentRotation;
+                drawWheel();
+
+                // Dynamic tick sound based on velocity
+                const angleDiff = currentRotation - lastTickAngle;
+                const totalSegments = weightedParticipants.length;
+                if (angleDiff > (2 * Math.PI) / totalSegments) {
+                    playSound(tickSound);
+                    wheelPointer.classList.add('tick');
+                    setTimeout(() => wheelPointer.classList.remove('tick'), 100);
+                    lastTickAngle = currentRotation;
+                }
+
+                if (progress < 1) {
+                    animationFrameId = requestAnimationFrame(spinLoop);
+                } else {
+                    handleSpinEnd();
+                }
             }
-            
-            canvas.style.transition = 'transform 7s cubic-bezier(0.25, 1, 0.5, 1)';
-            canvas.style.transform = `rotate(${currentRotation + totalRotation}rad)`;
-            canvas.addEventListener('transitionend', handleSpinEnd, { once: true });
+
+            animationFrameId = requestAnimationFrame(spinLoop);
         }
         
         const handleSpinEnd = () => {
-            clearInterval(tickInterval);
-            const style = window.getComputedStyle(canvas);
-            const matrix = new DOMMatrix(style.transform);
-            const finalRad = Math.atan2(matrix.b, matrix.a);
-
-            const numSegments = participants.length;
-            const winningAngle = (2 * Math.PI) - (finalRad % (2 * Math.PI));
-            const winningSegmentIndex = Math.floor(winningAngle / ((2 * Math.PI) / numSegments));
-            const winner = participants[winningSegmentIndex];
-
-            showWinner(winner);
+            const finalAngle = currentRotation % (2 * Math.PI);
             
-            canvas.style.transition = 'none';
-            currentRotation = finalRad;
+            let activeParticipants = participants;
+            if (fairModeToggle.checked) {
+                activeParticipants = participants.filter(p => !inactiveWinners.includes(p.name));
+            }
+
+            const totalWeight = activeParticipants.reduce((sum, p) => sum + p.weight, 0);
+
+            let cumulativePercent = 0;
+            const pointerAngle = (2 * Math.PI - finalAngle) % (2 * Math.PI);
+            
+            let winner = activeParticipants[activeParticipants.length - 1].name; // Default to last
+            for (const participant of activeParticipants) {
+                const segmentAngle = (participant.weight / totalWeight) * 2 * Math.PI;
+                cumulativePercent += segmentAngle;
+                if (pointerAngle < cumulativePercent) {
+                    winner = participant.name;
+                    break;
+                }
+            }
+            
+            showWinner(winner);
         };
         
         const showWinner = (winner) => {
             playSound(winSound);
             lastWinner = winner;
             winnerNameDisplay.textContent = winner;
+            winnerNameDisplay.style.animation = 'none';
+            winnerNameDisplay.offsetHeight; // Trigger reflow
+            winnerNameDisplay.style.animation = '';
             
             const totalWinners = parseInt(multiWinnerCountInput.value) || 1;
             const currentWinnerNum = totalWinners - multiWinnerQueue + 1;
@@ -598,12 +767,16 @@
             winnerHistory.unshift({ name: winner, timestamp });
             updateWinnerHistory();
             saveWinnerHistory();
+
+            if (fairModeToggle.checked) {
+                inactiveWinners.push(winner);
+            }
         };
 
         const updateWinnerHistory = () => {
             historyList.innerHTML = '';
             if (winnerHistory.length === 0) {
-                 historyList.innerHTML = '<li style="text-align: center; color: var(--text-secondary); font-size: 0.9em; padding: 20px 0;">Belum ada pemenang.</li>';
+                 historyList.innerHTML = `<li style="text-align: center; color: var(--text-secondary); font-size: 0.9em; padding: 20px 0;">Belum ada pemenang.</li>`;
             } else {
                 winnerHistory.forEach((winner, index) => {
                     const li = document.createElement('li');
@@ -623,7 +796,7 @@
         const updateSavedGroupsList = () => {
             savedGroupsList.innerHTML = '';
              if (Object.keys(savedGroups).length === 0) {
-                 savedGroupsList.innerHTML = '<li style="text-align: center; color: var(--text-secondary); font-size: 0.9em; padding: 10px 0;">Belum ada grup.</li>';
+                 savedGroupsList.innerHTML = `<li style="text-align: center; color: var(--text-secondary); font-size: 0.9em; padding: 10px 0;">Belum ada grup.</li>`;
              } else {
                 Object.keys(savedGroups).forEach((groupName, index) => {
                     const li = document.createElement('li');
@@ -657,10 +830,13 @@
         };
         
         const removeWinnerAndContinue = () => {
-            const currentParticipants = getParticipants();
-            const newParticipants = currentParticipants.filter(p => p !== lastWinner);
+            const currentParticipants = participantsTextarea.value.trim().split('\n');
+            const newParticipants = currentParticipants.filter(p => {
+                const cleanName = p.replace(/\s*[x(](\d+)[)]?$/i, '').trim();
+                return cleanName !== lastWinner;
+            });
             participantsTextarea.value = newParticipants.join('\n');
-            drawWheel();
+            parseParticipants();
             modal.classList.remove('show');
             
             multiWinnerQueue--;
@@ -668,50 +844,60 @@
         };
 
         // --- Data Persistence ---
-        const saveData = () => { localStorage.setItem('LenteraPrimeParticipants_v5', participantsTextarea.value); };
+        const saveData = () => { localStorage.setItem('LenteraPrimeParticipants_v6', participantsTextarea.value); };
         const loadData = () => {
-            const savedParticipants = localStorage.getItem('LenteraPrimeParticipants_v5');
+            const savedParticipants = localStorage.getItem('LenteraPrimeParticipants_v6');
             if (savedParticipants) participantsTextarea.value = savedParticipants;
 
-            const savedHistory = localStorage.getItem('LenteraPrimeWinnerHistory_v5');
+            const savedHistory = localStorage.getItem('LenteraPrimeWinnerHistory_v6');
             if (savedHistory) winnerHistory = JSON.parse(savedHistory);
 
-            const savedTheme = localStorage.getItem('LenteraPrimeTheme_v5');
+            const savedTheme = localStorage.getItem('LenteraPrimeTheme_v6');
             if (savedTheme && themes[savedTheme]) {
                 themeSelector.value = savedTheme;
                 applyTheme(savedTheme);
             }
 
-            const loadedGroups = localStorage.getItem('LenteraPrimeSavedGroups_v5');
+            const loadedGroups = localStorage.getItem('LenteraPrimeSavedGroups_v6');
             if (loadedGroups) savedGroups = JSON.parse(loadedGroups);
         };
-        const saveWinnerHistory = () => { localStorage.setItem('LenteraPrimeWinnerHistory_v5', JSON.stringify(winnerHistory)); };
-        const saveGroupsToStorage = () => { localStorage.setItem('LenteraPrimeSavedGroups_v5', JSON.stringify(savedGroups)); };
+        const saveWinnerHistory = () => { localStorage.setItem('LenteraPrimeWinnerHistory_v6', JSON.stringify(winnerHistory)); };
+        const saveGroupsToStorage = () => { localStorage.setItem('LenteraPrimeSavedGroups_v6', JSON.stringify(savedGroups)); };
 
         // --- Event Listeners ---
-        participantsTextarea.addEventListener('input', () => { drawWheel(); saveData(); });
+        participantsTextarea.addEventListener('input', () => { parseParticipants(); saveData(); });
+        weightedModeToggle.addEventListener('change', parseParticipants);
         spinButton.addEventListener('click', spin);
+
         clearButton.addEventListener('click', () => {
             playSound(clickSound);
             participantsTextarea.value = '';
-            drawWheel(); saveData();
+            winnerHistory = [];
+            inactiveWinners = [];
+            updateWinnerHistory();
+            saveWinnerHistory();
+            parseParticipants(); 
+            saveData();
         });
+
         shuffleButton.addEventListener('click', () => {
             playSound(clickSound);
-            const currentParticipants = getParticipants();
+            const currentParticipants = participantsTextarea.value.trim().split('\n');
             for (let i = currentParticipants.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [currentParticipants[i], currentParticipants[j]] = [currentParticipants[j], currentParticipants[i]];
             }
             participantsTextarea.value = currentParticipants.join('\n');
-            drawWheel(); saveData();
+            parseParticipants(); 
+            saveData();
         });
         
         closeModalBtn.addEventListener('click', () => {
             modal.classList.remove('show');
-            multiWinnerQueue = 0; // Stop multi-winner process if closed manually
+            multiWinnerQueue = 0;
             isSpinning = false;
             spinButton.disabled = false;
+            drawWheel(); // Redraw to reflect fair mode changes
         });
 
         removeWinnerBtn.addEventListener('click', removeWinnerAndContinue);
@@ -732,7 +918,8 @@
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     participantsTextarea.value = event.target.result;
-                    drawWheel(); saveData();
+                    parseParticipants(); 
+                    saveData();
                 };
                 reader.readAsText(file);
             }
@@ -743,7 +930,7 @@
                 alert('Tidak ada riwayat pemenang untuk diekspor.');
                 return;
             }
-            let content = "Riwayat Pemenang - Lentera Prime 5.0\n";
+            let content = "Riwayat Pemenang - Lentera Prime 6.0\n";
             content += `Diekspor pada: ${new Date().toLocaleString('id-ID')}\n\n`;
             winnerHistory.forEach(w => {
                 content += `${w.timestamp} - ${w.name}\n`;
@@ -777,7 +964,7 @@
             if (target.classList.contains('load-btn')) {
                 playSound(clickSound);
                 participantsTextarea.value = savedGroups[groupName];
-                drawWheel(); saveData();
+                parseParticipants(); saveData();
             }
             if (target.classList.contains('delete-btn')) {
                 if (confirm(`Apakah Anda yakin ingin menghapus grup "${groupName}"?`)) {
@@ -791,7 +978,7 @@
         
         // --- Initial Load ---
         loadData();
-        drawWheel();
+        parseParticipants();
         updateWinnerHistory();
         updateSavedGroupsList();
     });
