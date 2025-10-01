@@ -36,7 +36,7 @@
         .header-title h1 { font-size: 1.5rem; font-weight: 600; }
         .header-actions { display: flex; align-items: center; gap: 1.5rem; }
         .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--gray-color); }
-        .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .user-profile i { font-size: 2.2rem; color: var(--primary-color); }
         .app-main { grid-area: main; overflow-y: auto; padding: 2rem; }
         .page { display: none; } .page.active { display: block; animation: pageFadeIn 0.5s ease; } @keyframes pageFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
@@ -58,6 +58,7 @@
         .status-belum-hadir { background-color: var(--gray-color); }
         .status-selesai { background-color: var(--primary-color); }
         .status-disetujui, .status-paid { background-color: var(--success-color); } .status-ditolak { background-color: var(--danger-color); } .status-menunggu { background-color: var(--info-color); }
+        .text-danger { color: var(--danger-color); font-weight: 500; }
         .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; opacity: 0.7; }
         .btn-primary { background-color: var(--primary-color); color: white; } .btn-primary:hover:not(:disabled) { background-color: var(--secondary-color); }
@@ -92,6 +93,9 @@
         .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px 16px; }
         .detail-grid dt { font-weight: 600; color: var(--gray-color); } .detail-grid dd { margin: 0; }
         hr.dashed { border: none; border-top: 2px dashed var(--border-color); margin: 2rem 0; }
+        .app-footer { text-align: center; padding: 1rem 0; margin-top: 2rem; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--gray-color); }
+        .app-footer a { color: var(--primary-color); text-decoration: none; }
+        .app-footer a:hover { text-decoration: underline; }
         @media (max-width: 992px) {
             :root { --sidebar-width: 220px; }
         }
@@ -112,6 +116,10 @@
             table { font-size: 12px; }
             th, td { padding: 8px; }
             .status-badge { color: black !important; border: 1px solid #ccc; background-color: transparent !important;}
+            /* Perbaikan Warna Font Laporan Cetak */
+            .print-status-hadir { color: #28a745 !important; }
+            .print-status-terlambat { color: #ff8c00 !important; } /* Orange a bit darker for print */
+            .print-status-alpha { color: #dc3545 !important; }
         }
     </style>
 </head>
@@ -137,7 +145,7 @@
             </div>
             <div class="header-actions">
                 <i class="fas fa-sun theme-switcher" id="themeSwitcher"></i>
-                <div class="user-profile"><img src="https://i.pravatar.cc/150?u=admin" alt="Admin Avatar"></div>
+                <div class="user-profile"><i class="fas fa-user-circle"></i></div>
             </div>
         </header>
 
@@ -147,6 +155,13 @@
                 <div class="main-grid" style="margin-top: 1.5rem;">
                     <div class="panel"><h3 class="panel-title">Distribusi Departemen</h3><canvas id="departmentChart"></canvas></div>
                     <div class="panel"><h3 class="panel-title">Aktivitas Terkini</h3><ul id="activityLog" style="list-style: none; max-height: 250px; overflow-y: auto; padding: 5px;"></ul></div>
+                </div>
+                 <div class="panel" style="margin-top: 1.5rem;">
+                    <p style="text-align: center; color: var(--gray-color); font-size: 0.9rem;">
+                        Hak Cipta © 2025 <strong>Lentera Karya Situbondo</strong>.<br>
+                        <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a> | 
+                        <a href="https://wa.me/6287865614222" target="_blank">WhatsApp: 087865614222</a>
+                    </p>
                 </div>
             </div>
 
@@ -281,6 +296,11 @@
                     </div>
                 </div>
             </div>
+             <footer class="app-footer">
+                Hak Cipta © 2025 <strong>Lentera Karya Situbondo</strong>.
+                <a href="https://www.anekamarket.my.id" target="_blank">www.anekamarket.my.id</a> | 
+                <a href="https://wa.me/6287865614222" target="_blank">WhatsApp: 087865614222</a>
+            </footer>
         </main>
     </div>
 
@@ -503,14 +523,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 let statusClass = 'belum-hadir';
                 let actionButton = `<button class="btn btn-success" onclick="actions.clockIn('${emp.nip}')">Clock In</button>`;
                 let duration = '-';
+                let clockInTimeStr = '-';
+                let clockOutTimeStr = '-';
+                let clockInClass = '';
+                let clockOutClass = '';
 
                 if (record) {
                     const clockInTime = new Date(record.clockIn);
                     const standardMasuk = new Date(`${date}T${db.settings.jamMasuk}`);
                     standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
 
+                    clockInTimeStr = clockInTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+
                     if (clockInTime > standardMasuk) {
-                         status = 'Terlambat'; statusClass = 'terlambat';
+                         status = 'Terlambat'; statusClass = 'terlambat'; clockInClass = 'text-danger';
                     } else {
                         status = 'Hadir'; statusClass = 'hadir';
                     }
@@ -520,7 +546,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else if (record.clockIn && record.clockOut) {
                         status = 'Selesai'; statusClass = 'selesai';
                         actionButton = `-`;
-                        const diff = new Date(record.clockOut) - clockInTime;
+                        const clockOutTime = new Date(record.clockOut);
+                        const standardPulang = new Date(`${date}T${db.settings.jamPulang}`);
+                        
+                        clockOutTimeStr = clockOutTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                        
+                        if (clockOutTime < standardPulang) {
+                            clockOutClass = 'text-danger';
+                        }
+
+                        const diff = clockOutTime - clockInTime;
                         const hours = Math.floor(diff / 3600000);
                         const mins = Math.floor((diff % 3600000) / 60000);
                         duration = `${hours} jam ${mins} mnt`;
@@ -529,8 +564,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 return `<tr>
                     <td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td>
-                    <td>${record?.clockIn ? new Date(record.clockIn).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : '-'}</td>
-                    <td>${record?.clockOut ? new Date(record.clockOut).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : '-'}</td>
+                    <td class="${clockInClass}">${clockInTimeStr}</td>
+                    <td class="${clockOutClass}">${clockOutTimeStr}</td>
                     <td>${duration}</td>
                     <td><span class="status-badge status-${statusClass}">${status}</span></td>
                     <td>${actionButton}</td>
@@ -788,7 +823,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const date = document.getElementById('attendanceDateFilter').value;
             const recordIndex = db.attendance[date].findIndex(a => a.nip === nip);
             if (recordIndex > -1) {
-                db.attendance[date][recordIndex].clockOut = new Date();
+                const clockOutTime = new Date();
+                db.attendance[date][recordIndex].clockOut = clockOutTime;
+                
+                const standardPulang = new Date(`${date}T${db.settings.jamPulang}`);
+                if(clockOutTime < standardPulang) {
+                    uiUtils.showToast('Absensi pulang tidak sesuai (lebih awal).', 'warning');
+                }
+
                 const emp = db.employees.find(e => e.nip === nip);
                 addActivity(`${emp.name} melakukan clock out.`);
                 saveDb();
@@ -956,6 +998,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 filteredEmployees.forEach(emp => {
                     const record = attendanceRecords.find(r => r.nip === emp.nip);
                     let status = 'Alpha';
+                    let statusClass = 'print-status-alpha';
                     let clockIn = '-';
                     let clockOut = '-';
                     let duration = '-';
@@ -965,7 +1008,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         const standardMasuk = new Date(`${dateStr}T${db.settings.jamMasuk}`);
                         standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
                         
-                        status = clockInTime > standardMasuk ? 'Terlambat' : 'Hadir';
+                        if (clockInTime > standardMasuk) {
+                            status = 'Terlambat';
+                            statusClass = 'print-status-terlambat';
+                        } else {
+                            status = 'Hadir';
+                            statusClass = 'print-status-hadir';
+                        }
                         clockIn = clockInTime.toLocaleTimeString('id-ID');
                         
                         if (record.clockOut) {
@@ -977,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             duration = `${hours} jam ${mins} mnt`;
                         }
                     }
-                    rows += `<tr><td>${dateStr}</td><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${clockIn}</td><td>${clockOut}</td><td>${duration}</td><td>${status}</td></tr>`;
+                    rows += `<tr><td>${dateStr}</td><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${clockIn}</td><td>${clockOut}</td><td>${duration}</td><td class="${statusClass}">${status}</td></tr>`;
                 });
             }
 
