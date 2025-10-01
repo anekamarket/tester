@@ -3,950 +3,582 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMPEG Dashboard - Sistem Informasi Manajemen Kepegawaian</title>
+    <title>SIMPEG Ultimate - Sistem Informasi Kepegawaian</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary-color: #0052cc;
-            --primary-light-color: #e6f0ff;
-            --secondary-color: #003380;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-            --gray-color: #6c757d;
-            --white-color: #ffffff;
-            --text-color: #333;
-            --bg-color: #f4f7fc;
-            --border-color: #dee2e6;
-            --shadow-sm: 0 0.15rem 0.35rem rgba(0, 0, 0, 0.07);
-            --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            --rounded-sm: 0.35rem;
-            --rounded: 0.75rem;
-            --rounded-lg: 1rem;
-            --sidebar-width: 260px;
-            --header-height: 70px;
-            --transition-speed: 0.3s ease;
+            --primary-color: #0052cc; --primary-light-color: #e6f0ff; --secondary-color: #003380;
+            --success-color: #28a745; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #17a2b8;
+            --light-color: #f8f9fa; --dark-color: #343a40; --gray-color: #6c757d; --white-color: #ffffff;
+            --text-color: #333; --bg-color: #f4f7fc; --border-color: #dee2e6;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05); --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --rounded: 0.75rem; --sidebar-width: 260px; --header-height: 70px; --transition-speed: 0.3s ease;
         }
-
-        /* Dark Mode Variables */
         body.dark-mode {
-            --light-color: #2a2a35;
-            --dark-color: #f8f9fa;
-            --gray-color: #a0a0a0;
-            --white-color: #1f1f29;
-            --text-color: #e0e0e0;
-            --bg-color: #12121a;
-            --border-color: #3a3a4a;
+            --light-color: #2a2a35; --dark-color: #f8f9fa; --gray-color: #a0a0a0; --white-color: #1f1f29;
+            --text-color: #e0e0e0; --bg-color: #12121a; --border-color: #3a3a4a;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: background-color var(--transition-speed), color var(--transition-speed);
-        }
-
-        .app-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            grid-template-rows: var(--header-height) 1fr;
-            grid-template-areas:
-                "sidebar header"
-                "sidebar main";
-            height: 100vh;
-        }
-
-        /* Sidebar */
-        .app-sidebar {
-            grid-area: sidebar;
-            background-color: var(--white-color);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem 0;
-            transition: background-color var(--transition-speed), border-color var(--transition-speed);
-        }
-        .sidebar-header {
-            padding: 0 1.5rem 1.5rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: background-color var(--transition-speed), color var(--transition-speed); font-size: 15px; }
+        .app-container { display: grid; grid-template-columns: var(--sidebar-width) 1fr; grid-template-rows: var(--header-height) 1fr; grid-template-areas: "sidebar header" "sidebar main"; height: 100vh; }
+        .app-sidebar { grid-area: sidebar; background-color: var(--white-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.5rem 0; transition: all var(--transition-speed); }
+        .sidebar-header { padding: 0 1.5rem 1.5rem 1.5rem; display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 600; color: var(--primary-color); }
         .sidebar-menu { list-style: none; }
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0.8rem 1.5rem;
-            color: var(--gray-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all var(--transition-speed);
-        }
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: var(--primary-light-color);
-            color: var(--primary-color);
-            border-right: 3px solid var(--primary-color);
-        }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.5rem; color: var(--gray-color); text-decoration: none; font-weight: 500; transition: all var(--transition-speed); border-right: 3px solid transparent; }
+        .sidebar-menu a:hover { background-color: var(--primary-light-color); color: var(--primary-color); }
+        .sidebar-menu a.active { background-color: var(--primary-light-color); color: var(--primary-color); border-right-color: var(--primary-color); font-weight: 600; }
         .sidebar-menu a i { width: 20px; text-align: center; }
-
-        /* Header */
-        .app-header {
-            grid-area: header;
-            background-color: var(--white-color);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-            transition: background-color var(--transition-speed), border-color var(--transition-speed);
-        }
-        .header-title h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header-title p {
-            font-size: 0.9rem;
-            color: var(--gray-color);
-        }
-
+        .app-header { grid-area: header; background-color: var(--white-color); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; transition: all var(--transition-speed); z-index: 10; }
+        .header-title h1 { font-size: 1.5rem; font-weight: 600; }
         .header-actions { display: flex; align-items: center; gap: 1.5rem; }
-        .theme-switcher {
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--gray-color);
-        }
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .user-profile-info { line-height: 1.2; }
-        .user-profile-info span { font-weight: 600; }
-        .user-profile-info small { color: var(--gray-color); cursor: pointer; }
-
-
-        /* Main Content */
-        .app-main {
-            grid-area: main;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .panel {
-            background-color: var(--white-color);
-            border-radius: var(--rounded);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            transition: all var(--transition-speed);
-        }
-
-        .panel-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .panel-title i { margin-right: 10px; }
-        .panel-title span:last-child {
-            font-size: 0.9rem;
-            font-weight: 500;
-            background-color: var(--primary-light-color);
-            color: var(--primary-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        /* Employee Grid */
-        .search-container {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        .search-container i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-color);
-        }
-        .search-input {
-            width: 100%;
-            padding: 12px 12px 12px 40px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--rounded-sm);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 1.5rem;
-        }
-        .filter-chip {
-            padding: 6px 14px;
-            background-color: var(--light-color);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-        }
-        .filter-chip:hover { background-color: var(--primary-light-color); }
-        .filter-chip.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .employee-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1rem;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        .employee-card {
-            background: var(--white-color);
-            border-radius: var(--rounded-sm);
-            padding: 16px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .employee-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary-color);
-        }
-        .employee-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-bottom: 12px;
-            overflow: hidden;
-            border: 3px solid var(--primary-light-color);
-        }
-        .employee-photo img { width: 100%; height: 100%; object-fit: cover; }
-        .employee-name { font-weight: 600; font-size: 1.1rem; }
-        .employee-position { color: var(--primary-color); font-size: 0.9rem; margin-bottom: 4px;}
-        .employee-id { font-size: 0.8rem; color: var(--gray-color); }
-
-        /* Right Panel */
-        .approval-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .approval-item:last-child { border-bottom: none; }
-        .approval-info { flex-grow: 1; }
-        .approval-info strong { font-weight: 500; }
-        .approval-info p { font-size: 0.9rem; color: var(--gray-color); }
-        .approval-actions button { margin-left: 8px; }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-color);
-        }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; }
-
-        /* Buttons */
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--rounded-sm);
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all var(--transition-speed);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn i { font-size: 1rem; }
+        .theme-switcher { cursor: pointer; font-size: 1.2rem; color: var(--gray-color); }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .app-main { grid-area: main; overflow-y: auto; padding: 2rem; }
+        .page { display: none; } .page.active { display: block; animation: pageFadeIn 0.5s ease; } @keyframes pageFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .panel { background-color: var(--white-color); border-radius: var(--rounded); padding: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: all var(--transition-speed); }
+        .panel-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 600; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .kpi-card { background-color: var(--light-color); padding: 1.5rem; border-radius: var(--rounded); text-align: center; }
+        .kpi-card i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem; }
+        .kpi-card .value { font-size: 2rem; font-weight: 700; }
+        .kpi-card .label { font-size: 0.9rem; color: var(--gray-color); }
+        .activity-log ul { list-style: none; max-height: 200px; overflow-y: auto; }
+        .activity-log li { padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        .activity-log li:last-child { border-bottom: none; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: var(--light-color); font-weight: 600; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; }
+        .status-hadir { background-color: var(--success-color); } .status-cuti { background-color: var(--warning-color); color: var(--dark-color); } .status-belum-hadir { background-color: var(--gray-color); }
+        .progress-bar { width: 100%; background-color: var(--border-color); border-radius: 5px; overflow: hidden; }
+        .progress-bar-inner { height: 20px; width: 0%; background-color: var(--primary-color); transition: width 0.5s ease; text-align: center; color: white; line-height: 20px; }
+        .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; gap: 8px; }
+        .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-success { background-color: var(--success-color); color: white; }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-warning { background-color: var(--warning-color); color: var(--dark-color); }
-        .btn-sm { padding: 8px 12px; font-size: 0.8rem; }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s;
-        }
+        .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; animation: fadeIn 0.3s; }
         .modal.show { display: flex; }
-        .modal-content {
-            background-color: var(--white-color);
-            border-radius: var(--rounded);
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            animation: slideIn 0.3s;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-title { font-size: 1.25rem; font-weight: 600; }
-        .modal-close {
-            background: none; border: none; font-size: 1.8rem;
-            cursor: pointer; color: var(--gray-color);
-        }
+        .modal-content { background-color: var(--white-color); border-radius: var(--rounded); width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; animation: slideIn 0.3s; }
         .modal-body { padding: 1.5rem; overflow-y: auto; }
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Form elements */
+        .modal-header, .modal-footer { padding: 1rem 1.5rem; }
+        .modal-header { border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-footer { border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-title { font-size: 1.25rem; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--gray-color); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #notificationToast { position: fixed; bottom: 20px; right: 20px; padding: 15px 20px; border-radius: 0.35rem; box-shadow: var(--shadow); transform: translateY(200%); transition: transform 0.5s ease-in-out; z-index: 2000; }
+        #notificationToast.show { transform: translateY(0); }
         .form-group { margin-bottom: 1rem; }
         .form-label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--rounded-sm);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light-color);
-        }
-        textarea.form-control { resize: vertical; min-height: 80px; }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -1px;
-            color: var(--gray-color);
-        }
-        .tab.active {
-            border-bottom-color: var(--primary-color);
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        .tab-content { display: none; margin-top: 1.5rem; }
-        .tab-content.active { display: block; }
-        
-        /* Notification Toast */
-        #notificationToast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--success-color);
-            color: white;
-            padding: 15px 20px;
-            border-radius: var(--rounded-sm);
-            box-shadow: var(--shadow);
-            transform: translateY(200%);
-            transition: transform 0.5s ease-in-out;
-            z-index: 2000;
-        }
-        #notificationToast.show {
-            transform: translateY(0);
-        }
-
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            .app-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: var(--header-height) 1fr;
-                grid-template-areas: "header" "main";
-            }
-            .app-sidebar { display: none; } /* Hide sidebar on mobile, can be implemented with a toggle button */
-            .app-header { padding: 0 1rem; }
-            .header-title h1 { font-size: 1.2rem; }
-            .user-profile-info { display: none; }
-            .app-main { padding: 1rem; }
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        .form-control { width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background-color: var(--bg-color); color: var(--text-color); }
+        /* Placeholder for employee grid etc. */
+        .employee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        .employee-card { background: var(--white-color); border-radius: 0.35rem; padding: 16px; box-shadow: var(--shadow-sm); transition: all 0.2s; border: 1px solid var(--border-color); cursor: pointer; text-align: center; }
+        .employee-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--primary-color); }
+        .employee-photo img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; }
+        .employee-name { font-weight: 600; } .employee-position { font-size: 0.9rem; color: var(--primary-color); }
+        .empty-state { text-align: center; padding: 2rem; color: var(--gray-color); border: 2px dashed var(--border-color); border-radius: var(--rounded); }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; }
     </style>
 </head>
-<body class="dark-mode">
-
+<body>
     <div class="app-container">
         <aside class="app-sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-users-cog"></i>
-                <span>SIMPEG</span>
-            </div>
+            <div class="sidebar-header"><i class="fas fa-users-cog"></i><span>SIMPEG Ultimate</span></div>
             <ul class="sidebar-menu">
-                <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Karyawan</a></li>
-                <li><a href="#"><i class="fas fa-clock"></i> Absensi</a></li>
-                <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Penggajian</a></li>
-                <li><a href="#"><i class="fas fa-calendar-alt"></i> Cuti & Izin</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Laporan</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Pengaturan</a></li>
+                <li><a href="#" class="active" data-page="dashboardPage"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" data-page="karyawanPage"><i class="fas fa-users"></i> Karyawan</a></li>
+                <li><a href="#" data-page="absensiPage"><i class="fas fa-clock"></i> Absensi</a></li>
+                <li><a href="#" data-page="penggajianPage"><i class="fas fa-file-invoice-dollar"></i> Penggajian</a></li>
+                <li><a href="#" data-page="laporanPage"><i class="fas fa-chart-bar"></i> Laporan</a></li>
             </ul>
         </aside>
 
         <header class="app-header">
-            <div class="header-title">
-                <h1>Dashboard</h1>
-                <p id="currentDate">Rabu, 1 Oktober 2025</p>
-            </div>
+            <div class="header-title"><h1 id="headerTitle">Dashboard</h1></div>
             <div class="header-actions">
                 <i class="fas fa-sun theme-switcher" id="themeSwitcher"></i>
                 <div class="user-profile">
                     <img src="https://i.pravatar.cc/150?u=admin" alt="Admin Avatar">
-                    <div class="user-profile-info">
-                        <span id="loggedInUser">Admin HR</span>
-                        <small id="logoutBtn">Logout</small>
-                    </div>
                 </div>
             </div>
         </header>
 
         <main class="app-main">
-            <div class="main-grid">
-                <section class="panel" style="grid-column: 1 / -1;">
-                    <div class="panel-title">
-                        <span><i class="fas fa-database"></i> Database Karyawan</span>
-                        <span id="employeeCount">(0 Karyawan)</span>
+            <div id="dashboardPage" class="page active">
+                <div class="kpi-grid" id="kpiGrid"></div>
+                <div class="main-grid" style="margin-top: 1.5rem;">
+                    <div class="panel">
+                        <h3 class="panel-title">Distribusi Departemen</h3>
+                        <canvas id="departmentChart"></canvas>
                     </div>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                        <div class="search-container" style="flex-grow: 1; min-width: 250px;">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="employeeSearch" class="search-input" placeholder="Cari nama atau NIP karyawan...">
+                    <div class="panel">
+                        <h3 class="panel-title">Aktivitas Terkini</h3>
+                        <div class="activity-log">
+                            <ul id="activityLog"></ul>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="karyawanPage" class="page">
+                <section class="panel">
+                    <div class="panel-title"><span>Database Karyawan</span><span id="employeeCount">(0)</span></div>
+                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                        <input type="text" id="employeeSearch" class="form-control" placeholder="Cari nama atau NIP..." style="max-width: 400px;">
                         <button id="addEmployeeBtn" class="btn btn-primary"><i class="fas fa-user-plus"></i> Tambah Karyawan</button>
                     </div>
-                    
-                    <div class="filter-row" id="departmentFilterContainer">
-                        <div class="filter-chip active" data-department="all">Semua Departemen</div>
-                    </div>
-                    
-                    <div class="employee-grid" id="employeeGrid">
-                        <div class="empty-state" id="employeeEmptyState">
-                            <i class="fas fa-user-slash"></i>
-                            <p>Data karyawan tidak ditemukan.</p>
-                        </div>
-                    </div>
+                    <div class="employee-grid" id="employeeGrid"></div>
                 </section>
+            </div>
 
-                <section class="panel">
-                    <h2 class="panel-title">
-                        <span><i class="fas fa-concierge-bell"></i> Portal Karyawan Mandiri</span>
-                    </h2>
-                    <p>Hai <strong id="portalUserName">Admin</strong>, apa yang ingin Anda lakukan?</p>
-                    <div class="main-grid" style="margin-top: 1rem;">
-                        <button id="ajukanCutiBtn" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Ajukan Cuti</button>
-                        <button id="ajukanLemburBtn" class="btn btn-primary"><i class="fas fa-business-time"></i> Ajukan Lembur</button>
-                        <button id="lihatSlipGajiBtn" class="btn btn-success"><i class="fas fa-receipt"></i> Lihat Slip Gaji</button>
-                        <button id="ajukanKlaimBtn" class="btn btn-warning"><i class="fas fa-notes-medical"></i> Ajukan Klaim</button>
+            <div id="absensiPage" class="page">
+                <div class="panel">
+                    <div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div>
+                    <div style="display:flex; gap:1rem; margin-bottom: 1.5rem;">
+                        <button id="clockInBtn" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Clock In</button>
+                        <button id="clockOutBtn" class="btn btn-primary" disabled><i class="fas fa-sign-out-alt"></i> Clock Out</button>
+                        <div id="clockStatus" style="align-self: center;"></div>
                     </div>
-                </section>
+                    <div class="table-container">
+                        <table id="attendanceTable">
+                            <thead><tr><th>Nama Karyawan</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-                <section class="panel">
-                    <h2 class="panel-title">
-                        <span><i class="fas fa-tasks"></i> Persetujuan Manajer</span>
-                        <span id="requestCount">(0 Pengajuan)</span>
-                    </h2>
-                    <div id="approvalItems">
-                        <div class="empty-state" id="approvalEmptyState">
-                            <i class="fas fa-check-circle"></i>
-                            <p>Tidak ada pengajuan yang memerlukan persetujuan Anda.</p>
-                        </div>
+            <div id="penggajianPage" class="page">
+                <div class="panel">
+                    <div class="panel-title">Proses Penggajian</div>
+                     <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1.5rem;">
+                        <select id="payrollMonth" class="form-control" style="width: auto;"></select>
+                        <select id="payrollYear" class="form-control" style="width: auto;"></select>
+                        <button id="runPayrollBtn" class="btn btn-success"><i class="fas fa-play-circle"></i> Jalankan Penggajian</button>
                     </div>
-                </section>
+                    <div id="payrollProgressContainer" style="margin-bottom: 1.5rem; display: none;">
+                        <div class="progress-bar"><div id="payrollProgressBar" class="progress-bar-inner"></div></div>
+                    </div>
+                    <table>
+                        <thead><tr><th>Nama Karyawan</th><th>NIP</th><th>Jabatan</th><th>Status Pembayaran</th></tr></thead>
+                        <tbody id="payrollTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="laporanPage" class="page">
+                <div class="main-grid">
+                    <div class="panel">
+                        <h3 class="panel-title">Laporan Status Karyawan</h3>
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                     <div class="panel">
+                        <h3 class="panel-title">Laporan Komposisi Gender</h3>
+                        <canvas id="genderChart"></canvas>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <div id="notificationToast">Pesan notifikasi</div>
-    
+    <div id="notificationToast"></div>
     <div id="employeeModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="employeeModalTitle">Tambah Karyawan Baru</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
+             <div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div>
+             <div class="modal-body">
                 <form id="employeeForm">
                     <input type="hidden" id="employeeId">
-                    <div class="tabs">
-                        <div class="tab active" data-tab="personalInfo">Data Pribadi</div>
-                        <div class="tab" data-tab="jobInfo">Data Pekerjaan</div>
-                    </div>
-                    <div class="tab-content active" id="personalInfoTab">
-                        <div class="form-group">
-                            <label class="form-label" for="employeeName">Nama Lengkap</label>
-                            <input type="text" id="employeeName" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="employeeEmail">Email</label>
-                            <input type="email" id="employeeEmail" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="employeePhone">Nomor Telepon</label>
-                            <input type="tel" id="employeePhone" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="tab-content" id="jobInfoTab">
-                         <div class="form-group">
-                            <label class="form-label" for="employeeNIP">Nomor Induk Pegawai (NIP)</label>
-                            <input type="text" id="employeeNIP" class="form-control" placeholder="Akan dibuat otomatis jika kosong">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="employeeDepartment">Departemen</label>
-                            <select id="employeeDepartment" class="form-control" required></select>
-                        </div>
-                         <div class="form-group">
-                            <label class="form-label" for="employeePosition">Jabatan</label>
-                            <input type="text" id="employeePosition" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="employeeJoinDate">Tanggal Bergabung</label>
-                            <input type="date" id="employeeJoinDate" class="form-control" required>
-                        </div>
-                         <div class="form-group">
-                            <label class="form-label" for="employeeStatus">Status Karyawan</label>
-                            <select id="employeeStatus" class="form-control" required>
-                                <option value="Permanen">Permanen</option>
-                                <option value="Kontrak">Kontrak</option>
-                                <option value="Magang">Magang</option>
-                            </select>
-                        </div>
-                    </div>
+                    <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="employeeName" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="employeeEmail" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required></select></div>
+                    <div class="form-group"><label class="form-label">Jabatan</label><input type="text" id="employeePosition" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Gender</label><select id="employeeGender" class="form-control" required><option value="Pria">Pria</option><option value="Wanita">Wanita</option></select></div>
+                    <div class="form-group"><label class="form-label">Status</label><select id="employeeStatus" class="form-control" required><option value="Permanen">Permanen</option><option value="Kontrak">Kontrak</option><option value="Magang">Magang</option></select></div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-warning modal-close-btn">Batal</button>
-                <button class="btn btn-success" id="saveEmployeeBtn">Simpan Data</button>
-            </div>
+             </div>
+             <div class="modal-footer"><button class="btn" id="cancelEmployeeBtn">Batal</button><button class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
         </div>
     </div>
-
-    <div id="employeeDetailModal" class="modal">
-        <div class="modal-content" id="employeeDetailContent">
-             </div>
-    </div>
     
-<script>
+    <script>
+// Prevent flash of unstyled content
+document.body.style.display = 'none';
+
 document.addEventListener('DOMContentLoaded', function() {
+    document.body.style.display = 'block';
 
     // =================================================================================
-    // MOCK DATA (DATABASE SIMULATION)
-    // In a real application, this data would come from a server/API
+    // DATABASE & STATE MANAGEMENT
     // =================================================================================
-    
-    let db = {
-        employees: [
-            { id: 1, nip: 'NIP001', name: 'Budi Setiawan', email: 'budi.s@example.com', phone: '081234567890', position: 'Software Engineer', department: 'Teknologi', joinDate: '2022-01-15', status: 'Permanen', avatar: 'https://i.pravatar.cc/150?u=EMP001' },
-            { id: 2, nip: 'NIP002', name: 'Citra Dewi', email: 'citra.d@example.com', phone: '081234567891', position: 'UI/UX Designer', department: 'Produk', joinDate: '2022-03-20', status: 'Permanen', avatar: 'https://i.pravatar.cc/150?u=EMP002' },
-            { id: 3, nip: 'NIP003', name: 'Agus Santoso', email: 'agus.s@example.com', phone: '081234567892', position: 'Project Manager', department: 'Manajemen', joinDate: '2021-11-01', status: 'Permanen', avatar: 'https://i.pravatar.cc/150?u=EMP003' },
-            { id: 4, nip: 'NIP004', name: 'Rina Marlina', email: 'rina.m@example.com', phone: '081234567893', position: 'HR Generalist', department: 'SDM', joinDate: '2023-02-10', status: 'Kontrak', avatar: 'https://i.pravatar.cc/150?u=EMP004' },
-            { id: 5, nip: 'NIP005', name: 'Eko Prasetyo', email: 'eko.p@example.com', phone: '081234567894', position: 'DevOps Engineer', department: 'Teknologi', joinDate: '2022-08-05', status: 'Permanen', avatar: 'https://i.pravatar.cc/150?u=EMP005' },
-            { id: 6, nip: 'NIP006', name: 'Siti Aminah', email: 'siti.a@example.com', phone: '081234567895', position: 'Digital Marketer', department: 'Pemasaran', joinDate: '2023-05-12', status: 'Kontrak', avatar: 'https://i.pravatar.cc/150?u=EMP006' },
-            { id: 7, nip: 'NIP007', name: 'Doni Firmansyah', email: 'doni.f@example.com', phone: '081234567896', position: 'Junior Developer', department: 'Teknologi', joinDate: '2024-01-20', status: 'Magang', avatar: 'https://i.pravatar.cc/150?u=EMP007' }
-        ],
+    let db;
+    let charts = {};
+    const today = new Date().toISOString().slice(0, 10);
+    const defaultDb = {
+        employees: [],
         departments: ['Teknologi', 'Produk', 'Manajemen', 'SDM', 'Pemasaran', 'Keuangan'],
-        requests: [
-            { id: 1, employeeId: 2, employeeName: 'Citra Dewi', type: 'Cuti Tahunan', date: '2025-10-05', status: 'Pending' },
-            { id: 2, employeeId: 5, employeeName: 'Eko Prasetyo', type: 'Lembur Proyek', date: '2025-10-02', status: 'Pending' }
-        ]
+        attendance: {}, // Keyed by date
+        payroll: {}, // Keyed by month-year
+        activities: [],
+        user: { id: null, clockedIn: null } // Simulating logged in user
+    };
+
+    function loadDb() {
+        const data = localStorage.getItem('simpegUltimateDb');
+        db = data ? JSON.parse(data) : JSON.parse(JSON.stringify(defaultDb));
+        if (!db.attendance[today]) db.attendance[today] = [];
+    }
+
+    function saveDb() {
+        localStorage.setItem('simpegUltimateDb', JSON.stringify(db));
+    }
+    
+    function addActivity(text) {
+        db.activities.unshift({ text, time: new Date() });
+        if (db.activities.length > 10) db.activities.pop();
+        saveDb();
+        if(document.getElementById('dashboardPage').classList.contains('active')) render.activityLog();
+    }
+
+    // =================================================================================
+    // UI ELEMENT SELECTORS
+    // =================================================================================
+    const ui = {
+        headerTitle: document.getElementById('headerTitle'),
+        sidebarMenu: document.querySelector('.sidebar-menu'),
+        pages: document.querySelectorAll('.page'),
+        // Add all other selectors here as needed...
     };
 
     // =================================================================================
-    // UI ELEMENTS SELECTORS
+    // RENDER FUNCTIONS
     // =================================================================================
-    
-    const employeeGrid = document.getElementById('employeeGrid');
-    const employeeCountEl = document.getElementById('employeeCount');
-    const employeeSearchInput = document.getElementById('employeeSearch');
-    const departmentFilterContainer = document.getElementById('departmentFilterContainer');
-    const approvalItemsContainer = document.getElementById('approvalItems');
-    const requestCountEl = document.getElementById('requestCount');
-    const employeeModal = document.getElementById('employeeModal');
-    const employeeDetailModal = document.getElementById('employeeDetailModal');
-    const employeeForm = document.getElementById('employeeForm');
-    const notificationToast = document.getElementById('notificationToast');
+    const render = {
+        all: () => {
+            const activePage = document.querySelector('.page.active')?.id || 'dashboardPage';
+            render.page(activePage);
+        },
+        page: (pageId) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId)?.classList.add('active');
+            
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            const activeLink = document.querySelector(`.sidebar-menu a[data-page="${pageId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                ui.headerTitle.textContent = activeLink.textContent.trim();
+            }
 
-    // =================================================================================
-    // RENDER FUNCTIONS (To display data on the UI)
-    // =================================================================================
-
-    function renderEmployeeGrid(filter = '', department = 'all') {
-        employeeGrid.innerHTML = '';
-        const filteredEmployees = db.employees.filter(emp => {
-            const matchesSearch = emp.name.toLowerCase().includes(filter.toLowerCase()) || emp.nip.toLowerCase().includes(filter.toLowerCase());
-            const matchesDept = department === 'all' || emp.department === department;
-            return matchesSearch && matchesDept;
-        });
-
-        if (filteredEmployees.length === 0) {
-            employeeGrid.innerHTML = `<div class="empty-state" id="employeeEmptyState" style="grid-column: 1 / -1;">
-                <i class="fas fa-user-slash"></i><p>Data karyawan tidak ditemukan.</p></div>`;
-            return;
-        }
-
-        filteredEmployees.forEach(emp => {
-            const card = document.createElement('div');
-            card.className = 'employee-card';
-            card.dataset.id = emp.id;
-            card.innerHTML = `
-                <div class="employee-photo"><img src="${emp.avatar}" alt="Foto ${emp.name}"></div>
-                <div class="employee-name">${emp.name}</div>
-                <div class="employee-position">${emp.position}</div>
-                <div class="employee-id">NIP: ${emp.nip}</div>`;
-            card.addEventListener('click', () => showEmployeeDetail(emp.id));
-            employeeGrid.appendChild(card);
-        });
-        updateEmployeeCount();
-    }
-    
-    function renderDepartmentFilters() {
-        db.departments.forEach(dept => {
-            const chip = document.createElement('div');
-            chip.className = 'filter-chip';
-            chip.dataset.department = dept;
-            chip.textContent = dept;
-            departmentFilterContainer.appendChild(chip);
-        });
-    }
-
-    function renderApprovalItems() {
-        approvalItemsContainer.innerHTML = '';
-        if (db.requests.filter(r => r.status === 'Pending').length === 0) {
-            approvalItemsContainer.innerHTML = `<div class="empty-state" id="approvalEmptyState">
-                <i class="fas fa-check-circle"></i><p>Tidak ada pengajuan baru.</p></div>`;
-        } else {
-            db.requests.filter(r => r.status === 'Pending').forEach(req => {
-                const item = document.createElement('div');
-                item.className = 'approval-item';
-                item.innerHTML = `
-                    <div class="approval-info">
-                        <strong>${req.employeeName}</strong>
-                        <p>${req.type} - ${req.date}</p>
-                    </div>
-                    <div class="approval-actions">
-                        <button class="btn btn-sm btn-danger" data-id="${req.id}" data-action="reject">Tolak</button>
-                        <button class="btn btn-sm btn-success" data-id="${req.id}" data-action="approve">Setuju</button>
-                    </div>`;
-                approvalItemsContainer.appendChild(item);
+            // Page-specific render functions
+            switch (pageId) {
+                case 'dashboardPage': render.dashboard(); break;
+                case 'karyawanPage': render.karyawan(); break;
+                case 'absensiPage': render.absensi(); break;
+                case 'penggajianPage': render.penggajian(); break;
+                case 'laporanPage': render.laporan(); break;
+            }
+        },
+        dashboard: () => {
+            render.kpi();
+            render.activityLog();
+            render.charts.department();
+        },
+        karyawan: (filter = '') => {
+            const grid = document.getElementById('employeeGrid');
+            grid.innerHTML = '';
+            const filtered = db.employees.filter(e => e.name.toLowerCase().includes(filter.toLowerCase()));
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-users"></i><p>Belum ada data karyawan.</p></div>`;
+            } else {
+                filtered.forEach(emp => {
+                    const card = document.createElement('div');
+                    card.className = 'employee-card';
+                    card.innerHTML = `<div class="employee-photo"><img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}"></div>
+                                      <div class="employee-name">${emp.name}</div>
+                                      <div class="employee-position">${emp.position}</div>`;
+                    grid.appendChild(card);
+                });
+            }
+            document.getElementById('employeeCount').textContent = `(${db.employees.length})`;
+        },
+        absensi: () => {
+            document.getElementById('currentDateText').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' });
+            const tableBody = document.querySelector('#attendanceTable tbody');
+            tableBody.innerHTML = '';
+            db.employees.forEach(emp => {
+                const attendanceRecord = db.attendance[today].find(a => a.id === emp.id);
+                const status = attendanceRecord ? (attendanceRecord.status || 'Hadir') : 'Belum Hadir';
+                const clockIn = attendanceRecord?.clockIn ? new Date(attendanceRecord.clockIn).toLocaleTimeString('id-ID') : '-';
+                const clockOut = attendanceRecord?.clockOut ? new Date(attendanceRecord.clockOut).toLocaleTimeString('id-ID') : '-';
+                
+                const row = `<tr>
+                    <td>${emp.name}</td><td>${'NIP' + emp.id.toString().padStart(3, '0')}</td><td>${emp.department}</td>
+                    <td>${clockIn}</td><td>${clockOut}</td>
+                    <td><span class="status-badge status-${status.toLowerCase().replace(' ', '-')}">${status}</span></td>
+                </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', row);
             });
-        }
-        updateRequestCount();
-    }
-    
-    // =================================================================================
-    // MODAL & FORM HANDLING
-    // =================================================================================
+            // Update user clock-in status
+            const clockInBtn = document.getElementById('clockInBtn');
+            const clockOutBtn = document.getElementById('clockOutBtn');
+            if (db.user.clockedIn) {
+                clockInBtn.disabled = true;
+                clockOutBtn.disabled = false;
+                document.getElementById('clockStatus').textContent = `Anda masuk pada: ${new Date(db.user.clockedIn).toLocaleTimeString('id-ID')}`;
+            } else {
+                clockInBtn.disabled = false;
+                clockOutBtn.disabled = true;
+                document.getElementById('clockStatus').textContent = '';
+            }
+        },
+        penggajian: () => {
+             // Populate dropdowns
+            const monthSelect = document.getElementById('payrollMonth');
+            const yearSelect = document.getElementById('payrollYear');
+            if(monthSelect.options.length === 0) {
+                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                months.forEach((m, i) => monthSelect.add(new Option(m, i)));
+                monthSelect.value = new Date().getMonth();
+                for (let y = new Date().getFullYear(); y >= 2020; y--) yearSelect.add(new Option(y, y));
+            }
+            render.payrollTable();
+        },
+        payrollTable: () => {
+            const month = document.getElementById('payrollMonth').value;
+            const year = document.getElementById('payrollYear').value;
+            const period = `${month}-${year}`;
+            const payrollData = db.payroll[period] || [];
+            const tableBody = document.getElementById('payrollTableBody');
+            tableBody.innerHTML = '';
+            db.employees.forEach(emp => {
+                const isPaid = payrollData.includes(emp.id);
+                const status = isPaid ? '<span style="color:var(--success-color)">Sudah Dibayar</span>' : 'Belum Diproses';
+                 tableBody.insertAdjacentHTML('beforeend', `<tr><td>${emp.name}</td><td>${'NIP' + emp.id.toString().padStart(3, '0')}</td><td>${emp.position}</td><td>${status}</td></tr>`);
+            });
+        },
+        laporan: () => {
+            render.charts.status();
+            render.charts.gender();
+        },
+        kpi: () => {
+            const total = db.employees.length;
+            const onLeave = 0; // Placeholder
+            const active = total - onLeave;
+            const men = db.employees.filter(e => e.gender === 'Pria').length;
+            const women = total - men;
+            
+            const kpiGrid = document.getElementById('kpiGrid');
+            kpiGrid.innerHTML = `
+                <div class="kpi-card"><i class="fas fa-users"></i><div class="value">${total}</div><div class="label">Total Karyawan</div></div>
+                <div class="kpi-card"><i class="fas fa-user-check"></i><div class="value">${active}</div><div class="label">Karyawan Aktif</div></div>
+                <div class="kpi-card"><i class="fas fa-user-clock"></i><div class="value">${onLeave}</div><div class="label">Sedang Cuti</div></div>
+                <div class="kpi-card"><i class="fas fa-venus-mars"></i><div class="value">${men} P / ${women} W</div><div class="label">Rasio Gender</div></div>
+            `;
+        },
+        activityLog: () => {
+            const logUl = document.getElementById('activityLog');
+            logUl.innerHTML = '';
+            if(db.activities.length === 0) {
+                logUl.innerHTML = '<li>Tidak ada aktivitas.</li>';
+            } else {
+                db.activities.forEach(act => {
+                    logUl.insertAdjacentHTML('beforeend', `<li>${act.text} <small style="color: var(--gray-color)">(${new Date(act.time).toLocaleTimeString('id-ID')})</small></li>`);
+                });
+            }
+        },
+        charts: {
+            destroy: (chartId) => {
+                if(charts[chartId]) { charts[chartId].destroy(); delete charts[chartId]; }
+            },
+            department: () => {
+                render.charts.destroy('dept');
+                const ctx = document.getElementById('departmentChart').getContext('2d');
+                const data = db.departments.map(dept => ({
+                    dept,
+                    count: db.employees.filter(e => e.department === dept).length
+                }));
+                charts['dept'] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.map(d => d.dept),
+                        datasets: [{ label: 'Karyawan', data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            },
+            status: () => {
+                render.charts.destroy('status');
+                const ctx = document.getElementById('statusChart').getContext('2d');
+                const statuses = ['Permanen', 'Kontrak', 'Magang'];
+                const data = statuses.map(s => db.employees.filter(e => e.status === s).length);
+                 charts['status'] = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: statuses, datasets: [{ label: 'Jumlah Karyawan', data: data, backgroundColor: ['#0052cc', '#ffc107', '#17a2b8'] }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+                });
+            },
+            gender: () => {
+                 render.charts.destroy('gender');
+                const ctx = document.getElementById('genderChart').getContext('2d');
+                const men = db.employees.filter(e => e.gender === 'Pria').length;
+                const women = db.employees.length - men;
+                 charts['gender'] = new Chart(ctx, {
+                    type: 'pie',
+                    data: { labels: ['Pria', 'Wanita'], datasets: [{ data: [men, women], backgroundColor: ['#0052cc', '#dc3545'] }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+        },
+        employeeForm: (id = null) => {
+             const modal = document.getElementById('employeeModal');
+            const title = document.getElementById('employeeModalTitle');
+            const form = document.getElementById('employeeForm');
+            form.reset();
+            document.getElementById('employeeId').value = id || '';
+            
+            const deptSelect = document.getElementById('employeeDepartment');
+            deptSelect.innerHTML = '';
+            db.departments.forEach(d => deptSelect.add(new Option(d, d)));
 
-    function openModal(modal) { modal.classList.add('show'); }
-    function closeModal(modal) { modal.classList.remove('show'); }
-
-    function populateDepartmentDropdown(selectId) {
-        const select = document.getElementById(selectId);
-        select.innerHTML = '';
-        db.departments.forEach(dept => {
-            const option = document.createElement('option');
-            option.value = dept;
-            option.textContent = dept;
-            select.appendChild(option);
-        });
-    }
-
-    function showEmployeeForm(employeeId = null) {
-        employeeForm.reset();
-        document.getElementById('employeeId').value = '';
-        const modalTitle = document.getElementById('employeeModalTitle');
-
-        populateDepartmentDropdown('employeeDepartment');
-
-        if (employeeId) {
-            modalTitle.textContent = 'Edit Data Karyawan';
-            const emp = db.employees.find(e => e.id === employeeId);
-            if(emp) {
-                document.getElementById('employeeId').value = emp.id;
+            if(id) {
+                title.textContent = 'Edit Karyawan';
+                const emp = db.employees.find(e => e.id === id);
                 document.getElementById('employeeName').value = emp.name;
                 document.getElementById('employeeEmail').value = emp.email;
-                document.getElementById('employeePhone').value = emp.phone;
-                document.getElementById('employeeNIP').value = emp.nip;
                 document.getElementById('employeeDepartment').value = emp.department;
                 document.getElementById('employeePosition').value = emp.position;
-                document.getElementById('employeeJoinDate').value = emp.joinDate;
+                document.getElementById('employeeGender').value = emp.gender;
                 document.getElementById('employeeStatus').value = emp.status;
-            }
-        } else {
-            modalTitle.textContent = 'Tambah Karyawan Baru';
-        }
-        openModal(employeeModal);
-    }
-    
-    function saveEmployee() {
-        const id = document.getElementById('employeeId').value;
-        const employeeData = {
-            name: document.getElementById('employeeName').value,
-            email: document.getElementById('employeeEmail').value,
-            phone: document.getElementById('employeePhone').value,
-            nip: document.getElementById('employeeNIP').value || `NIP${String(db.employees.length + 1).padStart(3, '0')}`,
-            department: document.getElementById('employeeDepartment').value,
-            position: document.getElementById('employeePosition').value,
-            joinDate: document.getElementById('employeeJoinDate').value,
-            status: document.getElementById('employeeStatus').value,
-            avatar: `https://i.pravatar.cc/150?u=EMP${db.employees.length + 1}`
-        };
-
-        if (id) { // Update existing employee
-            const index = db.employees.findIndex(e => e.id == id);
-            if (index !== -1) {
-                db.employees[index] = { ...db.employees[index], ...employeeData };
-                showNotification('Data karyawan berhasil diperbarui.');
-            }
-        } else { // Add new employee
-            employeeData.id = db.employees.length > 0 ? Math.max(...db.employees.map(e => e.id)) + 1 : 1;
-            db.employees.push(employeeData);
-            showNotification('Karyawan baru berhasil ditambahkan.');
-        }
-
-        renderEmployeeGrid();
-        closeModal(employeeModal);
-    }
-
-    function deleteEmployee(employeeId) {
-        if (confirm('Apakah Anda yakin ingin menghapus data karyawan ini?')) {
-            db.employees = db.employees.filter(e => e.id !== employeeId);
-            renderEmployeeGrid();
-            closeModal(employeeDetailModal);
-            showNotification('Data karyawan berhasil dihapus.');
-        }
-    }
-
-    function showEmployeeDetail(employeeId) {
-        const emp = db.employees.find(e => e.id === employeeId);
-        if (!emp) return;
-
-        const detailContent = document.getElementById('employeeDetailContent');
-        detailContent.innerHTML = `
-            <div class="modal-header">
-                <h3 class="modal-title">Detail Karyawan</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align:center; margin-bottom: 1.5rem;">
-                    <img src="${emp.avatar}" alt="${emp.name}" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary-light-color);">
-                    <h3 style="margin-top: 1rem; font-size: 1.5rem;">${emp.name}</h3>
-                    <p style="color: var(--primary-color);">${emp.position}</p>
-                </div>
-                <h4>Informasi Kontak</h4>
-                <p><strong>NIP:</strong> ${emp.nip}</p>
-                <p><strong>Email:</strong> ${emp.email}</p>
-                <p><strong>Telepon:</strong> ${emp.phone}</p>
-                <hr style="margin: 1rem 0; border-color: var(--border-color);">
-                <h4>Informasi Pekerjaan</h4>
-                <p><strong>Departemen:</strong> ${emp.department}</p>
-                <p><strong>Tanggal Bergabung:</strong> ${new Date(emp.joinDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <p><strong>Status:</strong> ${emp.status}</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="deleteEmployeeBtn" data-id="${emp.id}">Hapus</button>
-                <button class="btn btn-primary" id="editEmployeeBtn" data-id="${emp.id}">Edit Data</button>
-            </div>
-        `;
-        openModal(employeeDetailModal);
-    }
-    
-    // =================================================================================
-    // UTILITY FUNCTIONS
-    // =================================================================================
-
-    function updateEmployeeCount() {
-        employeeCountEl.textContent = `(${db.employees.length} Karyawan)`;
-    }
-
-    function updateRequestCount() {
-        const pendingCount = db.requests.filter(r => r.status === 'Pending').length;
-        requestCountEl.textContent = `(${pendingCount} Pengajuan)`;
-    }
-
-    function showNotification(message) {
-        notificationToast.textContent = message;
-        notificationToast.classList.add('show');
-        setTimeout(() => {
-            notificationToast.classList.remove('show');
-        }, 3000);
-    }
-
-    function setDate() {
-        const dateEl = document.getElementById('currentDate');
-        dateEl.textContent = new Date().toLocaleDateString('id-ID', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-    }
-
-    function handleApproval(requestId, action) {
-        const request = db.requests.find(r => r.id == requestId);
-        if (request) {
-            if (action === 'approve') {
-                request.status = 'Approved';
-                showNotification(`Pengajuan dari ${request.employeeName} disetujui.`);
             } else {
-                request.status = 'Rejected';
-                showNotification(`Pengajuan dari ${request.employeeName} ditolak.`);
+                title.textContent = 'Tambah Karyawan Baru';
             }
-            renderApprovalItems();
+            modal.classList.add('show');
         }
-    }
-    
+    };
+
+    // =================================================================================
+    // ACTIONS
+    // =================================================================================
+    const actions = {
+        saveEmployee: () => {
+            const id = parseInt(document.getElementById('employeeId').value);
+            const data = {
+                name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
+                department: document.getElementById('employeeDepartment').value, position: document.getElementById('employeePosition').value,
+                gender: document.getElementById('employeeGender').value, status: document.getElementById('employeeStatus').value
+            };
+            if(id) {
+                const index = db.employees.findIndex(e => e.id === id);
+                db.employees[index] = { ...db.employees[index], ...data };
+                addActivity(`Data ${data.name} diperbarui.`);
+            } else {
+                const newId = db.employees.length > 0 ? Math.max(...db.employees.map(e => e.id)) + 1 : 1;
+                db.employees.push({ id: newId, ...data });
+                 addActivity(`${data.name} ditambahkan sebagai karyawan baru.`);
+            }
+            saveDb();
+            render.karyawan();
+            document.getElementById('employeeModal').classList.remove('show');
+        },
+        clockIn: () => {
+            if (db.user.clockedIn) return;
+            const now = new Date();
+            db.user.clockedIn = now;
+            // For demo, assume user is the first employee if exists
+            const userId = db.employees.length > 0 ? db.employees[0].id : 0;
+            if (userId > 0 && !db.attendance[today].find(a => a.id === userId)) {
+                db.attendance[today].push({ id: userId, clockIn: now });
+            }
+            saveDb();
+            render.absensi();
+            addActivity(`Anda melakukan clock in.`);
+        },
+        clockOut: () => {
+            if (!db.user.clockedIn) return;
+            const now = new Date();
+            db.user.clockedIn = null;
+            // For demo, assume user is the first employee if exists
+            const userId = db.employees.length > 0 ? db.employees[0].id : 0;
+            if (userId > 0) {
+                const record = db.attendance[today].find(a => a.id === userId);
+                if (record) record.clockOut = now;
+            }
+            saveDb();
+            render.absensi();
+            addActivity(`Anda melakukan clock out.`);
+        },
+        runPayroll: () => {
+            const month = document.getElementById('payrollMonth').value;
+            const year = document.getElementById('payrollYear').value;
+            const period = `${month}-${year}`;
+            if (!db.payroll[period]) db.payroll[period] = [];
+
+            const toPay = db.employees.filter(emp => !db.payroll[period].includes(emp.id));
+            if(toPay.length === 0) { alert('Semua karyawan sudah dibayar untuk periode ini.'); return; }
+            
+            document.getElementById('payrollProgressContainer').style.display = 'block';
+            let progress = 0;
+            const progressBar = document.getElementById('payrollProgressBar');
+            
+            const interval = setInterval(() => {
+                progress += 100 / toPay.length;
+                progressBar.style.width = Math.min(progress, 100) + '%';
+                progressBar.textContent = Math.round(Math.min(progress, 100)) + '%';
+
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    db.payroll[period] = db.employees.map(e => e.id);
+                    saveDb();
+                    render.payrollTable();
+                    addActivity(`Penggajian untuk periode ${month}/${year} selesai.`);
+                    setTimeout(() => { document.getElementById('payrollProgressContainer').style.display = 'none'; }, 1000);
+                }
+            }, 200);
+        }
+    };
+
     // =================================================================================
     // EVENT LISTENERS
     // =================================================================================
-    
-    // Search and Filter
-    employeeSearchInput.addEventListener('input', () => {
-        const activeDept = document.querySelector('.filter-chip.active').dataset.department;
-        renderEmployeeGrid(employeeSearchInput.value, activeDept);
+    ui.sidebarMenu.addEventListener('click', e => {
+        const link = e.target.closest('a');
+        if (link?.dataset.page) { e.preventDefault(); render.page(link.dataset.page); }
     });
-
-    departmentFilterContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-chip')) {
-            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
-            e.target.classList.add('active');
-            renderEmployeeGrid(employeeSearchInput.value, e.target.dataset.department);
-        }
-    });
-
-    // Modal Triggers
-    document.getElementById('addEmployeeBtn').addEventListener('click', () => showEmployeeForm());
-    document.querySelectorAll('.modal-close, .modal-close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            closeModal(btn.closest('.modal'));
-        });
-    });
-
-    // Form Submission
-    document.getElementById('saveEmployeeBtn').addEventListener('click', (e) => {
-        e.preventDefault();
-        saveEmployee();
-    });
-
-    // Dynamic Event Listeners for details, edit, delete
-    document.body.addEventListener('click', function(e) {
-        // Edit button in detail modal
-        if (e.target.id === 'editEmployeeBtn') {
-            const employeeId = parseInt(e.target.dataset.id);
-            closeModal(employeeDetailModal);
-            showEmployeeForm(employeeId);
-        }
-        // Delete button in detail modal
-        if (e.target.id === 'deleteEmployeeBtn') {
-            const employeeId = parseInt(e.target.dataset.id);
-            deleteEmployee(employeeId);
-        }
-        // Approval buttons
-        if(e.target.dataset.action === 'approve' || e.target.dataset.action === 'reject') {
-            const requestId = e.target.dataset.id;
-            const action = e.target.dataset.action;
-            handleApproval(requestId, action);
-        }
-    });
-    
-    // Tabs in Modal
-    employeeModal.querySelector('.tabs').addEventListener('click', (e) => {
-        if (e.target.classList.contains('tab')) {
-            const tabName = e.target.dataset.tab;
-            employeeModal.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            employeeModal.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-            e.target.classList.add('active');
-            employeeModal.querySelector(`#${tabName}Tab`).classList.add('active');
-        }
-    });
-
-    // Theme Switcher
     document.getElementById('themeSwitcher').addEventListener('click', function() {
         document.body.classList.toggle('dark-mode');
-        this.classList.toggle('fa-sun');
-        this.classList.toggle('fa-moon');
+        this.classList.toggle('fa-sun'); this.classList.toggle('fa-moon');
     });
+    // Karyawan Page
+    document.getElementById('addEmployeeBtn').addEventListener('click', () => render.employeeForm());
+    document.getElementById('saveEmployeeBtn').addEventListener('click', actions.saveEmployee);
+    document.getElementById('cancelEmployeeBtn').addEventListener('click', () => document.getElementById('employeeModal').classList.remove('show'));
+    document.getElementById('employeeSearch').addEventListener('input', (e) => render.karyawan(e.target.value));
+     // Absensi Page
+    document.getElementById('clockInBtn').addEventListener('click', actions.clockIn);
+    document.getElementById('clockOutBtn').addEventListener('click', actions.clockOut);
+    // Penggajian Page
+    document.getElementById('runPayrollBtn').addEventListener('click', actions.runPayroll);
+    document.getElementById('payrollMonth').addEventListener('change', render.payrollTable);
+    document.getElementById('payrollYear').addEventListener('change', render.payrollTable);
 
-    // Self Service Buttons (Simulations)
-    document.getElementById('ajukanCutiBtn').addEventListener('click', () => alert('Fungsi "Ajukan Cuti" akan membuka modal formulir pengajuan cuti.'));
-    document.getElementById('ajukanLemburBtn').addEventListener('click', () => alert('Fungsi "Ajukan Lembur" akan membuka modal formulir pengajuan lembur.'));
-    document.getElementById('lihatSlipGajiBtn').addEventListener('click', () => alert('Fungsi "Lihat Slip Gaji" akan menampilkan daftar slip gaji yang bisa diunduh.'));
-    document.getElementById('ajukanKlaimBtn').addEventListener('click', () => alert('Fungsi "Ajukan Klaim" akan membuka modal formulir pengajuan klaim.'));
+    // General Modal Close
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => btn.closest('.modal').classList.remove('show'));
+    });
 
     // =================================================================================
     // INITIALIZATION
     // =================================================================================
-    
-    function initializeApp() {
-        setDate();
-        renderDepartmentFilters();
-        renderEmployeeGrid();
-        renderApprovalItems();
+    function init() {
+        loadDb();
+        render.all();
     }
+    init();
 
-    initializeApp();
 });
 </script>
 </body>
