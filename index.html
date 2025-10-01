@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIMPEG Ultimate Pro - Sistem Informasi Kepegawaian Canggih</title>
+    <title>SIMPEG Ultimate Pro - Sistem Informasi Kepegawaian Cerdas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -53,7 +53,7 @@
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background-color: var(--light-color); font-weight: 600; }
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; text-transform: capitalize; }
-        .status-hadir { background-color: var(--success-color); } .status-cuti { background-color: var(--warning-color); color: var(--dark-color); } .status-belum-hadir { background-color: var(--gray-color); }
+        .status-hadir { background-color: var(--success-color); } .status-cuti { background-color: var(--warning-color); color: var(--dark-color); } .status-belum-hadir { background-color: var(--gray-color); } .status-selesai { background-color: var(--primary-color); }
         .status-disetujui, .status-paid { background-color: var(--success-color); } .status-ditolak { background-color: var(--danger-color); } .status-menunggu { background-color: var(--info-color); }
         .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; opacity: 0.7; }
@@ -108,10 +108,9 @@
             <ul class="sidebar-menu">
                 <li><a href="#" class="active" data-page="dashboardPage"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="#" data-page="karyawanPage"><i class="fas fa-users"></i> Karyawan</a></li>
+                <li><a href="#" data-page="departemenPage"><i class="fas fa-building"></i> Departemen</a></li>
                 <li><a href="#" data-page="absensiPage"><i class="fas fa-clock"></i> Absensi</a></li>
-                <li><a href="#" data-page="penggajianPage"><i class="fas fa-file-invoice-dollar"></i> Penggajian</a></li>
                 <li><a href="#" data-page="cutiPage"><i class="fas fa-calendar-alt"></i> Cuti</a></li>
-                <li><a href="#" data-page="kinerjaPage"><i class="fas fa-chart-line"></i> Kinerja</a></li>
                 <li><a href="#" data-page="laporanPage"><i class="fas fa-chart-bar"></i> Laporan</a></li>
                 <li><a href="#" data-page="pengaturanPage"><i class="fas fa-cog"></i> Pengaturan</a></li>
             </ul>
@@ -149,13 +148,33 @@
                     <div class="employee-grid" id="employeeGrid"></div>
                 </section>
             </div>
-
-            <div id="absensiPage" class="page">
-                 <div class="panel"><div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div><div class="table-container"><table id="attendanceTable"><thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th></tr></thead><tbody></tbody></table></div></div>
+            
+            <div id="departemenPage" class="page">
+                <section class="panel">
+                    <div class="panel-title">Manajemen Departemen</div>
+                    <div class="form-group" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <input type="text" id="newDepartmentInput" class="form-control" placeholder="Nama departemen baru...">
+                        <button id="addDepartmentBtn" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="departmentTable">
+                            <thead><tr><th>Nama Departemen</th><th style="width: 100px;">Aksi</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
 
-            <div id="penggajianPage" class="page">
-                 <div class="panel"><div class="panel-title">Proses Penggajian</div></div>
+            <div id="absensiPage" class="page">
+                 <div class="panel">
+                     <div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div>
+                     <div class="table-container" style="overflow-x: auto;">
+                         <table id="attendanceTable">
+                             <thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th><th>Aksi</th></tr></thead>
+                             <tbody></tbody>
+                         </table>
+                     </div>
+                </div>
             </div>
 
             <div id="cutiPage" class="page">
@@ -165,10 +184,6 @@
                         <table id="leaveTable"><thead><tr><th>Nama Karyawan</th><th>Tanggal Mulai</th><th>Tanggal Selesai</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
                     </div>
                 </div>
-            </div>
-
-            <div id="kinerjaPage" class="page">
-                <div class="panel"><div class="panel-title"><span>Review Kinerja Karyawan</span><button class="btn btn-primary" id="addPerformanceReviewBtn"><i class="fas fa-plus"></i> Tambah Review</button></div></div>
             </div>
             
             <div id="laporanPage" class="page">
@@ -198,8 +213,8 @@
     <div id="employeeFormModal" class="modal">
         <div class="modal-content">
              <div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div>
-             <div class="modal-body"><form id="employeeForm"></form></div>
-             <div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
+             <div class="modal-body"><form id="employeeForm" onsubmit="event.preventDefault(); actions.saveEmployee();"></form></div>
+             <div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="employeeForm" class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
         </div>
     </div>
     <div id="employeeDetailModal" class="modal">
@@ -226,26 +241,13 @@ document.addEventListener('DOMContentLoaded', function() {
         employees: [],
         departments: ['Teknologi', 'Produk', 'Manajemen', 'SDM', 'Pemasaran', 'Keuangan'],
         attendance: {},
-        payroll: {},
         activities: [],
-        leaves: [], // {id, employeeId, startDate, endDate, reason, status: 'Menunggu'}
-        performance: [], // {id, employeeId, date, review, rating}
+        leaves: [], // {id, employeeNip, startDate, endDate, reason, status: 'Menunggu'}
     };
     
     function seedData() {
-        db.employees = [
-            {id: 1, name: 'Budi Santoso', email: 'budi@example.com', department: 'Teknologi', position: 'Frontend Developer', gender: 'Pria', status: 'Permanen'},
-            {id: 2, name: 'Citra Lestari', email: 'citra@example.com', department: 'Produk', position: 'Product Manager', gender: 'Wanita', status: 'Permanen'},
-            {id: 3, name: 'Agus Wijaya', email: 'agus@example.com', department: 'Pemasaran', position: 'Digital Marketer', gender: 'Pria', status: 'Kontrak'},
-            {id: 4, name: 'Dewi Anggraini', email: 'dewi@example.com', department: 'SDM', position: 'HR Generalist', gender: 'Wanita', status: 'Permanen'},
-            {id: 5, name: 'Eko Prasetyo', email: 'eko@example.com', department: 'Teknologi', position: 'Backend Developer', gender: 'Pria', status: 'Kontrak'},
-            {id: 6, name: 'Fitriani', email: 'fitri@example.com', department: 'Keuangan', position: 'Accountant', gender: 'Wanita', status: 'Magang'},
-        ];
-        db.leaves = [
-            {id: 1, employeeId: 3, startDate: '2025-10-05', endDate: '2025-10-06', reason: 'Acara keluarga', status: 'Disetujui'},
-            {id: 2, employeeId: 5, startDate: '2025-10-10', endDate: '2025-10-10', reason: 'Sakit', status: 'Menunggu'},
-        ];
-        addActivity('Data dummy berhasil dimuat untuk demo.', true);
+        // Data default sengaja dikosongkan sesuai permintaan
+        addActivity('Aplikasi siap digunakan. Silakan tambahkan data karyawan.', true);
         saveDb();
     }
 
@@ -266,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function addActivity(text, silent = false) {
         db.activities.unshift({ text, time: new Date() });
-        if (db.activities.length > 15) db.activities.pop();
+        if (db.activities.length > 20) db.activities.pop();
         if (!silent) saveDb();
         if(document.getElementById('dashboardPage').classList.contains('active')) render.activityLog();
     }
@@ -314,6 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const renderMap = {
                 dashboardPage: render.dashboard,
                 karyawanPage: render.karyawan,
+                departemenPage: render.departemen,
                 absensiPage: render.absensi,
                 laporanPage: render.laporan,
                 cutiPage: render.cuti
@@ -332,51 +335,82 @@ document.addEventListener('DOMContentLoaded', function() {
             const statusFilter = document.getElementById('statusFilter').value;
 
             const filtered = db.employees.filter(e => 
-                (e.name.toLowerCase().includes(search) || `NIP${e.id.toString().padStart(3,'0')}`.toLowerCase().includes(search)) &&
+                (e.name.toLowerCase().includes(search) || e.nip.toLowerCase().includes(search)) &&
                 (!deptFilter || e.department === deptFilter) &&
                 (!statusFilter || e.status === statusFilter)
             );
 
             grid.innerHTML = filtered.length === 0 
-                ? `<div class="empty-state"><i class="fas fa-search"></i><p>Tidak ada karyawan yang cocok dengan kriteria.</p></div>`
-                : filtered.map(emp => `
-                    <div class="employee-card" data-id="${emp.id}">
-                        <div class="employee-photo"><img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}"></div>
+                ? `<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data karyawan. Silakan tambahkan karyawan baru.</p></div>`
+                : filtered.map(emp => {
+                    const photoSrc = emp.photoUrl || `https://i.pravatar.cc/150?u=${emp.nip}`;
+                    return `
+                    <div class="employee-card" data-nip="${emp.nip}">
+                        <div class="employee-photo"><img src="${photoSrc}" alt="${emp.name}" onerror="this.src='https://i.pravatar.cc/150?u=placeholder'"></div>
                         <div class="employee-name">${emp.name}</div>
                         <div class="employee-position">${emp.position}</div>
-                    </div>`).join('');
+                    </div>`}).join('');
             
             document.getElementById('employeeCount').textContent = `(${db.employees.length})`;
             
-            // Populate department filter if empty
             const deptFilterEl = document.getElementById('departmentFilter');
-            if(deptFilterEl.options.length <= 1) {
-                deptFilterEl.innerHTML = '<option value="">Semua Departemen</option>';
-                db.departments.forEach(d => deptFilterEl.add(new Option(d, d)));
+            const currentVal = deptFilterEl.value;
+            deptFilterEl.innerHTML = '<option value="">Semua Departemen</option>';
+            db.departments.forEach(d => deptFilterEl.add(new Option(d, d)));
+            deptFilterEl.value = currentVal;
+        },
+        departemen: () => {
+            const tableBody = document.querySelector('#departmentTable tbody');
+            if (db.departments.length === 0) {
+                 tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 2rem; color: var(--gray-color);">Belum ada departemen.</td></tr>`;
+                 return;
             }
+            tableBody.innerHTML = db.departments.map(dept => `
+                <tr>
+                    <td>${dept}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="actions.deleteDepartment('${dept}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
         },
         absensi: () => {
             document.getElementById('currentDateText').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' });
             const tableBody = document.querySelector('#attendanceTable tbody');
+            if (db.employees.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--gray-color);">Belum ada karyawan untuk diabsen.</td></tr>`;
+                return;
+            }
             tableBody.innerHTML = db.employees.map(emp => {
-                const record = db.attendance[today]?.find(a => a.id === emp.id);
-                const status = record ? 'Hadir' : 'Belum Hadir';
+                const record = db.attendance[today]?.find(a => a.nip === emp.nip);
+                let status = 'Belum Hadir';
+                let actionButton = `<button class="btn btn-success" onclick="actions.clockIn('${emp.nip}')">Clock In</button>`;
+                
+                if (record) {
+                    if (record.clockIn && !record.clockOut) {
+                        status = 'Hadir';
+                        actionButton = `<button class="btn btn-primary" onclick="actions.clockOut('${emp.nip}')">Clock Out</button>`;
+                    } else if (record.clockIn && record.clockOut) {
+                        status = 'Selesai';
+                        actionButton = `-`;
+                    }
+                }
+
                 return `<tr>
-                    <td>${emp.name}</td><td>${'NIP' + emp.id.toString().padStart(3, '0')}</td><td>${emp.department}</td>
+                    <td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td>
                     <td>${record?.clockIn ? new Date(record.clockIn).toLocaleTimeString('id-ID') : '-'}</td>
                     <td>${record?.clockOut ? new Date(record.clockOut).toLocaleTimeString('id-ID') : '-'}</td>
                     <td><span class="status-badge status-${status.toLowerCase().replace(' ', '-')}">${status}</span></td>
+                    <td>${actionButton}</td>
                 </tr>`;
             }).join('');
         },
         cuti: () => {
             const tableBody = document.querySelector('#leaveTable tbody');
             if (db.leaves.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="text-align:center; padding:2rem; color: var(--gray-color);">Belum ada pengajuan cuti.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color: var(--gray-color);">Belum ada pengajuan cuti.</td></tr>`;
                 return;
             }
             tableBody.innerHTML = db.leaves.map(leave => {
-                const employee = db.employees.find(e => e.id === leave.employeeId);
+                const employee = db.employees.find(e => e.nip === leave.employeeNip);
                 return `<tr>
                     <td>${employee?.name || 'N/A'}</td>
                     <td>${new Date(leave.startDate).toLocaleDateString('id-ID')}</td>
@@ -415,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
             department: () => {
                 render.charts.destroy('dept');
                 const data = db.departments.map(dept => ({ dept, count: db.employees.filter(e => e.department === dept).length }));
-                charts['dept'] = new Chart(document.getElementById('departmentChart').getContext('2d'), { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+                charts['dept'] = new Chart(document.getElementById('departmentChart').getContext('2d'), { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d', '#343a40'] }] }, options: { responsive: true, maintainAspectRatio: false } });
             },
             status: () => {
                 render.charts.destroy('status');
@@ -429,39 +463,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 charts['gender'] = new Chart(document.getElementById('genderChart').getContext('2d'), { type: 'pie', data: { labels: ['Pria', 'Wanita'], datasets: [{ data: [men, db.employees.length - men], backgroundColor: ['#0052cc', '#dc3545'] }] }, options: { responsive: true, maintainAspectRatio: false } });
             }
         },
-        employeeForm: (id = null) => {
+        employeeForm: (nip = null) => {
             const form = document.getElementById('employeeForm');
-            const emp = id ? db.employees.find(e => e.id === id) : {};
+            const emp = nip ? db.employees.find(e => e.nip === nip) : {};
             form.innerHTML = `
-                <input type="hidden" id="employeeId" value="${id || ''}">
+                <input type="hidden" id="employeeNipOriginal" value="${nip || ''}">
+                <div class="form-group">
+                    <label class="form-label">NIP / ID Karyawan</label>
+                    <input type="text" id="employeeNip" class="form-control" required value="${emp.nip || ''}" ${nip ? 'readonly' : ''} placeholder="Contoh: 112233">
+                </div>
                 <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="employeeName" class="form-control" required value="${emp.name || ''}"></div>
                 <div class="form-group"><label class="form-label">Email</label><input type="email" id="employeeEmail" class="form-control" required value="${emp.email || ''}"></div>
-                <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required>${db.departments.map(d => `<option value="${d}" ${emp.department === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
+                <div class="form-group"><label class="form-label">URL Foto (Opsional)</label><input type="url" id="employeePhotoUrl" class="form-control" value="${emp.photoUrl || ''}" placeholder="https://example.com/foto.jpg"></div>
+                <div class="form-group"><label class="form-label">Departemen</label><select id="employeeDepartment" class="form-control" required>${db.departments.length === 0 ? '<option value="">--Buat departemen dulu--</option>' : db.departments.map(d => `<option value="${d}" ${emp.department === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
                 <div class="form-group"><label class="form-label">Jabatan</label><input type="text" id="employeePosition" class="form-control" required value="${emp.position || ''}"></div>
                 <div class="form-group"><label class="form-label">Gender</label><select id="employeeGender" class="form-control" required><option value="Pria" ${emp.gender === 'Pria' ? 'selected' : ''}>Pria</option><option value="Wanita" ${emp.gender === 'Wanita' ? 'selected' : ''}>Wanita</option></select></div>
                 <div class="form-group"><label class="form-label">Status</label><select id="employeeStatus" class="form-control" required><option value="Permanen" ${emp.status === 'Permanen' ? 'selected' : ''}>Permanen</option><option value="Kontrak" ${emp.status === 'Kontrak' ? 'selected' : ''}>Kontrak</option><option value="Magang" ${emp.status === 'Magang' ? 'selected' : ''}>Magang</option></select></div>
             `;
-            document.getElementById('employeeModalTitle').textContent = id ? 'Edit Karyawan' : 'Tambah Karyawan Baru';
+            document.getElementById('employeeModalTitle').textContent = nip ? 'Edit Karyawan' : 'Tambah Karyawan Baru';
             document.getElementById('employeeFormModal').classList.add('show');
         },
-        employeeDetail: (id) => {
-            const emp = db.employees.find(e => e.id === id);
+        employeeDetail: (nip) => {
+            const emp = db.employees.find(e => e.nip === nip);
             if (!emp) return;
+            const photoSrc = emp.photoUrl || `https://i.pravatar.cc/150?u=${emp.nip}`;
             document.getElementById('employeeDetailBody').innerHTML = `
                 <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
-                    <img src="https://i.pravatar.cc/150?u=${emp.id}" alt="${emp.name}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;">
+                    <img src="${photoSrc}" alt="${emp.name}" style="width:100px; height:100px; border-radius:50%; object-fit:cover;" onerror="this.src='https://i.pravatar.cc/150?u=placeholder'">
                     <div><h3 style="margin:0;">${emp.name}</h3><p style="color:var(--primary-color);">${emp.position}</p></div>
                 </div>
                 <dl class="detail-grid">
-                    <dt>NIP</dt><dd>NIP${emp.id.toString().padStart(3,'0')}</dd>
+                    <dt>NIP</dt><dd>${emp.nip}</dd>
                     <dt>Email</dt><dd>${emp.email}</dd>
                     <dt>Departemen</dt><dd>${emp.department}</dd>
                     <dt>Gender</dt><dd>${emp.gender}</dd>
                     <dt>Status</dt><dd>${emp.status}</dd>
                 </dl>`;
             document.getElementById('employeeDetailFooter').innerHTML = `
-                <button class="btn btn-danger" onclick="actions.deleteEmployee(${emp.id})"><i class="fas fa-trash"></i> Hapus</button>
-                <button class="btn btn-primary" onclick="render.employeeForm(${emp.id})"><i class="fas fa-edit"></i> Edit</button>`;
+                <button class="btn btn-danger" onclick="actions.deleteEmployee('${emp.nip}')"><i class="fas fa-trash"></i> Hapus</button>
+                <button class="btn btn-primary" onclick="render.employeeForm('${emp.nip}')"><i class="fas fa-edit"></i> Edit</button>`;
             document.getElementById('employeeDetailModal').classList.add('show');
         }
     };
@@ -471,30 +511,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // =================================================================================
     window.actions = { // Make it globally accessible for inline onclick
         saveEmployee: () => {
-            const id = parseInt(document.getElementById('employeeId').value) || null;
+            const originalNip = document.getElementById('employeeNipOriginal').value;
+            const isEditing = !!originalNip;
+            const nip = document.getElementById('employeeNip').value.trim();
+
+            if (!nip) {
+                uiUtils.showToast('NIP / ID Karyawan wajib diisi.', 'danger');
+                return;
+            }
+
+            // Cek duplikasi NIP hanya saat menambah karyawan baru
+            if (!isEditing && db.employees.some(e => e.nip === nip)) {
+                uiUtils.showToast('NIP / ID Karyawan sudah digunakan.', 'danger');
+                return;
+            }
+            if (db.departments.length === 0){
+                uiUtils.showToast('Anda harus membuat departemen terlebih dahulu.', 'danger');
+                return;
+            }
+
             const data = {
-                name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
-                department: document.getElementById('employeeDepartment').value, position: document.getElementById('employeePosition').value,
-                gender: document.getElementById('employeeGender').value, status: document.getElementById('employeeStatus').value
+                nip: nip, name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
+                photoUrl: document.getElementById('employeePhotoUrl').value, department: document.getElementById('employeeDepartment').value,
+                position: document.getElementById('employeePosition').value, gender: document.getElementById('employeeGender').value,
+                status: document.getElementById('employeeStatus').value
             };
-            if(id) {
-                const index = db.employees.findIndex(e => e.id === id);
+
+            if(isEditing) {
+                const index = db.employees.findIndex(e => e.nip === originalNip);
                 db.employees[index] = { ...db.employees[index], ...data };
                 addActivity(`Data ${data.name} diperbarui.`);
             } else {
-                const newId = db.employees.length > 0 ? Math.max(...db.employees.map(e => e.id)) + 1 : 1;
-                db.employees.push({ id: newId, ...data });
+                db.employees.push(data);
                 addActivity(`${data.name} ditambahkan sebagai karyawan baru.`);
             }
             saveDb();
             render.karyawan();
-            uiUtils.showToast(`Data karyawan berhasil ${id ? 'diperbarui' : 'disimpan'}.`);
+            uiUtils.showToast(`Data karyawan berhasil ${isEditing ? 'diperbarui' : 'disimpan'}.`);
             document.getElementById('employeeFormModal').classList.remove('show');
         },
-        deleteEmployee: (id) => {
-            const emp = db.employees.find(e => e.id === id);
+        deleteEmployee: (nip) => {
+            const emp = db.employees.find(e => e.nip === nip);
             uiUtils.showConfirm('Hapus Karyawan', `Apakah Anda yakin ingin menghapus data <strong>${emp.name}</strong>? Tindakan ini tidak dapat diurungkan.`, () => {
-                db.employees = db.employees.filter(e => e.id !== id);
+                db.employees = db.employees.filter(e => e.nip !== nip);
                 saveDb();
                 addActivity(`Data ${emp.name} telah dihapus.`);
                 uiUtils.showToast('Data karyawan berhasil dihapus.', 'danger');
@@ -502,11 +561,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 render.karyawan();
             });
         },
+        addDepartment: () => {
+            const input = document.getElementById('newDepartmentInput');
+            const newDept = input.value.trim();
+            if (newDept && !db.departments.some(d => d.toLowerCase() === newDept.toLowerCase())) {
+                db.departments.push(newDept);
+                saveDb();
+                addActivity(`Departemen baru '${newDept}' ditambahkan.`);
+                uiUtils.showToast('Departemen berhasil ditambahkan.');
+                render.departemen();
+                input.value = '';
+            } else if (!newDept) {
+                 uiUtils.showToast('Nama departemen tidak boleh kosong.', 'warning');
+            } else {
+                 uiUtils.showToast('Nama departemen sudah ada.', 'warning');
+            }
+        },
+        deleteDepartment: (deptName) => {
+            const isUsed = db.employees.some(emp => emp.department === deptName);
+            if (isUsed) {
+                uiUtils.showToast('Departemen tidak bisa dihapus karena masih digunakan oleh karyawan.', 'danger');
+                return;
+            }
+            uiUtils.showConfirm('Hapus Departemen', `Yakin ingin menghapus departemen <strong>${deptName}</strong>?`, () => {
+                db.departments = db.departments.filter(d => d !== deptName);
+                saveDb();
+                addActivity(`Departemen '${deptName}' telah dihapus.`);
+                uiUtils.showToast('Departemen berhasil dihapus.', 'danger');
+                render.departemen();
+            });
+        },
+        clockIn: (nip) => {
+            if (!db.attendance[today]) db.attendance[today] = [];
+            db.attendance[today].push({ nip: nip, clockIn: new Date(), clockOut: null });
+            const emp = db.employees.find(e => e.nip === nip);
+            addActivity(`${emp.name} melakukan clock in.`);
+            saveDb();
+            render.absensi();
+        },
+        clockOut: (nip) => {
+            const recordIndex = db.attendance[today].findIndex(a => a.nip === nip);
+            if (recordIndex > -1) {
+                db.attendance[today][recordIndex].clockOut = new Date();
+                const emp = db.employees.find(e => e.nip === nip);
+                addActivity(`${emp.name} melakukan clock out.`);
+                saveDb();
+                render.absensi();
+            }
+        },
         updateLeaveStatus: (leaveId, newStatus) => {
             const leaveIndex = db.leaves.findIndex(l => l.id === leaveId);
             if(leaveIndex > -1) {
                 db.leaves[leaveIndex].status = newStatus;
-                const emp = db.employees.find(e => e.id === db.leaves[leaveIndex].employeeId);
+                const emp = db.employees.find(e => e.nip === db.leaves[leaveIndex].employeeNip);
                 addActivity(`Pengajuan cuti ${emp.name} telah ${newStatus.toLowerCase()}.`);
                 saveDb();
                 render.cuti();
@@ -531,20 +638,17 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = function(e) {
                 try {
                     const restoredDb = JSON.parse(e.target.result);
-                    // Basic validation
                     if (restoredDb.employees && restoredDb.departments) {
                         db = restoredDb;
                         saveDb();
                         addActivity('Data berhasil dipulihkan dari backup.');
                         uiUtils.showToast('Data berhasil di-restore. Halaman akan dimuat ulang.');
                         setTimeout(() => location.reload(), 1500);
-                    } else {
-                        throw new Error('Invalid file structure');
-                    }
+                    } else { throw new Error('Invalid file structure'); }
                 } catch (error) {
                     uiUtils.showToast('Gagal me-restore data. File tidak valid.', 'danger');
                 } finally {
-                    event.target.value = ''; // Reset file input
+                    event.target.value = '';
                 }
             };
             reader.readAsText(file);
@@ -575,20 +679,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // Karyawan Page
     document.getElementById('addEmployeeBtn').addEventListener('click', () => render.employeeForm());
-    document.getElementById('saveEmployeeBtn').addEventListener('click', actions.saveEmployee);
     document.getElementById('employeeGrid').addEventListener('click', (e) => {
         const card = e.target.closest('.employee-card');
-        if (card) render.employeeDetail(parseInt(card.dataset.id));
+        if (card) render.employeeDetail(card.dataset.nip);
     });
     ['employeeSearch', 'departmentFilter', 'statusFilter'].forEach(id => {
         document.getElementById(id).addEventListener('input', render.karyawan);
     });
+    // Departemen Page
+    document.getElementById('addDepartmentBtn').addEventListener('click', actions.addDepartment);
     // Pengaturan Page
     document.getElementById('backupDataBtn').addEventListener('click', actions.backupData);
     document.getElementById('restoreDataInput').addEventListener('change', actions.restoreData);
     document.getElementById('resetDataBtn').addEventListener('click', actions.resetData);
 
     // General Modal Close
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
+                this.classList.remove('show');
+            }
+        });
+    });
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => btn.closest('.modal').classList.remove('show'));
     });
