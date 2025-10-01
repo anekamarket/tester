@@ -3,508 +3,577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LENTERA KARYA SITUBONDO - Solusi Digital Terintegrasi</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Lentera Prime 5.1 - Quantum Voice Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        /* --- PENINGKATAN: Variabel Warna untuk Tema Terang & Gelap --- */
         :root {
-            --primary-color: #007BFF;
-            --secondary-color: #0056b3;
-            --background-start: #f4f7fa;
-            --background-end: #d6e4f3;
-            --card-background: rgba(255, 255, 255, 0.8);
-            --text-color: #333;
-            --text-light: #f8f9fa;
-            --shadow-color: rgba(0, 91, 187, 0.15);
-            --border-color: rgba(255, 255, 255, 0.9);
-            --icon-color: #495057;
+            /* Ethereal Indigo Theme (Default) */
+            --bg-color: #F4F7FC;
+            --surface-color: #FFFFFF;
+            --primary-color: #6366F1;
+            --primary-gradient: linear-gradient(45deg, #4F46E5, #818CF8);
+            --text-color: #1F2937;
+            --text-secondary: #6B7281;
+            --border-color: #E5E7EB;
+            --wheel-size: clamp(350px, 90vmin, 550px);
+            --font-body: 'Inter', sans-serif;
         }
 
-        body.dark-mode {
-            --primary-color: #0084ff;
-            --secondary-color: #369dff;
-            --background-start: #1a202c;
-            --background-end: #2d3748;
-            --card-background: rgba(25, 32, 44, 0.8);
-            --text-color: #edf2f7;
-            --shadow-color: rgba(0, 123, 255, 0.1);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --icon-color: #a0aec0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
         body {
-            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 40px 0;
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            overflow-x: hidden;
-            transition: background 0.5s ease;
-        }
-
-        .particle-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(0, 123, 255, 0.2);
-            pointer-events: none;
-            animation: floatUp 25s linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; }
-        }
-
-        /* --- PENINGKATAN: Efek 3D Tilt pada Kartu --- */
-        .content {
-            position: relative;
-            z-index: 2;
-            width: 95%;
-            max-width: 550px;
-            padding: 40px;
-            background: var(--card-background);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 24px;
-            box-shadow: 0 16px 48px var(--shadow-color);
-            text-align: center;
-            border: 1px solid var(--border-color);
-            animation: contentFadeIn 1s ease-out forwards;
-            transition: transform 0.1s ease-out, background 0.5s ease, border 0.5s ease, box-shadow 0.5s ease;
-            transform-style: preserve-3d;
-        }
-
-        @keyframes contentFadeIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        
-        .logo-container { margin-bottom: 35px; }
-        
-        .logo-img {
-            max-width: 220px;
-            height: auto;
-            margin-bottom: 15px;
-            transition: transform 0.4s ease, filter 0.4s ease;
-            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
-        }
-        .logo-img:hover { transform: scale(1.05); filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15)); }
-
-        .logo-text {
-            font-size: 2.3rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), #20c997, var(--primary-color));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradient-animation 6s ease infinite;
-        }
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .button-container { display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; }
-        
-        .button {
-            padding: 16px 24px;
-            color: var(--text-light);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
             display: flex;
-            align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            animation: buttonSlideIn 0.5s ease-out forwards;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease;
         }
 
-        .button-container .button:nth-child(1) { animation-delay: 0.3s; }
-        .button-container .button:nth-child(2) { animation-delay: 0.4s; }
-        .button-container .button:nth-child(3) { animation-delay: 0.5s; }
-        .button-container .button:nth-child(4) { animation-delay: 0.6s; }
-        .button-container .button:nth-child(5) { animation-delay: 0.7s; }
-
-        @keyframes buttonSlideIn {
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr var(--wheel-size) 1fr;
+            gap: 40px;
+            align-items: start;
+            width: 100%;
+            max-width: 1600px;
+        }
+        
+        /* General Animations */
+        @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .fade-in { animation: fadeIn 0.8s ease-in-out forwards; }
         
-        .button::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -150%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.6s ease;
-            transform: skewX(-25deg);
+        /* PENINGKATAN: Animasi baru untuk pointer dan highlight pemenang */
+        @keyframes pointerBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
         }
-        .button:hover::after { left: 150%; }
-        .button:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); }
-        .button:active { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
-        .button i { margin-right: 12px; font-size: 1.2rem; transition: transform 0.3s ease; }
-        .button:hover i { transform: rotate(-5deg) scale(1.1); }
-
-        .button.products { background-color: #FFA500; }
-        .button.products:hover { background-color: #e69500; }
-        .button.promo { background-color: #e74c3c; animation: pulse 2s infinite, buttonSlideIn 0.5s ease-out 0.4s forwards; }
-        .button.promo:hover { background-color: #d62c1a; }
-        .button.about { background-color: #3498db; }
-        .button.about:hover { background-color: #217dbb; }
-        .button.mou { background-color: #9b59b6; }
-        .button.mou:hover { background-color: #8949a3; }
-        .button.whatsapp { background-color: #25D366; }
-        .button.whatsapp:hover { background-color: #1ebe58; }
-        
-        /* --- PENINGKATAN: Animasi Pulse untuk tombol Promo --- */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        @keyframes winnerShimmer {
+            0% { box-shadow: 0 0 10px rgba(255,255,255,0), 0 0 10px inset rgba(255,255,255,0); }
+            50% { box-shadow: 0 0 40px var(--primary-color), 0 0 30px inset var(--primary-color); }
+            100% { box-shadow: 0 0 10px rgba(255,255,255,0), 0 0 10px inset rgba(255,255,255,0); }
         }
 
-        .divider { margin: 30px auto; width: 80%; height: 1px; background: #ccc; }
-        .sub-heading { margin-bottom: 20px; font-size: 1.2rem; font-weight: 600; color: var(--secondary-color); transition: color 0.5s ease; }
+        /* Wheel Section */
+        .wheel-section {
+            position: relative;
+            display: grid;
+            place-items: center;
+            margin-top: 20px;
+        }
+
+        #wheel-canvas {
+            width: var(--wheel-size);
+            height: var(--wheel-size);
+            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0px 15px 35px rgba(0,0,0,0.1));
+        }
+        .wheel-canvas-winner {
+            animation: winnerShimmer 1.5s ease-in-out;
+        }
         
-        /* --- FITUR BARU: Search Bar --- */
-        .search-container { position: relative; margin-bottom: 20px; }
-        .search-input {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border-radius: 12px;
+        .wheel-pointer {
+            width: 0; height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--primary-color);
+            position: absolute; top: -20px; z-index: 10;
+            transition: border-top-color 0.4s ease;
+            transform-origin: bottom center;
+            filter: drop-shadow(0px 4px 10px rgba(0,0,0, 0.2));
+            border-radius: 4px;
+        }
+        .wheel-pointer.bounce {
+            animation: pointerBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--surface-color); padding: 30px; border-radius: 20px;
             border: 1px solid var(--border-color);
-            background: rgba(255,255,255,0.2);
-            font-size: 1rem;
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-        .search-input:focus {
-            background: rgba(255,255,255,0.4);
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-        .search-container .fa-search {
-            position: absolute;
-            left: 15px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--icon-color);
-        }
-
-        .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .app-grid .button.hidden { display: none; } /* Untuk menyembunyikan item saat searching */
-
-        .button.app-button {
-            background-color: #5a67d8; font-size: 0.9rem; padding: 12px 10px;
-            animation: buttonSlideIn 0.5s ease-out forwards;
-        }
-        .app-grid .button:nth-child(1) { animation-delay: 0.8s; }
-        .app-grid .button:nth-child(2) { animation-delay: 0.85s; }
-        .app-grid .button:nth-child(3) { animation-delay: 0.9s; }
-        /* dst. ditangani JS jika perlu stagger lebih dinamis */
-
-        .button.app-button:hover { background-color: #434190; }
-        .button.app-button i { margin-right: 8px; font-size: 1rem; }
-        
-        .footer { margin-top: 35px; font-size: 0.9rem; color: #666; transition: color 0.5s ease; }
-        body.dark-mode .footer { color: #a0aec0; }
-        
-        /* --- FITUR BARU: Kontrol Tema & Suara --- */
-        .controls-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 15px;
-            z-index: 10;
-        }
-        .control-button {
-            background: var(--card-background);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px var(--shadow-color);
-            transition: all 0.3s ease;
-        }
-        .control-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px var(--shadow-color);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            display: flex; flex-direction: column;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
         
-        /* --- FITUR BARU: Tooltip Pratinjau Link --- */
-        #tooltip {
-            position: fixed;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            z-index: 100;
-            pointer-events: none;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            max-width: 200px;
+        .panel h1, .panel h2 {
+            font-weight: 800; font-size: 1.6rem; color: var(--text-color);
+            text-align: center; margin-bottom: 8px; transition: color 0.4s ease;
         }
-        #tooltip.visible {
-            opacity: 1;
-            transform: scale(1);
+        .panel .subtitle {
+            text-align: center; color: var(--text-secondary); margin-bottom: 25px;
+            font-size: 0.95rem; transition: color 0.4s ease;
         }
 
-        @media (max-width: 600px) {
-            body { padding: 20px 0; }
-            .content { padding: 30px 20px; }
-            .logo-img { max-width: 180px; }
-            .logo-text { font-size: 1.8rem; }
-            .button { padding: 14px 20px; }
-            .app-grid { grid-template-columns: 1fr; }
-            .controls-container { top: 10px; right: 10px; }
+        /* Controls Section */
+        .label-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .label-group label { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+        #participant-count, #participant-probability { font-weight: 600; color: var(--text-color); font-size: 0.9rem; }
+        #participant-probability { background: color-mix(in srgb, var(--primary-color) 10%, transparent); padding: 2px 8px; border-radius: 5px;}
+
+        #participants-textarea {
+            width: 100%; min-height: 200px;
+            background-color: color-mix(in srgb, var(--border-color) 40%, transparent); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 15px; color: var(--text-color);
+            font-size: 1rem; resize: vertical; margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        #participants-textarea:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, transparent);
+        }
+
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .action-button {
+            padding: 10px; font-size: 0.9rem; font-weight: 600; background: color-mix(in srgb, var(--border-color) 60%, transparent);
+            color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .action-button:hover { background: var(--border-color); color: var(--text-color); }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+        .input-group input, .input-group select {
+            width: 100%; padding: 10px; border-radius: 10px;
+            border: 1px solid var(--border-color); background: color-mix(in srgb, var(--border-color) 40%, transparent);
+            font-size: 0.9rem; color: var(--text-color);
+        }
+        
+        #spin-button {
+            width: 100%; padding: 18px; font-size: 1.2rem; font-weight: 700; color: #fff;
+            background: var(--primary-gradient); border: none; border-radius: 12px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s ease-out;
+            box-shadow: 0 5px 20px color-mix(in srgb, var(--primary-color) 30%, transparent);
+            position: relative; overflow: hidden;
+        }
+        #spin-button:disabled { background: #D1D5DB; cursor: not-allowed; color: #9CA3AF; box-shadow: none; }
+        #spin-button:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 8px 25px color-mix(in srgb, var(--primary-color) 40%, transparent); }
+        /* PENINGKATAN: Efek charge saat tombol ditekan */
+        #spin-button.charging::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(255,255,255,0.2);
+            transform: scaleX(0); transform-origin: left;
+            animation: charge 0.5s linear forwards;
+        }
+        @keyframes charge { to { transform: scaleX(1); } }
+        
+        /* Sub-panel untuk fitur lanjutan */
+        .sub-panel {
+            border: 1px solid var(--border-color); margin-top: 20px;
+            padding: 15px; border-radius: 12px;
+        }
+        .sub-panel h3 { font-size: 1rem; margin-bottom: 10px; text-align: center; }
+        
+        /* FITUR BARU: Toggle Switch untuk Fairness Mode */
+        .toggle-switch { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: color-mix(in srgb, var(--border-color) 40%, transparent); border-radius: 10px; margin-top: 15px; }
+        .toggle-switch label { margin: 0; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* History & Saved Groups Section */
+        .scrollable-list { list-style: none; overflow-y: auto; max-height: 300px; padding-right: 10px; }
+        .scrollable-list::-webkit-scrollbar { width: 6px; }
+        .scrollable-list::-webkit-scrollbar-track { background: transparent; }
+        .scrollable-list::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+        .scrollable-list-item {
+            background: color-mix(in srgb, var(--border-color) 40%, transparent); padding: 10px 15px; border-radius: 10px;
+            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            transition: transform 0.2s, background-color 0.2s;
+            animation: staggerFadeIn 0.5s ease-in-out forwards; opacity: 0; transform: translateX(10px);
+        }
+        @keyframes staggerFadeIn { to { opacity: 1; transform: translateX(0); } }
+        .scrollable-list-item:hover { transform: translateY(-2px); background-color: color-mix(in srgb, var(--border-color) 60%, transparent); }
+        .item-name { font-weight: 600; }
+        .item-meta { font-size: 0.8rem; color: var(--text-secondary); }
+        .item-actions button { background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 0.9rem; margin-left: 10px; transition: color 0.2s; }
+        .item-actions button:hover { color: var(--primary-color); }
+        .item-actions .delete-btn:hover { color: #EF4444; }
+
+        /* Modal & Confetti */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--surface-color); padding: 40px; border-radius: 20px; text-align: center; transform: scale(0.7) translateY(20px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; z-index: 1001; max-width: 500px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .modal-overlay.show .modal-content { transform: scale(1) translateY(0); }
+        .modal-content h2 { font-weight: 500; font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 15px; }
+        .winner-name { font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem); color: var(--text-color); margin-bottom: 30px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal-buttons { display: flex; flex-direction: column; gap: 15px; justify-content: center; width: 100%; }
+        .modal-button { padding: 12px 24px; border-radius: 10px; border: 2px solid var(--border-color); background: transparent; color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .modal-button.primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+        .modal-button:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .modal-button.primary:hover { filter: brightness(1.1); color: #fff; }
+        #confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2000; }
+        
+        /* Fixed Controls */
+        .fixed-controls { position: fixed; top: 20px; right: 20px; z-index: 100; display: flex; gap: 10px; }
+        .fixed-btn { background: var(--surface-color); color: var(--text-secondary); border: 1px solid var(--border-color); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 1.1rem; display: grid; place-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .fixed-btn:hover { color: var(--text-color); border-color: #D1D5DB; }
+        .fixed-btn.active { color: var(--primary-color); border-color: var(--primary-color); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 40%, transparent); } 70% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--primary-color) 0%, transparent); } 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 0%, transparent); } }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .app-container { grid-template-columns: 1fr; gap: 40px; max-width: 600px; }
+            .controls-section { order: 1; } .wheel-section { order: 0; } .history-section { order: 2; }
         }
     </style>
 </head>
 <body>
-    <div class="particle-background" id="particle-container"></div>
-    
-    <div class="controls-container">
-        <div id="theme-toggle" class="control-button" title="Ganti Tema">
-            <i class="fas fa-moon"></i>
-        </div>
-        <div id="sound-toggle" class="control-button" title="Aktifkan/Matikan Suara">
-            <i class="fas fa-volume-mute"></i>
-        </div>
-    </div>
-    
-    <div class="content" id="content-card">
-        <div class="logo-container">
-            <img src="https://raw.githubusercontent.com/anekamarket/aplikasi-situbondo/refs/heads/main/naikkelas.png" alt="Anekamarket Logo" class="logo-img">
-            <div class="logo-text">LENTERA KARYA SITUBONDO</div>
-        </div>
-        
-        <div class="button-container">
-            <a href="https://lks-88.github.io/produk-anekamarket/" class="button products">
-                <i class="fas fa-store"></i> Produk Kami
-            </a>
-            <a href="https://lks-88.github.io/promo-anekamarket/" class="button promo">
-                <i class="fas fa-tag"></i> Promo Spesial
-            </a>
-            <a href="https://lks-88.github.io/anekamarket/" class="button about">
-                <i class="fas fa-info-circle"></i> Tentang Kami
-            </a>
-            <a href="https://lenterakarya.github.io/perjanjian-anekamarket/" class="button mou">
-                <i class="fas fa-file-contract"></i> Perjanjian MoU
-            </a>
-            <a href="https://api.whatsapp.com/send?phone=6285647709114" class="button whatsapp">
-                <i class="fab fa-whatsapp"></i> Chat WhatsApp
-            </a>
-        </div>
-        
-        <div class="divider"></div>
-        
-        <div class="sub-heading">Aplikasi Pendukung</div>
-        
-        <div class="search-container">
-            <i class="fas fa-search"></i>
-            <input type="text" id="app-search" class="search-input" placeholder="Cari aplikasi...">
-        </div>
-        
-        <div class="app-grid" id="app-grid">
-            <a href="https://anekamarket.github.io/aplikasi-bantuan-barang-jasa/" target="_blank" class="button app-button" data-description="Aplikasi untuk bantuan pengadaan barang dan jasa."><i class="fas fa-hands-helping"></i> Bantuan BARJAS</a>
-            <a href="https://anekamarket.github.io/arsip-surat/" target="_blank" class="button app-button" data-description="Sistem pengarsipan surat digital untuk efisiensi."><i class="fas fa-archive"></i> Arsip Surat</a>
-            <a href="https://anekamarket.github.io/segerahadir/" target="_blank" class="button app-button" data-description="Sistem absensi online untuk karyawan. Segera hadir!"><i class="fas fa-user-check"></i> Absen Karyawan</a>
-            <a href="https://anekamarket.github.io/nota-gratis/" target="_blank" class="button app-button" data-description="Buat nota atau kwitansi digital dengan mudah dan gratis."><i class="fas fa-receipt"></i> Nota</a>
-            <a href="https://anekamarket.github.io/supermarket-trial/" target="_blank" class="button app-button" data-description="Coba demo aplikasi kasir untuk toko atau supermarket."><i class="fas fa-shopping-cart"></i> Toko</a>
-            <a href="https://anekamarket.github.io/caferesto-trial/" target="_blank" class="button app-button" data-description="Demo aplikasi manajemen untuk kafe dan restoran."><i class="fas fa-utensils"></i> Cafe & Resto</a>
-            <a href="https://anekamarket.github.io/hotel-ujicoba/" target="_blank" class="button app-button" data-description="Lihat uji coba sistem manajemen perhotelan."><i class="fas fa-concierge-bell"></i> Hotel</a>
-            <a href="https://anekamarket.github.io/wisata-ujicoba/" target="_blank" class="button app-button" data-description="Aplikasi uji coba untuk manajemen tiket tempat wisata."><i class="fas fa-map-marked-alt"></i> Wisata</a>
-            <a href="https://pergunu.github.io/ujian-online/" target="_blank" class="button app-button" data-description="Platform untuk menyelenggarakan ujian secara online."><i class="fas fa-file-alt"></i> Ujian</a>
-            <a href="https://anekamarket.github.io/laundry-trial/" target="_blank" class="button app-button" data-description="Demo aplikasi manajemen untuk usaha laundry."><i class="fas fa-tshirt"></i> Loundry</a>
-            <a href="https://anekamarket.github.io/segerahadir/" target="_blank" class="button app-button" data-description="Aplikasi untuk agen travel dan perjalanan. Segera hadir!"><i class="fas fa-plane"></i> Travel</a>
-            <a href="https://anekamarket.github.io/keuangan-digital/" target="_blank" class="button app-button" data-description="Aplikasi sederhana untuk mencatat keuangan pribadi atau usaha."><i class="fas fa-book-open"></i> Catatan Keuangan</a>
-            <a href="https://anekamarket.github.io/undian/" target="_blank" class="button app-button" data-description="Sistem untuk melakukan undian atau lotre secara digital."><i class="fas fa-ticket-alt"></i> Lotre Digital</a>
-            <a href="https://anekamarket.github.io/segerahadir/" target="_blank" class="button app-button" data-description="Nantikan aplikasi-aplikasi canggih lainnya dari kami!"><i class="fas fa-plus-circle"></i> Aplikasi Lainnya</a>
-        </div>
-        
-        <div class="footer">
-            &copy; 2025 Lentera Karya Situbondo. All Rights Reserved.
-        </div>
-    </div>
-    
-    <div id="tooltip"></div>
 
-    <audio id="audio-click" src="https://cdn.pixabay.com/audio/2022/03/15/audio_24ae930919.mp3" preload="auto"></audio>
-    <audio id="audio-hover" src="https://cdn.pixabay.com/audio/2022/03/10/audio_51323f03b2.mp3" preload="auto"></audio>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Partikel Latar Belakang ---
-            const container = document.getElementById('particle-container');
-            if (container) {
-                const particleCount = 50;
-                for (let i = 0; i < particleCount; i++) {
-                    let particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    const size = Math.random() * 8 + 2;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    const duration = Math.random() * 15 + 10;
-                    particle.style.animationDuration = `${duration}s`;
-                    const delay = Math.random() * 10;
-                    particle.style.animationDelay = `${delay}s`;
-                    container.appendChild(particle);
-                }
-            }
-
-            // --- EFEK AUDIO: Pengaturan Suara ---
-            const soundToggle = document.getElementById('sound-toggle');
-            const audioClick = document.getElementById('audio-click');
-            const audioHover = document.getElementById('audio-hover');
-            const allButtons = document.querySelectorAll('.button');
-            let isSoundEnabled = false;
-
-            audioClick.volume = 0.5;
-            audioHover.volume = 0.2;
-
-            if (soundToggle) {
-                soundToggle.addEventListener('click', () => {
-                    isSoundEnabled = !isSoundEnabled;
-                    const icon = soundToggle.querySelector('i');
-                    icon.className = isSoundEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
-                    // Mainkan suara klik saat tombol suara diaktifkan untuk pertama kali
-                    if (isSoundEnabled) {
-                        audioClick.currentTime = 0;
-                        audioClick.play();
-                    }
-                });
-            }
-
-            allButtons.forEach(button => {
-                button.addEventListener('mouseenter', () => {
-                    if (isSoundEnabled) {
-                        audioHover.currentTime = 0;
-                        audioHover.play();
-                    }
-                });
-                button.addEventListener('click', () => {
-                    if (isSoundEnabled) {
-                        audioClick.currentTime = 0;
-                        audioClick.play();
-                    }
-                });
-            });
-
-            // --- FITUR BARU: Tema Ganda (Dark/Light Mode) ---
-            const themeToggle = document.getElementById('theme-toggle');
-            if (themeToggle) {
-                // Periksa tema yang tersimpan di localStorage
-                if (localStorage.getItem('theme') === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    themeToggle.querySelector('i').className = 'fas fa-sun';
-                }
-
-                themeToggle.addEventListener('click', () => {
-                    document.body.classList.toggle('dark-mode');
-                    const isDarkMode = document.body.classList.contains('dark-mode');
-                    themeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
-                    // Simpan preferensi tema
-                    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-                });
-            }
-
-            // --- PENINGKATAN: Efek 3D Tilt pada Kartu ---
-            const contentCard = document.getElementById('content-card');
-            if (contentCard) {
-                contentCard.addEventListener('mousemove', (e) => {
-                    const { left, top, width, height } = contentCard.getBoundingClientRect();
-                    const x = e.clientX - left;
-                    const y = e.clientY - top;
-                    const rotateX = (height / 2 - y) / 20; // Atur pembagi untuk sensitivitas
-                    const rotateY = (x - width / 2) / 20;
-                    contentCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                });
-                contentCard.addEventListener('mouseleave', () => {
-                    contentCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-                });
-            }
-
-            // --- FITUR BARU: Pencarian Cepat (Live Search) ---
-            const searchInput = document.getElementById('app-search');
-            const appGrid = document.getElementById('app-grid');
-            if (searchInput && appGrid) {
-                const appButtons = Array.from(appGrid.children);
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    appButtons.forEach(button => {
-                        const buttonText = button.textContent.toLowerCase();
-                        if (buttonText.includes(searchTerm)) {
-                            button.classList.remove('hidden');
-                        } else {
-                            button.classList.add('hidden');
-                        }
-                    });
-                });
-            }
+    <div class="app-container">
+        <section class="panel controls-section fade-in" style="animation-delay: 0.2s;">
+            <h1>Lentera Prime 5.1</h1>
+            <p class="subtitle">Roda undian dengan kontrol suara & fitur cerdas.</p>
             
-            // --- FITUR BARU: Tooltip Pratinjau Link ---
-            const tooltip = document.getElementById('tooltip');
-            const appLinks = document.querySelectorAll('.app-button');
-            if (tooltip) {
-                appLinks.forEach(link => {
-                    link.addEventListener('mouseenter', (e) => {
-                        const description = link.getAttribute('data-description');
-                        if (description) {
-                            tooltip.textContent = description;
-                            tooltip.classList.add('visible');
-                        }
-                    });
+            <div class="label-group">
+                <label for="participants-textarea">Nama Peserta</label>
+                <div>
+                    <span id="participant-probability">Peluang: -</span>
+                    <span id="participant-count" style="margin-left: 8px;">0</span>
+                </div>
+            </div>
+            <textarea id="participants-textarea" placeholder="Satu nama per baris..."></textarea>
+            
+            <div class="button-group">
+                <button class="action-button" id="shuffle-button"><i class="fa-solid fa-shuffle"></i> Acak</button>
+                <button class="action-button" id="clear-button"><i class="fa-solid fa-trash"></i> Kosongkan</button>
+            </div>
 
-                    link.addEventListener('mousemove', (e) => {
-                        // Posisi tooltip sedikit di bawah dan di kanan kursor
-                        tooltip.style.left = `${e.clientX + 15}px`;
-                        tooltip.style.top = `${e.clientY + 15}px`;
-                    });
+            <div class="input-group">
+                <label for="multi-winner-count">Jumlah Pemenang Sekali Putar</label>
+                <input type="number" id="multi-winner-count" value="1" min="1">
+            </div>
+            
+            <button id="spin-button">PUTAR RODA</button>
 
-                    link.addEventListener('mouseleave', () => {
-                        tooltip.classList.remove('visible');
-                    });
-                });
+            <div class="toggle-switch">
+                <label for="fairness-mode-toggle"><i class="fa-solid fa-shield-halved"></i> Mode Adil</label>
+                <label class="switch">
+                    <input type="checkbox" id="fairness-mode-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="sub-panel">
+                 <h3><i class="fa-solid fa-cogs"></i> Opsi Lanjutan</h3>
+                 <div class="button-group">
+                    <button class="action-button" id="import-button"><i class="fa-solid fa-file-import"></i> Import (.txt)</button>
+                    <input type="file" id="import-file" accept=".txt" style="display: none;">
+                    <button class="action-button" id="export-history-button"><i class="fa-solid fa-file-export"></i> Export Riwayat</button>
+                 </div>
+                 <div class="input-group">
+                    <label for="theme-selector">Pilih Tema</label>
+                    <select id="theme-selector">
+                        <option value="indigo">Ethereal Indigo</option>
+                        <option value="neon">Quantum Neon</option>
+                        <option value="solar">Solaris Flare</option>
+                        <option value="ocean">Oceanic Deep</option>
+                        <option value="rainbow">Quantum Rainbow</option> </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="wheel-section fade-in">
+            <div class="wheel-pointer" id="wheel-pointer"></div>
+            <canvas id="wheel-canvas" width="600" height="600"></canvas>
+        </section>
+
+        <section class="panel history-section fade-in" style="animation-delay: 0.4s;">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pemenang</h2>
+            <p class="subtitle">Daftar pemenang dari sesi ini.</p>
+            <ul id="history-list" class="scrollable-list"></ul>
+            
+            <div class="sub-panel">
+                <h3><i class="fa-solid fa-users"></i> Grup Peserta</h3>
+                <div class="button-group">
+                    <input type="text" id="save-group-name" placeholder="Nama grup..." style="width:100%; border-radius:10px; border:1px solid var(--border-color); padding: 0 10px;">
+                    <button id="save-group-button" class="action-button"><i class="fa-solid fa-save"></i> Simpan</button>
+                </div>
+                <ul id="saved-groups-list" class="scrollable-list" style="max-height: 150px;"></ul>
+            </div>
+            
+            <div class="sub-panel">
+                <h3><i class="fa-solid fa-people-group"></i> Generator Tim</h3>
+                <div class="input-group" style="margin: 0;">
+                    <label for="team-count">Bagi menjadi berapa tim?</label>
+                    <div style="display: flex; gap: 10px;">
+                       <input type="number" id="team-count" value="2" min="2" style="width: 60px;">
+                       <button id="generate-teams-button" class="action-button" style="width: 100%;"><i class="fa-solid fa-shuffle"></i> Buat Tim</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="modal-overlay" id="winner-modal">
+        <div class="modal-content">
+            <h2 id="winner-title">🎉 Selamat Kepada Pemenang 🎉</h2>
+            <p class="winner-name" id="winner-name-display"></p>
+            <div class="modal-buttons">
+                 <button class="modal-button primary" id="close-modal-btn">Tutup</button>
+                 <button class="modal-button" id="remove-winner-btn">Hapus Pemenang & Lanjut</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="fixed-controls">
+        <button id="voice-control-btn" class="fixed-btn" title="Aktifkan Kontrol Suara (Katakan 'Putar Roda')">
+            <i class="fa-solid fa-microphone-slash"></i>
+        </button>
+        <button id="sound-toggle" class="fixed-btn" title="Aktifkan/Matikan Suara">
+            <i class="fa-solid fa-volume-xmark"></i>
+        </button>
+    </div>
+
+    <div id="confetti-container"></div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const canvas = document.getElementById('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        const spinButton = document.getElementById('spin-button');
+        const participantsTextarea = document.getElementById('participants-textarea');
+        const modal = document.getElementById('winner-modal');
+        const winnerNameDisplay = document.getElementById('winner-name-display');
+        const winnerTitle = document.getElementById('winner-title');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const removeWinnerBtn = document.getElementById('remove-winner-btn');
+        const confettiContainer = document.getElementById('confetti-container');
+        const participantCountDisplay = document.getElementById('participant-count');
+        const probabilityDisplay = document.getElementById('participant-probability');
+        const clearButton = document.getElementById('clear-button');
+        const shuffleButton = document.getElementById('shuffle-button');
+        const historyList = document.getElementById('history-list');
+        const soundToggle = document.getElementById('sound-toggle');
+        const multiWinnerCountInput = document.getElementById('multi-winner-count');
+        const themeSelector = document.getElementById('theme-selector');
+        const importButton = document.getElementById('import-button');
+        const importFileInput = document.getElementById('import-file');
+        const exportHistoryButton = document.getElementById('export-history-button');
+        const saveGroupNameInput = document.getElementById('save-group-name');
+        const saveGroupButton = document.getElementById('save-group-button');
+        const savedGroupsList = document.getElementById('saved-groups-list');
+        const wheelPointer = document.getElementById('wheel-pointer');
+        const fairnessModeToggle = document.getElementById('fairness-mode-toggle');
+        const teamCountInput = document.getElementById('team-count');
+        const generateTeamsButton = document.getElementById('generate-teams-button');
+        const voiceControlButton = document.getElementById('voice-control-btn');
+
+        // --- State ---
+        let participants = [];
+        let winnerHistory = [];
+        let savedGroups = {};
+        let currentRotation = 0;
+        let isSpinning = false;
+        let lastWinner = '';
+        let soundEnabled = false;
+        let tickInterval;
+        let multiWinnerQueue = 0;
+        let isFairnessMode = false;
+        let isAudioInitialized = false;
+
+        // --- PENINGKATAN: Audio lebih baik & suara baru ---
+        const sounds = {
+            tick: new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV-'),
+            win: new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAFAAAACDc1aHR0cHM6Ly9zd2ZpbGUuaW8vZHJlYW1zdGltZS1hcy1hLXRvb2wAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'),
+            click: new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAEw//3/3//7/f/p/9f/s/9v/z//v/3v+3//L/8//d/7f/y//f/4v/xf/f/w//3/z//L/9//p/9v/z//f/+//e/8='),
+            whoosh: new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU3LjgyLjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIBCF/6vAAAAAAAAAAAAAAAAAAAAA//uQxAAAAAABQAAAAFrTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//uQxAsAAANIAAAA3gFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+        };
+        sounds.tick.volume = 0.5;
+        
+        // --- THEME COLORS ---
+        const themes = {
+            // ... (definisi tema yang ada tetap sama)
+            // FITUR BARU: Menambahkan definisi warna untuk tema rainbow
+            rainbow: {
+                '--bg-color': '#F4F7FC', '--surface-color': '#FFFFFF', '--primary-color': '#6366F1',
+                '--primary-gradient': 'linear-gradient(45deg, #F472B6, #818CF8, #60A5FA, #34D399)',
+                '--text-color': '#1F2937', '--text-secondary': '#6B7281', '--border-color': '#E5E7EB',
+                'wheelColors': [] // Akan di-generate secara dinamis
             }
+        };
+        let activeTheme = 'indigo';
+
+        // --- Functions ---
+        
+        // PENINGKATAN: Inisialisasi audio saat interaksi pertama
+        const initAudio = () => {
+            if (isAudioInitialized) return;
+            Object.values(sounds).forEach(sound => {
+                sound.play().catch(() => {});
+                sound.pause();
+                sound.currentTime = 0;
+            });
+            isAudioInitialized = true;
+        };
+        
+        const playSound = (sound) => {
+            if (soundEnabled && isAudioInitialized) {
+                sound.currentTime = 0;
+                sound.play();
+            }
+        };
+
+        const getParticipants = () => { /* ... (fungsi tetap sama) ... */ };
+        
+        const updateParticipantInfo = () => {
+            const count = getParticipants().length;
+            participantCountDisplay.textContent = count;
+            if (count > 0) {
+                const prob = (1 / count) * 100;
+                probabilityDisplay.textContent = `Peluang: ${prob.toFixed(2)}%`;
+            } else {
+                probabilityDisplay.textContent = 'Peluang: -';
+            }
+        };
+        
+        const applyTheme = (themeName) => { /* ... (fungsi tetap sama) ... */ };
+        
+        const drawWheel = () => {
+            participants = getParticipants();
+            const numSegments = participants.length;
+            // ... (kode gambar dasar tetap sama) ...
+
+            // PENINGKATAN: Logika untuk tema rainbow dinamis
+            let wheelColors;
+            if (activeTheme === 'rainbow' && numSegments > 0) {
+                wheelColors = Array.from({ length: numSegments }, (_, i) => 
+                    `hsl(${(i * 360) / numSegments}, 85%, 65%)`
+                );
+            } else {
+                wheelColors = themes[activeTheme].wheelColors;
+            }
+
+            // ... (sisa kode gambar dengan `wheelColors` yang sudah ditentukan) ...
+            updateParticipantInfo();
+        };
+
+        const spin = () => { /* ... (sebagian besar fungsi tetap sama) ... */ };
+        
+        // PENINGKATAN: Logika baru untuk menangani akhir putaran
+        const handleSpinEnd = () => {
+            clearInterval(tickInterval);
+            wheelPointer.classList.add('bounce'); // Tambahkan animasi pantul
+            setTimeout(() => wheelPointer.classList.remove('bounce'), 500);
+
+            // ... (logika kalkulasi pemenang tetap sama) ...
+            const winner = participants[winningSegmentIndex];
+            
+            // Sorot segmen pemenang di roda sebelum menampilkan modal
+            highlightWinnerSegment(winningSegmentIndex, () => showWinner(winner));
+        };
+        
+        const highlightWinnerSegment = (index, callback) => {
+            const numSegments = participants.length;
+            if (numSegments === 0) { callback(); return; }
+
+            // Logika untuk "menggambar ulang" segmen yang menang dengan efek glow
+            // Ini adalah pendekatan sederhana, library canvas yang lebih canggih bisa lebih baik
+            playSound(sounds.win);
+            canvas.classList.add('wheel-canvas-winner');
+            setTimeout(() => {
+                canvas.classList.remove('wheel-canvas-winner');
+                callback();
+            }, 1500); // Tunggu animasi glow selesai
+        };
+        
+        const showWinner = (winner) => {
+            // ... (sebagian besar logika tetap sama) ...
+            
+            // PENINGKATAN: Logika untuk Fairness Mode
+            if(isFairnessMode) {
+                removeWinnerBtn.textContent = 'Hapus Pemenang & Lanjut';
+                setTimeout(removeWinnerAndContinue, 2000); // Hapus otomatis setelah 2 detik
+            } else {
+                removeWinnerBtn.textContent = 'Hapus Pemenang & Putar Lagi';
+            }
+        };
+
+        // --- FITUR BARU: Voice Control ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+                if (transcript.includes("putar")) {
+                    spin();
+                }
+                voiceControlButton.classList.remove('active');
+            };
+            recognition.onerror = () => voiceControlButton.classList.remove('active');
+            recognition.onend = () => voiceControlButton.classList.remove('active');
+        } else {
+            voiceControlButton.style.display = 'none'; // Sembunyikan jika tidak didukung
+        }
+
+        // --- Event Listeners ---
+        soundToggle.addEventListener('click', () => {
+            initAudio(); // Inisialisasi saat pertama kali diklik
+            soundEnabled = !soundEnabled;
+            soundToggle.innerHTML = soundEnabled 
+                ? '<i class="fa-solid fa-volume-high"></i>' 
+                : '<i class="fa-solid fa-volume-xmark"></i>';
+            playSound(sounds.click);
         });
+
+        // PENINGKATAN: Event listener untuk tombol putar (tekan & tahan)
+        let pressTimer;
+        spinButton.addEventListener('mousedown', () => {
+            pressTimer = setTimeout(() => { spinButton.classList.add('charging'); }, 200);
+        });
+        spinButton.addEventListener('mouseup', () => {
+            clearTimeout(pressTimer);
+            spinButton.classList.remove('charging');
+            playSound(sounds.whoosh);
+            spin();
+        });
+        spinButton.addEventListener('mouseleave', () => { // Batal jika mouse keluar
+            clearTimeout(pressTimer);
+            spinButton.classList.remove('charging');
+        });
+
+        fairnessModeToggle.addEventListener('change', (e) => {
+            isFairnessMode = e.target.checked;
+            playSound(sounds.click);
+        });
+        
+        if (recognition) {
+            voiceControlButton.addEventListener('click', () => {
+                playSound(sounds.click);
+                recognition.start();
+                voiceControlButton.classList.add('active');
+            });
+        }
+        
+        // ... (event listener lainnya tetap sama) ...
+
+        // --- Initial Load ---
+        loadData();
+        drawWheel();
+        updateWinnerHistory();
+        updateSavedGroupsList();
+    });
     </script>
 </body>
 </html>
