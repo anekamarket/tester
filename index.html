@@ -6,7 +6,6 @@
     <title>SIMPEG Ultimate Pro - Sistem Informasi Kepegawaian Cerdas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #0052cc; --primary-light-color: #e6f0ff; --secondary-color: #003380;
@@ -53,7 +52,11 @@
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { background-color: var(--light-color); font-weight: 600; }
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; text-transform: capitalize; }
-        .status-hadir { background-color: var(--success-color); } .status-cuti { background-color: var(--warning-color); color: var(--dark-color); } .status-belum-hadir { background-color: var(--gray-color); } .status-selesai { background-color: var(--primary-color); }
+        .status-hadir { background-color: var(--success-color); }
+        .status-terlambat { background-color: var(--warning-color); color: var(--dark-color);}
+        .status-cuti { background-color: var(--info-color); }
+        .status-belum-hadir { background-color: var(--gray-color); }
+        .status-selesai { background-color: var(--primary-color); }
         .status-disetujui, .status-paid { background-color: var(--success-color); } .status-ditolak { background-color: var(--danger-color); } .status-menunggu { background-color: var(--info-color); }
         .btn { padding: 10px 18px; border: none; border-radius: 0.35rem; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: all var(--transition-speed); display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .btn:disabled { background-color: var(--gray-color); cursor: not-allowed; opacity: 0.7; }
@@ -83,10 +86,11 @@
         .employee-name { font-weight: 600; } .employee-position { font-size: 0.9rem; color: var(--primary-color); }
         .empty-state { grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--gray-color); border: 2px dashed var(--border-color); border-radius: var(--rounded); background-color: var(--light-color); }
         .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
-        .filters { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-        .filters .form-control { max-width: 300px; }
+        .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .filters .form-control, .filters .btn { min-width: 180px; }
         .detail-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px 16px; }
         .detail-grid dt { font-weight: 600; color: var(--gray-color); } .detail-grid dd { margin: 0; }
+        hr.dashed { border: none; border-top: 2px dashed var(--border-color); margin: 2rem 0; }
         @media (max-width: 992px) {
             :root { --sidebar-width: 220px; }
         }
@@ -97,7 +101,16 @@
             .mobile-menu-btn { display: block; }
             .header-title h1 { font-size: 1.2rem; }
             .kpi-grid { grid-template-columns: 1fr 1fr; }
-            .filters { flex-direction: column; } .filters .form-control { max-width: 100%; }
+            .filters { flex-direction: column; align-items: stretch; } .filters .form-control { max-width: 100%; }
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #reportOutput, #reportOutput * { visibility: visible; }
+            #reportOutput { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+            #reportTitle { font-size: 24px; margin-bottom: 20px; text-align: center; }
+            table { font-size: 12px; }
+            th, td { padding: 8px; }
+            .status-badge { color: black !important; border: 1px solid #ccc; background-color: transparent !important;}
         }
     </style>
 </head>
@@ -111,7 +124,7 @@
                 <li><a href="#" data-page="departemenPage"><i class="fas fa-building"></i> Departemen</a></li>
                 <li><a href="#" data-page="absensiPage"><i class="fas fa-clock"></i> Absensi</a></li>
                 <li><a href="#" data-page="cutiPage"><i class="fas fa-calendar-alt"></i> Cuti</a></li>
-                <li><a href="#" data-page="laporanPage"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                <li><a href="#" data-page="laporanPage"><i class="fas fa-file-alt"></i> Laporan</a></li>
                 <li><a href="#" data-page="pengaturanPage"><i class="fas fa-cog"></i> Pengaturan</a></li>
             </ul>
         </aside>
@@ -132,7 +145,7 @@
                 <div class="kpi-grid" id="kpiGrid"></div>
                 <div class="main-grid" style="margin-top: 1.5rem;">
                     <div class="panel"><h3 class="panel-title">Distribusi Departemen</h3><canvas id="departmentChart"></canvas></div>
-                    <div class="panel"><h3 class="panel-title">Aktivitas Terkini</h3><ul id="activityLog" style="list-style: none; max-height: 250px; overflow-y: auto;"></ul></div>
+                    <div class="panel"><h3 class="panel-title">Aktivitas Terkini</h3><ul id="activityLog" style="list-style: none; max-height: 250px; overflow-y: auto; padding: 5px;"></ul></div>
                 </div>
             </div>
 
@@ -167,10 +180,14 @@
 
             <div id="absensiPage" class="page">
                  <div class="panel">
-                     <div class="panel-title">Absensi Hari Ini - <span id="currentDateText"></span></div>
+                     <div class="panel-title">Rekap Absensi Karyawan</div>
+                     <div class="filters">
+                         <input type="date" id="attendanceDateFilter" class="form-control">
+                         <select id="attendanceDeptFilter" class="form-control"></select>
+                     </div>
                      <div class="table-container" style="overflow-x: auto;">
                          <table id="attendanceTable">
-                             <thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Status</th><th>Aksi</th></tr></thead>
+                             <thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jam Masuk</th><th>Jam Keluar</th><th>Durasi Kerja</th><th>Status</th><th>Aksi</th></tr></thead>
                              <tbody></tbody>
                          </table>
                      </div>
@@ -180,19 +197,67 @@
             <div id="cutiPage" class="page">
                 <div class="panel">
                     <div class="panel-title"><span>Manajemen Cuti</span><button class="btn btn-primary" id="addLeaveBtn"><i class="fas fa-plus"></i> Ajukan Cuti</button></div>
-                    <div class="table-container">
+                    <div class="table-container" style="overflow-x: auto;">
                         <table id="leaveTable"><thead><tr><th>Nama Karyawan</th><th>Tanggal Mulai</th><th>Tanggal Selesai</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead><tbody></tbody></table>
                     </div>
                 </div>
             </div>
             
             <div id="laporanPage" class="page">
-                 <div class="main-grid"><div class="panel"><h3 class="panel-title">Laporan Status Karyawan</h3><canvas id="statusChart"></canvas></div><div class="panel"><h3 class="panel-title">Laporan Komposisi Gender</h3><canvas id="genderChart"></canvas></div></div>
+                 <div class="panel">
+                     <div class="panel-title">Generator Laporan</div>
+                     <div class="filters">
+                         <div class="form-group">
+                             <label for="reportType" class="form-label">Jenis Laporan</label>
+                             <select id="reportType" class="form-control">
+                                 <option value="attendance">Laporan Absensi Karyawan</option>
+                                 <option value="employee_status">Laporan Status Karyawan</option>
+                             </select>
+                         </div>
+                         <div class="form-group">
+                             <label for="reportStartDate" class="form-label">Tanggal Mulai</label>
+                             <input type="date" id="reportStartDate" class="form-control">
+                         </div>
+                         <div class="form-group">
+                             <label for="reportEndDate" class="form-label">Tanggal Selesai</label>
+                             <input type="date" id="reportEndDate" class="form-control">
+                         </div>
+                         <div class="form-group">
+                             <label for="reportDeptFilter" class="form-label">Departemen</label>
+                             <select id="reportDeptFilter" class="form-control"></select>
+                         </div>
+                     </div>
+                     <button id="generateReportBtn" class="btn btn-primary" style="width: 100%;"><i class="fas fa-print"></i> Buat & Cetak Laporan</button>
+                </div>
+                <div id="reportOutput" class="panel" style="margin-top: 1.5rem; border-color: var(--primary-color);"></div>
             </div>
             
             <div id="pengaturanPage" class="page">
                 <div class="panel">
                     <div class="panel-title">Pengaturan Aplikasi</div>
+                    
+                    <div class="settings-group">
+                        <h4>Pengaturan Jam Kerja</h4>
+                        <p style="margin-bottom: 1rem; color: var(--gray-color);">Atur jam kerja standar untuk perhitungan status absensi.</p>
+                        <div class="main-grid">
+                            <div class="form-group">
+                                <label for="settingJamMasuk" class="form-label">Jam Masuk Standar</label>
+                                <input type="time" id="settingJamMasuk" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="settingJamPulang" class="form-label">Jam Pulang Standar</label>
+                                <input type="time" id="settingJamPulang" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="settingToleransi" class="form-label">Toleransi Keterlambatan (menit)</label>
+                                <input type="number" id="settingToleransi" class="form-control" min="0">
+                            </div>
+                        </div>
+                        <button id="saveWorkHoursBtn" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Pengaturan Jam</button>
+                    </div>
+
+                    <hr class="dashed">
+
                     <div class="settings-group">
                         <h4>Manajemen Data</h4>
                         <p style="margin-bottom: 1rem; color: var(--gray-color);">Simpan data Anda secara lokal atau pulihkan dari file cadangan.</p>
@@ -210,20 +275,12 @@
 
     <div id="notificationToast"></div>
 
-    <div id="employeeFormModal" class="modal">
-        <div class="modal-content">
-             <div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div>
-             <div class="modal-body"><form id="employeeForm" onsubmit="event.preventDefault(); actions.saveEmployee();"></form></div>
-             <div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="employeeForm" class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div>
-        </div>
-    </div>
-    <div id="employeeDetailModal" class="modal">
-        <div class="modal-content"><div class="modal-header"><h3 class="modal-title">Detail Karyawan</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="employeeDetailBody"></div><div class="modal-footer" id="employeeDetailFooter"></div></div>
-    </div>
-    <div id="confirmModal" class="modal">
-        <div class="modal-content" style="max-width: 450px;"><div class="modal-header"><h3 class="modal-title" id="confirmModalTitle">Konfirmasi</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn" id="confirmModalBtn">Ya</button></div></div>
-    </div>
+    <div id="employeeFormModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title" id="employeeModalTitle"></h3><button class="modal-close">&times;</button></div><div class="modal-body"><form id="employeeForm" onsubmit="event.preventDefault(); actions.saveEmployee();"></form></div><div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="employeeForm" class="btn btn-primary" id="saveEmployeeBtn">Simpan</button></div></div></div>
+    <div id="employeeDetailModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Detail Karyawan</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="employeeDetailBody"></div><div class="modal-footer" id="employeeDetailFooter"></div></div></div>
+    <div id="leaveFormModal" class="modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Formulir Pengajuan Cuti</h3><button class="modal-close">&times;</button></div><div class="modal-body"><form id="leaveForm" onsubmit="event.preventDefault(); actions.saveLeave();"></form></div><div class="modal-footer"><button type="button" class="btn modal-close">Batal</button><button type="submit" form="leaveForm" class="btn btn-primary">Ajukan</button></div></div></div>
+    <div id="confirmModal" class="modal"><div class="modal-content" style="max-width: 450px;"><div class="modal-header"><h3 class="modal-title" id="confirmModalTitle">Konfirmasi</h3><button class="modal-close">&times;</button></div><div class="modal-body" id="confirmModalBody"></div><div class="modal-footer"><button class="btn modal-close">Batal</button><button class="btn" id="confirmModalBtn">Ya</button></div></div></div>
     
+    <script src="httpshttps://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
 // Prevent flash of unstyled content
 document.body.style.display = 'none';
@@ -236,17 +293,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // =================================================================================
     let db;
     let charts = {};
-    const today = new Date().toISOString().slice(0, 10);
     const defaultDb = {
         employees: [],
         departments: ['Teknologi', 'Produk', 'Manajemen', 'SDM', 'Pemasaran', 'Keuangan'],
-        attendance: {},
+        attendance: {}, // Key is YYYY-MM-DD
         activities: [],
         leaves: [], // {id, employeeNip, startDate, endDate, reason, status: 'Menunggu'}
+        settings: {
+            jamMasuk: '08:00',
+            jamPulang: '17:00',
+            toleransi: 15 // in minutes
+        }
     };
     
     function seedData() {
-        // Data default sengaja dikosongkan sesuai permintaan
         addActivity('Aplikasi siap digunakan. Silakan tambahkan data karyawan.', true);
         saveDb();
     }
@@ -255,11 +315,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = localStorage.getItem('simpegUltimateDb');
         if (data) {
             db = JSON.parse(data);
+            // Ensure settings object exists for backward compatibility
+            if (!db.settings) {
+                db.settings = JSON.parse(JSON.stringify(defaultDb.settings));
+            }
         } else {
             db = JSON.parse(JSON.stringify(defaultDb));
             seedData();
         }
-        if (!db.attendance[today]) db.attendance[today] = [];
     }
 
     function saveDb() {
@@ -294,6 +357,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('confirmModal').classList.remove('show');
             };
             document.getElementById('confirmModal').classList.add('show');
+        },
+        getTodayString: () => new Date().toISOString().slice(0, 10),
+        populateDeptFilter: (elementId, withAllOption = true) => {
+            const selectEl = document.getElementById(elementId);
+            const currentVal = selectEl.value;
+            selectEl.innerHTML = withAllOption ? '<option value="">Semua Departemen</option>' : '';
+            db.departments.forEach(d => selectEl.add(new Option(d, d)));
+            selectEl.value = currentVal;
         }
     };
 
@@ -318,8 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 karyawanPage: render.karyawan,
                 departemenPage: render.departemen,
                 absensiPage: render.absensi,
+                cutiPage: render.cuti,
                 laporanPage: render.laporan,
-                cutiPage: render.cuti
+                pengaturanPage: render.pengaturan
             };
             renderMap[pageId]?.();
         },
@@ -352,53 +424,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`}).join('');
             
             document.getElementById('employeeCount').textContent = `(${db.employees.length})`;
-            
-            const deptFilterEl = document.getElementById('departmentFilter');
-            const currentVal = deptFilterEl.value;
-            deptFilterEl.innerHTML = '<option value="">Semua Departemen</option>';
-            db.departments.forEach(d => deptFilterEl.add(new Option(d, d)));
-            deptFilterEl.value = currentVal;
+            uiUtils.populateDeptFilter('departmentFilter');
         },
         departemen: () => {
             const tableBody = document.querySelector('#departmentTable tbody');
-            if (db.departments.length === 0) {
-                 tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 2rem; color: var(--gray-color);">Belum ada departemen.</td></tr>`;
-                 return;
-            }
-            tableBody.innerHTML = db.departments.map(dept => `
-                <tr>
-                    <td>${dept}</td>
-                    <td><button class="btn btn-danger btn-sm" onclick="actions.deleteDepartment('${dept}')"><i class="fas fa-trash"></i></button></td>
-                </tr>
-            `).join('');
+            tableBody.innerHTML = db.departments.length === 0
+                ? `<tr><td colspan="2" class="empty-state" style="padding: 2rem;">Belum ada departemen.</td></tr>`
+                : db.departments.map(dept => `
+                    <tr>
+                        <td>${dept}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="actions.deleteDepartment('${dept}')"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `).join('');
         },
         absensi: () => {
-            document.getElementById('currentDateText').textContent = new Date().toLocaleDateString('id-ID', { dateStyle: 'full' });
+            const date = document.getElementById('attendanceDateFilter').value;
+            const dept = document.getElementById('attendanceDeptFilter').value;
             const tableBody = document.querySelector('#attendanceTable tbody');
-            if (db.employees.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--gray-color);">Belum ada karyawan untuk diabsen.</td></tr>`;
+
+            const filteredEmployees = db.employees.filter(emp => !dept || emp.department === dept);
+
+            if (filteredEmployees.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="padding: 2rem;">Belum ada karyawan untuk diabsen.</td></tr>`;
                 return;
             }
-            tableBody.innerHTML = db.employees.map(emp => {
-                const record = db.attendance[today]?.find(a => a.nip === emp.nip);
+
+            tableBody.innerHTML = filteredEmployees.map(emp => {
+                const record = db.attendance[date]?.find(a => a.nip === emp.nip);
                 let status = 'Belum Hadir';
+                let statusClass = 'belum-hadir';
                 let actionButton = `<button class="btn btn-success" onclick="actions.clockIn('${emp.nip}')">Clock In</button>`;
-                
+                let duration = '-';
+
                 if (record) {
+                    const clockInTime = new Date(record.clockIn);
+                    const standardMasuk = new Date(`${date}T${db.settings.jamMasuk}`);
+                    standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
+
+                    if (clockInTime > standardMasuk) {
+                         status = 'Terlambat'; statusClass = 'terlambat';
+                    } else {
+                        status = 'Hadir'; statusClass = 'hadir';
+                    }
+
                     if (record.clockIn && !record.clockOut) {
-                        status = 'Hadir';
                         actionButton = `<button class="btn btn-primary" onclick="actions.clockOut('${emp.nip}')">Clock Out</button>`;
                     } else if (record.clockIn && record.clockOut) {
-                        status = 'Selesai';
+                        status = 'Selesai'; statusClass = 'selesai';
                         actionButton = `-`;
+                        const diff = new Date(record.clockOut) - clockInTime;
+                        const hours = Math.floor(diff / 3600000);
+                        const mins = Math.floor((diff % 3600000) / 60000);
+                        duration = `${hours} jam ${mins} mnt`;
                     }
                 }
 
                 return `<tr>
                     <td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td>
-                    <td>${record?.clockIn ? new Date(record.clockIn).toLocaleTimeString('id-ID') : '-'}</td>
-                    <td>${record?.clockOut ? new Date(record.clockOut).toLocaleTimeString('id-ID') : '-'}</td>
-                    <td><span class="status-badge status-${status.toLowerCase().replace(' ', '-')}">${status}</span></td>
+                    <td>${record?.clockIn ? new Date(record.clockIn).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : '-'}</td>
+                    <td>${record?.clockOut ? new Date(record.clockOut).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : '-'}</td>
+                    <td>${duration}</td>
+                    <td><span class="status-badge status-${statusClass}">${status}</span></td>
                     <td>${actionButton}</td>
                 </tr>`;
             }).join('');
@@ -406,10 +492,13 @@ document.addEventListener('DOMContentLoaded', function() {
         cuti: () => {
             const tableBody = document.querySelector('#leaveTable tbody');
             if (db.leaves.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color: var(--gray-color);">Belum ada pengajuan cuti.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" class="empty-state" style="padding: 2rem;">Belum ada pengajuan cuti.</td></tr>`;
                 return;
             }
-            tableBody.innerHTML = db.leaves.map(leave => {
+            // Sort by most recent
+            const sortedLeaves = [...db.leaves].sort((a,b) => new Date(b.id) - new Date(a.id));
+
+            tableBody.innerHTML = sortedLeaves.map(leave => {
                 const employee = db.employees.find(e => e.nip === leave.employeeNip);
                 return `<tr>
                     <td>${employee?.name || 'N/A'}</td>
@@ -417,19 +506,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${new Date(leave.endDate).toLocaleDateString('id-ID')}</td>
                     <td>${leave.reason}</td>
                     <td><span class="status-badge status-${leave.status.toLowerCase()}">${leave.status}</span></td>
-                    <td>${leave.status === 'Menunggu' ? `
-                        <button class="btn btn-success btn-sm" onclick="actions.updateLeaveStatus(${leave.id}, 'Disetujui')"><i class="fas fa-check"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="actions.updateLeaveStatus(${leave.id}, 'Ditolak')"><i class="fas fa-times"></i></button>
-                    ` : '-'}</td>
+                    <td>
+                        ${leave.status === 'Menunggu' ? `
+                        <button class="btn btn-success btn-sm" title="Setujui" onclick="actions.updateLeaveStatus(${leave.id}, 'Disetujui')"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-danger btn-sm" title="Tolak" onclick="actions.updateLeaveStatus(${leave.id}, 'Ditolak')"><i class="fas fa-times"></i></button>
+                        ` : '-'}
+                        <button class="btn btn-danger btn-sm" title="Hapus" onclick="actions.deleteLeave(${leave.id})"><i class="fas fa-trash"></i></button>
+                    </td>
                 </tr>`;
             }).join('');
         },
         laporan: () => {
-            render.charts.status();
-            render.charts.gender();
+            uiUtils.populateDeptFilter('reportDeptFilter');
+            document.getElementById('reportOutput').innerHTML = '<p style="text-align: center; color: var(--gray-color);">Pilih filter di atas dan klik "Buat Laporan" untuk melihat hasil.</p>';
+        },
+        pengaturan: () => {
+            document.getElementById('settingJamMasuk').value = db.settings.jamMasuk;
+            document.getElementById('settingJamPulang').value = db.settings.jamPulang;
+            document.getElementById('settingToleransi').value = db.settings.toleransi;
         },
         kpi: () => {
-            const onLeave = db.leaves.filter(l => l.status === 'Disetujui' && new Date(l.startDate) <= new Date() && new Date(l.endDate) >= new Date()).length;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const onLeave = db.leaves.filter(l => l.status === 'Disetujui' && new Date(l.startDate) <= today && new Date(l.endDate) >= today).length;
             const total = db.employees.length;
             const men = db.employees.filter(e => e.gender === 'Pria').length;
             document.getElementById('kpiGrid').innerHTML = `
@@ -442,26 +541,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const logUl = document.getElementById('activityLog');
             logUl.innerHTML = db.activities.length === 0 
                 ? '<li>Tidak ada aktivitas.</li>'
-                : db.activities.map(act => `<li>${act.text} <small style="color: var(--gray-color)">(${new Date(act.time).toLocaleTimeString('id-ID')})</small></li>`).join('');
+                : db.activities.map(act => `<li style="padding: 4px 0; border-bottom: 1px solid var(--border-color);">${act.text} <small style="display:block; color: var(--gray-color)">${new Date(act.time).toLocaleString('id-ID')}</small></li>`).join('');
         },
         charts: {
             destroy: (chartId) => { if(charts[chartId]) { charts[chartId].destroy(); delete charts[chartId]; } },
             department: () => {
                 render.charts.destroy('dept');
+                const ctx = document.getElementById('departmentChart')?.getContext('2d');
+                if (!ctx) return;
                 const data = db.departments.map(dept => ({ dept, count: db.employees.filter(e => e.department === dept).length }));
-                charts['dept'] = new Chart(document.getElementById('departmentChart').getContext('2d'), { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d', '#343a40'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+                charts['dept'] = new Chart(ctx, { type: 'doughnut', data: { labels: data.map(d => d.dept), datasets: [{ data: data.map(d => d.count), backgroundColor: ['#0052cc', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6c757d', '#343a40'] }] }, options: { responsive: true, maintainAspectRatio: false } });
             },
-            status: () => {
-                render.charts.destroy('status');
-                const statuses = ['Permanen', 'Kontrak', 'Magang'];
-                const data = statuses.map(s => db.employees.filter(e => e.status === s).length);
-                charts['status'] = new Chart(document.getElementById('statusChart').getContext('2d'), { type: 'bar', data: { labels: statuses, datasets: [{ label: 'Jumlah Karyawan', data: data, backgroundColor: ['#0052cc', '#ffc107', '#17a2b8'] }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } } });
-            },
-            gender: () => {
-                render.charts.destroy('gender');
-                const men = db.employees.filter(e => e.gender === 'Pria').length;
-                charts['gender'] = new Chart(document.getElementById('genderChart').getContext('2d'), { type: 'pie', data: { labels: ['Pria', 'Wanita'], datasets: [{ data: [men, db.employees.length - men], backgroundColor: ['#0052cc', '#dc3545'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-            }
         },
         employeeForm: (nip = null) => {
             const form = document.getElementById('employeeForm');
@@ -503,6 +593,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="btn btn-danger" onclick="actions.deleteEmployee('${emp.nip}')"><i class="fas fa-trash"></i> Hapus</button>
                 <button class="btn btn-primary" onclick="render.employeeForm('${emp.nip}')"><i class="fas fa-edit"></i> Edit</button>`;
             document.getElementById('employeeDetailModal').classList.add('show');
+        },
+        leaveForm: () => {
+            const form = document.getElementById('leaveForm');
+            if(db.employees.length === 0) {
+                uiUtils.showToast('Tidak bisa mengajukan cuti, belum ada data karyawan.', 'danger');
+                return;
+            }
+            form.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label" for="leaveEmployee">Pilih Karyawan</label>
+                    <select id="leaveEmployee" class="form-control" required>
+                        ${db.employees.map(e => `<option value="${e.nip}">${e.name} (${e.nip})</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="leaveStartDate">Tanggal Mulai</label>
+                    <input type="date" id="leaveStartDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="leaveEndDate">Tanggal Selesai</label>
+                    <input type="date" id="leaveEndDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="leaveReason">Alasan Cuti</label>
+                    <textarea id="leaveReason" class="form-control" rows="3" required></textarea>
+                </div>
+            `;
+            document.getElementById('leaveFormModal').classList.add('show');
         }
     };
 
@@ -515,20 +633,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const isEditing = !!originalNip;
             const nip = document.getElementById('employeeNip').value.trim();
 
-            if (!nip) {
-                uiUtils.showToast('NIP / ID Karyawan wajib diisi.', 'danger');
-                return;
-            }
-
-            // Cek duplikasi NIP hanya saat menambah karyawan baru
-            if (!isEditing && db.employees.some(e => e.nip === nip)) {
-                uiUtils.showToast('NIP / ID Karyawan sudah digunakan.', 'danger');
-                return;
-            }
-            if (db.departments.length === 0){
-                uiUtils.showToast('Anda harus membuat departemen terlebih dahulu.', 'danger');
-                return;
-            }
+            if (!nip) { uiUtils.showToast('NIP / ID Karyawan wajib diisi.', 'danger'); return; }
+            if (!isEditing && db.employees.some(e => e.nip === nip)) { uiUtils.showToast('NIP / ID Karyawan sudah digunakan.', 'danger'); return; }
+            if (db.departments.length === 0){ uiUtils.showToast('Anda harus membuat departemen terlebih dahulu.', 'danger'); return; }
 
             const data = {
                 nip: nip, name: document.getElementById('employeeName').value, email: document.getElementById('employeeEmail').value,
@@ -592,22 +699,48 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         },
         clockIn: (nip) => {
-            if (!db.attendance[today]) db.attendance[today] = [];
-            db.attendance[today].push({ nip: nip, clockIn: new Date(), clockOut: null });
+            const date = document.getElementById('attendanceDateFilter').value;
+            if (!db.attendance[date]) db.attendance[date] = [];
+            db.attendance[date].push({ nip: nip, clockIn: new Date(), clockOut: null });
             const emp = db.employees.find(e => e.nip === nip);
             addActivity(`${emp.name} melakukan clock in.`);
             saveDb();
             render.absensi();
         },
         clockOut: (nip) => {
-            const recordIndex = db.attendance[today].findIndex(a => a.nip === nip);
+            const date = document.getElementById('attendanceDateFilter').value;
+            const recordIndex = db.attendance[date].findIndex(a => a.nip === nip);
             if (recordIndex > -1) {
-                db.attendance[today][recordIndex].clockOut = new Date();
+                db.attendance[date][recordIndex].clockOut = new Date();
                 const emp = db.employees.find(e => e.nip === nip);
                 addActivity(`${emp.name} melakukan clock out.`);
                 saveDb();
                 render.absensi();
             }
+        },
+        saveLeave: () => {
+            const employeeNip = document.getElementById('leaveEmployee').value;
+            const startDate = document.getElementById('leaveStartDate').value;
+            const endDate = document.getElementById('leaveEndDate').value;
+            const reason = document.getElementById('leaveReason').value.trim();
+            if(!employeeNip || !startDate || !endDate || !reason) {
+                uiUtils.showToast('Semua field wajib diisi.', 'danger');
+                return;
+            }
+            if(new Date(endDate) < new Date(startDate)) {
+                uiUtils.showToast('Tanggal selesai tidak boleh sebelum tanggal mulai.', 'danger');
+                return;
+            }
+            const newLeave = {
+                id: Date.now(), employeeNip, startDate, endDate, reason, status: 'Menunggu'
+            };
+            db.leaves.push(newLeave);
+            const emp = db.employees.find(e => e.nip === employeeNip);
+            addActivity(`Pengajuan cuti baru dari ${emp.name}.`);
+            saveDb();
+            render.cuti();
+            document.getElementById('leaveFormModal').classList.remove('show');
+            uiUtils.showToast('Pengajuan cuti berhasil disimpan.');
         },
         updateLeaveStatus: (leaveId, newStatus) => {
             const leaveIndex = db.leaves.findIndex(l => l.id === leaveId);
@@ -620,10 +753,113 @@ document.addEventListener('DOMContentLoaded', function() {
                 uiUtils.showToast('Status cuti berhasil diperbarui.');
             }
         },
+        deleteLeave: (leaveId) => {
+             uiUtils.showConfirm('Hapus Pengajuan Cuti', `Yakin ingin menghapus data pengajuan cuti ini?`, () => {
+                db.leaves = db.leaves.filter(l => l.id !== leaveId);
+                saveDb();
+                addActivity(`Satu data pengajuan cuti telah dihapus.`);
+                uiUtils.showToast('Data cuti berhasil dihapus.', 'danger');
+                render.cuti();
+            });
+        },
+        saveWorkHours: () => {
+            db.settings.jamMasuk = document.getElementById('settingJamMasuk').value;
+            db.settings.jamPulang = document.getElementById('settingJamPulang').value;
+            db.settings.toleransi = parseInt(document.getElementById('settingToleransi').value, 10) || 0;
+            saveDb();
+            addActivity('Pengaturan jam kerja telah diperbarui.');
+            uiUtils.showToast('Pengaturan jam kerja berhasil disimpan.');
+        },
+        generateReport: () => {
+            const type = document.getElementById('reportType').value;
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            const dept = document.getElementById('reportDeptFilter').value;
+            const output = document.getElementById('reportOutput');
+
+            if (!startDate || !endDate) {
+                uiUtils.showToast('Silakan tentukan rentang tanggal laporan.', 'warning');
+                return;
+            }
+            if (new Date(endDate) < new Date(startDate)) {
+                uiUtils.showToast('Tanggal selesai tidak boleh sebelum tanggal mulai.', 'warning');
+                return;
+            }
+            
+            let html = '';
+            if (type === 'attendance') {
+                html = actions.generateAttendanceReport(startDate, endDate, dept);
+            } else if (type === 'employee_status') {
+                html = actions.generateEmployeeStatusReport(dept);
+            }
+            output.innerHTML = html;
+            
+            setTimeout(() => {
+                if (html.includes("Tidak ada data")) {
+                    uiUtils.showToast('Tidak ada data untuk dilaporkan pada filter yang dipilih.', 'info');
+                } else {
+                    window.print();
+                }
+            }, 100);
+        },
+        generateAttendanceReport: (start, end, dept) => {
+            let rows = '';
+            const filteredEmployees = db.employees.filter(e => !dept || e.department === dept);
+
+            for (let d = new Date(start); d <= new Date(end); d.setDate(d.getDate() + 1)) {
+                const dateStr = d.toISOString().slice(0, 10);
+                const attendanceRecords = db.attendance[dateStr] || [];
+                
+                filteredEmployees.forEach(emp => {
+                    const record = attendanceRecords.find(r => r.nip === emp.nip);
+                    let status = 'Alpha';
+                    let clockIn = '-';
+                    let clockOut = '-';
+                    let duration = '-';
+
+                    if (record) {
+                        const clockInTime = new Date(record.clockIn);
+                        const standardMasuk = new Date(`${dateStr}T${db.settings.jamMasuk}`);
+                        standardMasuk.setMinutes(standardMasuk.getMinutes() + db.settings.toleransi);
+                        
+                        status = clockInTime > standardMasuk ? 'Terlambat' : 'Hadir';
+                        clockIn = clockInTime.toLocaleTimeString('id-ID');
+                        
+                        if (record.clockOut) {
+                            const clockOutTime = new Date(record.clockOut);
+                            clockOut = clockOutTime.toLocaleTimeString('id-ID');
+                            const diff = clockOutTime - clockInTime;
+                            const hours = Math.floor(diff / 3600000);
+                            const mins = Math.floor((diff % 3600000) / 60000);
+                            duration = `${hours} jam ${mins} mnt`;
+                        }
+                    }
+                    rows += `<tr><td>${dateStr}</td><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${clockIn}</td><td>${clockOut}</td><td>${duration}</td><td>${status}</td></tr>`;
+                });
+            }
+
+            if (!rows) return '<p class="empty-state" style="grid-column: 1 / -1;">Tidak ada data absensi pada rentang tanggal dan departemen yang dipilih.</p>';
+            
+            return `<h3 id="reportTitle">Laporan Absensi Karyawan</h3>
+                    <p style="text-align:center; margin-bottom:1.5rem;">Periode: ${start} s/d ${end} | Departemen: ${dept || 'Semua'}</p>
+                    <table><thead><tr><th>Tanggal</th><th>Nama</th><th>NIP</th><th>Departemen</th><th>Masuk</th><th>Pulang</th><th>Durasi</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+        },
+        generateEmployeeStatusReport: (dept) => {
+            const filteredEmployees = db.employees.filter(e => !dept || e.department === dept);
+            if(filteredEmployees.length === 0) return '<p class="empty-state">Tidak ada data karyawan pada departemen yang dipilih.</p>';
+            
+            const rows = filteredEmployees.map(emp => `
+                <tr><td>${emp.name}</td><td>${emp.nip}</td><td>${emp.department}</td><td>${emp.position}</td><td>${emp.gender}</td><td>${emp.status}</td></tr>
+            `).join('');
+
+            return `<h3 id="reportTitle">Laporan Status Karyawan</h3>
+                    <p style="text-align:center; margin-bottom:1.5rem;">Departemen: ${dept || 'Semua'}</p>
+                    <table><thead><tr><th>Nama</th><th>NIP</th><th>Departemen</th><th>Jabatan</th><th>Gender</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+        },
         backupData: () => {
             const dataStr = JSON.stringify(db, null, 2);
             const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = `simpeg_backup_${new Date().toISOString().slice(0,10)}.json`;
+            const exportFileDefaultName = `simpeg_backup_${uiUtils.getTodayString()}.json`;
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
@@ -688,7 +924,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // Departemen Page
     document.getElementById('addDepartmentBtn').addEventListener('click', actions.addDepartment);
+    // Absensi Page
+    document.getElementById('attendanceDateFilter').addEventListener('change', render.absensi);
+    document.getElementById('attendanceDeptFilter').addEventListener('change', render.absensi);
+    // Cuti Page
+    document.getElementById('addLeaveBtn').addEventListener('click', render.leaveForm);
+    // Laporan Page
+    document.getElementById('generateReportBtn').addEventListener('click', actions.generateReport);
     // Pengaturan Page
+    document.getElementById('saveWorkHoursBtn').addEventListener('click', actions.saveWorkHours);
     document.getElementById('backupDataBtn').addEventListener('click', actions.backupData);
     document.getElementById('restoreDataInput').addEventListener('change', actions.restoreData);
     document.getElementById('resetDataBtn').addEventListener('click', actions.resetData);
@@ -710,6 +954,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // =================================================================================
     function init() {
         loadDb();
+        // Setup initial values
+        document.getElementById('attendanceDateFilter').value = uiUtils.getTodayString();
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+        document.getElementById('reportStartDate').value = firstDayOfMonth;
+        document.getElementById('reportEndDate').value = uiUtils.getTodayString();
+        
         render.page('dashboardPage');
     }
     init();
