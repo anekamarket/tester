@@ -196,8 +196,13 @@
             border: none;
             cursor: pointer;
         }
+        
+        .cta-button:disabled {
+            background: var(--light-text);
+            cursor: not-allowed;
+        }
 
-        .cta-button:hover {
+        .cta-button:hover:not(:disabled) {
             background: var(--secondary-color);
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(10, 77, 152, 0.3);
@@ -436,7 +441,7 @@
             display: block;
         }
 
-        /* --- [BARU] Helper Button Maps --- */
+        /* --- [PERBAIKAN] Helper Button Maps --- */
         .label-with-button {
             display: flex;
             justify-content: space-between;
@@ -453,15 +458,21 @@
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
         }
         
-        .button-helper:hover {
+        .button-helper:hover:not(:disabled) {
             background: var(--border-color);
+        }
+        
+        .button-helper:disabled {
+            background: var(--light-gray);
+            color: var(--light-text);
+            cursor: wait;
         }
 
 
-        /* --- [PERBAIKAN] Modal Nota (Desain Profesional Baru) --- */
+        /* --- [PERBAIKAN BESAR] Modal Nota (Desain Profesional Baru) --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -485,12 +496,14 @@
         
         .modal-content {
             background: var(--white-color);
-            padding: 2.5rem;
+            padding: 0; /* Padding diatur di header/body/footer */
             border-radius: 10px;
             width: 90%;
-            max-width: 700px;
+            max-width: 750px; /* Sedikit lebih lebar */
             max-height: 90vh;
-            overflow-y: auto;
+            overflow: hidden; /* Kontrol overflow di body */
+            display: flex;
+            flex-direction: column;
             transform: scale(0.9);
             transition: transform 0.3s ease;
         }
@@ -499,22 +512,22 @@
             transform: scale(1);
         }
         
+        /* Header Modal (Layar) */
         .modal-header {
+            padding: 1.5rem 2.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
         }
         
         .modal-header h2 {
             color: var(--primary-color);
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
         
         .modal-close-btn {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: var(--light-text);
             background: none;
             border: none;
@@ -522,22 +535,33 @@
             line-height: 1;
         }
         
+        /* Body Nota (Layar & Cetak) */
         .nota-body {
             font-size: 1rem;
+            padding: 2.5rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: var(--light-gray);
+        }
+        
+        .nota-body-content {
+            background: var(--white-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
 
-        /* Header Nota Baru */
+        /* Header Nota Baru (Layar) */
         .nota-brand-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 2rem;
+            padding: 2rem;
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 1rem;
         }
         
         .nota-brand-logo {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--primary-color);
         }
@@ -551,22 +575,25 @@
         }
         .nota-brand-code strong {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--light-text);
             font-weight: 500;
             margin-bottom: 0.25rem;
         }
         .nota-brand-code span {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--dark-text);
             background: var(--light-gray);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 5px;
         }
         
         .nota-section {
-            margin-bottom: 2rem;
+            padding: 2rem;
+        }
+        .nota-section:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
         }
         
         .nota-section h4 {
@@ -575,7 +602,7 @@
             color: var(--dark-text);
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         /* Layout Tabel Nota Baru */
@@ -587,9 +614,8 @@
         .nota-table tbody tr {
             border-bottom: 1px solid var(--border-color);
         }
-        
-        .nota-table tbody tr:nth-child(even) {
-            background-color: var(--light-gray);
+        .nota-table tbody tr:last-child {
+            border-bottom: none;
         }
         
         .nota-table td {
@@ -600,7 +626,7 @@
         
         /* Kolom label */
         .nota-table td:first-child {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--dark-text);
             width: 35%;
             min-width: 150px;
@@ -618,35 +644,24 @@
             font-weight: 600;
             text-decoration: none;
         }
-        
         .nota-table a:hover {
             text-decoration: underline;
         }
         
         /* Box Catatan Baru */
         .nota-catatan-box {
-            background: var(--light-gray);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--primary-color);
-            padding: 1.5rem;
-            border-radius: 5px;
             color: var(--light-text);
             font-size: 0.95rem;
             line-height: 1.7;
             white-space: pre-wrap; /* Menghargai baris baru dari textarea */
-        }
-
-        /* Hapus Style Nota Lama */
-        .nota-header-info,
-        .nota-item {
-            display: none;
+            padding: 0.5rem;
         }
         
+        /* Footer Modal (Layar) */
         .modal-footer {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
+            padding: 1.5rem 2.5rem;
             border-top: 1px solid var(--border-color);
-            text-align: right;
+            background: var(--white-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -656,6 +671,7 @@
             font-size: 0.9rem;
             color: var(--light-text);
             text-align: left;
+            margin: 0;
         }
         
         .cta-button-secondary {
@@ -675,14 +691,142 @@
             background: var(--border-color);
         }
         
-        /* Style untuk tombol Download (PDF) */
-        .modal-footer #btn-print-nota {
-            background: var(--light-gray);
-            color: var(--dark-text);
-            border: 1px solid var(--border-color);
+        /* --- [PERBAIKAN BESAR] Gaya Khusus untuk Cetak (Download PDF) --- */
+        
+        /* Elemen khusus cetak (default tersembunyi) */
+        .nota-print-header, .nota-print-footer {
+            display: none;
         }
-        .modal-footer #btn-print-nota:hover {
-            background: var(--border-color);
+        
+        @media print {
+            body, html {
+                background: #FFF;
+                color: #000;
+                width: 100%;
+            }
+            
+            /* Sembunyikan semua elemen di halaman KECUALI konten nota */
+            body * {
+                visibility: hidden;
+            }
+            #modal-nota-content-printable, #modal-nota-content-printable * {
+                visibility: visible;
+            }
+            
+            /* Sembunyikan UI Modal (Tombol close, footer, dll) */
+            .modal-header, .modal-footer, .nota-brand-header {
+                display: none !important;
+            }
+            
+            /* Atur ulang posisi & style modal agar pas 1 halaman */
+            .modal-overlay {
+                position: static;
+                background: none;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                max-height: none;
+                height: auto;
+                border: 1px solid #AAA;
+                box-shadow: none;
+                padding: 0;
+                overflow: visible;
+                display: block;
+            }
+            .nota-body {
+                padding: 1.5rem;
+                overflow: visible;
+                background: #FFF;
+            }
+            .nota-body-content {
+                box-shadow: none;
+                border: none;
+            }
+
+            /* Tampilkan Header Cetak */
+            .nota-print-header {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 1.5rem;
+                border-bottom: 2px solid #333;
+            }
+            .nota-print-logo {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #000;
+            }
+            .nota-print-logo span {
+                color: #333;
+            }
+            .nota-print-title {
+                text-align: right;
+            }
+            .nota-print-title h3 {
+                font-size: 1.6rem;
+                margin: 0 0 5px 0;
+                color: #000;
+            }
+            .nota-print-title span {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+            }
+            
+            .nota-section {
+                padding: 1.5rem 0.5rem;
+            }
+            .nota-section h4 {
+                border-bottom: 2px solid #555;
+            }
+            
+            .nota-table {
+                width: 100%;
+            }
+            .nota-table tr {
+                border-bottom: 1px solid #ccc;
+            }
+            .nota-table tbody tr:nth-child(even) {
+                background-color: #f7f7f7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .nota-table td {
+                padding: 10px 5px;
+                color: #333;
+            }
+            .nota-table td:first-child {
+                font-weight: 600;
+                color: #000;
+            }
+            .nota-table a {
+                color: #333;
+                text-decoration: none;
+            }
+            .nota-table a::after {
+                content: " (" attr(href) ")";
+                font-size: 0.9em;
+            }
+            
+            .nota-catatan-box {
+                background: #f7f7f7 !important;
+                border: 1px solid #ddd;
+                padding: 1rem;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            /* Tampilkan Footer Cetak */
+            .nota-print-footer {
+                display: block !important;
+                text-align: center;
+                font-size: 0.9rem;
+                color: #777;
+                border-top: 1px solid #ccc;
+                padding-top: 1.5rem;
+                margin: 2rem 1.5rem 1.5rem 1.5rem;
+            }
         }
 
 
@@ -738,49 +882,26 @@
             transform: scale(1.1);
         }
 
-        /* --- Responsive (Mobile) - Disempurnakan --- */
+        /* --- Responsive (Mobile) --- */
         @media (max-width: 992px) {
             #hero .container {
-                flex-direction: column-reverse; /* Gambar di atas, teks di bawah */
+                flex-direction: column-reverse;
                 text-align: center;
             }
-            
-            #hero .hero-image {
-                margin-bottom: 2rem;
-            }
-            
-            #hero .subheadline {
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            #hero h1 {
-                font-size: 2.8rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            .form-group-full {
-                grid-column: 1; /* Reset di mobile */
-            }
-            #form-pemesanan {
-                padding: 1.5rem;
-            }
+            #hero .hero-image { margin-bottom: 2rem; }
+            #hero .subheadline { margin-left: auto; margin-right: auto; }
+            #hero h1 { font-size: 2.8rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group-full { grid-column: 1; }
+            #form-pemesanan { padding: 1.5rem; }
         }
         
         @media (max-width: 768px) {
-            header .container {
-                flex-wrap: wrap;
-            }
-            
-            .hamburger {
-                display: flex; /* Tampilkan hamburger di mobile */
-            }
-
+            header .container { flex-wrap: wrap; }
+            .hamburger { display: flex; }
             nav {
                 width: 100%;
-                max-height: 0; /* Sembunyikan menu */
+                max-height: 0;
                 overflow: hidden;
                 transition: max-height 0.4s ease-out;
                 background: var(--white-color);
@@ -788,92 +909,39 @@
                 border-radius: 8px;
                 margin-top: 1rem;
             }
-            
-            nav ul {
-                flex-direction: column;
-                padding: 1rem;
-                align-items: flex-start;
-            }
-            
-            nav li {
-                margin: 0;
-                width: 100%;
-            }
-
-            nav a {
-                display: block;
-                padding: 0.8rem;
-                width: 100%;
-                border-radius: 5px;
-            }
-            
-            nav a:hover {
-                background: var(--light-gray);
-            }
-            
-            .nav-cta {
-                width: auto;
-                margin: 0.5rem 0.8rem;
-            }
-
-            nav.active {
-                max-height: 400px;
-            }
-
+            nav ul { flex-direction: column; padding: 1rem; align-items: flex-start; }
+            nav li { margin: 0; width: 100%; }
+            nav a { display: block; padding: 0.8rem; width: 100%; border-radius: 5px; }
+            nav a:hover { background: var(--light-gray); }
+            .nav-cta { width: auto; margin: 0.5rem 0.8rem; }
+            nav.active { max-height: 400px; }
             .hamburger.active .bar:nth-child(2) { opacity: 0; }
             .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
             .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+            #hero h1 { font-size: 2.2rem; }
+            #hero .subheadline { font-size: 1rem; }
+            .section-title { font-size: 2rem; }
+            .section-subtitle { font-size: 1rem; }
+            .whatsapp-float { width: 50px; height: 50px; bottom: 20px; right: 20px; }
 
-            #hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            #hero .subheadline {
-                font-size: 1rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .section-subtitle {
-                font-size: 1rem;
-            }
-
-            .whatsapp-float {
-                width: 50px;
-                height: 50px;
-                bottom: 20px;
-                right: 20px;
-            }
-
+            /* Responsive Modal */
             .modal-content {
-                padding: 1.5rem;
+                padding: 0;
                 width: 95%;
             }
-            .modal-header h2 {
-                font-size: 1.5rem;
-            }
-            /* Perbaikan Nota di Mobile */
-            .nota-table td {
-                padding: 0.8rem 0.2rem;
-            }
-            .nota-table td:first-child {
-                min-width: 120px;
-                width: 30%;
-            }
-            .nota-brand-header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .nota-brand-code {
-                text-align: left;
-            }
-
+            .modal-header { padding: 1rem 1.5rem; }
+            .modal-header h2 { font-size: 1.3rem; }
+            .nota-body { padding: 1.5rem; }
+            .nota-brand-header { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+            .nota-brand-code { text-align: left; }
+            .nota-section { padding: 1.5rem; }
+            .nota-table td:first-child { min-width: 120px; width: 30%; }
+            
             .modal-footer {
                 flex-direction: column-reverse;
                 gap: 1rem;
                 align-items: stretch;
+                padding: 1.5rem;
             }
             .modal-footer .cta-button, .modal-footer .cta-button-secondary {
                 width: 100%;
@@ -882,82 +950,6 @@
             }
             .modal-footer p {
                 text-align: center;
-            }
-        }
-
-        /* --- [PERBAIKAN] Gaya Khusus untuk Cetak (Download PDF) --- */
-        @media print {
-            body, html {
-                background: #FFF;
-                color: #000;
-            }
-            header, nav, #hero, #layanan, #order, #galeri, #pesan, footer, .whatsapp-float, .modal-footer, .modal-close-btn {
-                display: none !important;
-            }
-            
-            .modal-overlay {
-                position: static;
-                background: none;
-                opacity: 1;
-                visibility: visible;
-                display: block;
-            }
-            
-            .modal-content {
-                box-shadow: none;
-                border: 1px solid #ddd;
-                padding: 1rem;
-                width: 100%;
-                max-width: 100%;
-                max-height: none;
-                overflow: visible;
-            }
-            
-            .nota-brand-header {
-                border-bottom: 2px solid #ccc;
-            }
-            .nota-brand-logo { color: #000; }
-            .nota-brand-logo span { color: #333; }
-            .nota-brand-code span { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            
-            .nota-section h4 {
-                border-bottom: 2px solid #000;
-            }
-            
-            .nota-table {
-                width: 100%;
-            }
-            .nota-table tr {
-                border-bottom: 1px solid #ccc;
-            }
-            .nota-table tbody tr:nth-child(even) {
-                background-color: #f9f9f9 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            .nota-table td {
-                padding: 0.5rem;
-                color: #333;
-            }
-            .nota-table td:first-child { color: #000; }
-            
-            .nota-table a {
-                color: #333;
-                text-decoration: none;
-            }
-            .nota-table a::after {
-                content: " (" attr(href) ")";
-                font-size: 0.9em;
-            }
-            
-            .nota-catatan-box {
-                background: #f9f9f9 !important;
-                border: 1px solid #ccc;
-                border-left: 4px solid #aaa;
-                color: #333;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
         }
 
@@ -1177,10 +1169,10 @@
                         <div class="form-group form-group-full hidden" id="grup-lokasi">
                             <div class="label-with-button">
                                 <label for="lokasi-acara">Link Google Maps Lokasi Acara</label>
-                                <button type="button" id="btn-get-maps" class="button-helper">Dapatkan Link</button>
+                                <button type="button" id="btn-get-gps" class="button-helper">Gunakan Lokasi (GPS)</button>
                             </div>
-                            <input type="url" id="lokasi-acara" name="lokasi-acara" placeholder="Contoh: https://maps.app.goo.gl/xyz...">
-                            <p class="note"><b>Wajib diisi untuk undangan.</b> Klik 'Dapatkan Link', cari lokasi Anda di Google Maps, klik 'Share', lalu 'Copy link', dan tempel (paste) di sini.</p>
+                            <input type="url" id="lokasi-acara" name="lokasi-acara" placeholder="Contoh: https://www.google.com/maps?q=-8.1,113.7">
+                            <p class="note"><b>Wajib diisi untuk undangan.</b> Klik 'Gunakan Lokasi (GPS)' untuk mengisi otomatis, atau cari manual di Google Maps, klik 'Share', lalu 'Copy link', dan tempel (paste) di sini.</p>
                         </div>
                         
                         <div class="form-group form-group-full">
@@ -1208,65 +1200,80 @@
     
     <div class="modal-overlay" id="modal-nota">
         <div class="modal-content" id="modal-nota-content-printable">
+            
+            <div class="nota-print-header">
+                <div class="nota-print-logo">Aneka<span>Digital</span></div>
+                <div class="nota-print-title">
+                    <h3>PRA-NOTA PESANAN</h3>
+                    <span id="nota-kode-print"></span>
+                </div>
+            </div>
+
             <div class="modal-header">
                 <h2>Pra-Nota Pesanan</h2>
                 <button class="modal-close-btn" id="btn-close-modal">×</button>
             </div>
             
             <div class="nota-body">
-                
-                <div class="nota-brand-header">
-                    <div class="nota-brand-logo">
-                        Aneka<span>Digital</span>
-                    </div>
-                    <div class="nota-brand-code">
-                        <strong>Kode Pra-Pesanan:</strong>
-                        <span id="nota-kode"></span>
-                    </div>
-                </div>
-
-                <div class="nota-section">
-                    <h4>1. Detail Pemesan</h4>
-                    <table class="nota-table">
-                        <tbody>
-                            <tr>
-                                <td>Nama Pemesan</td>
-                                <td id="nota-nama-pemesan"></td>
-                            </tr>
-                            <tr>
-                                <td>Nomor WhatsApp</td>
-                                <td id="nota-wa-pemesan"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="nota-section">
-                    <h4>2. Detail Pesanan</h4>
-                    <table class="nota-table">
-                        <tbody>
-                            <tr>
-                                <td>Jenis Pesanan</td>
-                                <td id="nota-jenis-produk"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="nota-body-content">
                     
-                    <table class="nota-table" id="nota-grup-acara-table">
-                        <tbody id="nota-grup-acara-tbody">
-                            </tbody>
-                    </table>
-                </div>
-                
-                <div class="nota-section">
-                    <h4>3. Catatan Tambahan</h4>
-                    <p class="nota-catatan-box" id="nota-catatan-tambahan"></p>
-                </div>
+                    <div class="nota-brand-header">
+                        <div class="nota-brand-logo">
+                            Aneka<span>Digital</span>
+                        </div>
+                        <div class="nota-brand-code">
+                            <strong>Kode Pra-Pesanan:</strong>
+                            <span id="nota-kode"></span>
+                        </div>
+                    </div>
 
+                    <div class="nota-section">
+                        <h4>1. Detail Pemesan</h4>
+                        <table class="nota-table">
+                            <tbody>
+                                <tr>
+                                    <td>Nama Pemesan</td>
+                                    <td id="nota-nama-pemesan"></td>
+                                </tr>
+                                <tr>
+                                    <td>Nomor WhatsApp</td>
+                                    <td id="nota-wa-pemesan"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="nota-section">
+                        <h4>2. Detail Pesanan</h4>
+                        <table class="nota-table">
+                            <tbody>
+                                <tr>
+                                    <td>Jenis Pesanan</td>
+                                    <td id="nota-jenis-produk"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <table class="nota-table" id="nota-grup-acara-table">
+                            <tbody id="nota-grup-acara-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="nota-section">
+                        <h4>3. Catatan Tambahan</h4>
+                        <p class="nota-catatan-box" id="nota-catatan-tambahan"></p>
+                    </div>
+                
+                </div>
+            </div>
+            
+            <div class="nota-print-footer">
+                <p>Ini adalah bukti pra-pesanan, bukan tagihan akhir. Admin akan menghubungi Anda untuk konfirmasi.<br>Terima kasih atas pesanan Anda.</p>
             </div>
 
             <div class="modal-footer">
-                <p>Ini adalah bukti pra-pesanan, bukan tagihan akhir.<br>Silakan kirim ke Admin untuk konfirmasi & total biaya.</p>
+                <p>Ini adalah bukti pra-pesanan, bukan tagihan akhir.<br>Silakan kirim ke Admin untuk konfirmasi.</p>
                 <div>
                     <button class="cta-button-secondary" id="btn-close-modal-2">Tutup</button>
                     <button class="cta-button-secondary" id="btn-print-nota">Download (PDF)</button>
@@ -1296,15 +1303,43 @@
                 });
             });
 
-            // --- [BARU] Skrip Helper Tombol Maps ---
-            const btnGetMaps = document.getElementById('btn-get-maps');
-            if(btnGetMaps) {
-                btnGetMaps.addEventListener('click', () => {
-                    window.open('https://www.google.com/maps', '_blank');
+            // --- [PERBAIKAN] Skrip Helper Tombol GPS (Otomatis) ---
+            const btnGetGps = document.getElementById('btn-get-gps');
+            const inputLokasi = document.getElementById('lokasi-acara');
+            
+            if(btnGetGps && inputLokasi) {
+                btnGetGps.addEventListener('click', () => {
+                    if (!navigator.geolocation) {
+                        alert('Browser Anda tidak mendukung fitur Geolocation.');
+                        return;
+                    }
+                    
+                    const originalText = btnGetGps.textContent;
+                    btnGetGps.textContent = 'Mencari...';
+                    btnGetGps.disabled = true;
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                            
+                            inputLokasi.value = mapsLink;
+                            
+                            btnGetGps.textContent = originalText;
+                            btnGetGps.disabled = false;
+                        },
+                        (error) => {
+                            console.error('Geolocation Error:', error);
+                            alert('Gagal mendapatkan lokasi. Pastikan Anda mengizinkan akses lokasi di browser Anda.');
+                            btnGetGps.textContent = originalText;
+                            btnGetGps.disabled = false;
+                        }
+                    );
                 });
             }
 
-            // --- Skrip Form Cerdas ---
+            // --- Skrip Form Cerdas (Tidak Berubah) ---
             const jenisProdukSelect = document.getElementById('jenis-produk');
             const jenisAcaraSelect = document.getElementById('jenis-acara');
             
@@ -1323,17 +1358,14 @@
                 grupNamaAnak, grupOrtuPria, grupOrtuWanita, grupTanggalWaktu, grupLokasi
             ];
 
-            // Sembunyikan semua grup acara saat awal
             const hideAllEventFields = () => {
                 allEventGroups.forEach(grup => grup.classList.add('hidden'));
             };
 
-            // Tampilkan field berdasarkan jenis produk
             jenisProdukSelect.addEventListener('change', () => {
                 const value = jenisProdukSelect.value;
                 if (value === 'undangan') {
                     grupJenisAcara.classList.remove('hidden');
-                    // Reset dan picu event change di jenisAcara untuk tampilkan field yg relevan
                     jenisAcaraSelect.value = '';
                     jenisAcaraSelect.dispatchEvent(new Event('change'));
                 } else {
@@ -1341,16 +1373,13 @@
                 }
             });
 
-            // Tampilkan field berdasarkan jenis acara (Fungsi Cerdas)
             jenisAcaraSelect.addEventListener('change', () => {
                 const value = jenisAcaraSelect.value;
                 
-                // Sembunyikan dulu semua field spesifik
                 [grupNamaAcara, grupNamaPria, grupNamaWanita, grupNamaAnak, grupOrtuPria, grupOrtuWanita, grupTanggalWaktu, grupLokasi].forEach(g => g.classList.add('hidden'));
 
-                if (!value) return; // Jika memilih "-- Pilih --", jangan tampilkan apa-apa
+                if (!value) return;
 
-                // Tampilkan field yang umum untuk semua acara
                 grupNamaAcara.classList.remove('hidden');
                 grupTanggalWaktu.classList.remove('hidden');
                 grupLokasi.classList.remove('hidden');
@@ -1362,15 +1391,14 @@
                     grupOrtuWanita.classList.remove('hidden');
                 } else if (value === 'khitanan') {
                     grupNamaAnak.classList.remove('hidden');
-                    grupOrtuPria.classList.remove('hidden'); // Asumsi Ortu Pria = Ayah, Ortu Wanita = Ibu
+                    grupOrtuPria.classList.remove('hidden');
                     grupOrtuWanita.classList.remove('hidden');
                 } else if (value === 'ulang-tahun') {
                     grupNamaAnak.classList.remove('hidden');
                 }
-                // 'Syukuran', 'Rapat', 'Lainnya' hanya butuh field umum (Nama Acara, Tgl, Lokasi)
             });
 
-            // --- [PERBAIKAN] Skrip Validasi & Modal Nota (JS Diperbarui) ---
+            // --- [PERBAIKAN] Skrip Validasi & Modal Nota (Disesuaikan Desain Baru) ---
             const btnBuatNota = document.getElementById('btn-buat-nota');
             const modal = document.getElementById('modal-nota');
             const btnCloseModal = document.getElementById('btn-close-modal');
@@ -1403,9 +1431,10 @@
             // Event listener untuk tombol Buat Nota
             btnBuatNota.addEventListener('click', () => {
                 if (validateForm()) {
-                    // 1. Generate Kode Pesanan
+                    // 1. Generate Kode Pesanan (Untuk Layar & Cetak)
                     const kodePesanan = 'AD-' + Date.now().toString().slice(-6);
                     document.getElementById('nota-kode').textContent = kodePesanan;
+                    document.getElementById('nota-kode-print').textContent = kodePesanan; // BARU
 
                     // 2. Ambil data & isi ke Nota
                     document.getElementById('nota-nama-pemesan').textContent = document.getElementById('nama-pemesan').value;
@@ -1414,15 +1443,13 @@
                     const produkSelect = document.getElementById('jenis-produk');
                     document.getElementById('nota-jenis-produk').textContent = produkSelect.options[produkSelect.selectedIndex].text;
                     
-                    // [PERBAIKAN] Gunakan .innerHTML dan ganti \n dengan <br> untuk catatan
                     const catatan = document.getElementById('catatan-tambahan').value || '(Tidak ada)';
                     document.getElementById('nota-catatan-tambahan').innerHTML = catatan.replace(/\n/g, '<br>');
 
-                    // 3. Ambil data acara (jika ada) - [PERBAIKAN] Menggunakan <tbody> tabel
+                    // 3. Ambil data acara (jika ada)
                     const containerAcaraTbody = document.getElementById('nota-grup-acara-tbody');
                     containerAcaraTbody.innerHTML = ''; // Kosongkan dulu
                     
-                    // [PERBAIKAN] Fungsi addNotaItem untuk membuat <tr>
                     const addNotaItem = (label, value, isHtml = false) => {
                         if (value) {
                             const newRow = containerAcaraTbody.insertRow();
@@ -1452,18 +1479,16 @@
                         const tgl = document.getElementById('tanggal-acara').value;
                         const waktu = document.getElementById('waktu-acara').value;
                         if (tgl || waktu) {
-                            // [PERBAIKAN] Format tanggal ke format Indonesia
                             let tglFormatted = tgl;
                             if (tgl) {
                                 try {
-                                    const tglObj = new Date(tgl + 'T00:00:00'); // Tambah T00 untuk hindari masalah zona waktu
+                                    const tglObj = new Date(tgl + 'T00:00:00'); // Hindari masalah zona waktu
                                     tglFormatted = tglObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                                 } catch (e) { /* biarkan format aslinya jika error */ }
                             }
                             addNotaItem('Waktu Acara', `${tglFormatted} ${waktu ? 'Pukul ' + waktu : ''}`.trim());
                         }
                         
-                        // Logika untuk menampilkan link Google Maps di nota
                         const lokasiValue = document.getElementById('lokasi-acara').value;
                         if(lokasiValue) {
                             if (lokasiValue.startsWith('http')) {
@@ -1485,14 +1510,14 @@
             btnCloseModal.addEventListener('click', closeModal);
             btnCloseModal2.addEventListener('click', closeModal);
 
-            // Event listener untuk Cetak/Simpan PDF
+            // Event listener untuk Download (PDF) / Cetak
             btnPrintNota.addEventListener('click', () => {
                 window.print();
             });
 
             // --- Fungsi Kirim ke WhatsApp (Tidak berubah) ---
             const formatNotaForWhatsApp = () => {
-                const adminNomor = '6285647709114'; // Nomor WA Admin
+                const adminNomor = '6285647709114';
                 
                 const addLine = (label, value) => {
                     if (value && value.trim() !== '' && value.trim() !== '(Tidak ada)') {
@@ -1527,7 +1552,6 @@
                     const tgl = document.getElementById('tanggal-acara').value;
                     const waktu = document.getElementById('waktu-acara').value;
                     if (tgl || waktu) {
-                         // [PERBAIKAN] Format tanggal di WA juga
                         let tglFormatted = tgl;
                         if (tgl) {
                             try {
