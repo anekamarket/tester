@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <style>
@@ -217,7 +219,7 @@
             cursor: pointer; font-size: 0.8rem; font-weight: 600; z-index: 5;
         }
 
-        /* --- 6. INVOICE MODAL REDESIGN (PREMIUM & PROFESSIONAL) --- */
+        /* --- 6. INVOICE MODAL (UI SCREEN) --- */
         .modal-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%; 
             background: rgba(15, 23, 42, 0.8); z-index: 2000; 
@@ -246,7 +248,7 @@
         .inv-header {
             background: var(--primary);
             color: white;
-            padding: 2rem 2rem 3rem 2rem; /* Extra padding bottom for overlap */
+            padding: 2rem 2rem 3rem 2rem;
             text-align: center;
             position: relative;
         }
@@ -264,7 +266,7 @@
         .inv-body {
             background: white;
             border-radius: 20px 20px 0 0;
-            margin-top: -20px; /* Overlap effect */
+            margin-top: -20px;
             padding: 1.5rem;
             position: relative;
             overflow-y: auto;
@@ -280,7 +282,6 @@
             display: block; letter-spacing: 1px; text-transform: uppercase;
         }
 
-        /* Data Rows */
         .inv-row {
             display: flex; justify-content: space-between; align-items: flex-start;
             margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px;
@@ -290,7 +291,6 @@
         .inv-label { font-size: 0.85rem; color: #64748b; font-weight: 500; }
         .inv-value { font-size: 0.95rem; color: #0f172a; font-weight: 600; text-align: right; max-width: 60%; }
 
-        /* Highlight Box (Product) */
         .inv-product-box {
             background: #f8fafc; border-radius: 12px; padding: 15px;
             margin: 10px 0 20px 0; border: 1px solid #e2e8f0;
@@ -298,7 +298,6 @@
         .inv-product-title { color: var(--primary); font-weight: 700; margin-bottom: 5px; font-size: 1rem; }
         .inv-product-spec { font-size: 0.85rem; color: #64748b; line-height: 1.4; }
 
-        /* Total Area */
         .inv-total-area {
             background: #ecfeff; border: 1px dashed #22d3ee;
             border-radius: 12px; padding: 15px; margin-top: 15px;
@@ -307,7 +306,6 @@
         .inv-total-label { color: #0891b2; font-weight: 600; font-size: 0.9rem; }
         .inv-total-value { color: var(--primary); font-weight: 800; font-size: 1.3rem; }
 
-        /* Footer Actions */
         .inv-footer {
             padding: 1.5rem; border-top: 1px solid #f1f5f9;
             display: flex; flex-direction: column; gap: 12px; background: white;
@@ -388,7 +386,7 @@
                 width: 100%; padding: 0; margin: 0; background: white; color: black; 
             }
             #print-container * { visibility: visible; }
-            @page { margin: 0.5cm; size: auto; }
+            @page { margin: 0; size: auto; }
         }
     </style>
 </head>
@@ -1120,68 +1118,312 @@
             window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
         });
 
-        // Tombol PDF / Print
+        // Tombol PDF / Print (DESAIN MEWAH / LUXURY HOTEL STYLE)
         document.getElementById('btn-download-pdf').addEventListener('click', () => {
-            // Layout cetak yang bersih untuk kertas A4/Struk
+            // Format Tanggal & Waktu Cetak
+            const printTime = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            // Layout Invoice Mewah (Mirip Hotel Bintang 7)
             const printContent = `
-                <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #ccc;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                        <div>
-                            <h2 style="margin:0; color:#0A4D98;">ANEKA DIGITAL</h2>
-                            <p style="margin:5px 0; font-size: 12px; color:#555;">Jasa Cetak & Digital Printing<br>Situbondo - Jawa Timur</p>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600;700&display=swap');
+                        
+                        @page { margin: 0; size: A4; }
+                        body {
+                            font-family: 'Montserrat', sans-serif;
+                            color: #1a1a1a;
+                            background: #fff;
+                            margin: 0;
+                            padding: 0;
+                            -webkit-print-color-adjust: exact;
+                        }
+                        .invoice-container {
+                            width: 100%;
+                            max-width: 210mm; /* Lebar A4 */
+                            min-height: 297mm;
+                            margin: 0 auto;
+                            padding: 50px;
+                            box-sizing: border-box;
+                            position: relative;
+                        }
+                        
+                        /* HEADER SECTION */
+                        .header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                            margin-bottom: 60px;
+                            border-bottom: 2px solid #0A4D98;
+                            padding-bottom: 20px;
+                        }
+                        .brand-section h1 {
+                            font-family: 'Cormorant Garamond', serif;
+                            font-size: 36px;
+                            color: #0A4D98;
+                            margin: 0;
+                            text-transform: uppercase;
+                            letter-spacing: 2px;
+                        }
+                        .brand-section p {
+                            font-size: 10px;
+                            color: #666;
+                            letter-spacing: 1px;
+                            margin-top: 5px;
+                            text-transform: uppercase;
+                        }
+                        .invoice-title {
+                            text-align: right;
+                        }
+                        .invoice-title h2 {
+                            font-size: 48px;
+                            font-weight: 200;
+                            color: #e0e0e0;
+                            margin: 0;
+                            line-height: 0.8;
+                            letter-spacing: 4px;
+                        }
+                        .invoice-number {
+                            font-size: 14px;
+                            font-weight: 700;
+                            color: #0A4D98;
+                            margin-top: 5px;
+                        }
+
+                        /* INFO GRID */
+                        .info-grid {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 50px;
+                        }
+                        .info-col {
+                            flex: 1;
+                        }
+                        .label {
+                            font-size: 9px;
+                            text-transform: uppercase;
+                            color: #999;
+                            letter-spacing: 1.5px;
+                            margin-bottom: 8px;
+                            font-weight: 600;
+                        }
+                        .value {
+                            font-size: 14px;
+                            font-weight: 500;
+                            color: #000;
+                            line-height: 1.4;
+                        }
+                        .client-address {
+                            max-width: 250px;
+                        }
+
+                        /* TABLE SECTION */
+                        .table-container {
+                            margin-bottom: 40px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        th {
+                            text-align: left;
+                            font-size: 10px;
+                            text-transform: uppercase;
+                            color: #666;
+                            letter-spacing: 1.5px;
+                            padding: 15px 0;
+                            border-bottom: 1px solid #000;
+                        }
+                        td {
+                            padding: 20px 0;
+                            border-bottom: 1px solid #f0f0f0;
+                            vertical-align: top;
+                        }
+                        .col-desc { width: 50%; }
+                        .col-qty { width: 15%; text-align: center; }
+                        .col-price { width: 15%; text-align: right; }
+                        .col-total { width: 20%; text-align: right; }
+                        
+                        .item-name {
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #0A4D98;
+                            margin-bottom: 5px;
+                            display: block;
+                        }
+                        .item-spec {
+                            font-size: 11px;
+                            color: #777;
+                            font-style: italic;
+                        }
+
+                        /* SUMMARY SECTION */
+                        .summary-section {
+                            display: flex;
+                            justify-content: flex-end;
+                            margin-bottom: 60px;
+                        }
+                        .summary-table {
+                            width: 300px;
+                        }
+                        .summary-row {
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 8px 0;
+                            font-size: 12px;
+                        }
+                        .summary-row.total {
+                            border-top: 1px solid #000;
+                            border-bottom: 1px solid #000;
+                            padding: 15px 0;
+                            margin-top: 10px;
+                            font-size: 16px;
+                            font-weight: 700;
+                            color: #0A4D98;
+                        }
+                        .discount-text { color: #e63946; }
+
+                        /* NOTES & FOOTER */
+                        .notes-section {
+                            background: #f9f9f9;
+                            padding: 20px;
+                            border-left: 3px solid #0A4D98;
+                            margin-bottom: 50px;
+                        }
+                        .footer {
+                            position: absolute;
+                            bottom: 40px;
+                            left: 50px;
+                            right: 50px;
+                            text-align: center;
+                            border-top: 1px solid #eee;
+                            padding-top: 30px;
+                        }
+                        .footer h3 {
+                            font-family: 'Cormorant Garamond', serif;
+                            font-size: 18px;
+                            margin: 0 0 5px 0;
+                            color: #0A4D98;
+                        }
+                        .footer-links {
+                            font-size: 10px;
+                            color: #666;
+                            letter-spacing: 2px;
+                            text-transform: uppercase;
+                            margin-bottom: 10px;
+                        }
+                        .footer-contact {
+                            font-size: 10px;
+                            color: #999;
+                        }
+                        
+                        /* PRINT HIDE */
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="invoice-container">
+                        <div class="header">
+                            <div class="brand-section">
+                                <h1>Aneka Digital</h1>
+                                <p>Premium Printing & Digital Solution</p>
+                            </div>
+                            <div class="invoice-title">
+                                <h2>INVOICE</h2>
+                                <div class="invoice-number">NO: ${orderData.kode}</div>
+                            </div>
                         </div>
-                        <div style="text-align:right;">
-                            <h3 style="margin:0; color:#555;">INVOICE</h3>
-                            <p style="margin:0; font-size:14px;">${orderData.kode}</p>
+
+                        <div class="info-grid">
+                            <div class="info-col">
+                                <div class="label">Ditagihkan Kepada</div>
+                                <div class="value">${orderData.nama}</div>
+                                <div class="value" style="font-size: 12px; margin-top: 4px; color: #555;">${orderData.wa}</div>
+                            </div>
+                            <div class="info-col" style="text-align: right;">
+                                <div class="label">Tanggal Terbit</div>
+                                <div class="value">${orderData.today}</div>
+                                <div class="value" style="font-size: 11px; color: #777;">${printTime} WIB</div>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="col-desc">Deskripsi Layanan</th>
+                                        <th class="col-price">Harga Unit</th>
+                                        <th class="col-qty">Qty</th>
+                                        <th class="col-total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="item-name">${orderData.produk}</span>
+                                            <span class="item-spec">${orderData.specs}</span>
+                                        </td>
+                                        <td style="text-align:right;">${orderData.priceUnit}</td>
+                                        <td style="text-align:center;">${orderData.qty}</td>
+                                        <td style="text-align:right; font-weight:600;">${orderData.subtotal}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="summary-section">
+                            <div class="summary-table">
+                                <div class="summary-row">
+                                    <span>Subtotal</span>
+                                    <span>${orderData.subtotal}</span>
+                                </div>
+                                ${orderData.discount !== '-Rp 0' ? `
+                                <div class="summary-row">
+                                    <span class="discount-text">Potongan / Diskon</span>
+                                    <span class="discount-text">${orderData.discount}</span>
+                                </div>
+                                ` : ''}
+                                <div class="summary-row">
+                                    <span>Biaya Layanan</span>
+                                    <span>Rp 0</span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>TOTAL PEMBAYARAN</span>
+                                    <span>${orderData.total}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="notes-section">
+                            <div class="label" style="color:#0A4D98;">Catatan & Detail Acara</div>
+                            <div class="value" style="font-size: 12px; line-height:1.6;">${orderData.fullNote}</div>
+                        </div>
+
+                        <div class="footer">
+                            <h3>TERIMA KASIH ATAS KEPERCAYAAN ANDA</h3>
+                            <div class="footer-links">
+                                www.anekamarket.my.id/anekadigital
+                            </div>
+                            <div class="footer-contact">
+                                Panarukan, Situbondo • +62 856-4770-9114 • admin@anekamarket.my.id
+                            </div>
                         </div>
                     </div>
-                    <hr style="border:0; border-top: 1px solid #eee; margin-bottom:20px;">
-                    
-                    <div style="margin-bottom: 20px; font-size: 14px;">
-                        <strong>Pemesan:</strong> ${orderData.nama}<br>
-                        <strong>WhatsApp:</strong> ${orderData.wa}<br>
-                        <strong>Tanggal:</strong> ${orderData.today}
-                    </div>
-
-                    <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-bottom: 20px;">
-                        <tr style="background:#f8f9fa; color:#333;">
-                            <th style="text-align:left; padding:10px; border-bottom:1px solid #ddd;">Deskripsi</th>
-                            <th style="text-align:right; padding:10px; border-bottom:1px solid #ddd;">Total</th>
-                        </tr>
-                        <tr>
-                            <td style="padding:10px; border-bottom:1px solid #eee;">
-                                <strong>${orderData.produk}</strong><br>
-                                <span style="color:#666; font-size:12px;">${orderData.specs}</span><br>
-                                <span style="font-size:12px;">${orderData.qty} x ${orderData.priceUnit}</span>
-                            </td>
-                            <td style="text-align: right; padding:10px; border-bottom:1px solid #eee;">${orderData.subtotal}</td>
-                        </tr>
-                    </table>
-
-                    <div style="display:flex; justify-content:flex-end; margin-bottom:30px;">
-                        <table style="width:200px; font-size:14px;">
-                            ${orderData.discount !== '-Rp 0' ? `<tr><td style="color:red;">Diskon</td><td style="text-align:right; color:red;">${orderData.discount}</td></tr>` : ''}
-                            <tr><td style="font-weight:bold; padding-top:10px;">TOTAL</td><td style="text-align:right; font-weight:bold; padding-top:10px; color:#0A4D98;">${orderData.total}</td></tr>
-                        </table>
-                    </div>
-
-                    <div style="font-size: 12px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-                        <strong>Catatan / Detail Acara:</strong><br>
-                        ${orderData.fullNote}
-                    </div>
-                    
-                    <div style="text-align: center; font-size: 11px; color:#999; margin-top: 40px;">
-                        Terima kasih telah mempercayakan kebutuhan cetak Anda kepada Aneka Digital.
-                    </div>
-                </div>
+                </body>
+                </html>
             `;
 
             const printContainer = document.getElementById('print-container');
             printContainer.innerHTML = printContent;
             
+            // Jeda sedikit agar browser me-render font dan style sebelum print dialog muncul
             setTimeout(() => {
                 window.print();
-            }, 500);
+            }, 800);
         });
 
     </script>
