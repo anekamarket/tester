@@ -437,7 +437,7 @@
                 </div>
             </div>
             
-            <div id="printable-area" class="invoice-body">
+            <div class="invoice-body">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px dashed #ddd;">
                     <div>
                         <strong style="display:block; margin-bottom:5px;">Diterbitkan Untuk:</strong>
@@ -669,15 +669,14 @@
             };
 
             // ============================================
-            // LOGIKA PDF: ANTI BLANK & ANTI POTONG
+            // LOGIKA PDF: FORCE RENDER METHOD (PASTI BISA)
             // ============================================
             btnDownloadPdf.onclick = function() {
                 const originalText = this.innerHTML;
-                this.innerHTML = "⏳ Sedang Mencetak...";
+                this.innerHTML = "⏳ Mencetak...";
                 this.disabled = true;
-                this.style.cursor = "wait";
 
-                // 1. Ambil data terbaru
+                // 1. Ambil data
                 const data = {
                     kode: document.getElementById('inv-code').innerText,
                     tanggal: document.getElementById('inv-date').innerText,
@@ -689,26 +688,37 @@
                     acara: document.getElementById('inv-event-detail').innerText
                 };
 
-                // 2. Buat Container PDF di Latar Belakang
+                // 2. Buat Container
                 const pdfContainer = document.createElement('div');
                 
-                // Styling Khusus: 
-                // - absolute/top:0 agar TERLIHAT oleh browser (tidak blank)
-                // - z-index:-9999 agar TIDAK TERLIHAT oleh user
-                // - width A4 agar rapi
-                pdfContainer.style.position = 'absolute'; 
+                // --- KUNCI SUKSES (FIX) ---
+                // Kita menaruhnya di posisi FIXED, TOP 0, LEFT 0
+                // Dan Z-INDEX SANGAT TINGGI (di atas segalanya)
+                // Agar browser 'terpaksa' merendernya.
+                pdfContainer.style.position = 'fixed'; 
                 pdfContainer.style.top = '0';
                 pdfContainer.style.left = '0';
-                pdfContainer.style.zIndex = '-9999';
-                pdfContainer.style.width = '794px'; // Lebar A4 (96 dpi)
-                pdfContainer.style.minHeight = '1123px';
-                pdfContainer.style.padding = '40px';
-                pdfContainer.style.backgroundColor = '#ffffff';
-                pdfContainer.style.fontFamily = "'Inter', sans-serif";
-                pdfContainer.style.color = '#1A1A1A';
+                pdfContainer.style.zIndex = '99999'; 
+                pdfContainer.style.width = '100%';
+                pdfContainer.style.height = '100%';
+                pdfContainer.style.backgroundColor = 'rgba(255,255,255,1)'; 
+                pdfContainer.style.display = 'flex';
+                pdfContainer.style.justifyContent = 'center';
+                pdfContainer.style.alignItems = 'flex-start';
+                pdfContainer.style.overflow = 'auto';
 
-                // 3. Masukkan HTML Template Surat Resmi
-                pdfContainer.innerHTML = `
+                // 3. Konten A4 di dalam container
+                const pageA4 = document.createElement('div');
+                pageA4.style.width = '794px'; // Lebar A4 pixel
+                pageA4.style.minHeight = '1123px';
+                pageA4.style.padding = '40px';
+                pageA4.style.backgroundColor = 'white';
+                pageA4.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+                pageA4.style.fontFamily = "'Inter', sans-serif";
+                pageA4.style.color = '#1A1A1A';
+                
+                // Masukkan HTML
+                pageA4.innerHTML = `
                     <div style="border-bottom: 3px solid #0A4D98; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h1 style="color: #0A4D98; margin: 0; font-size: 28px; font-family: sans-serif;">INVOICE</h1>
@@ -762,44 +772,39 @@
                         <p style="margin: 0; font-size: 14px; color: #333; font-style: italic;">"${data.catatan}"</p>
                     </div>
 
-                    <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+                    <div style="text-align: center; border-top: 1px solid #eee; padding-top: 20px; margin-top: 50px;">
                         <p style="font-size: 12px; color: #888; margin-bottom: 5px;">Terima kasih telah mempercayakan kebutuhan cetak Anda kepada Aneka Digital.</p>
                         <p style="font-size: 11px; color: #aaa;">Dokumen ini dibuat otomatis oleh sistem pada ${data.tanggal}</p>
                     </div>
                 `;
 
+                // Masukkan A4 ke dalam Container
+                pdfContainer.appendChild(pageA4);
                 document.body.appendChild(pdfContainer);
 
-                // 4. Konfigurasi Output PDF
+                // 4. Opsi PDF
                 const opt = {
                     margin: 0,
                     filename: `Invoice_${data.kode}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true, 
-                        scrollY: 0,
-                        windowWidth: document.documentElement.offsetWidth 
-                    },
+                    html2canvas: { scale: 2, useCORS: true },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 5. Jeda 1 Detik untuk Rendering (Sangat Penting agar tidak blank)
+                // 5. Generate dengan Jeda 1 Detik (PENTING!)
                 setTimeout(() => {
-                    html2pdf().set(opt).from(pdfContainer).save()
+                    html2pdf().set(opt).from(pageA4).save()
                     .then(() => {
                         document.body.removeChild(pdfContainer);
                         this.innerHTML = originalText;
                         this.disabled = false;
-                        this.style.cursor = "pointer";
                     })
                     .catch(err => {
                         console.error(err);
-                        alert("Gagal membuat PDF.");
-                        if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
+                        alert("Gagal.");
+                        document.body.removeChild(pdfContainer);
                         this.innerHTML = originalText;
                         this.disabled = false;
-                        this.style.cursor = "pointer";
                     });
                 }, 1000);
             };
