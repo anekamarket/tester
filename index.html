@@ -18,12 +18,11 @@
         :root {
             --primary: #0A4D98;
             --primary-dark: #06356b;
-            --accent: #FF7F00; /* Oranye ala marketplace */
+            --accent: #FF7F00;
             --text-dark: #1A1A1A;
             --text-gray: #6c757d;
             --bg-light: #F3F4F6;
             --white: #FFFFFF;
-            --glass: rgba(255, 255, 255, 0.95);
             --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
@@ -40,7 +39,7 @@
         .hidden { display: none !important; }
         .badge { background: #E0F2FE; color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
 
-        /* --- HEADER (Sticky Glass) --- */
+        /* --- HEADER --- */
         header {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
@@ -91,7 +90,7 @@
         
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
 
-        /* --- MARKETPLACE GRID (PRODUK) --- */
+        /* --- MARKETPLACE GRID --- */
         .section-title { text-align: center; margin-bottom: 3rem; }
         .section-title h2 { font-size: 2.2rem; margin-bottom: 0.5rem; }
         .section-title p { color: var(--text-gray); }
@@ -116,7 +115,7 @@
         .card-btn { margin-top: auto; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--primary); color: var(--primary); background: transparent; cursor: pointer; font-weight: 600; transition: 0.3s; }
         .card-btn:hover { background: var(--primary); color: white; }
 
-        /* --- FORM PEMESANAN CANGGIH --- */
+        /* --- FORM PEMESANAN --- */
         #pesan { scroll-margin-top: 100px; }
         .order-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         
@@ -144,7 +143,7 @@
         
         .gps-btn { position: absolute; right: 5px; top: 32px; background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
-        /* --- MODAL NOTA (INVOICE STYLE) --- */
+        /* --- MODAL INVOICE --- */
         .modal-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6);
             z-index: 2000; display: flex; align-items: center; justify-content: center;
@@ -159,11 +158,12 @@
         }
         .modal-overlay.active .invoice-box { transform: scale(1); }
         
-        /* Area yang akan dicetak PDF (Header & Body) */
+        /* Area yang akan dicetak PDF */
         #printable-area {
             background: #fff;
             border-radius: 10px 10px 0 0;
-            overflow: hidden;
+            /* Penting untuk PDF: pastikan warna text hitam default */
+            color: #111;
         }
 
         .invoice-header { padding: 2rem; background: #f8f9fa; border-bottom: 2px solid #eee; display: flex; justify-content: space-between; }
@@ -171,14 +171,14 @@
         
         .invoice-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .invoice-table th { text-align: left; background: #0A4D98; color: white; padding: 12px; font-weight: 600; }
-        .invoice-table td { padding: 12px; border-bottom: 1px solid #eee; }
+        .invoice-table td { padding: 12px; border-bottom: 1px solid #eee; color: #333; }
         .invoice-total-box { text-align: right; margin-top: 20px; font-size: 1.4rem; font-weight: 700; color: var(--primary); }
         
-        /* Footer tombol (TIDAK ikut diprint) */
+        /* Footer tombol */
         .invoice-footer { padding: 1.5rem; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end; background: white; border-radius: 0 0 10px 10px; }
         .btn-secondary { background: #eee; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
-        /* --- RESPONSIVE --- */
+        /* RESPONSIVE */
         @media (max-width: 900px) {
             .hero-wrapper { flex-direction: column-reverse; text-align: center; padding-top: 0; }
             .hero-text h1 { font-size: 2.2rem; }
@@ -487,21 +487,19 @@
         // --- 1. INISIALISASI & UI EFFECTS ---
         AOS.init({ duration: 800, once: true });
 
-        // Sticky Header Effect
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 50) header.classList.add('scrolled');
             else header.classList.remove('scrolled');
         });
 
-        // Hamburger Menu
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('nav-menu');
         hamburger.addEventListener('click', () => {
             navMenu.classList.toggle('active');
         });
 
-        // --- 2. LOGIKA KALKULATOR HARGA & FORM CERDAS ---
+        // --- 2. LOGIKA KALKULATOR ---
         const productSelect = document.getElementById('jenis-produk');
         const qtyInput = document.getElementById('qty');
         const summaryProduct = document.getElementById('summary-product');
@@ -510,7 +508,6 @@
         const totalDisplay = document.getElementById('total-display');
         const weddingSection = document.getElementById('wedding-details');
 
-        // Fungsi Format Rupiah
         const formatRupiah = (angka) => {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
         };
@@ -543,7 +540,7 @@
             document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- 3. FITUR AUTO-SAVE (LOCAL STORAGE) ---
+        // --- 3. FITUR AUTO-SAVE ---
         function saveToLocal() {
             const data = {
                 produk: productSelect.value,
@@ -571,7 +568,7 @@
             document.getElementById(id).addEventListener('input', saveToLocal);
         });
 
-        // --- 4. FITUR GEOLOCATION (GPS) ---
+        // --- 4. FITUR GPS ---
         document.getElementById('btn-gps').addEventListener('click', function() {
             const btn = this;
             btn.textContent = "Mencari...";
@@ -591,7 +588,7 @@
             }
         });
 
-        // --- 5. PROSES CHECKOUT, NOTA, & PDF DOWNLOAD ---
+        // --- 5. LOGIKA MODAL & PDF (FIX MASALAH BLANK) ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
@@ -646,29 +643,60 @@
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            // --- FITUR DOWNLOAD PDF OTOMATIS ---
+            // --- FITUR DOWNLOAD PDF "CLEAN" (FIX BLANK PAGE) ---
             btnDownloadPdf.onclick = function() {
-                // Ubah teks tombol biar user tahu sedang proses
                 const originalText = this.innerHTML;
                 this.innerHTML = "⏳ Memproses...";
                 this.disabled = true;
 
-                const element = document.getElementById('printable-area');
-                
-                // Konfigurasi Nama File Otomatis
-                const fileName = `Invoice-${nama.replace(/\s+/g, '-')}-${kode}.pdf`;
+                // 1. Ambil elemen asli
+                const elementAsli = document.getElementById('printable-area');
 
+                // 2. Buat Kloningan (Copy) untuk PDF
+                // Kita kloning agar manipulasi CSS tidak merusak tampilan di layar
+                const elementClone = elementAsli.cloneNode(true);
+
+                // 3. Styling Kloningan agar RAPI di PDF
+                // Hapus batasan lebar, paksa background putih, text hitam
+                elementClone.style.width = '750px'; // Ukuran pas A4
+                elementClone.style.maxWidth = 'none';
+                elementClone.style.background = 'white';
+                elementClone.style.color = 'black';
+                elementClone.style.padding = '20px';
+                elementClone.style.margin = '0';
+                elementClone.style.position = 'absolute'; // Lepas dari layout flex modal
+                elementClone.style.left = '-9999px'; // Sembunyikan dari pandangan user
+                elementClone.style.top = '0';
+                
+                // Pastikan semua text di dalam clone berwarna hitam
+                const allText = elementClone.querySelectorAll('*');
+                allText.forEach(el => el.style.color = '#000');
+                // Kecuali header biru
+                const headers = elementClone.querySelectorAll('h2, h3, th');
+                headers.forEach(el => el.style.color = '#0A4D98');
+                const whiteText = elementClone.querySelectorAll('th');
+                whiteText.forEach(el => el.style.color = '#FFF');
+
+                // Masukkan ke body sementara
+                document.body.appendChild(elementClone);
+
+                // 4. Konfigurasi PDF
                 const opt = {
-                    margin:       10,
-                    filename:     fileName,
+                    margin:       0, 
+                    filename:     `Invoice-${nama.replace(/\s+/g, '-')}-${kode}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true }, // Scale 2 agar tajam
+                    html2canvas:  {
+                        scale: 2,       
+                        useCORS: true,  
+                        scrollY: 0      
+                    },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // Eksekusi Download
-                html2pdf().set(opt).from(element).save().then(() => {
-                    // Kembalikan tombol seperti semula setelah selesai
+                // 5. Generate & Bersihkan
+                html2pdf().set(opt).from(elementClone).save().then(() => {
+                    // Hapus elemen kloningan setelah selesai
+                    document.body.removeChild(elementClone);
                     this.innerHTML = originalText;
                     this.disabled = false;
                 });
