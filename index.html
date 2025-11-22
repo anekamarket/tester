@@ -162,8 +162,7 @@
         #printable-area {
             background: #fff;
             border-radius: 10px 10px 0 0;
-            /* Penting untuk PDF: pastikan warna text hitam default */
-            color: #111;
+            color: #111; /* Warna text hitam default */
         }
 
         /* Style untuk INVOICE di layar biasa */
@@ -229,7 +228,7 @@
                     <a href="#katalog" class="btn-primary">Lihat Katalog Produk →</a>
                 </div>
                 <div class="hero-img" data-aos="fade-left">
-                    <img src="https://images.unsplash.com/photo-1562564025-51011893e812?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Aneka Digital Printing Services">
+                    <img src="https://i.imgur.com/731UDrZ.jpeg">
                 </div>
             </div>
         </div>
@@ -589,7 +588,7 @@
             }
         });
 
-        // --- 5. LOGIKA MODAL & PDF (SOLUSI FINAL: CREATE NEW CONTAINER) ---
+        // --- 5. LOGIKA MODAL & PDF ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
@@ -644,60 +643,70 @@
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            // --- FITUR DOWNLOAD PDF "CONTAINER BARU" (FIX BLANK 100%) ---
+            // --- [BAGIAN PERBAIKAN UTAMA] LOGIKA DOWNLOAD PDF ---
             btnDownloadPdf.onclick = function() {
                 // 1. Ubah tombol jadi loading
                 const originalText = this.innerHTML;
-                this.innerHTML = "⏳ Memproses...";
+                this.innerHTML = "⏳ Memproses PDF...";
                 this.disabled = true;
 
-                // 2. BUAT CONTAINER BARU (Wadah Khusus PDF)
-                // Kita buat elemen baru dari nol, bukan clone, untuk menghindari style modal yang aneh-aneh.
-                const pdfContainer = document.createElement('div');
+                // 2. Ambil elemen asli
+                const element = document.getElementById('printable-area');
                 
-                // 3. Isi dengan konten HTML dari nota
-                // Ambil HTML string-nya saja, lebih aman daripada cloneNode untuk kasus ini.
-                const contentHTML = document.getElementById('printable-area').innerHTML;
-                pdfContainer.innerHTML = contentHTML;
+                // 3. Buat Container Sementara untuk PDF
+                // Kita clone (duplikat) elemen invoice agar tampilan aslinya tidak terganggu
+                const clone = element.cloneNode(true);
+                const pdfContainer = document.createElement('div');
+                pdfContainer.appendChild(clone);
 
-                // 4. Styling Paksa (Hardcode) agar 100% muncul
-                // Kita atur CSS langsung di elemen ini agar tidak terpengaruh CSS luar.
+                // 4. Styling Container (FIX BUG BLANK PDF)
+                // Posisikan di layar (top:0) tapi di belakang layer (z-index negative)
+                // agar browser tetap me-render isinya.
                 Object.assign(pdfContainer.style, {
-                    position: 'absolute',
-                    top: '-99999px', // Sembunyikan di luar layar atas
+                    position: 'fixed', 
+                    top: '0',
                     left: '0',
-                    width: '210mm', // Lebar A4 pas
-                    minHeight: '297mm',
-                    backgroundColor: '#ffffff', // Background Putih Mutlak
-                    color: '#000000', // Teks Hitam Mutlak
+                    width: '210mm',       // Lebar A4
+                    minHeight: '297mm',   // Tinggi minimal A4
                     padding: '20px',
-                    fontFamily: 'sans-serif', // Font standar
-                    zIndex: '-1'
+                    backgroundColor: '#ffffff', // Background Putih Mutlak
+                    color: '#111111',     // Text Hitam
+                    zIndex: '-9999',      // Sembunyi di belakang
+                    fontFamily: 'sans-serif' 
                 });
 
-                // 5. Masukkan ke Body
+                // 5. Pastikan warna heading tetap Biru
+                const headings = pdfContainer.querySelectorAll('h2, h3, strong');
+                headings.forEach(el => el.style.color = '#0A4D98'); 
+
+                // 6. Masukkan container ke Body agar terbaca browser
                 document.body.appendChild(pdfContainer);
 
-                // 6. Fix Warna Teks di dalam container (opsional tapi safety net)
-                // Kadang header ikut warna body yang mungkin salah.
-                const headings = pdfContainer.querySelectorAll('h2, h3, h4, strong');
-                headings.forEach(el => el.style.color = '#0A4D98'); // Biru brand
-
-                // 7. Generate PDF
+                // 7. Generate Nama File yang Aman
+                const safeName = nama.replace(/[^a-zA-Z0-9]/g, '_') || 'Customer';
+                
+                // 8. Konfigurasi html2pdf
                 const opt = {
-                    margin:       10,
-                    filename:     `Invoice-${nama.replace(/\s+/g, '-')}-${kode}.pdf`,
+                    margin:       [10, 10, 10, 10], 
+                    filename:     `Invoice_${safeName}_${kode}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { 
-                        scale: 2, 
-                        useCORS: true 
+                        scale: 2,         // Skala 2x agar teks tajam
+                        useCORS: true,    // Izinkan load gambar eksternal
+                        scrollY: 0
                     },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
+                // 9. Generate & Clean up
                 html2pdf().set(opt).from(pdfContainer).save().then(() => {
-                    // 8. Bersih-bersih
                     document.body.removeChild(pdfContainer); // Hapus sampah
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                }).catch(err => {
+                    console.error("Error PDF:", err);
+                    alert("Gagal membuat PDF. Coba lagi.");
+                    if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
                     this.innerHTML = originalText;
                     this.disabled = false;
                 });
