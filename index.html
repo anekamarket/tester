@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         /* --- TEMA MARKETPLACE MODERN --- */
         :root {
@@ -114,13 +116,12 @@
         .card-btn { margin-top: auto; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--primary); color: var(--primary); background: transparent; cursor: pointer; font-weight: 600; transition: 0.3s; }
         .card-btn:hover { background: var(--primary); color: white; }
 
-        /* --- FORM PEMESANAN CANGGIH (Panel Kanan/Modal) --- */
+        /* --- FORM PEMESANAN CANGGIH --- */
         #pesan { scroll-margin-top: 100px; }
         .order-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         
         .form-panel { background: var(--white); padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
         
-        /* Styling Form Inputs */
         .form-group { margin-bottom: 1.2rem; position: relative; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
         .form-control {
@@ -129,7 +130,6 @@
         }
         .form-control:focus { border-color: var(--primary); background: #fff; outline: none; box-shadow: 0 0 0 3px rgba(10, 77, 152, 0.1); }
         
-        /* Panel Ringkasan (Sticky) */
         .summary-panel {
             background: var(--white); padding: 1.5rem; border-radius: var(--radius);
             box-shadow: var(--shadow-md); height: fit-content; position: sticky; top: 100px;
@@ -142,7 +142,6 @@
         .btn-checkout { width: 100%; margin-top: 1.5rem; background: var(--accent); border: none; color: white; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 127, 0, 0.3); }
         .btn-checkout:hover { background: #e67300; transform: translateY(-2px); }
         
-        /* Helper Button GPS */
         .gps-btn { position: absolute; right: 5px; top: 32px; background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
         /* --- MODAL NOTA (INVOICE STYLE) --- */
@@ -160,15 +159,22 @@
         }
         .modal-overlay.active .invoice-box { transform: scale(1); }
         
-        .invoice-header { padding: 1.5rem; background: var(--bg-light); border-bottom: 1px solid #eee; display: flex; justify-content: space-between; border-radius: 10px 10px 0 0; }
-        .invoice-body { padding: 2rem; overflow-y: auto; flex: 1; font-size: 0.9rem; }
+        /* Area yang akan dicetak PDF (Header & Body) */
+        #printable-area {
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+
+        .invoice-header { padding: 2rem; background: #f8f9fa; border-bottom: 2px solid #eee; display: flex; justify-content: space-between; }
+        .invoice-body { padding: 2rem; font-size: 0.95rem; color: #333; background: white; }
         
-        /* Desain Tabel Invoice Modern */
         .invoice-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .invoice-table th { text-align: left; background: #f8f9fa; padding: 12px; color: #555; font-weight: 600; }
+        .invoice-table th { text-align: left; background: #0A4D98; color: white; padding: 12px; font-weight: 600; }
         .invoice-table td { padding: 12px; border-bottom: 1px solid #eee; }
-        .invoice-total-box { text-align: right; margin-top: 20px; font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+        .invoice-total-box { text-align: right; margin-top: 20px; font-size: 1.4rem; font-weight: 700; color: var(--primary); }
         
+        /* Footer tombol (TIDAK ikut diprint) */
         .invoice-footer { padding: 1.5rem; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end; background: white; border-radius: 0 0 10px 10px; }
         .btn-secondary { background: #eee; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
@@ -183,14 +189,8 @@
             .hamburger { display: block; }
             nav ul { position: fixed; top: 70px; left: -100%; width: 100%; background: white; flex-direction: column; padding: 2rem; box-shadow: var(--shadow-lg); transition: 0.4s; }
             nav ul.active { left: 0; }
-        }
-        
-        /* Print Styling */
-        @media print {
-            body * { visibility: hidden; }
-            .invoice-box, .invoice-box * { visibility: visible; }
-            .invoice-box { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; max-width: 100%; }
-            .invoice-footer, .modal-close { display: none; }
+            .invoice-header { flex-direction: column; gap: 1rem; }
+            .invoice-header div { text-align: left !important; }
         }
     </style>
 </head>
@@ -401,57 +401,73 @@
 
     <div class="modal-overlay" id="invoiceModal">
         <div class="invoice-box">
-            <div class="invoice-header">
-                <div>
-                    <h2 style="color:var(--primary);">INVOICE</h2>
-                    <small style="color:#666;">Kode Pesanan: <span id="inv-code" style="font-weight:bold; color:black;"></span></small>
-                </div>
-                <div style="text-align:right;">
-                    <h3 style="color:var(--primary);">Aneka<span>Digital</span></h3>
-                    <p style="font-size:0.8rem; color:#666;">Jasa Cetak Profesional</p>
-                </div>
-            </div>
             
-            <div class="invoice-body">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+            <div id="printable-area">
+                <div class="invoice-header">
                     <div>
-                        <strong>Kepada:</strong><br>
-                        <span id="inv-name">Customer Name</span><br>
-                        <span id="inv-wa">08xx...</span>
+                        <h2 style="color:var(--primary); margin-bottom: 5px;">INVOICE</h2>
+                        <div style="color:#333;">Kode Pesanan: <span id="inv-code" style="font-weight:bold;"></span></div>
+                        <div style="color:#666; font-size: 0.9rem;">Status: <span style="background:#e6f4ea; color:#1e7e34; padding:2px 8px; border-radius:4px; font-weight:600;">Menunggu Konfirmasi</span></div>
                     </div>
-                    <div style="text-align: right;">
-                        <strong>Tanggal:</strong><br>
-                        <span id="inv-date">dd/mm/yyyy</span>
+                    <div style="text-align:right;">
+                        <h3 style="color:var(--primary); margin-bottom: 5px;">Aneka<span>Digital</span></h3>
+                        <p style="font-size:0.85rem; color:#555; line-height: 1.4;">
+                            Jasa Cetak Profesional & Digital Printing<br>
+                            Jember, Jawa Timur<br>
+                            WhatsApp: +62 856-4770-9114
+                        </p>
                     </div>
-                </div>
-
-                <table class="invoice-table">
-                    <thead>
-                        <tr>
-                            <th>Deskripsi Layanan</th>
-                            <th style="text-align:center;">Qty</th>
-                            <th style="text-align:right;">Harga</th>
-                            <th style="text-align:right;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inv-items">
-                        </tbody>
-                </table>
-
-                <div class="invoice-total-box">
-                    Total Estimasi: <span id="inv-total-final">Rp 0</span>
                 </div>
                 
-                <div style="margin-top: 2rem; background: #fff3cd; padding: 10px; border-radius: 5px; font-size: 0.85rem;">
-                    <strong>Catatan:</strong> <span id="inv-notes">-</span><br>
-                    <br>
-                    <em>Detail Acara (Jika ada):</em> <span id="inv-event-detail">-</span>
+                <div class="invoice-body">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px dashed #ddd;">
+                        <div>
+                            <strong style="display:block; margin-bottom:5px;">Diterbitkan Untuk:</strong>
+                            <span id="inv-name" style="font-size: 1.1rem;">Customer Name</span><br>
+                            <span id="inv-wa" style="color:#666;">08xx...</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <strong style="display:block; margin-bottom:5px;">Tanggal Pemesanan:</strong>
+                            <span id="inv-date" style="font-size: 1.1rem;">dd/mm/yyyy</span>
+                        </div>
+                    </div>
+
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Deskripsi Layanan</th>
+                                <th style="text-align:center;">Qty</th>
+                                <th style="text-align:right;">Harga Satuan</th>
+                                <th style="text-align:right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inv-items">
+                            </tbody>
+                    </table>
+
+                    <div class="invoice-total-box">
+                        Total Estimasi: <span id="inv-total-final">Rp 0</span>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; background: #F3F4F6; padding: 15px; border-radius: 8px; font-size: 0.9rem; border-left: 4px solid var(--primary);">
+                        <strong style="color: var(--primary);">Catatan Tambahan:</strong> <br>
+                        <span id="inv-notes">-</span><br>
+                        <br>
+                        <strong style="color: var(--primary);">Detail Acara:</strong> <br>
+                        <span id="inv-event-detail">-</span>
+                    </div>
+
+                    <div style="margin-top: 3rem; text-align: center; font-size: 0.8rem; color: #888;">
+                        <p>Terima kasih telah mempercayakan kebutuhan cetak Anda kepada Aneka Digital.</p>
+                        <p><em>Dokumen ini dibuat secara otomatis oleh komputer.</em></p>
+                    </div>
                 </div>
             </div>
-
             <div class="invoice-footer">
                 <button class="btn-secondary" id="btn-close-modal">Tutup</button>
-                <button class="btn-secondary" onclick="window.print()">🖨️ Cetak PDF</button>
+                <button class="btn-secondary" id="btn-download-pdf" style="background: var(--accent); color: white;">
+                    📥 Download PDF
+                </button>
                 <button class="btn-primary" id="btn-send-wa" style="box-shadow:none;">Kirim WhatsApp ➔</button>
             </div>
         </div>
@@ -461,7 +477,7 @@
         <div class="container">
             <h3 style="color: white; margin-bottom: 1rem;">Aneka Digital</h3>
             <p style="margin-bottom: 1.5rem;">Mitra cetak terpercaya untuk kebutuhan personal dan bisnis Anda.</p>
-            <p>&copy; 2025 Aneka Digital. Powered by <a href="https://anekamarket.my.id" style="color: var(--accent); text-decoration: none;">AnekaMarket.my.id</a></p>
+            <p>© 2025 Aneka Digital. Powered by <a href="https://anekamarket.my.id" style="color: var(--accent); text-decoration: none;">AnekaMarket.my.id</a></p>
         </div>
     </footer>
 
@@ -499,34 +515,28 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
         };
 
-        // Fungsi Update Harga Real-time
         function updateCalculator() {
             const selectedOption = productSelect.options[productSelect.selectedIndex];
             const price = parseInt(selectedOption.getAttribute('data-price')) || 0;
             const qty = parseInt(qtyInput.value) || 0;
             const total = price * qty;
 
-            // Update Text UI
             summaryProduct.textContent = selectedOption.text.split('(')[0] || '-';
             summaryPrice.textContent = price > 0 ? formatRupiah(price) : 'Hubungi Admin';
             summaryQty.textContent = qty;
             totalDisplay.textContent = total > 0 ? formatRupiah(total) : 'Rp 0';
 
-            // Show/Hide Wedding Fields
             if (productSelect.value === 'undangan') {
                 weddingSection.classList.remove('hidden');
             } else {
                 weddingSection.classList.add('hidden');
             }
-            
-            // Simpan ke LocalStorage (Auto-Save)
             saveToLocal();
         }
 
         productSelect.addEventListener('change', updateCalculator);
         qtyInput.addEventListener('input', updateCalculator);
 
-        // Helper: Pilih Produk dari Katalog
         window.selectProduct = function(value) {
             productSelect.value = value;
             updateCalculator();
@@ -534,7 +544,6 @@
         }
 
         // --- 3. FITUR AUTO-SAVE (LOCAL STORAGE) ---
-        // Agar data tidak hilang saat refresh
         function saveToLocal() {
             const data = {
                 produk: productSelect.value,
@@ -554,16 +563,13 @@
                 if(data.nama) document.getElementById('nama').value = data.nama;
                 if(data.wa) document.getElementById('wa').value = data.wa;
                 if(data.catatan) document.getElementById('catatan').value = data.catatan;
-                updateCalculator(); // Refresh hitungan
+                updateCalculator(); 
             }
         }
-        // Load data saat halaman dibuka
         document.addEventListener('DOMContentLoaded', loadFromLocal);
-        // Tambahkan event listener untuk input teks agar tersimpan juga
         ['nama', 'wa', 'catatan'].forEach(id => {
             document.getElementById(id).addEventListener('input', saveToLocal);
         });
-
 
         // --- 4. FITUR GEOLOCATION (GPS) ---
         document.getElementById('btn-gps').addEventListener('click', function() {
@@ -585,21 +591,19 @@
             }
         });
 
-
-        // --- 5. PROSES CHECKOUT & MODAL INVOICE ---
+        // --- 5. PROSES CHECKOUT, NOTA, & PDF DOWNLOAD ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
         const btnSendWa = document.getElementById('btn-send-wa');
+        const btnDownloadPdf = document.getElementById('btn-download-pdf');
 
         btnProcess.addEventListener('click', () => {
-            // Validasi sederhana
             if (!document.getElementById('nama').value || !document.getElementById('wa').value) {
                 alert("Mohon lengkapi Nama dan WhatsApp Anda.");
                 return;
             }
 
-            // Generate Invoice Data
             const kode = 'INV-' + Math.floor(Math.random() * 1000000);
             const today = new Date().toLocaleDateString('id-ID');
             const nama = document.getElementById('nama').value;
@@ -610,7 +614,6 @@
             const total = price * qty;
             const note = document.getElementById('catatan').value || '-';
             
-            // Acara Detail
             let eventDetail = '-';
             if(productSelect.value === 'undangan') {
                 eventDetail = `Acara: ${document.getElementById('jenis-acara').value}, Pria: ${document.getElementById('nama-pria').value}, Wanita: ${document.getElementById('nama-wanita').value}`;
@@ -625,7 +628,6 @@
             document.getElementById('inv-event-detail').innerText = eventDetail;
             document.getElementById('inv-total-final').innerText = formatRupiah(total);
 
-            // Isi Tabel Item
             const tbody = document.getElementById('inv-items');
             tbody.innerHTML = `
                 <tr>
@@ -636,21 +638,44 @@
                 </tr>
             `;
 
-            // Tampilkan Modal
             modal.classList.add('active');
 
-            // Siapkan Link WhatsApp
+            // Konfigurasi Tombol WA
             btnSendWa.onclick = () => {
-                let text = `Halo Admin, saya ingin konfirmasi pesanan:\n\n*Kode:* ${kode}\n*Nama:* ${nama}\n*Item:* ${produk} (${qty} pcs)\n*Total Est:* ${formatRupiah(total)}\n\nMohon diproses.`;
+                let text = `Halo Admin, konfirmasi pesanan:\n\n*Kode:* ${kode}\n*Nama:* ${nama}\n*Item:* ${produk} (${qty} pcs)\n*Total:* ${formatRupiah(total)}\n\nMohon diproses.`;
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
+            };
+
+            // --- FITUR DOWNLOAD PDF OTOMATIS ---
+            btnDownloadPdf.onclick = function() {
+                // Ubah teks tombol biar user tahu sedang proses
+                const originalText = this.innerHTML;
+                this.innerHTML = "⏳ Memproses...";
+                this.disabled = true;
+
+                const element = document.getElementById('printable-area');
+                
+                // Konfigurasi Nama File Otomatis
+                const fileName = `Invoice-${nama.replace(/\s+/g, '-')}-${kode}.pdf`;
+
+                const opt = {
+                    margin:       10,
+                    filename:     fileName,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true }, // Scale 2 agar tajam
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                // Eksekusi Download
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Kembalikan tombol seperti semula setelah selesai
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                });
             };
         });
 
-        btnClose.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-
-        // Close modal on click outside
+        btnClose.addEventListener('click', () => modal.classList.remove('active'));
         modal.addEventListener('click', (e) => {
             if(e.target === modal) modal.classList.remove('active');
         });
