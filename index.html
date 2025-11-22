@@ -160,7 +160,7 @@
         
         /* Area yang akan dicetak PDF */
         #printable-area {
-            background: #fff; /* WAJIB PUTIH */
+            background: #fff;
             border-radius: 10px 10px 0 0;
             color: #111;
         }
@@ -201,6 +201,8 @@
         .pdf-mode-active .invoice-header {
             flex-wrap: wrap; /* Header aman jika sempit */
         }
+        /* --- END OF PDF FIX CSS --- */
+
 
         /* RESPONSIVE */
         @media (max-width: 900px) {
@@ -637,7 +639,14 @@
             
             let eventDetail = '-';
             if(productSelect.value === 'undangan') {
-                eventDetail = `Acara: ${document.getElementById('jenis-acara').value}, Pria: ${document.getElementById('nama-pria').value}, Wanita: ${document.getElementById('nama-wanita').value}`;
+                const pria = document.getElementById('nama-pria').value;
+                const wanita = document.getElementById('nama-wanita').value;
+                eventDetail = `Acara: ${document.getElementById('jenis-acara').value}`;
+                if (pria && wanita) {
+                    eventDetail += `, Pasangan: ${pria} & ${wanita}`;
+                } else if (pria) {
+                    eventDetail += `, Nama: ${pria}`;
+                }
             }
 
             // Isi Modal
@@ -667,7 +676,7 @@
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            // --- PERBAIKAN FINAL: FITUR DOWNLOAD PDF ---
+            // --- PERBAIKAN FINAL LOGIKA DOWNLOAD PDF (Menggunakan Class Fix & Delay) ---
             btnDownloadPdf.onclick = function() {
                 // 1. Kunci Tombol & Ubah Teks
                 const originalText = this.innerHTML;
@@ -676,67 +685,76 @@
                 
                 // 2. Ambil Elemen & Container Invoice
                 const element = document.getElementById('printable-area');
-                const invoiceBox = document.querySelector('.invoice-box');
+                const invoiceBox = document.querySelector('.invoice-box'); // Parent container
 
                 // 3. SIMPAN STYLE ASLI (Backup)
-                const originalStyle = element.getAttribute('style');
+                // Kita perlu backup style inline pada elemen-elemen ini jika ada
+                const originalElementStyle = element.getAttribute('style');
                 const originalBoxStyle = invoiceBox.getAttribute('style');
 
-                // 4. TERAPKAN MODE A4 (Inject CSS agar layout pas)
-                // Lebar 750px agar tidak terpotong di kertas A4
+                // 4. TERAPKAN MODE A4 (Paksa ukuran agar tidak terpotong)
                 element.classList.add('pdf-mode-active');
                 
-                // Reset transform/scale modal agar tidak mengacaukan koordinat canvas
-                invoiceBox.style.transform = 'none'; 
-                invoiceBox.style.width = 'fit-content';
-                invoiceBox.style.margin = '0';
-                invoiceBox.style.position = 'fixed'; 
-                invoiceBox.style.left = '0';
-                invoiceBox.style.top = '0';
-                invoiceBox.style.zIndex = '9999'; 
-                invoiceBox.style.background = 'white';
+                // Reset transform/scale modal agar html2canvas tidak bingung
+                // Ini penting karena modal memiliki transform: scale(0.9)
+                Object.assign(invoiceBox.style, {
+                    transform: 'none', 
+                    width: 'fit-content',
+                    margin: '0',
+                    position: 'fixed', 
+                    left: '0',
+                    top: '0',
+                    zIndex: '9999', 
+                    background: 'white'
+                });
 
-                // 5. Konfigurasi html2pdf
+
+                // 5. Konfigurasi PDF
                 const opt = {
-                    margin:       [10, 10, 10, 10],
+                    margin:       [10, 10, 10, 10], // Margin 10mm
                     filename:     `Invoice_${kode}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { 
-                        scale: 2,         // Resolusi Tinggi (Teks Tajam)
+                        scale: 2,         // Resolusi Tinggi
                         useCORS: true,    
                         scrollY: 0,       
-                        windowWidth: 800  // Simulasi layar lebar agar layout rapi
+                        windowWidth: 800  // Anggap lebar virtual 800px (Simulasi A4)
                     },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 6. Generate PDF dengan Delay (Penting!)
-                // Delay 500ms memberi waktu browser me-render CSS baru sebelum di-capture
+                // 6. Generate PDF
+                // Beri jeda 500ms agar browser sempat merender perubahan CSS di atas
                 setTimeout(() => {
                     html2pdf().set(opt).from(element).save().then(() => {
                         // 7. RESTORE (Kembalikan Tampilan Semula)
                         element.classList.remove('pdf-mode-active');
                         
-                        if(originalStyle) element.setAttribute('style', originalStyle);
+                        // Kembalikan style inline pada elemen
+                        if(originalElementStyle) element.setAttribute('style', originalElementStyle);
                         else element.removeAttribute('style');
 
+                        // Kembalikan style inline pada box
                         if(originalBoxStyle) invoiceBox.setAttribute('style', originalBoxStyle);
                         else invoiceBox.removeAttribute('style');
 
+                        // Reset tombol
                         this.innerHTML = originalText;
                         this.disabled = false;
 
                     }).catch(err => {
                         console.error("Gagal PDF:", err);
-                        alert("Gagal membuat PDF. Silakan coba lagi.");
+                        alert("Terjadi kesalahan saat membuat PDF.");
                         
-                        // Restore Emergency
+                        // Restore Emergency jika error
                         element.classList.remove('pdf-mode-active');
-                        invoiceBox.removeAttribute('style');
+                        if(originalElementStyle) element.setAttribute('style', originalElementStyle); else element.removeAttribute('style');
+                        if(originalBoxStyle) invoiceBox.setAttribute('style', originalBoxStyle); else invoiceBox.removeAttribute('style');
+                        
                         this.innerHTML = originalText;
                         this.disabled = false;
                     });
-                }, 500);
+                }, 500); // Delay 0.5 detik sangat penting!
             };
         });
 
