@@ -161,7 +161,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.2); 
             transform: scale(0.95); transition: 0.3s;
             display: flex; flex-direction: column;
-            max-height: 90vh; /* Agar tidak melebihi layar */
+            max-height: 90vh;
         }
         .modal-overlay.active .invoice-box { transform: scale(1); }
 
@@ -172,10 +172,10 @@
             border-radius: 10px 10px 0 0; flex-shrink: 0; 
         }
 
-        /* Body Modal (Scrollable) */
+        /* Body Modal (Scrollable untuk layar HP) */
         .invoice-body { 
             padding: 1.5rem; font-size: 0.95rem; color: #333; background: white; 
-            overflow-y: auto; /* Scroll jika konten panjang */
+            overflow-y: auto; 
             flex-grow: 1; 
         }
         
@@ -606,7 +606,7 @@
             }
         });
 
-        // --- 5. LOGIKA MODAL, WA, & PDF FIXED ---
+        // --- 5. LOGIKA MODAL, WA, & PDF ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
@@ -668,14 +668,16 @@
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            // --- LOGIKA DOWNLOAD PDF "GHOST CONTAINER" (FIXED) ---
+            // ============================================
+            // LOGIKA PDF: ANTI BLANK & ANTI POTONG
+            // ============================================
             btnDownloadPdf.onclick = function() {
                 const originalText = this.innerHTML;
-                this.innerHTML = "⏳ Membuat PDF...";
+                this.innerHTML = "⏳ Sedang Mencetak...";
                 this.disabled = true;
-                this.style.opacity = "0.7";
+                this.style.cursor = "wait";
 
-                // Ambil data teks dari modal yang sudah terisi
+                // 1. Ambil data terbaru
                 const data = {
                     kode: document.getElementById('inv-code').innerText,
                     tanggal: document.getElementById('inv-date').innerText,
@@ -687,31 +689,34 @@
                     acara: document.getElementById('inv-event-detail').innerText
                 };
 
-                // Buat elemen sementara (Ghost Container)
+                // 2. Buat Container PDF di Latar Belakang
                 const pdfContainer = document.createElement('div');
                 
-                // Style agar pas A4 (tanpa scroll)
-                pdfContainer.style.width = '794px'; 
+                // Styling Khusus: 
+                // - absolute/top:0 agar TERLIHAT oleh browser (tidak blank)
+                // - z-index:-9999 agar TIDAK TERLIHAT oleh user
+                // - width A4 agar rapi
+                pdfContainer.style.position = 'absolute'; 
+                pdfContainer.style.top = '0';
+                pdfContainer.style.left = '0';
+                pdfContainer.style.zIndex = '-9999';
+                pdfContainer.style.width = '794px'; // Lebar A4 (96 dpi)
                 pdfContainer.style.minHeight = '1123px';
                 pdfContainer.style.padding = '40px';
                 pdfContainer.style.backgroundColor = '#ffffff';
-                pdfContainer.style.position = 'fixed';
-                pdfContainer.style.top = '-9999px'; // Sembunyikan
-                pdfContainer.style.left = '0';
-                pdfContainer.style.zIndex = '-999';
                 pdfContainer.style.fontFamily = "'Inter', sans-serif";
                 pdfContainer.style.color = '#1A1A1A';
 
-                // HTML Template PDF (Beda dengan Modal, lebih formal)
+                // 3. Masukkan HTML Template Surat Resmi
                 pdfContainer.innerHTML = `
                     <div style="border-bottom: 3px solid #0A4D98; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
-                            <h1 style="color: #0A4D98; margin: 0; font-size: 28px; font-family: 'Poppins', sans-serif;">INVOICE</h1>
+                            <h1 style="color: #0A4D98; margin: 0; font-size: 28px; font-family: sans-serif;">INVOICE</h1>
                             <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">No: <strong>${data.kode}</strong></p>
                             <p style="margin: 2px 0 0 0; font-size: 14px; color: #666;">Tgl: ${data.tanggal}</p>
                         </div>
                         <div style="text-align: right;">
-                            <h2 style="color: #0A4D98; margin: 0; font-size: 22px;">Aneka<span style="color: #FF7F00;">Digital</span></h2>
+                            <h2 style="color: #0A4D98; margin: 0; font-size: 22px; font-family: sans-serif;">Aneka<span style="color: #FF7F00;">Digital</span></h2>
                             <p style="margin: 5px 0 0 0; font-size: 12px; line-height: 1.4; color: #555;">
                                 Jasa Cetak Profesional<br>Jember, Jawa Timur<br>WA: +62 856-4770-9114
                             </p>
@@ -720,12 +725,12 @@
 
                     <div style="margin-bottom: 30px; display: flex; justify-content: space-between;">
                         <div style="width: 48%;">
-                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98;">Kepada:</h4>
+                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98; font-family: sans-serif;">Kepada:</h4>
                             <div style="font-size: 16px; font-weight: bold;">${data.nama}</div>
                             <div style="font-size: 14px; color: #555;">${data.wa}</div>
                         </div>
                         <div style="width: 48%;">
-                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98;">Detail Pesanan:</h4>
+                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98; font-family: sans-serif;">Detail Pesanan:</h4>
                             <div style="font-size: 13px; margin-bottom: 5px;"><strong>Status:</strong> <span style="color: #d97706;">Menunggu Konfirmasi</span></div>
                             <div style="font-size: 13px;"><strong>Acara:</strong> ${data.acara}</div>
                         </div>
@@ -753,7 +758,7 @@
                     </div>
 
                     <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; border-left: 5px solid #FF7F00; margin-bottom: 40px;">
-                        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #0A4D98;">Catatan Tambahan:</h4>
+                        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #0A4D98; font-family: sans-serif;">Catatan Tambahan:</h4>
                         <p style="margin: 0; font-size: 14px; color: #333; font-style: italic;">"${data.catatan}"</p>
                     </div>
 
@@ -765,29 +770,38 @@
 
                 document.body.appendChild(pdfContainer);
 
+                // 4. Konfigurasi Output PDF
                 const opt = {
                     margin: 0,
                     filename: `Invoice_${data.kode}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        scrollY: 0,
+                        windowWidth: document.documentElement.offsetWidth 
+                    },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                html2pdf().set(opt).from(pdfContainer).save()
-                .then(() => {
-                    document.body.removeChild(pdfContainer);
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                    this.style.opacity = "1";
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Gagal membuat PDF.");
-                    if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                    this.style.opacity = "1";
-                });
+                // 5. Jeda 1 Detik untuk Rendering (Sangat Penting agar tidak blank)
+                setTimeout(() => {
+                    html2pdf().set(opt).from(pdfContainer).save()
+                    .then(() => {
+                        document.body.removeChild(pdfContainer);
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                        this.style.cursor = "pointer";
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Gagal membuat PDF.");
+                        if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                        this.style.cursor = "pointer";
+                    });
+                }, 1000);
             };
         });
 
