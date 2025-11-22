@@ -160,9 +160,9 @@
         
         /* Area yang akan dicetak PDF */
         #printable-area {
-            background: #fff;
+            background: #fff; /* WAJIB PUTIH AGAR TIDAK BLANK */
             border-radius: 10px 10px 0 0;
-            color: #111; /* Warna text hitam default */
+            color: #111;
         }
 
         /* Style untuk INVOICE di layar biasa */
@@ -643,70 +643,34 @@
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
 
-            // --- [BAGIAN PERBAIKAN UTAMA] LOGIKA DOWNLOAD PDF ---
+            // --- [FIX] LOGIKA DOWNLOAD PDF YANG BENAR ---
             btnDownloadPdf.onclick = function() {
-                // 1. Ubah tombol jadi loading
                 const originalText = this.innerHTML;
-                this.innerHTML = "⏳ Memproses PDF...";
+                this.innerHTML = "⏳ Sedang Membuat PDF...";
                 this.disabled = true;
 
-                // 2. Ambil elemen asli
                 const element = document.getElementById('printable-area');
-                
-                // 3. Buat Container Sementara untuk PDF
-                // Kita clone (duplikat) elemen invoice agar tampilan aslinya tidak terganggu
-                const clone = element.cloneNode(true);
-                const pdfContainer = document.createElement('div');
-                pdfContainer.appendChild(clone);
 
-                // 4. Styling Container (FIX BUG BLANK PDF)
-                // Posisikan di layar (top:0) tapi di belakang layer (z-index negative)
-                // agar browser tetap me-render isinya.
-                Object.assign(pdfContainer.style, {
-                    position: 'fixed', 
-                    top: '0',
-                    left: '0',
-                    width: '210mm',       // Lebar A4
-                    minHeight: '297mm',   // Tinggi minimal A4
-                    padding: '20px',
-                    backgroundColor: '#ffffff', // Background Putih Mutlak
-                    color: '#111111',     // Text Hitam
-                    zIndex: '-9999',      // Sembunyi di belakang
-                    fontFamily: 'sans-serif' 
-                });
-
-                // 5. Pastikan warna heading tetap Biru
-                const headings = pdfContainer.querySelectorAll('h2, h3, strong');
-                headings.forEach(el => el.style.color = '#0A4D98'); 
-
-                // 6. Masukkan container ke Body agar terbaca browser
-                document.body.appendChild(pdfContainer);
-
-                // 7. Generate Nama File yang Aman
-                const safeName = nama.replace(/[^a-zA-Z0-9]/g, '_') || 'Customer';
-                
-                // 8. Konfigurasi html2pdf
                 const opt = {
-                    margin:       [10, 10, 10, 10], 
-                    filename:     `Invoice_${safeName}_${kode}.pdf`,
+                    margin:       [10, 10, 10, 10],
+                    filename:     `Invoice_${kode}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { 
-                        scale: 2,         // Skala 2x agar teks tajam
-                        useCORS: true,    // Izinkan load gambar eksternal
-                        scrollY: 0
+                        scale: 2,           // Resolusi tinggi
+                        useCORS: true,      
+                        scrollY: 0,
+                        windowWidth: 1200   // Paksa layout desktop
                     },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 9. Generate & Clean up
-                html2pdf().set(opt).from(pdfContainer).save().then(() => {
-                    document.body.removeChild(pdfContainer); // Hapus sampah
+                // Generate PDF langsung dari element (tanpa clone aneh-aneh)
+                html2pdf().set(opt).from(element).save().then(() => {
                     this.innerHTML = originalText;
                     this.disabled = false;
                 }).catch(err => {
                     console.error("Error PDF:", err);
                     alert("Gagal membuat PDF. Coba lagi.");
-                    if(document.body.contains(pdfContainer)) document.body.removeChild(pdfContainer);
                     this.innerHTML = originalText;
                     this.disabled = false;
                 });
@@ -720,4 +684,4 @@
 
     </script>
 </body>
-</html>
+</html>                                                                                                                                                                                                                                            
