@@ -8,11 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-    
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA MARKETPLACE MODERN (KEMBALI UTUH) --- */
+        /* --- TEMA MARKETPLACE MODERN --- */
         :root {
             --primary: #0A4D98;
             --primary-dark: #06356b;
@@ -188,43 +187,6 @@
             .invoice-header div { text-align: center !important; }
             .invoice-footer { justify-content: center; }
             .invoice-footer button { width: 100%; margin-bottom: 5px; }
-        }
-
-        /* ============================================================
-           CSS KHUSUS PRINT (PERBAIKAN UTAMA - BRUTAL FIX)
-           Ini yang membuat PDF Anda berisi TEKS dan formatnya RAPI
-        ============================================================ */
-        /* Sembunyikan elemen print di tampilan layar normal */
-        #printable-area { display: none; }
-
-        @media print {
-            /* 1. Sembunyikan SELURUH elemen website asli */
-            body * { visibility: hidden; }
-            
-            /* 2. Tampilkan HANYA elemen #printable-area dan isinya */
-            #printable-area, #printable-area * { visibility: visible; }
-            
-            /* 3. Posisikan #printable-area di pojok kiri atas kertas */
-            #printable-area {
-                display: block !important;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-                padding: 20px;
-            }
-
-            /* 4. Reset Margin Browser */
-            @page { margin: 0; size: auto; }
-            body { margin: 1cm; }
-
-            /* 5. Styling Khusus Invoice di Kertas */
-            .print-header { border-bottom: 3px solid #0A4D98; margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; }
-            .print-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #000; }
-            .print-table th { background: #eee !important; color: #000 !important; border: 1px solid #000; padding: 8px; text-align: left; -webkit-print-color-adjust: exact; }
-            .print-table td { border: 1px solid #000; padding: 8px; }
-            .print-total { text-align: right; font-size: 18px; font-weight: bold; margin-top: 20px; }
         }
     </style>
 </head>
@@ -461,7 +423,7 @@
             <div class="invoice-footer">
                 <button class="btn-secondary" id="btn-close-modal">Tutup</button>
                 <button class="btn-secondary" id="btn-download-pdf" style="background: var(--accent); color: white;">
-                    📥 Download PDF (Teks)
+                    📥 Cetak / PDF
                 </button>
                 <button class="btn-primary" id="btn-send-wa" style="box-shadow:none;">Kirim WhatsApp ➔</button>
             </div>
@@ -476,66 +438,6 @@
         </div>
     </footer>
 
-    <div id="printable-area">
-        <div class="print-header">
-            <div>
-                <h1 style="color:#0A4D98; margin:0;">INVOICE</h1>
-                <p style="margin:5px 0;">No. Pesanan: <span id="p-kode">INV-000</span></p>
-                <p style="margin:0;">Tanggal: <span id="p-tgl">01/01/2025</span></p>
-            </div>
-            <div style="text-align:right;">
-                <h2 style="margin:0; color:#333;">Aneka<span style="color:#FF7F00;">Digital</span></h2>
-                <p style="margin:5px 0; font-size:12px;">Jember, Jawa Timur</p>
-                <p style="margin:0; font-size:12px;">WA: 0856-4770-9114</p>
-            </div>
-        </div>
-
-        <table style="width:100%; margin-bottom:20px; font-family:sans-serif;">
-            <tr>
-                <td style="width:50%; vertical-align:top;">
-                    <strong>DITERBITKAN UNTUK:</strong><br>
-                    Nama: <span id="p-nama">Budi</span><br>
-                    WA: <span id="p-wa">08123</span>
-                </td>
-                <td style="text-align:right; vertical-align:top;">
-                    <strong>DETAIL ACARA:</strong><br>
-                    <span id="p-event">-</span>
-                </td>
-            </tr>
-        </table>
-
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th>Deskripsi Layanan</th>
-                    <th style="text-align:center;">Qty</th>
-                    <th style="text-align:right;">Harga Satuan</th>
-                    <th style="text-align:right;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="p-produk">Undangan</td>
-                    <td style="text-align:center;" id="p-qty">100</td>
-                    <td style="text-align:right;" id="p-harga">Rp 1.500</td>
-                    <td style="text-align:right;" id="p-subtotal">Rp 150.000</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="print-total">
-            Total Tagihan: <span id="p-total">Rp 150.000</span>
-        </div>
-
-        <div style="margin-top:30px; border:1px solid #000; padding:10px; font-size:12px;">
-            <strong>CATATAN TAMBAHAN:</strong><br>
-            <span id="p-catatan">-</span>
-        </div>
-
-        <div style="margin-top:50px; text-align:center; font-size:10px; color:#555;">
-            Dokumen ini sah dan dibuat secara otomatis oleh sistem Aneka Digital.
-        </div>
-    </div>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
@@ -632,7 +534,7 @@
                 navigator.geolocation.getCurrentPosition(function(position) {
                     const lat = position.coords.latitude;
                     const long = position.coords.longitude;
-                    document.getElementById('lokasi').value = `https://maps.google.com/?q=${lat},${long}`;
+                    document.getElementById('lokasi').value = `https://www.google.com/maps?q=${lat},${long}`;
                     btn.textContent = "✅ Lokasi Ditemukan";
                     setTimeout(() => btn.textContent = "📍 Ambil GPS Saya", 3000);
                 }, function() {
@@ -644,14 +546,13 @@
             }
         });
 
-        // --- 5. LOGIKA MODAL & PDF (NATIVE PRINT FIX) ---
+        // --- 5. LOGIKA MODAL & PDF (FIXED WINDOW PRINT) ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
         const btnSendWa = document.getElementById('btn-send-wa');
         const btnDownloadPdf = document.getElementById('btn-download-pdf');
 
-        // Variabel Global Data Pesanan
         let orderData = {};
 
         btnProcess.addEventListener('click', () => {
@@ -660,9 +561,8 @@
                 return;
             }
 
-            // 1. Kumpulkan Data
             const kode = 'INV-' + Math.floor(Math.random() * 1000000);
-            const today = new Date().toLocaleDateString('id-ID');
+            const today = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
             const nama = document.getElementById('nama').value;
             const wa = document.getElementById('wa').value;
             const produkRaw = productSelect.options[productSelect.selectedIndex];
@@ -674,16 +574,14 @@
             
             let eventDetail = '-';
             if(productSelect.value === 'undangan') {
-                const pria = document.getElementById('nama-pria').value;
-                const wanita = document.getElementById('nama-wanita').value;
+                const pria = document.getElementById('nama-pria').value || '-';
+                const wanita = document.getElementById('nama-wanita').value || '-';
                 const jenis = document.getElementById('jenis-acara').value;
                 eventDetail = `${jenis}: ${pria} & ${wanita}`;
             }
 
-            // Simpan ke Global Variable
             orderData = { kode, today, nama, wa, produkNama, price, qty, total, note, eventDetail };
 
-            // 2. Tampilkan ke Modal (UI)
             document.getElementById('inv-code').innerText = kode;
             document.getElementById('inv-total-final').innerText = formatRupiah(total);
             
@@ -707,33 +605,118 @@
 
             modal.classList.add('active');
 
-            // 3. Siapkan Tombol WA
             btnSendWa.onclick = () => {
                 let text = `Halo Admin, Order Baru:\n*Kode:* ${kode}\n*Nama:* ${nama}\n*Item:* ${produkNama} (${qty} pcs)\n*Total:* ${formatRupiah(total)}\nMohon diproses.`;
                 window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
             };
         });
 
-        // 4. LOGIKA DOWNLOAD PDF (NATIVE PRINT)
+        // --- SOLUSI UTAMA CETAK PDF YANG BERSIH ---
         btnDownloadPdf.addEventListener('click', () => {
-            // a. Masukkan data ke elemen #printable-area (Template Cetak)
-            document.getElementById('p-kode').innerText = orderData.kode;
-            document.getElementById('p-tgl').innerText = orderData.today;
-            document.getElementById('p-nama').innerText = orderData.nama;
-            document.getElementById('p-wa').innerText = orderData.wa;
-            document.getElementById('p-event').innerText = orderData.eventDetail;
+            // Membuka Jendela Baru yang Kosong
+            const printWindow = window.open('', '', 'height=650,width=900');
             
-            document.getElementById('p-produk').innerText = orderData.produkNama;
-            document.getElementById('p-qty').innerText = orderData.qty;
-            document.getElementById('p-harga').innerText = formatRupiah(orderData.price);
-            document.getElementById('p-subtotal').innerText = formatRupiah(orderData.total);
-            document.getElementById('p-total').innerText = formatRupiah(orderData.total);
-            
-            document.getElementById('p-catatan').innerText = orderData.note;
+            // Menulis HTML Struktur Invoice yang SANGAT RAPI
+            printWindow.document.write('<html><head><title>INVOICE - ' + orderData.kode + '</title>');
+            printWindow.document.write(`
+                <style>
+                    body { font-family: 'Arial', sans-serif; padding: 40px; color: #333; max-width: 800px; margin: auto; }
+                    .header { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 3px solid #0A4D98; padding-bottom: 20px; }
+                    .logo { font-size: 24px; font-weight: bold; color: #0A4D98; }
+                    .logo span { color: #FF7F00; }
+                    .meta { text-align: right; font-size: 14px; color: #555; }
+                    
+                    .info-grid { display: flex; justify-content: space-between; margin-bottom: 30px; }
+                    .info-box { width: 48%; }
+                    .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; }
+                    .value { font-size: 16px; font-weight: 500; }
 
-            // b. Panggil Window Print
-            // Browser otomatis membaca CSS @media print dan hanya mencetak #printable-area
-            window.print();
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                    th { background: #f4f4f4; padding: 12px; text-align: left; border-bottom: 2px solid #ddd; font-size: 14px; }
+                    td { padding: 12px; border-bottom: 1px solid #eee; }
+                    
+                    .total-section { text-align: right; margin-top: 20px; }
+                    .total-label { font-size: 16px; font-weight: bold; margin-right: 10px; }
+                    .total-amount { font-size: 24px; font-weight: bold; color: #0A4D98; }
+                    
+                    .footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 12px; color: #aaa; }
+                    
+                    /* Hapus elemen browser saat print */
+                    @media print {
+                        body { margin: 0; padding: 20px; }
+                        .no-print { display: none; }
+                    }
+                </style>
+            `);
+            printWindow.document.write('</head><body>');
+            
+            // Konten Invoice
+            printWindow.document.write(`
+                <div class="header">
+                    <div class="logo">Aneka<span>Digital</span></div>
+                    <div class="meta">
+                        <div><strong>INVOICE</strong></div>
+                        <div>#${orderData.kode}</div>
+                        <div>${orderData.today}</div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="label">Diterbitkan Untuk:</div>
+                        <div class="value">${orderData.nama}</div>
+                        <div style="font-size:14px; color:#666;">${orderData.wa}</div>
+                    </div>
+                    <div class="info-box" style="text-align:right;">
+                        <div class="label">Metode Pembayaran:</div>
+                        <div class="value">Transfer / Tunai</div>
+                        <div style="font-size:14px; color:#666;">Status: Menunggu</div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Deskripsi Layanan</th>
+                            <th style="text-align:center; width: 80px;">Qty</th>
+                            <th style="text-align:right; width: 150px;">Harga Satuan</th>
+                            <th style="text-align:right; width: 150px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>${orderData.produkNama}</strong><br>
+                                <span style="font-size:12px; color:#666;">Catatan: ${orderData.note}</span><br>
+                                <span style="font-size:12px; color:#666;">Detail: ${orderData.eventDetail}</span>
+                            </td>
+                            <td style="text-align:center;">${orderData.qty}</td>
+                            <td style="text-align:right;">${formatRupiah(orderData.price)}</td>
+                            <td style="text-align:right;">${formatRupiah(orderData.total)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="total-section">
+                    <span class="total-label">TOTAL TAGIHAN:</span>
+                    <span class="total-amount">${formatRupiah(orderData.total)}</span>
+                </div>
+
+                <div class="footer">
+                    Terima kasih atas kepercayaan Anda pada Aneka Digital.<br>
+                    Dokumen ini dihasilkan secara otomatis oleh komputer dan sah tanpa tanda tangan.
+                </div>
+            `);
+
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            
+            // Tunggu sebentar agar style termuat, lalu print
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
         });
 
         btnClose.addEventListener('click', () => modal.classList.remove('active'));
