@@ -15,7 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* --- TEMA MARKETPLACE MODERN --- */
+        /* --- TEMA MARKETPLACE MODERN (DIKEMBALIKAN UTUH) --- */
         :root {
             --primary: #0A4D98;
             --primary-dark: #06356b;
@@ -145,7 +145,7 @@
         
         .gps-btn { position: absolute; right: 5px; top: 32px; background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
 
-        /* --- MODAL & INVOICE UI (Tampilan Layar) --- */
+        /* --- MODAL & INVOICE UI (Tampilan Popup di Layar) --- */
         .modal-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6);
             z-index: 2000; display: flex; align-items: center; justify-content: center;
@@ -172,10 +172,10 @@
             border-radius: 10px 10px 0 0; flex-shrink: 0; 
         }
 
-        /* Body Modal (Scrollable untuk layar HP) */
+        /* Body Modal */
         .invoice-body { 
             padding: 1.5rem; font-size: 0.95rem; color: #333; background: white; 
-            overflow-y: auto; 
+            overflow-y: auto; /* Scrollbar HANYA untuk tampilan layar, tidak untuk PDF */
             flex-grow: 1; 
         }
         
@@ -502,7 +502,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
-        // --- 1. INISIALISASI & UI EFFECTS ---
+        // --- 1. INISIALISASI ANIMASI & NAVBAR ---
         AOS.init({ duration: 800, once: true });
 
         window.addEventListener('scroll', () => {
@@ -541,6 +541,7 @@
             summaryQty.textContent = qty;
             totalDisplay.textContent = total > 0 ? formatRupiah(total) : 'Rp 0';
 
+            // Tampilkan form tambahan jika Undangan
             if (productSelect.value === 'undangan') {
                 weddingSection.classList.remove('hidden');
             } else {
@@ -558,7 +559,7 @@
             document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- 3. FITUR AUTO-SAVE ---
+        // --- 3. AUTO-SAVE LOCALSTORAGE ---
         function saveToLocal() {
             const data = {
                 produk: productSelect.value,
@@ -606,7 +607,7 @@
             }
         });
 
-        // --- 5. LOGIKA MODAL, WA, & PDF ---
+        // --- 5. LOGIKA MODAL, WA, & PDF "CLEAN & FIX" ---
         const modal = document.getElementById('invoiceModal');
         const btnProcess = document.getElementById('btn-process');
         const btnClose = document.getElementById('btn-close-modal');
@@ -619,6 +620,7 @@
                 return;
             }
 
+            // Generate Data Invoice
             const kode = 'INV-' + Math.floor(Math.random() * 1000000);
             const today = new Date().toLocaleDateString('id-ID');
             const nama = document.getElementById('nama').value;
@@ -641,7 +643,7 @@
                 }
             }
 
-            // Isi Data ke Modal (UI)
+            // Tampilkan Data ke Modal UI (Agar user bisa lihat dulu)
             document.getElementById('inv-code').innerText = kode;
             document.getElementById('inv-date').innerText = today;
             document.getElementById('inv-name').innerText = nama;
@@ -669,144 +671,118 @@
             };
 
             // ============================================
-            // LOGIKA PDF: FORCE RENDER METHOD (PASTI BISA)
+            // LOGIKA DOWNLOAD PDF (METODE GHOST ELEMENT)
             // ============================================
             btnDownloadPdf.onclick = function() {
                 const originalText = this.innerHTML;
-                this.innerHTML = "⏳ Mencetak...";
+                this.innerHTML = "⏳ Memproses...";
                 this.disabled = true;
 
-                // 1. Ambil data
-                const data = {
-                    kode: document.getElementById('inv-code').innerText,
-                    tanggal: document.getElementById('inv-date').innerText,
-                    nama: document.getElementById('inv-name').innerText,
-                    wa: document.getElementById('inv-wa').innerText,
-                    items: document.getElementById('inv-items').innerHTML,
-                    total: document.getElementById('inv-total-final').innerText,
-                    catatan: document.getElementById('inv-notes').innerText,
-                    acara: document.getElementById('inv-event-detail').innerText
+                // 1. Ambil Data (Bukan ambil Element)
+                const pdfData = {
+                    kode: kode,
+                    date: today,
+                    name: nama,
+                    wa: wa,
+                    items: document.getElementById('inv-items').innerHTML, // Ambil HTML baris tabel
+                    total: formatRupiah(total),
+                    notes: note,
+                    event: eventDetail
                 };
 
-                // 2. Buat Container
-                const pdfContainer = document.createElement('div');
+                // 2. Buat Elemen Baru (Ghost Element)
+                // Elemen ini dibuat KHUSUS untuk PDF, tanpa scroll, background putih bersih
+                const ghostElement = document.createElement('div');
                 
-                // --- KUNCI SUKSES (FIX) ---
-                // Kita menaruhnya di posisi FIXED, TOP 0, LEFT 0
-                // Dan Z-INDEX SANGAT TINGGI (di atas segalanya)
-                // Agar browser 'terpaksa' merendernya.
-                pdfContainer.style.position = 'fixed'; 
-                pdfContainer.style.top = '0';
-                pdfContainer.style.left = '0';
-                pdfContainer.style.zIndex = '99999'; 
-                pdfContainer.style.width = '100%';
-                pdfContainer.style.height = '100%';
-                pdfContainer.style.backgroundColor = 'rgba(255,255,255,1)'; 
-                pdfContainer.style.display = 'flex';
-                pdfContainer.style.justifyContent = 'center';
-                pdfContainer.style.alignItems = 'flex-start';
-                pdfContainer.style.overflow = 'auto';
+                // Styling Ghost Element agar mirip Kertas A4
+                ghostElement.style.width = '794px'; // Lebar A4 dlm px
+                ghostElement.style.minHeight = '1123px';
+                ghostElement.style.padding = '40px';
+                ghostElement.style.backgroundColor = 'white';
+                ghostElement.style.position = 'absolute';
+                ghostElement.style.top = '0';
+                ghostElement.style.left = '0';
+                ghostElement.style.zIndex = '-9999'; // Sembunyikan di belakang
+                ghostElement.style.fontFamily = 'sans-serif';
+                ghostElement.style.color = '#333';
 
-                // 3. Konten A4 di dalam container
-                const pageA4 = document.createElement('div');
-                pageA4.style.width = '794px'; // Lebar A4 pixel
-                pageA4.style.minHeight = '1123px';
-                pageA4.style.padding = '40px';
-                pageA4.style.backgroundColor = 'white';
-                pageA4.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
-                pageA4.style.fontFamily = "'Inter', sans-serif";
-                pageA4.style.color = '#1A1A1A';
-                
-                // Masukkan HTML
-                pageA4.innerHTML = `
-                    <div style="border-bottom: 3px solid #0A4D98; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-start;">
+                // 3. Isi Ghost Element dengan HTML yang Rapi
+                ghostElement.innerHTML = `
+                    <div style="border-bottom: 3px solid #0A4D98; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between;">
                         <div>
-                            <h1 style="color: #0A4D98; margin: 0; font-size: 28px; font-family: sans-serif;">INVOICE</h1>
-                            <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">No: <strong>${data.kode}</strong></p>
-                            <p style="margin: 2px 0 0 0; font-size: 14px; color: #666;">Tgl: ${data.tanggal}</p>
+                            <h1 style="color: #0A4D98; margin: 0;">INVOICE</h1>
+                            <p style="margin: 5px 0 0 0;">No: <strong>${pdfData.kode}</strong></p>
+                            <p style="margin: 2px 0 0 0;">Tgl: ${pdfData.date}</p>
                         </div>
                         <div style="text-align: right;">
-                            <h2 style="color: #0A4D98; margin: 0; font-size: 22px; font-family: sans-serif;">Aneka<span style="color: #FF7F00;">Digital</span></h2>
-                            <p style="margin: 5px 0 0 0; font-size: 12px; line-height: 1.4; color: #555;">
-                                Jasa Cetak Profesional<br>Jember, Jawa Timur<br>WA: +62 856-4770-9114
-                            </p>
+                            <h2 style="color: #0A4D98; margin: 0;">Aneka<span style="color: #FF7F00;">Digital</span></h2>
+                            <p style="margin: 5px 0 0 0; font-size: 12px;">Jasa Cetak Profesional<br>Jember, Jawa Timur<br>WA: +62 856-4770-9114</p>
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 30px; display: flex; justify-content: space-between;">
-                        <div style="width: 48%;">
-                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98; font-family: sans-serif;">Kepada:</h4>
-                            <div style="font-size: 16px; font-weight: bold;">${data.nama}</div>
-                            <div style="font-size: 14px; color: #555;">${data.wa}</div>
+                    <div style="margin-bottom: 30px; display:flex; justify-content:space-between;">
+                        <div style="width:48%">
+                            <h4>Kepada:</h4>
+                            <div>${pdfData.name}</div>
+                            <div>${pdfData.wa}</div>
                         </div>
-                        <div style="width: 48%;">
-                            <h4 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: #0A4D98; font-family: sans-serif;">Detail Pesanan:</h4>
-                            <div style="font-size: 13px; margin-bottom: 5px;"><strong>Status:</strong> <span style="color: #d97706;">Menunggu Konfirmasi</span></div>
-                            <div style="font-size: 13px;"><strong>Acara:</strong> ${data.acara}</div>
+                         <div style="width:48%">
+                            <h4>Detail:</h4>
+                             <div>Status: Menunggu Konfirmasi</div>
+                             <div>Acara: ${pdfData.event}</div>
                         </div>
                     </div>
 
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
                         <thead>
-                            <tr style="background-color: #0A4D98; color: white;">
-                                <th style="padding: 12px; text-align: left; font-size: 14px;">Deskripsi Produk</th>
-                                <th style="padding: 12px; text-align: center; font-size: 14px;">Qty</th>
-                                <th style="padding: 12px; text-align: right; font-size: 14px;">Harga</th>
-                                <th style="padding: 12px; text-align: right; font-size: 14px;">Total</th>
+                            <tr style="background: #0A4D98; color: white;">
+                                <th style="padding: 10px; text-align: left;">Item</th>
+                                <th style="padding: 10px; text-align: center;">Qty</th>
+                                <th style="padding: 10px; text-align: right;">Harga</th>
+                                <th style="padding: 10px; text-align: right;">Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${data.items.replace(/<td/g, '<td style="padding: 12px; border-bottom: 1px solid #eee; font-size: 14px;"')} 
+                            ${pdfData.items}
                         </tbody>
                     </table>
 
-                    <div style="text-align: right; margin-bottom: 40px;">
-                        <div style="display: inline-block; background: #f8f9fa; padding: 15px 30px; border-radius: 8px; border: 1px solid #eee;">
-                            <span style="font-size: 16px; color: #555; margin-right: 20px;">Total Tagihan:</span>
-                            <span style="font-size: 24px; font-weight: 700; color: #0A4D98;">${data.total}</span>
-                        </div>
-                    </div>
+                    <h3 style="text-align: right; margin-bottom: 20px;">Total: ${pdfData.total}</h3>
 
-                    <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; border-left: 5px solid #FF7F00; margin-bottom: 40px;">
-                        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #0A4D98; font-family: sans-serif;">Catatan Tambahan:</h4>
-                        <p style="margin: 0; font-size: 14px; color: #333; font-style: italic;">"${data.catatan}"</p>
+                    <div style="background: #f3f3f3; padding: 15px; border-left: 4px solid #FF7F00;">
+                        <strong>Catatan:</strong> <br> ${pdfData.notes}
                     </div>
-
-                    <div style="text-align: center; border-top: 1px solid #eee; padding-top: 20px; margin-top: 50px;">
-                        <p style="font-size: 12px; color: #888; margin-bottom: 5px;">Terima kasih telah mempercayakan kebutuhan cetak Anda kepada Aneka Digital.</p>
-                        <p style="font-size: 11px; color: #aaa;">Dokumen ini dibuat otomatis oleh sistem pada ${data.tanggal}</p>
+                    
+                    <div style="margin-top:50px; text-align:center; font-size:12px; color:#888;">
+                        Terima kasih telah berbelanja di Aneka Digital.
                     </div>
                 `;
 
-                // Masukkan A4 ke dalam Container
-                pdfContainer.appendChild(pageA4);
-                document.body.appendChild(pdfContainer);
+                // Masukkan ke Body agar html2pdf bisa "melihatnya"
+                document.body.appendChild(ghostElement);
 
-                // 4. Opsi PDF
+                // 4. Generate PDF dari Ghost Element
                 const opt = {
                     margin: 0,
-                    filename: `Invoice_${data.kode}.pdf`,
+                    filename: `Invoice_${pdfData.kode}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                // 5. Generate dengan Jeda 1 Detik (PENTING!)
-                setTimeout(() => {
-                    html2pdf().set(opt).from(pageA4).save()
-                    .then(() => {
-                        document.body.removeChild(pdfContainer);
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Gagal.");
-                        document.body.removeChild(pdfContainer);
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                    });
-                }, 1000);
+                html2pdf().set(opt).from(ghostElement).save()
+                .then(() => {
+                    document.body.removeChild(ghostElement); // Hapus elemen setelah selesai
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Gagal download PDF");
+                    document.body.removeChild(ghostElement);
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                });
             };
         });
 
