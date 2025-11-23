@@ -14,8 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <style>
@@ -1118,299 +1116,284 @@
             window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
         });
 
-        // Tombol PDF / Print (DESAIN MEWAH / LUXURY HOTEL STYLE)
+        // Tombol PDF / Print (REVISI DESAIN: MODERN, 5 WARNA, FONT BARU)
         document.getElementById('btn-download-pdf').addEventListener('click', () => {
             // Format Tanggal & Waktu Cetak
             const printTime = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-            // Layout Invoice Mewah (Mirip Hotel Bintang 7)
+            // Layout Invoice Baru (Modern Professional - 5 Warna)
             const printContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
+                    <title>Cetak Invoice - ${orderData.kode}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
                     <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@300;400;600;700&display=swap');
-                        
                         @page { margin: 0; size: A4; }
+                        
+                        :root {
+                            /* 5 Palette Warna Sesuai Permintaan */
+                            --i-blue: #0A4D98;    /* Warna 1: Biru Utama */
+                            --i-red: #EF4444;     /* Warna 2: Merah (Diskon/Alert) */
+                            --i-orange: #F97316;  /* Warna 3: Orange (Aksen) */
+                            --i-green: #10B981;   /* Warna 4: Hijau (Sukses/Total) */
+                            --i-black: #0f172a;   /* Warna 5: Hitam (Teks Utama) */
+                        }
+
                         body {
-                            font-family: 'Montserrat', sans-serif;
-                            color: #1a1a1a;
+                            font-family: 'Inter', sans-serif;
+                            color: var(--i-black);
                             background: #fff;
                             margin: 0;
                             padding: 0;
                             -webkit-print-color-adjust: exact;
-                        }
-                        .invoice-container {
-                            width: 100%;
-                            max-width: 210mm; /* Lebar A4 */
-                            min-height: 297mm;
-                            margin: 0 auto;
-                            padding: 50px;
-                            box-sizing: border-box;
-                            position: relative;
+                            print-color-adjust: exact;
+                            font-size: 14px;
                         }
                         
-                        /* HEADER SECTION */
-                        .header {
+                        /* Font Khusus Judul - Menghindari 'Font Jelek' */
+                        h1, h2, h3, h4, th { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+                        .invoice-box {
+                            max-width: 210mm;
+                            margin: 0 auto;
+                            padding: 40px;
+                            min-height: 297mm;
+                            position: relative;
+                            box-sizing: border-box;
+                        }
+
+                        /* HEADER */
+                        .header-container {
                             display: flex;
                             justify-content: space-between;
                             align-items: flex-start;
-                            margin-bottom: 60px;
-                            border-bottom: 2px solid #0A4D98;
+                            border-bottom: 3px solid var(--i-blue);
                             padding-bottom: 20px;
+                            margin-bottom: 30px;
                         }
+                        
                         .brand-section h1 {
-                            font-family: 'Cormorant Garamond', serif;
-                            font-size: 36px;
-                            color: #0A4D98;
+                            font-size: 28px;
+                            font-weight: 800;
+                            color: var(--i-blue);
                             margin: 0;
+                            letter-spacing: -0.5px;
+                        }
+                        .brand-section span { color: var(--i-orange); }
+                        .brand-tagline {
+                            font-size: 11px;
+                            color: #64748b;
+                            margin-top: 4px;
+                            letter-spacing: 0.5px;
                             text-transform: uppercase;
+                            font-weight: 600;
+                        }
+
+                        .invoice-meta { text-align: right; }
+                        .inv-title {
+                            font-size: 36px;
+                            font-weight: 800;
+                            color: #e2e8f0; /* Abu sangat muda agar tidak tabrakan */
+                            margin: 0;
+                            line-height: 1;
                             letter-spacing: 2px;
                         }
-                        .brand-section p {
-                            font-size: 10px;
-                            color: #666;
-                            letter-spacing: 1px;
-                            margin-top: 5px;
-                            text-transform: uppercase;
-                        }
-                        .invoice-title {
-                            text-align: right;
-                        }
-                        .invoice-title h2 {
-                            font-size: 48px;
-                            font-weight: 200;
-                            color: #e0e0e0;
-                            margin: 0;
-                            line-height: 0.8;
-                            letter-spacing: 4px;
-                        }
-                        .invoice-number {
-                            font-size: 14px;
+                        .inv-number {
+                            font-size: 16px;
                             font-weight: 700;
-                            color: #0A4D98;
+                            color: var(--i-orange);
+                            background: #fff7ed;
+                            padding: 4px 10px;
+                            border-radius: 4px;
+                            display: inline-block;
                             margin-top: 5px;
+                            border: 1px solid #ffedd5;
                         }
 
                         /* INFO GRID */
                         .info-grid {
                             display: flex;
                             justify-content: space-between;
-                            margin-bottom: 50px;
-                        }
-                        .info-col {
-                            flex: 1;
-                        }
-                        .label {
-                            font-size: 9px;
-                            text-transform: uppercase;
-                            color: #999;
-                            letter-spacing: 1.5px;
-                            margin-bottom: 8px;
-                            font-weight: 600;
-                        }
-                        .value {
-                            font-size: 14px;
-                            font-weight: 500;
-                            color: #000;
-                            line-height: 1.4;
-                        }
-                        .client-address {
-                            max-width: 250px;
-                        }
-
-                        /* TABLE SECTION */
-                        .table-container {
                             margin-bottom: 40px;
                         }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-                        th {
-                            text-align: left;
-                            font-size: 10px;
+                        .info-box h3 {
+                            font-size: 11px;
                             text-transform: uppercase;
-                            color: #666;
-                            letter-spacing: 1.5px;
-                            padding: 15px 0;
-                            border-bottom: 1px solid #000;
+                            color: #94a3b8;
+                            margin: 0 0 8px 0;
+                            letter-spacing: 1px;
+                        }
+                        .info-value {
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: var(--i-black);
+                        }
+                        .info-sub { font-size: 12px; color: #64748b; margin-top: 3px; font-weight: 400; }
+
+                        /* TABLE */
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        
+                        th {
+                            background: var(--i-blue);
+                            color: white;
+                            text-align: left;
+                            padding: 12px 15px;
+                            font-size: 12px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
                         }
                         td {
-                            padding: 20px 0;
-                            border-bottom: 1px solid #f0f0f0;
+                            padding: 15px;
+                            border-bottom: 1px solid #f1f5f9;
                             vertical-align: top;
                         }
-                        .col-desc { width: 50%; }
-                        .col-qty { width: 15%; text-align: center; }
-                        .col-price { width: 15%; text-align: right; }
-                        .col-total { width: 20%; text-align: right; }
+                        tr:nth-child(even) { background-color: #f8fafc; }
                         
-                        .item-name {
-                            font-size: 14px;
-                            font-weight: 600;
-                            color: #0A4D98;
-                            margin-bottom: 5px;
-                            display: block;
-                        }
-                        .item-spec {
-                            font-size: 11px;
-                            color: #777;
-                            font-style: italic;
-                        }
+                        .td-desc { width: 55%; }
+                        .td-price { width: 15%; text-align: right; }
+                        .td-qty { width: 10%; text-align: center; }
+                        .td-total { width: 20%; text-align: right; font-weight: 700; color: var(--i-blue); }
+                        
+                        .item-title { font-weight: 700; font-size: 14px; display: block; margin-bottom: 4px; color: var(--i-black); }
+                        .item-spec { font-size: 11px; color: #64748b; line-height: 1.4; display: block; }
 
-                        /* SUMMARY SECTION */
-                        .summary-section {
-                            display: flex;
-                            justify-content: flex-end;
-                            margin-bottom: 60px;
+                        /* SUMMARY & NOTES */
+                        .bottom-section { display: flex; gap: 40px; }
+                        .notes-box {
+                            flex: 1.5;
+                            background: #f8fafc;
+                            border-left: 4px solid var(--i-orange);
+                            padding: 15px;
+                            border-radius: 0 8px 8px 0;
                         }
-                        .summary-table {
-                            width: 300px;
-                        }
-                        .summary-row {
-                            display: flex;
-                            justify-content: space-between;
+                        .notes-title { font-size: 11px; font-weight: 700; color: var(--i-orange); margin-bottom: 5px; text-transform: uppercase; }
+                        .notes-content { font-size: 12px; color: #475569; line-height: 1.5; }
+
+                        .totals-box { flex: 1; }
+                        .total-row {
+                            display: flex; justify-content: space-between;
                             padding: 8px 0;
-                            font-size: 12px;
+                            font-size: 13px;
+                            color: #475569;
                         }
-                        .summary-row.total {
-                            border-top: 1px solid #000;
-                            border-bottom: 1px solid #000;
-                            padding: 15px 0;
+                        .total-row.discount span:last-child { color: var(--i-red); font-weight: 600; }
+                        .grand-total {
+                            border-top: 2px dashed #cbd5e1;
                             margin-top: 10px;
-                            font-size: 16px;
-                            font-weight: 700;
-                            color: #0A4D98;
-                        }
-                        .discount-text { color: #e63946; }
-
-                        /* NOTES & FOOTER */
-                        .notes-section {
-                            background: #f9f9f9;
-                            padding: 20px;
-                            border-left: 3px solid #0A4D98;
-                            margin-bottom: 50px;
-                        }
-                        .footer {
-                            position: absolute;
-                            bottom: 40px;
-                            left: 50px;
-                            right: 50px;
-                            text-align: center;
-                            border-top: 1px solid #eee;
-                            padding-top: 30px;
-                        }
-                        .footer h3 {
-                            font-family: 'Cormorant Garamond', serif;
+                            padding-top: 10px;
                             font-size: 18px;
-                            margin: 0 0 5px 0;
-                            color: #0A4D98;
+                            font-weight: 800;
+                            color: var(--i-green);
+                            display: flex; justify-content: space-between;
+                            align-items: center;
                         }
-                        .footer-links {
-                            font-size: 10px;
-                            color: #666;
-                            letter-spacing: 2px;
+
+                        /* FOOTER */
+                        .print-footer {
+                            position: absolute; bottom: 40px; left: 40px; right: 40px;
+                            text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;
+                        }
+                        .thank-you {
+                            font-family: 'Plus Jakarta Sans', sans-serif;
+                            font-weight: 800;
+                            color: var(--i-blue);
+                            font-size: 14px;
+                            margin-bottom: 5px;
+                            letter-spacing: 1px;
                             text-transform: uppercase;
-                            margin-bottom: 10px;
                         }
-                        .footer-contact {
-                            font-size: 10px;
-                            color: #999;
+                        .website-link {
+                            color: var(--i-orange);
+                            text-decoration: none;
+                            font-weight: 600;
+                            font-size: 11px;
+                            /* PERBAIKAN: URL Lowercase */
+                            text-transform: lowercase; 
                         }
-                        
-                        /* PRINT HIDE */
-                        @media print {
-                            .no-print { display: none; }
+                        .contact-info {
+                            font-size: 11px;
+                            color: #94a3b8;
+                            margin-top: 5px;
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="invoice-container">
-                        <div class="header">
+                    <div class="invoice-box">
+                        <div class="header-container">
                             <div class="brand-section">
-                                <h1>Aneka Digital</h1>
-                                <p>Premium Printing & Digital Solution</p>
+                                <h1>Aneka<span>Digital</span></h1>
+                                <div class="brand-tagline">Printing Solution & Marketplace</div>
                             </div>
-                            <div class="invoice-title">
-                                <h2>INVOICE</h2>
-                                <div class="invoice-number">NO: ${orderData.kode}</div>
+                            <div class="invoice-meta">
+                                <div class="inv-title">INVOICE</div>
+                                <div class="inv-number">${orderData.kode}</div>
                             </div>
                         </div>
 
                         <div class="info-grid">
-                            <div class="info-col">
-                                <div class="label">Ditagihkan Kepada</div>
-                                <div class="value">${orderData.nama}</div>
-                                <div class="value" style="font-size: 12px; margin-top: 4px; color: #555;">${orderData.wa}</div>
+                            <div class="info-box">
+                                <h3>Ditagihkan Kepada</h3>
+                                <div class="info-value">${orderData.nama}</div>
+                                <div class="info-sub">${orderData.wa}</div>
                             </div>
-                            <div class="info-col" style="text-align: right;">
-                                <div class="label">Tanggal Terbit</div>
-                                <div class="value">${orderData.today}</div>
-                                <div class="value" style="font-size: 11px; color: #777;">${printTime} WIB</div>
+                            <div class="info-box" style="text-align: right;">
+                                <h3>Tanggal Terbit</h3>
+                                <div class="info-value">${orderData.today}</div>
+                                <div class="info-sub">Waktu Cetak: ${printTime} WIB</div>
                             </div>
                         </div>
 
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th class="col-desc">Deskripsi Layanan</th>
-                                        <th class="col-price">Harga Unit</th>
-                                        <th class="col-qty">Qty</th>
-                                        <th class="col-total">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <span class="item-name">${orderData.produk}</span>
-                                            <span class="item-spec">${orderData.specs}</span>
-                                        </td>
-                                        <td style="text-align:right;">${orderData.priceUnit}</td>
-                                        <td style="text-align:center;">${orderData.qty}</td>
-                                        <td style="text-align:right; font-weight:600;">${orderData.subtotal}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="td-desc">Produk & Deskripsi</th>
+                                    <th class="td-price">Harga Satuan</th>
+                                    <th class="td-qty">Qty</th>
+                                    <th class="td-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="item-title">${orderData.produk}</span>
+                                        <span class="item-spec">${orderData.specs}</span>
+                                    </td>
+                                    <td class="td-price">${orderData.priceUnit}</td>
+                                    <td class="td-qty">${orderData.qty}</td>
+                                    <td class="td-total">${orderData.subtotal}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                        <div class="summary-section">
-                            <div class="summary-table">
-                                <div class="summary-row">
+                        <div class="bottom-section">
+                            <div class="notes-box">
+                                <div class="notes-title">Catatan & Detail Pesanan</div>
+                                <div class="notes-content">${orderData.fullNote}</div>
+                            </div>
+
+                            <div class="totals-box">
+                                <div class="total-row">
                                     <span>Subtotal</span>
                                     <span>${orderData.subtotal}</span>
                                 </div>
                                 ${orderData.discount !== '-Rp 0' ? `
-                                <div class="summary-row">
-                                    <span class="discount-text">Potongan / Diskon</span>
-                                    <span class="discount-text">${orderData.discount}</span>
+                                <div class="total-row discount">
+                                    <span>Diskon Promo</span>
+                                    <span>${orderData.discount}</span>
                                 </div>
                                 ` : ''}
-                                <div class="summary-row">
-                                    <span>Biaya Layanan</span>
-                                    <span>Rp 0</span>
-                                </div>
-                                <div class="summary-row total">
-                                    <span>TOTAL PEMBAYARAN</span>
+                                <div class="grand-total">
+                                    <span>TOTAL BAYAR</span>
                                     <span>${orderData.total}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="notes-section">
-                            <div class="label" style="color:#0A4D98;">Catatan & Detail Acara</div>
-                            <div class="value" style="font-size: 12px; line-height:1.6;">${orderData.fullNote}</div>
-                        </div>
-
-                        <div class="footer">
-                            <h3>TERIMA KASIH ATAS KEPERCAYAAN ANDA</h3>
-                            <div class="footer-links">
-                                www.anekamarket.my.id/anekadigital
-                            </div>
-                            <div class="footer-contact">
-                                Panarukan, Situbondo • +62 856-4770-9114 • admin@anekamarket.my.id
-                            </div>
+                        <div class="print-footer">
+                            <div class="thank-you">Terima Kasih Telah Berbelanja</div>
+                            <div><a href="#" class="website-link">www.anekamarket.my.id/anekadigital</a></div>
+                            <div class="contact-info">Jl. Pb. Sudirman, Panarukan, Situbondo • 0856-4770-9114</div>
                         </div>
                     </div>
                 </body>
