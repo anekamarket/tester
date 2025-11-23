@@ -7,7 +7,10 @@
     
     <title>Aneka Digital - Pusat Cetak & Jasa Website | Market Printing Solution</title>
     
-    <meta name="description" content="Platform digital printing modern anekamarket.my.id. Solusi cetak undangan, ID Card, dan Jasa Pembuatan Website Profesional.">
+    <meta name="description" content="Platform digital printing modern anekamarket.my.id. Solusi cetak undangan, ID Card, dan Jasa Pembuatan Website Profesional murah dan berkualitas.">
+    <meta name="keywords" content="digital printing, percetakan online, jasa website murah, buat website toko online, jasa pembuatan website custom, domain murah, hosting murah, cetak undangan pernikahan, undangan unik, undangan murah situbondo, percetakan jawa timur, cetak id card pvc, id card member, kartu pelajar, cetak foto online, cetak foto polaroid, cetak stiker, cetak banner, spanduk kilat, cetak kalender, brosur, flyer, kartu nama bisnis, aneka digital, aneka market, aplikasi usaha, website umkm, website sekolah, website desa, website pemerintah, domain .id, domain .com, domain .my.id, domain .co.id, jasa seo, digital marketing, percetakan panarukan, percetakan besuki, percetakan bondowoso, percetakan banyuwangi, percetakan jember, undangan digital, undangan video, souvenir pernikahan, cetak buku yasin, cetak sertifikat, piagam penghargaan, edit foto wisuda, desain grafis online, jasa desain logo, branding bisnis, cetak label kemasan, stiker label makanan, cetak mug custom, pin gantungan kunci, solusi cetak cepat, cetak dokumen online, print on demand indonesia, marketplace percetakan, bisnis digital, web developer situbondo, programmer website, coding website, html5, css3, javascript, template website premium, landing page murah, website company profile, toko online whatsapp, integrasi qris, pembayaran digital, cetak cd dvd, burning cd, label cd, cover cd, casing cd, duplikasi cd, percetakan 24 jam online">
+    <meta name="author" content="Aneka Digital Team">
+    <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#0A4D98">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -682,9 +685,14 @@
                                     <option value="350000" data-ext=".com">Domain .COM - Rp 350.000/thn</option>
                                     <option value="350000" data-ext=".net">Domain .NET - Rp 350.000/thn</option>
                                     <option value="350000" data-ext=".id">Domain .ID - Rp 350.000/thn</option>
+                                    <option value="25000" data-ext=".my.id">Domain .MY.ID (Personal) - Rp 25.000/thn</option>
+                                    <option value="250000" data-ext=".co.id">Domain .CO.ID (Bisnis) - Rp 250.000/thn</option>
+                                    <option value="200000" data-ext=".org">Domain .ORG (Organisasi) - Rp 200.000/thn</option>
+                                    <option value="50000" data-ext=".top">Domain .TOP (Promo) - Rp 50.000/thn</option>
+                                    <option value="200000" data-ext=".info">Domain .INFO - Rp 200.000/thn</option>
+                                    <option value="150000" data-ext=".it.com">Domain .IT.COM - Rp 150.000/thn</option>
                                     <option value="350000" data-ext=".web.id">Domain .WEB.ID - Rp 350.000/thn</option>
                                     <option value="350000" data-ext=".online">Domain .ONLINE - Rp 350.000/thn</option>
-                                    <option value="350000" data-ext=".go.id">Domain .GO.ID (Instansi) - Rp 350.000/thn</option>
                                 </select>
                             </div>
 
@@ -1214,7 +1222,7 @@
             document.getElementById('web-final-link').value = finalUrl;
         }
 
-        // --- FITUR BARU: DOMAIN CHECKER CERDAS (UPDATED) ---
+        // --- FITUR BARU: DOMAIN CHECKER CERDAS (SUPERIOR) ---
         function resetDomainStatus() {
             // Ketika user mengetik, hilangkan status valid/invalid agar dia harus cek lagi
             const input = document.getElementById('web-input-name');
@@ -1305,10 +1313,11 @@
 
             // --- FILTER 2: STATIC BLOCKLIST (Database Brand Populer & Reserved Words) ---
             const takenDomains = [
-                // Top Tech
+                // Top Tech & Indo
                 'google', 'facebook', 'youtube', 'twitter', 'instagram', 'tiktok', 'linkedin', 'whatsapp',
                 'amazon', 'apple', 'microsoft', 'netflix', 'spotify', 'zoom', 'gojek', 'grab', 'shopee',
                 'tokopedia', 'bukalapak', 'lazada', 'blibli', 'traveloka', 'tiket', 'dana', 'ovo', 'gopay',
+                'kompas', 'detik', 'tribun', 'cnn', 'bca', 'bri', 'mandiri', 'bni', 'telkomsel', 'indosat',
                 // Common Names & Brands
                 'admin', 'administrator', 'root', 'support', 'info', 'contact', 'help', 'api', 'dev', 'test',
                 'demo', 'beta', 'staging', 'mail', 'webmail', 'server', 'system', 'cpanel', 'plesk',
@@ -1319,7 +1328,6 @@
                 'bank', 'money', 'crypto', 'bitcoin', 'game', 'play', 'movie', 'music', 'video'
             ];
 
-            // Cek di blocklist static dulu
             if (takenDomains.includes(rawName)) {
                 setTimeout(() => {
                     showDomainError(input, msgContainer, btn, finalUrl, "Nama ini termasuk 'Premium' atau 'Reserved Brand' yang tidak dapat digunakan.");
@@ -1328,34 +1336,36 @@
             }
 
             // --- FILTER 3: REAL CHECK VIA GOOGLE DNS API (Khusus TLD) ---
-            // Jika user memilih subdomain, kita anggap Available jika lolos static check (karena kita tidak punya akses DB internal subdomain)
             if (isSubdomain) {
                 setTimeout(() => {
                     showDomainSuccess(input, msgContainer, btn, finalUrl);
                 }, 800);
             } else {
-                // Jika user memilih .COM, .NET, dll -> Cek beneran ke Internet
                 try {
-                    // Kita gunakan Google DNS-over-HTTPS untuk mengecek apakah domain resolve ke IP
-                    // Jika resolve (status 0 dan ada Answer), berarti domain SUDAH DIAMBIL ORANG.
-                    // Jika NXDOMAIN (Domain not found), kemungkinan besar AVAILABLE.
-                    const checkUrl = `https://dns.google/resolve?name=${rawName}${tldExt}`;
-                    
-                    const response = await fetch(checkUrl);
-                    const data = await response.json();
+                    // CHECK 1: Cek apakah ada A record (Website aktif)
+                    const checkUrlA = `https://dns.google/resolve?name=${rawName}${tldExt}&type=A`;
+                    const responseA = await fetch(checkUrlA);
+                    const dataA = await responseA.json();
 
-                    // Status 0 = No Error (Berarti record ditemukan/exist)
-                    // Jika ada 'Answer', berarti domain aktif -> TAKEN
-                    if (data.Status === 0 && data.Answer) {
+                    // CHECK 2: Cek apakah ada NS record (Domain terdaftar tapi mungkin belum ada hosting/A record)
+                    // Ini penting untuk domain yg "Parked"
+                    const checkUrlNS = `https://dns.google/resolve?name=${rawName}${tldExt}&type=NS`;
+                    const responseNS = await fetch(checkUrlNS);
+                    const dataNS = await responseNS.json();
+
+                    // LOGIKA: Jika (Status 0 DAN ada Answer di A) ATAU (Status 0 DAN ada Answer di NS) => TAKEN
+                    const isTakenA = (dataA.Status === 0 && dataA.Answer);
+                    const isTakenNS = (dataNS.Status === 0 && dataNS.Answer);
+
+                    if (isTakenA || isTakenNS) {
                         showDomainError(input, msgContainer, btn, finalUrl, `Domain <b>${rawName}${tldExt}</b> sudah terdaftar dan aktif di internet. Milik orang lain.`);
                     } else {
-                        // Kemungkinan besar Available (NXDOMAIN atau tidak ada A record)
+                        // Jika NXDOMAIN atau tidak ada record => Available
                         showDomainSuccess(input, msgContainer, btn, finalUrl);
                     }
                 } catch (error) {
                     console.error("DNS Check Error", error);
-                    // Fallback jika API Google gagal/offline -> Default ke Success tapi kasih warning kecil (opsional)
-                    // Untuk UX yang baik, kita assume success jika network error, nanti admin manual check.
+                    // Fallback jika API Google error, kita anggap available agar user bisa lanjut order (nanti admin cek manual)
                     showDomainSuccess(input, msgContainer, btn, finalUrl);
                 }
             }
