@@ -221,16 +221,46 @@
             border-color: var(--primary); background: #fff; outline: none; 
             box-shadow: 0 0 0 4px rgba(10, 77, 152, 0.1); 
         }
+        
+        .form-control[readonly] {
+            cursor: not-allowed;
+            user-select: none;
+        }
 
         .input-group { display: flex; align-items: stretch; }
         .input-group-text {
-            background: #e2e8f0; border: 1px solid #cbd5e1; border-right: none;
+            background: #e2e8f0; border: 1px solid #cbd5e1; 
             padding: 0 15px; display: flex; align-items: center;
             font-size: 0.9rem; color: #64748b; font-weight: 600;
-            border-top-left-radius: 10px; border-bottom-left-radius: 10px;
         }
-        .input-group .form-control { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+        /* Style untuk prefix (kiri) */
+        .input-group .input-group-text:first-child {
+            border-right: none;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+        /* Style untuk suffix (kanan) */
+        .input-group .input-group-text:last-child {
+            border-left: none;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
         
+        /* Adjust input agar sudutnya rata saat diapit */
+        .input-group .form-control {
+            border-radius: 0;
+        }
+        /* Jika input di kanan, sudut kanan rounded */
+        .input-group .input-group-text:first-child + .form-control:last-child {
+             border-top-right-radius: 10px;
+             border-bottom-right-radius: 10px;
+        }
+        /* Jika input di kiri, sudut kiri rounded */
+        .input-group .form-control:first-child {
+             border-top-left-radius: 10px;
+             border-bottom-left-radius: 10px;
+        }
+
         .sub-option-container {
             background: #eff6ff; border: 1px dashed #93c5fd;
             padding: 20px; border-radius: 10px; margin-bottom: 2rem;
@@ -620,35 +650,37 @@
                             
                             <div class="form-group">
                                 <label>Pilih Opsi Domain</label>
-                                <select id="web-domain-type" class="form-control" onchange="updateCalculator()">
-                                    <option value="0">Subdomain Gratis (Selamanya) - Rp 0</option>
-                                    <option value="350000">Domain .COM - Rp 350.000/thn</option>
-                                    <option value="350000">Domain .NET - Rp 350.000/thn</option>
-                                    <option value="350000">Domain .ID - Rp 350.000/thn</option>
-                                    <option value="350000">Domain .WEB.ID - Rp 350.000/thn</option>
-                                    <option value="350000">Domain .ONLINE - Rp 350.000/thn</option>
-                                    <option value="350000">Domain .GO.ID (Instansi) - Rp 350.000/thn</option>
+                                <select id="web-domain-type" class="form-control" onchange="handleWebDomainUI()">
+                                    <option value="0" data-ext="subdomain">Subdomain Gratis (Selamanya) - Rp 0</option>
+                                    <option value="350000" data-ext=".com">Domain .COM - Rp 350.000/thn</option>
+                                    <option value="350000" data-ext=".net">Domain .NET - Rp 350.000/thn</option>
+                                    <option value="350000" data-ext=".id">Domain .ID - Rp 350.000/thn</option>
+                                    <option value="350000" data-ext=".web.id">Domain .WEB.ID - Rp 350.000/thn</option>
+                                    <option value="350000" data-ext=".online">Domain .ONLINE - Rp 350.000/thn</option>
+                                    <option value="350000" data-ext=".go.id">Domain .GO.ID (Instansi) - Rp 350.000/thn</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label>Nama Domain / Link yang Diinginkan</label>
-                                <div id="input-subdomain" class="input-group">
-                                    <span class="input-group-text">www.aplikasiusaha.com/</span>
-                                    <input type="text" id="web-domain-sub" class="form-control" placeholder="namatokoanda">
+                                <label>Nama Website yang Diinginkan</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="url-prefix">www.aplikasiusaha.com/</span>
+                                    <input type="text" id="web-input-name" class="form-control" placeholder="namatokoanda" onkeyup="updateUrlPreview()">
+                                    <span class="input-group-text hidden" id="url-suffix"></span>
                                 </div>
-                                <div id="input-tld" class="input-group hidden">
-                                    <input type="text" id="web-domain-tld" class="form-control" placeholder="contoh: namabisnisanda.com">
-                                </div>
-                                <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px; display: block;">*Permanen, pastikan nama sudah benar.</small>
+                                <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px; display: block;">*Pastikan nama sudah benar, gunakan huruf kecil tanpa spasi.</small>
                             </div>
 
+                            <div class="form-group">
+                                <label>Preview Link Final (Terkunci)</label>
+                                <input type="text" id="web-final-link" class="form-control" readonly 
+                                       style="background-color: #ecfdf5; color: #047857; font-weight: 800; border-color: #10b981;">
+                            </div>
                             <div class="form-group">
                                 <label>Deskripsi Singkat / Isi Website</label>
                                 <textarea id="web-deskripsi" class="form-control" rows="3" placeholder="Jelaskan isi website Anda, profil singkat, atau layanan yang ingin ditampilkan..."></textarea>
                             </div>
                         </div>
-
                         <div id="form-undangan" class="hidden sub-option-container">
                             <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi Undangan</h4>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -1085,6 +1117,8 @@
                 eventSection.classList.add('hidden');
                 // Auto set qty to 1 for website
                 document.getElementById('qty').value = 1;
+                // Init UI domain
+                handleWebDomainUI();
             } else {
                 document.getElementById('form-lainnya').classList.remove('hidden');
                 eventSection.classList.add('hidden');
@@ -1104,6 +1138,45 @@
             } else {
                 document.getElementById('fields-umum').classList.remove('hidden');
             }
+        }
+
+        // --- 3.5. LOGIKA UI JASA WEBSITE (BARU) ---
+        function handleWebDomainUI() {
+            const domainSelect = document.getElementById('web-domain-type');
+            const selectedOption = domainSelect.options[domainSelect.selectedIndex];
+            const ext = selectedOption.getAttribute('data-ext');
+            
+            const prefixEl = document.getElementById('url-prefix');
+            const suffixEl = document.getElementById('url-suffix');
+            
+            if (ext === 'subdomain') {
+                // Case: Subdomain Gratis
+                prefixEl.textContent = 'www.aplikasiusaha.com/';
+                suffixEl.classList.add('hidden');
+                suffixEl.textContent = '';
+            } else {
+                // Case: TLD (.com, .id, dll)
+                prefixEl.textContent = 'www.';
+                suffixEl.classList.remove('hidden');
+                suffixEl.textContent = ext;
+            }
+            
+            updateUrlPreview();
+            updateCalculator();
+        }
+
+        function updateUrlPreview() {
+            const nameVal = document.getElementById('web-input-name').value.trim().toLowerCase();
+            const prefix = document.getElementById('url-prefix').textContent;
+            const suffix = document.getElementById('url-suffix').textContent;
+            
+            let finalUrl = '';
+            
+            if (nameVal) {
+                finalUrl = prefix + nameVal + suffix;
+            }
+            
+            document.getElementById('web-final-link').value = finalUrl;
         }
 
         // --- 4. KALKULATOR HARGA KOMPLEKS ---
@@ -1146,18 +1219,6 @@
                 const domainSelect = document.getElementById('web-domain-type');
                 const domainPrice = parseInt(domainSelect.value);
                 const domainTypeTxt = domainSelect.options[domainSelect.selectedIndex].text.split(' - ')[0];
-                
-                // Show/Hide Domain Input logic
-                const inputSub = document.getElementById('input-subdomain');
-                const inputTLD = document.getElementById('input-tld');
-                
-                if(domainPrice === 0) {
-                    inputSub.classList.remove('hidden');
-                    inputTLD.classList.add('hidden');
-                } else {
-                    inputSub.classList.add('hidden');
-                    inputTLD.classList.remove('hidden');
-                }
 
                 unitPrice = jasaPembuatan + domainPrice;
                 specText = `Jasa Web Custom + ${domainTypeTxt}`;
@@ -1285,23 +1346,16 @@
                 const tema = document.getElementById('web-tema').value || "Default";
                 const warna = document.getElementById('web-warna').value || "Default";
                 const deskripsi = document.getElementById('web-deskripsi').value || "-";
+                const finalLink = document.getElementById('web-final-link').value || "(Belum Diisi)";
                 
                 const domainSelect = document.getElementById('web-domain-type');
-                const domainType = domainSelect.value;
-                const domainTypeLabel = domainSelect.options[domainSelect.selectedIndex].text.split(' - ')[0]; // Ambil labelnya saja
-                
-                let domainName = "";
-                if(domainType === "0") {
-                    domainName = "www.aplikasiusaha.com/" + (document.getElementById('web-domain-sub').value || "nama-toko");
-                } else {
-                    domainName = document.getElementById('web-domain-tld').value || "namadomain.com";
-                }
+                const domainTypeLabel = domainSelect.options[domainSelect.selectedIndex].text.split(' - ')[0]; 
 
                 extraDetail = `
                 • Tema: ${tema}
                 • Warna: ${warna}
                 • Tipe Domain: ${domainTypeLabel}
-                • Link/Nama: ${domainName}
+                • Link/Nama: ${finalLink}
                 • Konten: ${deskripsi}`;
             }
 
