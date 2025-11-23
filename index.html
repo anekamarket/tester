@@ -1214,7 +1214,7 @@
             document.getElementById('web-final-link').value = finalUrl;
         }
 
-        // --- FITUR BARU: DOMAIN CHECKER CERDAS ---
+        // --- FITUR BARU: DOMAIN CHECKER CERDAS (UPDATED) ---
         function resetDomainStatus() {
             // Ketika user mengetik, hilangkan status valid/invalid agar dia harus cek lagi
             const input = document.getElementById('web-input-name');
@@ -1232,69 +1232,133 @@
             updateUrlPreview();
         }
 
-        function checkDomainAvailability() {
+        // HELPER: UI Error Message Display
+        function showDomainError(input, msgContainer, btn, finalUrl, customMessage = null) {
+            input.classList.add('is-invalid');
+            input.classList.remove('is-valid');
+            
+            msgContainer.classList.remove('hidden', 'success', 'info');
+            msgContainer.classList.add('domain-msg', 'error');
+            
+            const message = customMessage || `Mohon maaf, domain <b>${finalUrl}</b> tidak tersedia atau sudah digunakan. Silakan pilih variasi nama lain.`;
+
+            msgContainer.innerHTML = `
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                    <strong>Tidak Tersedia</strong><br>
+                    ${message}
+                </div>
+            `;
+            btn.innerHTML = '❌ Ganti Nama';
+            btn.disabled = false;
+        }
+
+        // HELPER: UI Success Message Display
+        function showDomainSuccess(input, msgContainer, btn, finalUrl) {
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            
+            // Kunci final link agar makin hijau
+            document.getElementById('web-final-link').style.backgroundColor = '#ecfdf5';
+            document.getElementById('web-final-link').style.color = '#047857';
+            document.getElementById('web-final-link').style.borderColor = '#10b981';
+
+            msgContainer.classList.remove('hidden', 'error', 'info');
+            msgContainer.classList.add('domain-msg', 'success');
+            msgContainer.innerHTML = `
+                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                    <strong>Domain Tersedia!</strong><br>
+                    Kabar baik! Domain <b>${finalUrl}</b> tersedia. Segera klaim dan selesaikan pemesanan sekarang sebelum diambil orang lain!
+                </div>
+            `;
+            btn.innerHTML = '✅ Terverifikasi';
+        }
+
+        async function checkDomainAvailability() {
             const input = document.getElementById('web-input-name');
             const rawName = input.value.trim().toLowerCase();
             const btn = document.getElementById('btn-check-domain');
             const msgContainer = document.getElementById('domain-status-msg');
             const finalUrl = document.getElementById('web-final-link').value;
+            
+            const domainSelect = document.getElementById('web-domain-type');
+            const isSubdomain = domainSelect.options[domainSelect.selectedIndex].getAttribute('data-ext') === 'subdomain';
+            const tldExt = domainSelect.options[domainSelect.selectedIndex].getAttribute('data-ext');
 
-            // 1. Validasi Input Kosong
+            // --- FILTER 1: Validasi Input Dasar ---
             if(rawName === "" || rawName.length < 3) {
                 alert("Mohon masukkan nama website minimal 3 karakter.");
                 input.focus();
                 return;
             }
+            
+            // Cek karakter ilegal (Hanya huruf, angka, dan dash)
+            if (!/^[a-z0-9-]+$/.test(rawName)) {
+                 showDomainError(input, msgContainer, btn, finalUrl, "Nama domain hanya boleh mengandung huruf kecil, angka, dan tanda hubung (-). Tanpa spasi.");
+                 return;
+            }
 
-            // 2. Loading State
-            btn.innerHTML = '⏳ Mengecek...';
+            // --- LOADING STATE ---
+            btn.innerHTML = '⏳ Mengecek Server...';
             btn.disabled = true;
 
-            // 3. Simulasi Check (Delay 1 detik)
-            setTimeout(() => {
-                // Database dummy domain yang "Sudah Terpakai"
-                const takenDomains = ['google', 'facebook', 'tokopedia', 'shopee', 'anekadigital', 'aplikasiusaha', 'admin', 'test', 'demo'];
-                
-                const isTaken = takenDomains.includes(rawName);
-                
-                msgContainer.classList.remove('hidden', 'success', 'error');
+            // --- FILTER 2: STATIC BLOCKLIST (Database Brand Populer & Reserved Words) ---
+            const takenDomains = [
+                // Top Tech
+                'google', 'facebook', 'youtube', 'twitter', 'instagram', 'tiktok', 'linkedin', 'whatsapp',
+                'amazon', 'apple', 'microsoft', 'netflix', 'spotify', 'zoom', 'gojek', 'grab', 'shopee',
+                'tokopedia', 'bukalapak', 'lazada', 'blibli', 'traveloka', 'tiket', 'dana', 'ovo', 'gopay',
+                // Common Names & Brands
+                'admin', 'administrator', 'root', 'support', 'info', 'contact', 'help', 'api', 'dev', 'test',
+                'demo', 'beta', 'staging', 'mail', 'webmail', 'server', 'system', 'cpanel', 'plesk',
+                'indonesia', 'jakarta', 'surabaya', 'bandung', 'bali', 'jawa', 'news', 'berita',
+                'anekadigital', 'anekamarket', 'aplikasiusaha', 'jember', 'situbondo', 'login', 'signin',
+                // Generic High Value
+                'shop', 'store', 'market', 'online', 'digital', 'tech', 'net', 'com', 'org', 'gov', 'edu',
+                'bank', 'money', 'crypto', 'bitcoin', 'game', 'play', 'movie', 'music', 'video'
+            ];
 
-                if (isTaken) {
-                    // KASUS: DOMAIN SUDAH ADA (MERAH)
-                    input.classList.add('is-invalid');
-                    input.classList.remove('is-valid');
-                    
-                    msgContainer.classList.add('domain-msg', 'error');
-                    msgContainer.innerHTML = `
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <div>
-                            <strong>Tidak Tersedia</strong><br>
-                            Mohon maaf, domain <b>${finalUrl}</b> sudah digunakan oleh pihak lain. Demi keunikan identitas bisnis Anda, silakan pilih variasi nama lain.
-                        </div>
-                    `;
-                    btn.innerHTML = '❌ Ganti Nama';
-                    btn.disabled = false; // Biarkan aktif agar bisa diklik lagi setelah edit
-                } else {
-                    // KASUS: DOMAIN TERSEDIA (HIJAU)
-                    input.classList.add('is-valid');
-                    input.classList.remove('is-invalid');
-                    
-                    // Kunci final link agar makin hijau
-                    document.getElementById('web-final-link').style.backgroundColor = '#ecfdf5';
-                    document.getElementById('web-final-link').style.color = '#047857';
-                    document.getElementById('web-final-link').style.borderColor = '#10b981';
+            // Cek di blocklist static dulu
+            if (takenDomains.includes(rawName)) {
+                setTimeout(() => {
+                    showDomainError(input, msgContainer, btn, finalUrl, "Nama ini termasuk 'Premium' atau 'Reserved Brand' yang tidak dapat digunakan.");
+                }, 600);
+                return;
+            }
 
-                    msgContainer.classList.add('domain-msg', 'success');
-                    msgContainer.innerHTML = `
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <div>
-                            <strong>Domain Tersedia!</strong><br>
-                            Kabar baik! Domain <b>${finalUrl}</b> tersedia. Segera klaim dan selesaikan pemesanan sekarang sebelum diambil orang lain!
-                        </div>
-                    `;
-                    btn.innerHTML = '✅ Terverifikasi';
+            // --- FILTER 3: REAL CHECK VIA GOOGLE DNS API (Khusus TLD) ---
+            // Jika user memilih subdomain, kita anggap Available jika lolos static check (karena kita tidak punya akses DB internal subdomain)
+            if (isSubdomain) {
+                setTimeout(() => {
+                    showDomainSuccess(input, msgContainer, btn, finalUrl);
+                }, 800);
+            } else {
+                // Jika user memilih .COM, .NET, dll -> Cek beneran ke Internet
+                try {
+                    // Kita gunakan Google DNS-over-HTTPS untuk mengecek apakah domain resolve ke IP
+                    // Jika resolve (status 0 dan ada Answer), berarti domain SUDAH DIAMBIL ORANG.
+                    // Jika NXDOMAIN (Domain not found), kemungkinan besar AVAILABLE.
+                    const checkUrl = `https://dns.google/resolve?name=${rawName}${tldExt}`;
+                    
+                    const response = await fetch(checkUrl);
+                    const data = await response.json();
+
+                    // Status 0 = No Error (Berarti record ditemukan/exist)
+                    // Jika ada 'Answer', berarti domain aktif -> TAKEN
+                    if (data.Status === 0 && data.Answer) {
+                        showDomainError(input, msgContainer, btn, finalUrl, `Domain <b>${rawName}${tldExt}</b> sudah terdaftar dan aktif di internet. Milik orang lain.`);
+                    } else {
+                        // Kemungkinan besar Available (NXDOMAIN atau tidak ada A record)
+                        showDomainSuccess(input, msgContainer, btn, finalUrl);
+                    }
+                } catch (error) {
+                    console.error("DNS Check Error", error);
+                    // Fallback jika API Google gagal/offline -> Default ke Success tapi kasih warning kecil (opsional)
+                    // Untuk UX yang baik, kita assume success jika network error, nanti admin manual check.
+                    showDomainSuccess(input, msgContainer, btn, finalUrl);
                 }
-            }, 800);
+            }
         }
 
         // --- 4. KALKULATOR HARGA KOMPLEKS ---
