@@ -28,6 +28,7 @@
             --bg-light: #f1f5f9;
             --white: #FFFFFF;
             --success: #10b981;
+            --danger: #ef4444;
             
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
             --shadow-card: 0 10px 30px -5px rgba(0,0,0,0.1);
@@ -227,40 +228,63 @@
             user-select: none;
         }
 
-        .input-group { display: flex; align-items: stretch; }
+        /* --- MODIFIED INPUT GROUP FOR CHECK BUTTON --- */
+        .input-group { display: flex; align-items: stretch; position: relative; }
         .input-group-text {
             background: #e2e8f0; border: 1px solid #cbd5e1; 
             padding: 0 15px; display: flex; align-items: center;
             font-size: 0.9rem; color: #64748b; font-weight: 600;
         }
-        /* Style untuk prefix (kiri) */
+        
+        /* Prefix (kiri) */
         .input-group .input-group-text:first-child {
             border-right: none;
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
         }
-        /* Style untuk suffix (kanan) */
-        .input-group .input-group-text:last-child {
-            border-left: none;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-        
-        /* Adjust input agar sudutnya rata saat diapit */
+
+        /* Input Tengah */
         .input-group .form-control {
             border-radius: 0;
-        }
-        /* Jika input di kanan, sudut kanan rounded */
-        .input-group .input-group-text:first-child + .form-control:last-child {
-             border-top-right-radius: 10px;
-             border-bottom-right-radius: 10px;
-        }
-        /* Jika input di kiri, sudut kiri rounded */
-        .input-group .form-control:first-child {
-             border-top-left-radius: 10px;
-             border-bottom-left-radius: 10px;
+            z-index: 2; /* Agar border focus terlihat */
         }
 
+        /* Suffix (Jika ada) - ditangani oleh Javascript untuk radius */
+        .input-group .input-group-text:nth-child(3) {
+            border-left: none;
+            border-right: none; 
+        }
+
+        /* TOMBOL CEK DOMAIN (BARU) */
+        .btn-check-domain {
+            background: var(--text-dark); color: white; border: none;
+            padding: 0 20px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+            border-top-right-radius: 10px; border-bottom-right-radius: 10px;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-check-domain:hover { background: black; }
+        .btn-check-domain:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        /* Fix radius jika suffix hidden */
+        .input-group .input-group-text.hidden + .btn-check-domain {
+            /* Button tetap rounded kanan, input rounded kiri ditangani prefix */
+        }
+        
+        /* VALIDATION STATES FOR DOMAIN */
+        .form-control.is-valid { border-color: var(--success); background-color: #f0fdf4; }
+        .form-control.is-invalid { border-color: var(--danger); background-color: #fef2f2; }
+
+        /* DOMAIN MESSAGES */
+        .domain-msg {
+            margin-top: 10px; font-size: 0.85rem; padding: 12px; border-radius: 8px;
+            display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
+            animation: fadeIn 0.4s ease;
+        }
+        .domain-msg.success { background: #ecfdf5; color: #065f46; border: 1px solid #10b981; }
+        .domain-msg.error { background: #fef2f2; color: #991b1b; border: 1px solid #f87171; }
+        .domain-msg.info { background: #eff6ff; color: #1e40af; border: 1px solid #60a5fa; }
+        
         .sub-option-container {
             background: #eff6ff; border: 1px dashed #93c5fd;
             padding: 20px; border-radius: 10px; margin-bottom: 2rem;
@@ -445,6 +469,9 @@
             .inv-header { padding: 1.5rem 1.5rem 2.5rem 1.5rem; }
             .inv-body { padding: 1.2rem; }
             .btn-group-secondary { grid-template-columns: 1fr 1fr; } 
+            
+            /* RESPONSIVE CHECK DOMAIN BUTTON */
+             .btn-check-domain { padding: 0 12px; font-size: 0.8rem; }
         }
 
         /* --- 9. PRINT STYLE --- */
@@ -665,16 +692,22 @@
                                 <label>Nama Website yang Diinginkan</label>
                                 <div class="input-group">
                                     <span class="input-group-text" id="url-prefix">www.aplikasiusaha.com/</span>
-                                    <input type="text" id="web-input-name" class="form-control" placeholder="namatokoanda" onkeyup="updateUrlPreview()">
+                                    <input type="text" id="web-input-name" class="form-control" placeholder="namatokoanda" onkeyup="resetDomainStatus()">
                                     <span class="input-group-text hidden" id="url-suffix"></span>
+                                    
+                                    <button type="button" class="btn-check-domain" id="btn-check-domain" onclick="checkDomainAvailability()">
+                                        🔍 Cek Ketersediaan
+                                    </button>
                                 </div>
-                                <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px; display: block;">*Pastikan nama sudah benar, gunakan huruf kecil tanpa spasi.</small>
+                                <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px; display: block;">*Gunakan huruf kecil tanpa spasi.</small>
+                                
+                                <div id="domain-status-msg" class="hidden"></div>
                             </div>
 
                             <div class="form-group">
                                 <label>Preview Link Final (Terkunci)</label>
                                 <input type="text" id="web-final-link" class="form-control" readonly 
-                                       style="background-color: #ecfdf5; color: #047857; font-weight: 800; border-color: #10b981;">
+                                       style="background-color: #f1f5f9; color: #64748b; font-weight: 600;">
                             </div>
                             <div class="form-group">
                                 <label>Deskripsi Singkat / Isi Website</label>
@@ -1163,6 +1196,8 @@
             
             updateUrlPreview();
             updateCalculator();
+            // Reset status saat ganti ekstensi domain
+            resetDomainStatus();
         }
 
         function updateUrlPreview() {
@@ -1177,6 +1212,89 @@
             }
             
             document.getElementById('web-final-link').value = finalUrl;
+        }
+
+        // --- FITUR BARU: DOMAIN CHECKER CERDAS ---
+        function resetDomainStatus() {
+            // Ketika user mengetik, hilangkan status valid/invalid agar dia harus cek lagi
+            const input = document.getElementById('web-input-name');
+            const msgContainer = document.getElementById('domain-status-msg');
+            const btn = document.getElementById('btn-check-domain');
+            
+            input.classList.remove('is-valid', 'is-invalid');
+            msgContainer.className = 'domain-msg hidden';
+            msgContainer.innerHTML = '';
+            
+            // Re-enable tombol
+            btn.innerHTML = '🔍 Cek Ketersediaan';
+            btn.disabled = false;
+            
+            updateUrlPreview();
+        }
+
+        function checkDomainAvailability() {
+            const input = document.getElementById('web-input-name');
+            const rawName = input.value.trim().toLowerCase();
+            const btn = document.getElementById('btn-check-domain');
+            const msgContainer = document.getElementById('domain-status-msg');
+            const finalUrl = document.getElementById('web-final-link').value;
+
+            // 1. Validasi Input Kosong
+            if(rawName === "" || rawName.length < 3) {
+                alert("Mohon masukkan nama website minimal 3 karakter.");
+                input.focus();
+                return;
+            }
+
+            // 2. Loading State
+            btn.innerHTML = '⏳ Mengecek...';
+            btn.disabled = true;
+
+            // 3. Simulasi Check (Delay 1 detik)
+            setTimeout(() => {
+                // Database dummy domain yang "Sudah Terpakai"
+                const takenDomains = ['google', 'facebook', 'tokopedia', 'shopee', 'anekadigital', 'aplikasiusaha', 'admin', 'test', 'demo'];
+                
+                const isTaken = takenDomains.includes(rawName);
+                
+                msgContainer.classList.remove('hidden', 'success', 'error');
+
+                if (isTaken) {
+                    // KASUS: DOMAIN SUDAH ADA (MERAH)
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                    
+                    msgContainer.classList.add('domain-msg', 'error');
+                    msgContainer.innerHTML = `
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <strong>Tidak Tersedia</strong><br>
+                            Mohon maaf, domain <b>${finalUrl}</b> sudah digunakan oleh pihak lain. Demi keunikan identitas bisnis Anda, silakan pilih variasi nama lain.
+                        </div>
+                    `;
+                    btn.innerHTML = '❌ Ganti Nama';
+                    btn.disabled = false; // Biarkan aktif agar bisa diklik lagi setelah edit
+                } else {
+                    // KASUS: DOMAIN TERSEDIA (HIJAU)
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                    
+                    // Kunci final link agar makin hijau
+                    document.getElementById('web-final-link').style.backgroundColor = '#ecfdf5';
+                    document.getElementById('web-final-link').style.color = '#047857';
+                    document.getElementById('web-final-link').style.borderColor = '#10b981';
+
+                    msgContainer.classList.add('domain-msg', 'success');
+                    msgContainer.innerHTML = `
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <strong>Domain Tersedia!</strong><br>
+                            Kabar baik! Domain <b>${finalUrl}</b> tersedia. Segera klaim dan selesaikan pemesanan sekarang sebelum diambil orang lain!
+                        </div>
+                    `;
+                    btn.innerHTML = '✅ Terverifikasi';
+                }
+            }, 800);
         }
 
         // --- 4. KALKULATOR HARGA KOMPLEKS ---
