@@ -16,6 +16,8 @@
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
+    <script src="https://unpkg.com/feather-icons"></script>
+    
     <style>
         /* --- 1. CORE VARIABLES & RESET --- */
         :root {
@@ -306,13 +308,14 @@
         }
 
         /* Content Body */
+        /* Fix #2: .inv-body sudah memiliki overflow-y: auto untuk scroll manual. */
         .inv-body {
             background: white;
             border-radius: 20px 20px 0 0;
             margin-top: -20px;
             padding: 1.5rem;
             position: relative;
-            overflow-y: auto;
+            overflow-y: auto; 
             flex-grow: 1;
         }
 
@@ -373,7 +376,12 @@
         .btn-action-secondary:hover { background: #e2e8f0; color: #1e293b; }
 
         /* --- 7. FOOTER --- */
-        .footer-wave { width: 100%; line-height: 0; background-color: var(--bg-light); margin-top: 3rem; }
+        /* Perbaikan #3: Menghilangkan tumpang tindih warna di footer */
+        .footer-wave { 
+            width: 100%; line-height: 0; 
+            background-color: var(--white); /* FIX: Ganti ke white agar transisi dari section #pesan (putih) mulus */ 
+            margin-top: 3rem; 
+        }
         .footer-wave svg { display: block; width: 100%; height: 80px; fill: #022a5c; } 
         
         footer { background: #022a5c; color: #e2e8f0; padding-bottom: 2rem; font-size: 0.95rem; }
@@ -422,14 +430,20 @@
 
         /* --- 9. PRINT STYLE --- */
         #print-container { display: none; }
-        @media print {
+        @media print { 
+            /* Fix #1: Perbaikan potong di PDF */
+            body { margin: 0; padding: 0; }
             body > * { display: none !important; }
+            
             #print-container { 
                 display: block !important; position: absolute; top: 0; left: 0; 
-                width: 100%; padding: 0; margin: 0; background: white; color: black; 
+                width: 100%; min-height: 100vh; /* Pastikan minimal 100% tinggi viewport */
+                padding: 0; margin: 0; background: white; color: black; 
             }
             #print-container * { visibility: visible; }
-            @page { margin: 0; size: auto; }
+            
+            /* Override margin untuk semua halaman cetak agar tidak ada pemotongan ganda */
+            @page { margin: 10mm; } 
         }
     </style>
 </head>
@@ -523,12 +537,12 @@
                     </div>
                 </div>
                 <div class="product-card" data-aos="fade-up" data-delay="400">
-                    <div class="card-img"><img src="https://i.imgur.com/iyAx3pL.jpeg" alt="Label CD"></div>
+                    <div class="card-img"><img src="https://i.imgur.com/o1QY7Hj.jpeg" alt="Cetak Label CD"></div>
                     <div class="card-body">
-                        <div class="card-cat">Data</div>
+                        <div class="card-cat">Custom</div>
                         <h3 class="card-title">Cetak Label CD/DVD</h3>
-                        <div class="card-price">Rp 15.000 /pcs</div>
-                        <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">Burning data + cetak label langsung di keping CD.</p>
+                        <div class="card-price">Mulai Rp 2.000 /lbr</div>
+                        <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">Untuk kebutuhan profesional. Kualitas cetak anti air.</p>
                         <button class="card-btn" onclick="selectProduct('cetak-cd')">Pesan Sekarang</button>
                     </div>
                 </div>
@@ -543,10 +557,8 @@
                 <p>Silakan lengkapi spesifikasi pesanan Anda di bawah ini.</p>
                 <div style="background:#ecfdf5; color:#047857; display:inline-block; padding:8px 20px; border-radius:50px; font-size:0.9rem; font-weight:700; margin-top:15px; border:1px dashed #10b981;">⚠️ Semua harga sudah termasuk diskon volume otomatis.</div>
             </div>
-            
             <form id="form-pemesanan">
                 <div class="order-layout">
-                    
                     <div class="form-panel">
                         <h3 style="margin-bottom: 1.5rem; color:var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Detail Pesanan</h3>
                         
@@ -583,81 +595,82 @@
                                 <label>Jenis Kertas/Tekstur</label>
                                 <select id="undangan-tekstur" class="form-control" onchange="updateCalculator()">
                                     <option value="0">Standart (Halus) - Rp 0</option>
-                                    <option value="300">Bertekstur (Fancy) - Tambah Rp 300</option>
+                                    <option value="300">Jasmine (Tekstur Kilap) - Rp 300</option>
+                                    <option value="500">Linen (Tekstur Kain) - Rp 500</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <div id="form-foto" class="hidden sub-option-container">
+
+                        <div id="form-idcard" class="hidden sub-option-container">
+                            <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi ID Card</h4>
+                            <div class="form-group">
+                                <label>Tipe ID Card</label>
+                                <select id="idcard-tipe" class="form-control" onchange="updateCalculator()">
+                                    <option value="10000">Satu Sisi (Rp 10.000)</option>
+                                    <option value="15000">Dua Sisi (Rp 15.000)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Casing Holder</label>
+                                <select id="idcard-holder" class="form-control" onchange="updateCalculator()">
+                                    <option value="0">Tanpa Holder (Rp 0)</option>
+                                    <option value="3000">Holder Plastik (Rp 3.000)</option>
+                                    <option value="7000">Holder Kulit (Rp 7.000)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="form-cetak-foto" class="hidden sub-option-container">
                             <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi Cetak Foto</h4>
                             <div class="form-group">
-                                <label>Pilih Ukuran Foto</label>
+                                <label>Ukuran Foto</label>
                                 <select id="foto-ukuran" class="form-control" onchange="updateCalculator()">
-                                    <option value="250" data-name="3x4">3x4 (Rp 250)</option>
-                                    <option value="500" data-name="4x6">4x6 (Rp 500)</option>
-                                    <option value="5000" data-name="3R">3R (Rp 5.000)</option>
-                                    <option value="8000" data-name="8R">8R (Rp 8.000)</option>
-                                    <option value="20000" data-name="A3">A3 (Rp 20.000)</option>
+                                    <option value="250" data-name="3x4">3 x 4 cm (Rp 250)</option>
+                                    <option value="500" data-name="4x6">4 x 6 cm (Rp 500)</option>
+                                    <option value="2000" data-name="5R">5R (Rp 2.000)</option>
+                                    <option value="5000" data-name="10R">10R (Rp 5.000)</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Jenis Kertas</label>
                                 <select id="foto-kertas" class="form-control" onchange="updateCalculator()">
                                     <option value="Glossy">Glossy (Mengkilap)</option>
-                                    <option value="Matte/Textured">Matte/Doff (Bertekstur)</option>
+                                    <option value="Doff">Doff (Mate)</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Jasa Edit</label>
                                 <select id="foto-edit" class="form-control" onchange="updateCalculator()">
-                                    <option value="0">Tanpa Edit (File Siap Cetak)</option>
-                                    <option value="1000">Edit Standart (+Rp 1.000)</option>
-                                    <option value="3000">Edit Total Custom (+Rp 3.000)</option>
+                                    <option value="0">Tanpa Edit (Rp 0)</option>
+                                    <option value="1000">Koreksi Warna/Wajah (Rp 1.000)</option>
+                                    <option value="5000">Ganti Background (Rp 5.000)</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <div id="form-idcard" class="hidden sub-option-container">
-                            <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi ID Card</h4>
-                            <div class="form-group">
-                                <label>Tipe ID Card</label>
-                                <select id="idcard-tipe" class="form-control" onchange="updateCalculator()">
-                                    <option value="10000">ID Card PVC Standart (Rp 10.000/pcs)</option>
-                                    <option value="15000">ID Card + Design (Rp 15.000/pcs)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Tambahan Holder/Casing</label>
-                                <select id="idcard-holder" class="form-control" onchange="updateCalculator()">
-                                    <option value="0">Tanpa Holder (Rp 0)</option>
-                                    <option value="2000">Holder Plastik (+Rp 2.000)</option>
-                                    <option value="5000">Holder Akrilik (+Rp 5.000)</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div id="form-cd" class="hidden sub-option-container">
-                            <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi CD/DVD</h4>
+
+                        <div id="form-cetak-cd" class="hidden sub-option-container">
+                            <h4 style="margin-bottom:15px; color:var(--text-dark); font-weight:700;">Opsi Cetak Label CD/DVD</h4>
                             <div class="form-group">
                                 <label>Tipe Cetak</label>
                                 <select id="cd-tipe" class="form-control" onchange="updateCalculator()">
-                                    <option value="15000">Cetak Label + Burning Data (Rp 15.000/pcs)</option>
-                                    <option value="10000">Cetak Label Saja (Rp 10.000/pcs)</option>
+                                    <option value="2000">Cetak Full Label (Rp 2.000)</option>
+                                    <option value="3500">Cetak + Cutting Stiker (Rp 3.500)</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="qty">Kuantitas (Jumlah Pesanan)</label>
-                            <input type="number" id="qty" class="form-control" value="1" min="1" required onchange="updateCalculator()" onkeyup="updateCalculator()">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="deadline">Kapan Anda Butuh Selesai?</label>
-                            <input type="date" id="deadline" class="form-control" required>
-                        </div>
 
-                        <h3 style="margin-top: 3rem; margin-bottom: 1.5rem; color:var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Data Pemesan</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label for="qty">Kuantitas (Jumlah Pesanan)</label>
+                                <input type="number" id="qty" class="form-control" value="1" min="1" required onchange="updateCalculator()" onkeyup="updateCalculator()">
+                            </div>
+                            <div class="form-group">
+                                <label for="deadline">Kapan Anda Butuh Selesai?</label>
+                                <input type="date" id="deadline" class="form-control" required>
+                            </div>
+                        </div>
                         
+                        <h3 style="margin-top: 3rem; margin-bottom: 1.5rem; color:var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Data Pemesan</h3>
                         <div class="form-group">
                             <label for="nama-pemesan">Nama Lengkap</label>
                             <input type="text" id="nama-pemesan" class="form-control" placeholder="Nama Anda" required>
@@ -666,7 +679,7 @@
                             <label for="whatsapp">Nomor WhatsApp (Aktif)</label>
                             <input type="text" id="whatsapp" class="form-control" placeholder="Cth: 62856xxxxxxx" required>
                         </div>
-                        
+
                         <div id="event-details-section" class="hidden" style="margin-top: 3rem;">
                             <h3 style="margin-bottom: 1.5rem; color:var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Detail Acara (Khusus Undangan)</h3>
                             <div class="form-group">
@@ -696,81 +709,68 @@
                                     <input type="text" id="nama-ortu" class="form-control" placeholder="Bpk... & Ibu...">
                                 </div>
                             </div>
-
+                            
                             <div id="fields-khitan" class="event-fields hidden">
                                 <div class="form-group">
                                     <label>Nama Anak (Yang Dikhitan)</label>
-                                    <input type="text" id="nama-anak" class="form-control" placeholder="Nama Lengkap Anak">
-                                </div>
-                                <div class="form-group">
-                                    <label>Nama Orang Tua</label>
-                                    <input type="text" id="nama-ortu-khitan" class="form-control" placeholder="Nama Orang Tua">
+                                    <input type="text" id="nama-anak-khitan" class="form-control" placeholder="Cth: Ananda Adam">
                                 </div>
                             </div>
-
-                            <div id="fields-umum" class="event-fields hidden">
+                            
+                            <div id="fields-syukuran" class="event-fields hidden">
                                 <div class="form-group">
-                                    <label>Nama Yang Punya Hajat / Ultah</label>
-                                    <input type="text" id="nama-hajat" class="form-control" placeholder="Nama Lengkap">
+                                    <label>Acara Syukuran Untuk?</label>
+                                    <input type="text" id="syukuran-acara" class="form-control" placeholder="Cth: Aqiqah Anak ke-1">
                                 </div>
                             </div>
-
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label>Hari & Tanggal Acara</label>
-                                    <input type="text" id="tgl-acara" class="form-control" placeholder="Contoh: Minggu, 20 Agustus 2025">
-                                </div>
-                                <div class="form-group">
-                                    <label>Jam Acara</label>
-                                    <input type="text" id="jam-acara" class="form-control" placeholder="Contoh: 08.00 WIB - Selesai">
-                                </div>
-                            </div>
+                            
                             <div class="form-group">
-                                <label>Lokasi Acara (Link Google Maps)</label>
-                                <input type="text" id="lokasi" class="form-control" placeholder="Tempel link maps di sini...">
-                                <button type="button" id="btn-gps" class="gps-btn">📍 Ambil Lokasi Saya</button>
+                                <label>Tanggal & Lokasi Acara</label>
+                                <input type="text" id="tanggal-lokasi-acara" class="form-control" placeholder="Cth: 20 Januari 2025 di Gedung Serbaguna">
                             </div>
                         </div>
 
-                        <div class="form-group" style="margin-top: 1.5rem;">
-                            <label>Catatan Tambahan (Request Desain, Warna, dll)</label>
-                            <textarea id="catatan" class="form-control" rows="3" placeholder="Contoh: Warna dominan biru muda, tambah foto prewed, dll..."></textarea>
+                        <div class="form-group" style="margin-top: 3rem;">
+                            <label for="catatan">Catatan Tambahan (Opsional)</label>
+                            <textarea id="catatan" class="form-control" rows="3" placeholder="Contoh: Desain minimalis warna biru."></textarea>
                         </div>
+
                     </div>
-                    
+
                     <div class="summary-panel">
                         <div class="summary-title">
-                            <span>Ringkasan Biaya</span>
-                            <span id="summary-product">-</span>
-                        </div>
-                        
-                        <div class="summary-row">
-                            <span>Harga Satuan</span>
-                            <span id="summary-price">Rp 0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Kuantitas</span>
-                            <span id="summary-qty">0</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span id="summary-subtotal">Rp 0</span>
-                        </div>
-                        
-                        <div class="summary-row" id="row-discount" style="display:none;">
-                            <span style="color: var(--accent);">Diskon Promo</span>
-                            <span style="color: var(--accent);" id="summary-discount">-Rp 0</span>
-                        </div>
-                        
-                        <div class="summary-row" id="row-detail-specs" style="display:none;">
-                            <span>Detail Spesifikasi</span>
-                            <span id="summary-specs">-</span>
+                            <span>Total Pesanan Anda</span>
+                            <span id="invoice-code">#INV-AD-001</span>
                         </div>
 
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span>Produk</span>
+                                <span id="summary-product">-</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Harga Satuan (Rp)</span>
+                                <span id="summary-price">Rp 0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Kuantitas</span>
+                                <span id="summary-qty">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal">Rp 0</span>
+                            </div>
+                            <div class="summary-row" style="color: var(--accent);">
+                                <span>Diskon Volume</span>
+                                <span id="summary-discount">-Rp 0</span>
+                            </div>
+                        </div>
+                        
                         <div class="summary-row" style="margin-top: 1rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
                             <span style="font-weight: 700; color: var(--text-dark);">Uang Muka (DP 50%)</span>
                             <span style="font-weight: 700; color: var(--accent);" id="summary-dp">Rp 0</span>
                         </div>
+
                         <div class="summary-total" style="border-top: none; padding-top: 1rem;">
                             <span>TOTAL PESANAN</span>
                             <span id="total-display">Rp 0</span>
@@ -785,7 +785,6 @@
 
     <div class="modal-overlay" id="invoice-modal-overlay">
         <div class="invoice-card-wrapper">
-            
             <div class="inv-header">
                 <div class="inv-logo-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
@@ -793,10 +792,8 @@
                 <h3>INVOICE PEMESANAN</h3>
                 <p>Aneka Digital Market Printing Solution</p>
             </div>
-
             <div class="inv-body">
                 <div class="inv-badge">Menunggu Pembayaran DP</div>
-                
                 <div class="inv-row">
                     <div class="inv-label">No. Invoice</div>
                     <div class="inv-value" id="inv-code" style="color: var(--primary);">#INV-000000</div>
@@ -809,12 +806,10 @@
                     <div class="inv-label">Pemesan</div>
                     <div class="inv-value" id="inv-name">-</div>
                 </div>
-                
                 <div class="inv-product-box">
                     <div class="inv-product-title" id="inv-product">-</div>
                     <div class="inv-product-spec" id="inv-specs">-</div>
                 </div>
-                
                 <div class="inv-row">
                     <div class="inv-label">Harga x Qty</div>
                     <div class="inv-value"><span id="inv-price-unit">0</span> x <span id="inv-qty">0</span></div>
@@ -823,183 +818,191 @@
                     <div class="inv-label" style="color: var(--accent);">Diskon</div>
                     <div class="inv-value" style="color: var(--accent);" id="inv-discount">-</div>
                 </div>
-                
                 <div class="inv-total-area">
                     <div class="inv-total-label">TOTAL TAGIHAN (Penuh)</div>
                     <div class="inv-total-value" id="inv-total-final">Rp 0</div>
                 </div>
+                
+                <div id="dp-payment-section"> 
+                    </div> 
 
-                <div id="dp-payment-section">
-                    </div>
                 <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 15px;">
-                    <span id="inv-notes-preview" style="font-style: italic;">-</span>
+                    <span id="inv-notes-preview" style="font-style: italic;">Tidak ada catatan tambahan.</span>
                 </div>
-            </div> <div class="inv-footer">
-                <button class="btn-action-primary" id="btn-send-wa">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326z"/></svg> Kirim ke WhatsApp Sekarang
-                </button>
+                
+            </div>
+            <div class="inv-footer">
+                <a href="#" id="btn-wa-konfirmasi" class="btn-action-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                    Konfirmasi Via WhatsApp
+                </a>
                 <div class="btn-group-secondary">
-                    <button class="btn-action-secondary" id="btn-download-pdf">🖨️ Simpan PDF</button>
-                    <button class="btn-action-secondary" id="btn-close-modal">Tutup</button>
+                    <button class="btn-action-secondary" onclick="closeModal()">Tutup</button>
+                    <button class="btn-action-secondary" id="btn-download-pdf">Cetak Invoice (PDF)</button>
                 </div>
             </div>
         </div>
     </div>
     
     <div id="print-container"></div>
-    
+
     <div class="footer-wave">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M985.66,92.83C906.67,72,823.7,18.67,753.85,4.71c-66.97-12.22-35.48,57.17-83.3,1.35C589.65,10.65,562.9,2.83,509,2.83c-11.75,0-24.81,0-36.92,0C424.16,35.15,355.28,68.4,286.4,85.48c-76.43,18.79-247.66,13.6-320.12,3.47" fill="#022a5c"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#022a5c" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,128C672,128,768,160,864,160C960,160,1056,128,1152,128C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
     </div>
+
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <a href="#" class="logo" style="color:white; font-size:1.8rem;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                        Aneka<span>Digital</span>
-                    </a>
-                    <p style="margin-top: 15px;">Solusi cetak cepat dan murah. Platform digital printing terpercaya.</p>
+                    <h3>AnekaDigital</h3>
+                    <p style="margin-top: 15px;">Solusi Cetak Cepat dan Akurat.</p>
                 </div>
                 <div class="footer-links">
-                    <h4 style="color:white; margin-bottom:15px; font-weight:700;">Menu Cepat</h4>
+                    <h4 style="color: white; margin-bottom: 15px; font-weight: 700;">Menu Cepat</h4>
                     <a href="#hero">Beranda</a>
                     <a href="#katalog">Katalog Produk</a>
-                    <a href="#pesan">Buat Pesanan</a>
-                </div>
-                <div class="footer-links">
-                    <h4 style="color:white; margin-bottom:15px; font-weight:700;">Layanan & Info</h4>
                     <a href="https://www.anekamarket.my.id" target="_blank">Official Store</a>
-                    <a href="#">Cara Pemesanan</a>
-                    <a href="#">FAQ (Tanya Jawab)</a>
                 </div>
                 <div class="footer-links">
-                    <h4 style="color:white; margin-bottom:15px; font-weight:700;">Hubungi Kami</h4>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="background:#25D366; padding:8px; border-radius:50%; line-height:1; flex-shrink:0;">
-                            <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M12.002 0c6.627 0 12 5.373 12 12s-5.373 12-12 12C5.373 24 0 18.627 0 12S5.373 0 12.002 0zm5.18 13.918c-.12-.061-.722-.358-.83-.398-.106-.041-.183-.061-.259.061-.076.12-.298.398-.363.48-.065.08-.13.09-.248.031-.692-.258-1.516-.576-2.164-1.01-.648-.435-1.12-1.045-1.42-1.525-.297-.48-.033-.74.195-.968.163-.153.358-.398.435-.479.076-.08.106-.153.153-.258.05-.105.025-.197-.008-.258-.033-.06-.259-.008-.622-.153-.363-.145-.6-.358-.83-.615-.228-.259-.44-.398-.692-.622-.251-.223-.52-.519-.106-.883.414-.363.83-.883.95-1.01.12-.127.061-.259 0-.324-.061-.06-.398-.153-.48-.228-.08-.075-.153-.17-.228-.248-.076-.076-.145-.061-.259-.061-.113 0-.251-.015-.363-.015-.118 0-.306.045-.487.247-.183.2-.62.593-.62.95 0 .363.63 1.25.722 1.341.09.091 1.26 2.053 3.03 2.82.77.33 1.25.479 1.63.593.59.176.766.153 1.056-.008.29-.163.72-.66 1.056-1.01.334-.35.49-.479.566-.576.076-.098.243-.17.398-.106.152.06.822.398.95.459.12.061.2.091.228.145.025.05.025.275-.098.459zM22 16.92A10 10 0 0012 2C6.48 2 2 6.48 2 12c0 2.92.002.85 2 1.83 2.14 1.15 4.38 2.37 6.57 3.25.13.06.27.09.41.09.14 0 .28-.03.41-.09 2.19-.88 4.43-2.1 6.57-3.25 2.002-1.08 2.002-2.81 2.002-4.22 0-3.6-2.9-6.5-6.5-6.5z"/></svg></div>
-                        <a href="https://wa.me/6285647709114" target="_blank" style="color:inherit; text-decoration:none;">
-                            <div style="font-weight: 700; color: white;">WhatsApp Admin</div>
-                            <div style="opacity:0.8; font-size:0.9rem;">+62 856-4770-9114</div>
-                        </a>
-                    </div>
+                    <h4 style="color: white; margin-bottom: 15px; font-weight: 700;">Hubungi Kami</h4>
+                    <p>Jl. Pb. Sudirman, Panarukan, Situbondo</p>
+                    <p>WhatsApp: 0856-4770-9114</p>
+                    <p>Email: admin@anekamarket.my.id</p>
                 </div>
             </div>
-            <div style="padding-top: 2rem; text-align: center; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 1rem; color: #94a3b8;">
-                <div style="font-weight: 500; margin-bottom: 5px;">© 2025 <strong>Aneka Digital</strong>. All Rights Reserved.</div>
-                <div>Hak Cipta & Pemilik Sistem adalah <a href="https://www.aplikasiusaha.com" target="_blank" style="color: var(--accent); text-decoration:none;">www.aplikasiusaha.com</a></div>
+            <div class="footer-bottom">
+                <p style="text-align: center; font-size: 0.8rem; padding-top: 1.5rem; color: #a1a1aa;">&copy; 2024 Aneka Digital - All Rights Reserved.</p>
             </div>
         </div>
     </footer>
 
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // --- 1. INISIALISASI ---
-        AOS.init({ duration: 800, once: true, offset: 100 });
+        AOS.init();
+        feather.replace();
 
-        window.addEventListener('scroll', () => {
+        // UTILITY FUNCTIONS
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        }
+        
+        function generateInvoiceCode() {
+            const today = new Date();
+            const year = today.getFullYear().toString().slice(-2);
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            
+            // Generate simple unique ID (e.g., last 4 digits of timestamp)
+            const uniqueId = Date.now().toString().slice(-4);
+            
+            return `AD${year}${month}${day}-${uniqueId}`;
+        }
+        
+        // --- EVENT LISTENERS & HANDLERS ---
+        
+        // Sticky Header & Hamburger Menu
+        document.addEventListener('DOMContentLoaded', () => {
             const header = document.getElementById('main-header');
-            if (window.scrollY > 50) header.classList.add('scrolled');
-            else header.classList.remove('scrolled');
-        });
+            const navMenu = document.getElementById('nav-menu');
+            const hamburger = document.getElementById('hamburger');
 
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-menu').classList.toggle('active');
-        });
+            // Set Initial Invoice Code
+            document.getElementById('invoice-code').textContent = "#" + generateInvoiceCode();
 
-        // Tutup menu saat link diklik (Mobile UX)
-        document.querySelectorAll('#nav-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('nav-menu').classList.remove('active');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
             });
         });
 
-        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(angka);
+        // Update Invoice Code
+        setInterval(() => {
+            if (!document.getElementById('invoice-modal-overlay').classList.contains('active')) {
+                document.getElementById('invoice-code').textContent = "#" + generateInvoiceCode();
+            }
+        }, 60000); // Regenerate every minute if not in use
 
-        // Global state for order data
-        let orderData = {};
-
-        // --- 2. LOGIKA PRODUK & FORM DINAMIS ---
-        const form = document.getElementById('form-pemesanan');
-        const productSelect = document.getElementById('jenis-produk');
-        const eventSection = document.getElementById('event-details-section');
-
-        function hideAllSubForms() {
-            document.querySelectorAll('.sub-option-container').forEach(el => el.classList.add('hidden'));
+        // Catalog Button Select Product
+        function selectProduct(productValue) {
+            document.getElementById('jenis-produk').value = productValue;
+            handleProductChange();
+            updateCalculator();
+            // Scroll to form
+            document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' });
         }
-
+        
+        // Handle Product Change Visibility
         function handleProductChange() {
-            hideAllSubForms();
-            const val = productSelect.value;
+            const produk = document.getElementById('jenis-produk').value;
+            document.querySelectorAll('.sub-option-container').forEach(el => el.classList.add('hidden'));
+            document.getElementById('event-details-section').classList.add('hidden');
 
-            if(val === 'undangan') {
+            if (produk === 'undangan') {
                 document.getElementById('form-undangan').classList.remove('hidden');
-                eventSection.classList.remove('hidden');
-            } else if (val === 'cetak-foto') {
-                document.getElementById('form-foto').classList.remove('hidden');
-                eventSection.classList.add('hidden');
-            } else if (val === 'id-card') {
+                document.getElementById('event-details-section').classList.remove('hidden');
+                handleAcaraChange(); // Ensure event fields show
+            } else if (produk === 'id-card') {
                 document.getElementById('form-idcard').classList.remove('hidden');
-                eventSection.classList.add('hidden');
-            } else if (val === 'cetak-cd') {
-                document.getElementById('form-cd').classList.remove('hidden');
-                eventSection.classList.add('hidden');
-            } else {
-                eventSection.classList.add('hidden');
+            } else if (produk === 'cetak-foto') {
+                document.getElementById('form-cetak-foto').classList.remove('hidden');
+            } else if (produk === 'cetak-cd') {
+                document.getElementById('form-cetak-cd').classList.remove('hidden');
             }
         }
-
-        productSelect.addEventListener('change', handleProductChange);
-
+        
+        // Handle Event Type Change Visibility
         function handleAcaraChange() {
+            const acara = document.getElementById('jenis-acara').value;
             document.querySelectorAll('.event-fields').forEach(el => el.classList.add('hidden'));
-            const jenisAcara = document.getElementById('jenis-acara').value;
 
-            if (jenisAcara === 'Pernikahan') {
+            if (acara === 'Pernikahan') {
                 document.getElementById('fields-pernikahan').classList.remove('hidden');
-            } else if (jenisAcara === 'Khitanan') {
+            } else if (acara === 'Khitanan') {
                 document.getElementById('fields-khitan').classList.remove('hidden');
-            } else {
-                document.getElementById('fields-umum').classList.remove('hidden');
+            } else if (acara === 'Syukuran' || acara === 'Lainnya') {
+                document.getElementById('fields-syukuran').classList.remove('hidden');
             }
         }
-
-        document.getElementById('jenis-acara').addEventListener('change', handleAcaraChange);
-
-        // --- 3. LOGIKA KALKULATOR HARGA & DP ---
-        window.updateCalculator = function() {
-            const produk = productSelect.value;
+        
+        // --- CORE CALCULATOR LOGIC ---
+        function updateCalculator() {
+            const produk = document.getElementById('jenis-produk').value;
             const qty = parseInt(document.getElementById('qty').value) || 0;
+            
             let unitPrice = 0;
-            let specText = "";
+            let productText = '';
 
             if (produk === 'undangan') {
                 const tipeHarga = parseInt(document.getElementById('undangan-tipe').value);
                 const teksturHarga = parseInt(document.getElementById('undangan-tekstur').value);
                 unitPrice = tipeHarga + teksturHarga;
-                specText = `Tipe: ${document.getElementById('undangan-tipe').options[document.getElementById('undangan-tipe').selectedIndex].text.split('(')[0].trim()}, Halaman: ${document.getElementById('undangan-halaman').value}, Kertas: ${document.getElementById('undangan-tekstur').options[document.getElementById('undangan-tekstur').selectedIndex].text.split('-')[0].trim()}`;
+                productText = 'Cetak Undangan';
             } else if (produk === 'cetak-foto') {
                 const fotoHarga = parseInt(document.getElementById('foto-ukuran').value);
                 const editHarga = parseInt(document.getElementById('foto-edit').value);
                 unitPrice = fotoHarga + editHarga;
-                specText = `Ukuran: ${document.getElementById('foto-ukuran').options[document.getElementById('foto-ukuran').selectedIndex].getAttribute('data-name')}, Kertas: ${document.getElementById('foto-kertas').value}, Edit: ${document.getElementById('foto-edit').options[document.getElementById('foto-edit').selectedIndex].text.split('(')[0].trim()}`;
+                productText = 'Cetak Foto & Edit';
             } else if (produk === 'id-card') {
                 const idCardHarga = parseInt(document.getElementById('idcard-tipe').value);
                 const holderHarga = parseInt(document.getElementById('idcard-holder').value);
                 unitPrice = idCardHarga + holderHarga;
-                specText = `Tipe: ${document.getElementById('idcard-tipe').options[document.getElementById('idcard-tipe').selectedIndex].text.split('(')[0].trim()}, Holder: ${document.getElementById('idcard-holder').options[document.getElementById('idcard-holder').selectedIndex].text.split('(')[0].trim()}`;
+                productText = 'ID Card PVC';
             } else if (produk === 'cetak-cd') {
                 unitPrice = parseInt(document.getElementById('cd-tipe').value);
-                specText = document.getElementById('cd-tipe').options[document.getElementById('cd-tipe').selectedIndex].text.split('(')[0].trim();
+                productText = 'Cetak Label CD/DVD';
             } else {
                 unitPrice = 0;
-                specText = "Custom / Other";
+                productText = '-';
             }
 
             const subtotal = unitPrice * qty;
@@ -1009,108 +1012,89 @@
             if (subtotal >= 100000) {
                 discountAmount = Math.floor(subtotal / 100000) * 5000;
             }
-            
+
             const grandTotal = subtotal - discountAmount;
-            
-            // NEW: Calculate Down Payment (DP) - 50% of Grand Total, rounded up
-            const dpAmount = Math.ceil(grandTotal / 2);
+
+            // Calculate Down Payment (DP) - 50% of Grand Total, rounded up to prevent weird change due to rounding
+            const dpAmount = Math.ceil(grandTotal / 2); 
 
             // Update UI
-            document.getElementById('summary-product').textContent = produk ? produk.toUpperCase().replace('-', ' ') : '-';
+            document.getElementById('summary-product').textContent = productText;
             document.getElementById('summary-price').textContent = unitPrice > 0 ? formatRupiah(unitPrice) : 'Chat Admin';
             document.getElementById('summary-qty').textContent = qty;
             document.getElementById('summary-subtotal').textContent = formatRupiah(subtotal);
-
-            const discountRow = document.getElementById('row-discount');
-            if(discountAmount > 0) {
-                discountRow.style.display = 'flex';
-                document.getElementById('summary-discount').textContent = "-" + formatRupiah(discountAmount);
-            } else {
-                discountRow.style.display = 'none';
-            }
-            
-            const specRow = document.getElementById('row-detail-specs');
-            const specVal = document.getElementById('summary-specs');
-            if(specText && produk) {
-                specRow.style.display = 'flex';
-                specVal.textContent = specText;
-            } else {
-                specRow.style.display = 'none';
-            }
-            
-            // NEW: Update DP Display in Summary Panel
-            document.getElementById('summary-dp').textContent = grandTotal > 0 ? formatRupiah(dpAmount) : 'Rp 0';
-            
-            document.getElementById('total-display').textContent = grandTotal > 0 ? formatRupiah(grandTotal) : 'Rp 0';
+            document.getElementById('summary-discount').textContent = "-" + formatRupiah(discountAmount);
+            document.getElementById('summary-dp').textContent = formatRupiah(dpAmount);
+            document.getElementById('total-display').textContent = formatRupiah(grandTotal);
         }
+        
+        // --- MODAL & INVOICE GENERATOR ---
 
-        window.selectProduct = function(value) {
-            productSelect.value = value;
-            handleProductChange();
-            updateCalculator();
-            document.getElementById('pesan').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // --- 4. GPS FEATURE ---
-        document.getElementById('btn-gps').addEventListener('click', function() {
-            const btn = this;
-            btn.textContent = "⏳ Mencari...";
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const lat = position.coords.latitude;
-                    const long = position.coords.longitude;
-                    document.getElementById('lokasi').value = `https://maps.google.com/?q=${lat},${long}`;
-                    btn.textContent = "✅ Lokasi Terisi";
-                    setTimeout(() => btn.textContent = "📍 Ambil Lokasi Saya", 3000);
-                }, function() {
-                    btn.textContent = "❌ Gagal Ambil Lokasi";
-                    alert("Gagal mengambil lokasi. Pastikan GPS aktif dan izin diberikan.");
-                    setTimeout(() => btn.textContent = "📍 Ambil Lokasi Saya", 3000);
-                });
-            } else {
-                btn.textContent = "❌ Browser Tidak Support";
-                alert("Browser Anda tidak mendukung Geolocation.");
-            }
-        });
-
-        // --- 5. LOGIKA SUBMIT FORM (CHECKOUT) & MODAL INVOICE ---
+        const form = document.getElementById('form-pemesanan');
         const modal = document.getElementById('invoice-modal-overlay');
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+        
+        // Fix #2: Fungsi untuk gulir otomatis sebagai petunjuk
+        function animateScrollHint() {
+            const invBody = document.querySelector('.inv-body');
+            if (invBody.scrollHeight > invBody.clientHeight) {
+                // Scroll down 50px
+                invBody.scrollTo({ top: 50, behavior: 'smooth' });
+                
+                // Scroll back up after 800ms
+                setTimeout(() => {
+                    invBody.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 800);
+            }
+        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
             // Ambil data dari form
+            const kode = document.getElementById('invoice-code').textContent.replace('#', '');
             const nama = document.getElementById('nama-pemesan').value;
             const waRaw = document.getElementById('whatsapp').value;
-            const wa = waRaw.startsWith('62') ? waRaw : '62' + waRaw.replace(/^0/, ''); // Format WA number to start with 62
+            const wa = waRaw.startsWith('62') ? waRaw : '62' + waRaw.replace(/^0/, ''); 
             const qty = parseInt(document.getElementById('qty').value);
             const produk = document.getElementById('jenis-produk').value;
             const noteRaw = document.getElementById('catatan').value;
             const deadlineVal = document.getElementById('deadline').value;
 
-            // Recalculate everything inside the submit handler to ensure fresh data
+            // Re-run the core logic to get unitPrice, specText, and totals
             let unitPrice = 0;
             let specText = "";
-            
-            // Re-run the core logic to get unitPrice and specText
+            let productFullName = "";
+
             if (produk === 'undangan') {
                 const tipeHarga = parseInt(document.getElementById('undangan-tipe').value);
                 const teksturHarga = parseInt(document.getElementById('undangan-tekstur').value);
                 unitPrice = tipeHarga + teksturHarga;
+                productFullName = 'Cetak Undangan';
                 specText = `Tipe: ${document.getElementById('undangan-tipe').options[document.getElementById('undangan-tipe').selectedIndex].text.split('(')[0].trim()}, Halaman: ${document.getElementById('undangan-halaman').value}, Kertas: ${document.getElementById('undangan-tekstur').options[document.getElementById('undangan-tekstur').selectedIndex].text.split('-')[0].trim()}`;
             } else if (produk === 'cetak-foto') {
                 const fotoHarga = parseInt(document.getElementById('foto-ukuran').value);
                 const editHarga = parseInt(document.getElementById('foto-edit').value);
                 unitPrice = fotoHarga + editHarga;
+                productFullName = 'Cetak Foto & Edit';
                 specText = `Ukuran: ${document.getElementById('foto-ukuran').options[document.getElementById('foto-ukuran').selectedIndex].getAttribute('data-name')}, Kertas: ${document.getElementById('foto-kertas').value}, Edit: ${document.getElementById('foto-edit').options[document.getElementById('foto-edit').selectedIndex].text.split('(')[0].trim()}`;
             } else if (produk === 'id-card') {
                 const idCardHarga = parseInt(document.getElementById('idcard-tipe').value);
                 const holderHarga = parseInt(document.getElementById('idcard-holder').value);
                 unitPrice = idCardHarga + holderHarga;
+                productFullName = 'ID Card PVC';
                 specText = `Tipe: ${document.getElementById('idcard-tipe').options[document.getElementById('idcard-tipe').selectedIndex].text.split('(')[0].trim()}, Holder: ${document.getElementById('idcard-holder').options[document.getElementById('idcard-holder').selectedIndex].text.split('(')[0].trim()}`;
             } else if (produk === 'cetak-cd') {
                 unitPrice = parseInt(document.getElementById('cd-tipe').value);
+                productFullName = 'Cetak Label CD/DVD';
                 specText = document.getElementById('cd-tipe').options[document.getElementById('cd-tipe').selectedIndex].text.split('(')[0].trim();
+            } else {
+                unitPrice = 0;
+                productFullName = 'Custom / Other';
+                specText = "Silakan hubungi admin untuk detail harga dan spesifikasi.";
             }
 
             const subtotalRaw = unitPrice * qty;
@@ -1119,301 +1103,316 @@
                 discountRaw = Math.floor(subtotalRaw / 100000) * 5000;
             }
             const grandTotalRaw = subtotalRaw - discountRaw;
-            
-            // NEW: Calculate DP amount
             const dpAmountRaw = Math.ceil(grandTotalRaw / 2);
-
-            // Format angka untuk tampilan
+            
+            // Format for display/WA
             const priceUnit = formatRupiah(unitPrice);
             const subtotal = formatRupiah(subtotalRaw);
-            const discount = discountRaw > 0 ? formatRupiah(discountRaw) : '-Rp 0';
-            const total = formatRupiah(grandTotalRaw); // Full Total
-            const dpAmountFormatted = formatRupiah(dpAmountRaw); // NEW
+            const discount = "-" + formatRupiah(discountRaw);
+            const total = formatRupiah(grandTotalRaw);
+            const dpAmountFormatted = formatRupiah(dpAmountRaw);
 
-            // Buat kode invoice unik sederhana
-            const timeStamp = Date.now().toString().slice(-6);
-            const random = Math.floor(Math.random() * 100);
-            const kode = `AD${timeStamp}${random.toString().padStart(2, '0')}`;
-
-            // Detail Acara logic
-            let eventDetail = "";
-            if (productSelect.value === 'undangan') {
+            // Detailed Note Assembly
+            let eventDetails = '';
+            if (produk === 'undangan' && document.getElementById('event-details-section').classList.contains('hidden') === false) {
                 const jenisAcara = document.getElementById('jenis-acara').value;
-                if(jenisAcara === 'Pernikahan') {
-                    eventDetail = `Acara Nikah: ${document.getElementById('nama-pria').value} & ${document.getElementById('nama-wanita').value}`;
+                eventDetails += `\n*DETAIL ACARA*: `;
+                if (jenisAcara === 'Pernikahan') {
+                    eventDetails += `\n- Jenis: Pernikahan`;
+                    eventDetails += `\n- Mempelai Pria: ${document.getElementById('nama-pria').value}`;
+                    eventDetails += `\n- Mempelai Wanita: ${document.getElementById('nama-wanita').value}`;
+                    eventDetails += `\n- Ortu: ${document.getElementById('nama-ortu').value}`;
                 } else if (jenisAcara === 'Khitanan') {
-                    eventDetail = `Acara Khitan: ${document.getElementById('nama-anak').value}`;
-                } else {
-                    eventDetail = `Acara ${jenisAcara}: ${document.getElementById('nama-hajat').value}`;
+                    eventDetails += `\n- Jenis: Khitanan`;
+                    eventDetails += `\n- Nama Anak: ${document.getElementById('nama-anak-khitan').value}`;
+                } else if (jenisAcara === 'Syukuran') {
+                    eventDetails += `\n- Jenis: Syukuran`;
+                    eventDetails += `\n- Acara Untuk: ${document.getElementById('syukuran-acara').value}`;
+                } else if (jenisAcara === 'Ulang Tahun') {
+                    eventDetails += `\n- Jenis: Ulang Tahun`;
                 }
+                eventDetails += `\n- Waktu/Lokasi: ${document.getElementById('tanggal-lokasi-acara').value}`;
             }
+            const fullNote = `${noteRaw.trim()}${eventDetails}`;
             
-            const fullNote = (eventDetail ? eventDetail + ". " : "") + (noteRaw ? "Catatan: " + noteRaw : "");
-            const displayNote = fullNote || "-";
-
-            // Simpan data ke global object
-            orderData = {
-                kode, nama, wa, produk, specs: specText, priceUnit, qty, subtotal: subtotalRaw, 
-                discount: discount, discountRaw: discountRaw, total: total, fullNote, deadlineVal,
-                today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-                grandTotalRaw: grandTotalRaw, // Full price numeric
-                dpAmountRaw: dpAmountRaw, // DP price numeric
-                dpAmountFormatted: dpAmountFormatted // DP price formatted
-            };
+            // Store data globally for use in print/WA handlers
+            window.orderData = {
+                kode, nama, wa, produk: productFullName, specs: specText, priceUnit: unitPrice, 
+                qty, subtotal: subtotal, discount: discount, discountRaw, total: total, fullNote, 
+                deadlineVal, today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), 
+                grandTotalRaw: grandTotalRaw, dpAmountRaw: dpAmountRaw, dpAmountFormatted: dpAmountFormatted,
+                fullNoteForWA: fullNote.replace(/\n/g, ' - ').replace(/\*/g, '').trim() // Cleaned note for single line WA display
+            }; 
 
             // Render ke Modal (Isi Data)
             document.getElementById('inv-code').textContent = "#" + kode;
-            document.getElementById('inv-date').textContent = orderData.today;
+            document.getElementById('inv-date').textContent = window.orderData.today;
             document.getElementById('inv-name').textContent = nama;
-            document.getElementById('inv-product').textContent = produk.toUpperCase().replace('-', ' ');
+            document.getElementById('inv-product').textContent = window.orderData.produk.toUpperCase();
             document.getElementById('inv-specs').textContent = specText;
-            document.getElementById('inv-price-unit').textContent = unitPrice.toLocaleString('id-ID'); // Use unformatted price to match old logic
+            document.getElementById('inv-price-unit').textContent = unitPrice.toLocaleString('id-ID'); 
             document.getElementById('inv-qty').textContent = qty;
-
-            if(orderData.discount !== '-Rp 0') {
+            
+            if(discountRaw > 0) {
                 document.getElementById('modal-discount-row').style.display = 'flex';
-                document.getElementById('inv-discount').textContent = orderData.discount;
+                document.getElementById('inv-discount').textContent = discount;
             } else {
                 document.getElementById('modal-discount-row').style.display = 'none';
             }
 
-            // Display Full Total
-            document.getElementById('inv-total-final').textContent = orderData.total; 
+            document.getElementById('inv-total-final').textContent = total;
             document.querySelector('.inv-total-label').textContent = "TOTAL TAGIHAN (Penuh)";
+            document.getElementById('inv-notes-preview').textContent = noteRaw || 'Tidak ada catatan tambahan.';
 
-            // NEW: Insert the DP/QRIS payment section dynamically before the footer
-            const invBody = document.querySelector('.inv-body');
+            // Inject the DP/QRIS payment section dynamically
             let dpSection = document.getElementById('dp-payment-section');
-
-            // Template for the DP/QRIS content
             const dpPaymentHtml = `
                 <div class="inv-payment-qris">
                     <h4>Pembayaran Uang Muka (DP) Otomatis</h4>
                     <div style="font-size: 1rem; color: #475569; font-weight: 600; margin-bottom: 5px;">Nominal Yang Perlu Dibayar (50%)</div>
                     <div class="inv-qris-nominal">
-                        ${orderData.dpAmountFormatted}
+                        ${dpAmountFormatted}
                     </div>
-                    <p class="inv-qris-info" style="margin-bottom: 20px;">
-                        Silakan scan QRIS di bawah ini untuk membayar **Uang Muka (DP) sebesar 50%** dari total pesanan. Nominal yang tercantum sudah termasuk Kode Invoice: 
-                        <br>Kode Invoice: <strong style="color: var(--primary);">#${orderData.kode}</strong>
-                    </p>
                     <img src="https://i.imgur.com/YeK2AF2.jpeg" alt="QRIS Pembayaran" class="inv-qris-image">
+                    <p class="inv-qris-info">
+                        Nomor Invoice: <strong>#${kode}</strong>
+                        <br>Gunakan QRIS di atas atau transfer manual ke rekening admin.
+                    </p>
                     <div class="inv-confirmation-note">
-                        ⚠️ **PENTING!** Setelah transfer DP berhasil, **Wajib Konfirmasi** ke admin via WhatsApp dengan mengirimkan bukti pembayaran Anda.
+                        ⚠️ PENTING! Setelah transfer DP, Wajib Konfirmasi ke admin via WhatsApp dengan mengirimkan bukti pembayaran.
                     </div>
                 </div>
             `;
-
-            // Check if DP section already exists
-            if (!dpSection) {
-                dpSection = document.createElement('div');
-                dpSection.id = 'dp-payment-section';
-                // Find the full total area to insert the new DP section after it.
-                const invTotalArea = document.querySelector('.inv-total-area');
-                invBody.insertBefore(dpSection, invTotalArea.nextSibling); 
-            }
-            
             dpSection.innerHTML = dpPaymentHtml;
 
-            document.getElementById('inv-notes-preview').textContent = displayNote.length > 50 ? displayNote.substring(0, 50) + "..." : displayNote;
 
-            // Tampilkan Modal
+            // Tampilkan modal dan jalankan scroll otomatis
             modal.classList.add('active');
+            animateScrollHint();
         });
 
-        document.getElementById('btn-close-modal').addEventListener('click', () => {
-            // Remove dynamically added DP section when closing modal
-            const dpSection = document.getElementById('dp-payment-section');
-            if (dpSection) {
-                dpSection.remove();
-            }
-            modal.classList.remove('active');
-        });
+        // --- 6. WHATSAPP CONFIRMATION HANDLER ---
+        document.getElementById('btn-wa-konfirmasi').addEventListener('click', (e) => {
+            e.preventDefault();
+            const orderData = window.orderData;
 
-        // PERBAIKAN: FORMAT TEXT WHATSAPP YANG LEBIH RAPI & JELAS + TAMBAHAN DP INFO
-        document.getElementById('btn-send-wa').addEventListener('click', () => {
             const waText = `
-*--- ORDER BARU ANEKA DIGITAL ---*
-
-*Invoice:* #${orderData.kode}
-*Tanggal:* ${orderData.today}
-*Pemesan:* ${orderData.nama}
-*WhatsApp:* ${orderData.wa}
-${orderData.deadlineVal ? `*Deadline:* ${orderData.deadlineVal}` : ''}
+*--- INVOICE PEMESANAN ANEKA DIGITAL ---*
+Kepada Yth. ${orderData.nama}
+No. Invoice: *#${orderData.kode}*
+Tanggal Pesan: ${orderData.today}
+Deadline: ${orderData.deadlineVal}
 
 *--- Rincian Pesanan ---*
-*Produk:* ${orderData.produk.toUpperCase().replace('-', ' ')}
+*Produk:* ${orderData.produk.toUpperCase()} 
 *Spesifikasi:* ${orderData.specs}
-*Harga Satuan:* ${orderData.priceUnit}
+*Harga Satuan:* ${orderData.priceUnit.replace("Rp", "Rp ")}
 *Kuantitas:* ${orderData.qty}
-${orderData.discount !== '-Rp 0' ? `*Diskon:* ${orderData.discount}` : ''}
-*TOTAL AKHIR (Full):* ${orderData.total}
+${orderData.discountRaw > 0 ? `*Diskon:* ${orderData.discount.replace("Rp", "-Rp ")}` : ''}
+*TOTAL AKHIR (Full):* ${orderData.total.replace("Rp", "Rp ")}
 
 *--- PEMBAYARAN UANG MUKA (DP) ---*
-*Nominal DP (50%):* *${orderData.dpAmountFormatted}*
-Mohon segera lakukan pembayaran DP sebesar *${orderData.dpAmountFormatted}* sesuai nominal yang tertera pada QRIS.
+*Nominal DP (50%):* *${orderData.dpAmountFormatted.replace("Rp", "Rp ")}*
+Mohon segera lakukan pembayaran DP sebesar *${orderData.dpAmountFormatted.replace("Rp", "Rp ")}* sesuai nominal yang tertera pada QRIS.
 
 *PENTING!* Setelah transfer DP berhasil, **Wajib kirim bukti pembayaran ini SEGERA ke Admin** untuk konfirmasi pesanan Anda dan memulai proses pengerjaan.
 
-*Catatan:* ${orderData.fullNote || '-'}
-
+*Catatan:* ${orderData.fullNoteForWA || 'Tidak ada catatan tambahan.'}
 Terima kasih atas pesanannya!
-
 ------------------------------------------
 (Pesan ini dibuat otomatis melalui website)
-            `.trim();
-
+`.trim();
             const encodedText = encodeURIComponent(waText);
             const waNumber = '6285647709114';
             const waLink = `https://wa.me/${waNumber}?text=${encodedText}`;
-            
             window.open(waLink, '_blank');
         });
 
-        // --- 6. PRINT PDF GENERATOR ---
+        // --- 7. PRINT PDF GENERATOR (Fix #1: Invoice Cut-off) ---
         document.getElementById('btn-download-pdf').addEventListener('click', () => {
+            const orderData = window.orderData;
+            
+            // Re-define formatRupiah locally for the print document scope
+            const formatRupiah = (number) => {
+                const numberRaw = typeof number === 'string' ? parseFloat(number.replace(/[^0-9,-]/g, '').replace(',', '.')) : number;
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(numberRaw);
+            };
+
             const printContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Invoice #${orderData.kode}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
                     <style>
-                        /* --- PRINT INVOICE STYLES --- */
+                        /* --- PRINT INVOICE STYLES (Disesuaikan untuk menghindari potongan) --- */
                         :root {
                             --i-blue: #0A4D98;
                             --i-orange: #FF7F00;
-                            --i-black: #1e293b; 
+                            --i-black: #1e293b;
                             --i-gray: #64748b;
                             --i-red: #ef4444;
-                            --i-green: #10b981;
+                        }
+                        body {
+                            font-family: 'Inter', sans-serif;
+                            color: var(--i-black);
+                            margin: 0;
+                            padding: 0;
+                            background: white;
+                            font-size: 14px;
+                        }
+                        
+                        .print-page {
+                            width: 100%;
+                            padding: 30px; /* Margin Kertas Aman */
+                            box-sizing: border-box;
+                            max-width: 800px; /* Width aman untuk Letter/A4 */
+                            margin: 0 auto;
                         }
 
+                        .header-section {
+                            text-align: center;
+                            padding-bottom: 20px;
+                            border-bottom: 3px solid var(--i-blue);
+                            margin-bottom: 20px;
+                        }
+                        .header-section h1 {
+                            font-family: 'Plus Jakarta Sans', sans-serif;
+                            font-size: 24px;
+                            color: var(--i-blue);
+                            margin: 0;
+                            line-height: 1.1;
+                            letter-spacing: 2px;
+                        }
+                        .inv-number {
+                            font-size: 16px;
+                            font-weight: 700;
+                            color: var(--i-orange);
+                            background: #fff7ed;
+                            padding: 4px 10px;
+                            border-radius: 4px;
+                            display: inline-block;
+                            margin-top: 5px;
+                            border: 1px dashed #fed7aa;
+                        }
+                        .client-info-section {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 30px;
+                        }
+                        .client-box { width: 45%; }
+                        .client-box h3 {
+                            font-size: 15px;
+                            font-weight: 700;
+                            color: var(--i-blue);
+                            margin-bottom: 10px;
+                        }
+                        .client-box p {
+                            font-size: 13px;
+                            color: #475569;
+                            margin: 4px 0;
+                        }
+                        .data-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 30px;
+                        }
+                        .data-table th, .data-table td {
+                            border: 1px solid #e2e8f0;
+                            padding: 12px;
+                            text-align: left;
+                            font-size: 13px;
+                            page-break-inside: avoid; /* Membantu mencegah pemotongan baris di tengah */
+                        }
+                        .data-table th {
+                            background: #f8fafc;
+                            color: #475569;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                        }
+                        .data-table td { color: #1e293b; }
+                        .data-table .col-qty { width: 60px; text-align: center; }
+                        .data-table .col-price, .data-table .col-total { width: 120px; text-align: right; font-weight: 600; }
+
+                        .notes-totals-container {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                        }
+                        .notes-box { width: 60%; }
+                        .notes-box h3 { font-size: 15px; color: var(--i-blue); margin-bottom: 10px; }
+                        .notes-content { 
+                            border: 1px solid #e2e8f0; 
+                            padding: 10px; 
+                            border-radius: 6px; 
+                            font-size: 12px; 
+                            line-height: 1.4;
+                            white-space: pre-wrap;
+                        }
+                        .totals-box { width: 35%; text-align: right; }
+                        .total-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+                        .total-row span { font-weight: 700; }
+                        .total-row:last-child { font-size: 1.1rem; color: var(--i-blue); margin-top: 10px; border-top: 2px dashed #e2e8f0; padding-top: 10px; }
+                        
                         /* NEW: Print-specific DP/QRIS Style */
                         .print-dp-payment {
                             margin-top: 30px;
-                            padding: 20px;
+                            padding: 15px;
                             border: 2px solid var(--i-blue);
                             border-radius: 8px;
                             background: #f0f9ff;
                             text-align: center;
+                            page-break-before: auto; /* Membantu mencegah pemisahan dari konten utama */
                         }
-                        .print-dp-payment h4 {
-                            color: var(--i-blue);
-                            margin-bottom: 10px;
-                            font-size: 16px;
-                            font-weight: 700;
-                        }
-                        .print-qris-nominal {
-                            font-size: 24px;
-                            font-weight: 800;
-                            color: var(--i-orange);
-                            margin-bottom: 15px;
-                        }
-                        .print-qris-info {
-                            font-size: 11px;
-                            color: #475569;
-                            line-height: 1.4;
-                            margin-bottom: 15px;
-                        }
-                        .print-qris-image {
-                            width: 150px;
-                            height: auto;
-                            display: block;
-                            margin: 10px auto;
-                            border: 1px solid #e2e8f0;
-                        }
-                        .print-confirmation-note {
-                            background: #fff7ed;
-                            color: #c2410c;
-                            padding: 8px;
-                            border-radius: 4px;
-                            font-size: 10px;
-                            font-weight: 500;
-                            border: 1px solid #fed7aa;
-                        }
+                        .print-dp-payment h4 { color: var(--i-blue); margin: 0 0 5px 0; font-size: 16px; }
+                        .print-qris-image { max-width: 150px; height: auto; margin: 10px auto; display: block; border: 1px solid #ccc; }
+                        .print-nominal { font-size: 18px; font-weight: 800; color: var(--i-orange); margin-bottom: 5px; }
+                        .print-warning { font-size: 11px; color: var(--i-red); font-weight: 700; margin-top: 5px; }
                         
-                        /* Core Print Styles */
-                        body { font-family: 'Inter', sans-serif; color: var(--i-black); background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 14px; }
-                        h1, h2, h3, h4, th { font-family: 'Plus Jakarta Sans', sans-serif; }
-                        .invoice-box { max-width: 210mm; margin: 0 auto; padding: 40px; min-height: 297mm; position: relative; box-sizing: border-box; }
-                        .header-container { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid var(--i-blue); padding-bottom: 20px; margin-bottom: 30px; }
-                        .brand-section h1 { font-size: 28px; font-weight: 800; color: var(--i-blue); margin: 0; letter-spacing: -0.5px; }
-                        .brand-section span { color: var(--i-orange); }
-                        .brand-tagline { font-size: 11px; color: #64748b; margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
-                        .invoice-meta { text-align: right; }
-                        .inv-title { font-size: 36px; font-weight: 800; color: #e2e8f0; margin: 0; line-height: 1; letter-spacing: 2px; }
-                        .inv-number { font-size: 16px; font-weight: 700; color: var(--i-orange); background: #fff7ed; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-top: 5px; border: 1px dashed #fed7aa; }
-                        .client-info-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
-                        .client-box h3 { font-size: 15px; font-weight: 700; color: var(--i-blue); margin-bottom: 10px; }
-                        .client-box p { font-size: 13px; color: #475569; margin: 4px 0; }
-                        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                        .data-table th, .data-table td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 13px; }
-                        .data-table th { background: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; }
-                        .data-table td { color: #1e293b; }
-                        .data-table .col-qty { width: 60px; text-align: center; }
-                        .data-table .col-price, .data-table .col-total { width: 120px; text-align: right; font-weight: 600; }
-                        .notes-totals-container { display: flex; justify-content: space-between; align-items: flex-start; }
-                        .notes-box { width: 50%; padding-right: 20px; }
-                        .notes-box h3 { font-size: 15px; font-weight: 700; color: var(--i-blue); margin-bottom: 5px; text-transform: uppercase; }
-                        .notes-content { font-size: 12px; color: #475569; line-height: 1.5; }
-                        .totals-box { flex: 1; }
-                        .total-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; color: #475569; }
-                        .total-row.discount span:last-child { color: var(--i-red); font-weight: 600; }
-                        .total-row.dp-payment { color: var(--i-orange); font-weight: 700; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
-                        .grand-total { border-top: 2px dashed #cbd5e1; margin-top: 10px; padding-top: 10px; font-size: 18px; font-weight: 800; color: var(--i-blue); display: flex; justify-content: space-between; align-items: center; }
-                        .print-footer { position: absolute; bottom: 40px; left: 40px; right: 40px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px; font-size: 11px; color: #94a3b8; }
-                        .print-footer .thank-you { font-weight: 700; color: var(--i-blue); margin-bottom: 5px; font-size: 12px; }
-                        .print-footer .website-link { color: var(--i-orange); text-decoration: none; font-weight: 600; }
-                        @media print { html, body { width: 210mm; height: 297mm; } }
+                        /* Footer Print (Alamat) */
+                        .print-footer-info { text-align: center; margin-top: 40px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 11px; color: #475569; }
+
                     </style>
                 </head>
                 <body>
-                    <div class="invoice-box">
-                        <div class="header-container">
-                            <div class="brand-section">
-                                <h1>Aneka<span>Digital</span></h1>
-                                <div class="brand-tagline">Market Printing Solution</div>
-                            </div>
-                            <div class="invoice-meta">
-                                <div class="inv-title">INVOICE</div>
-                                <div class="inv-number">#${orderData.kode}</div>
-                            </div>
+                    <div class="print-page">
+                        <div class="header-section">
+                            <h1>ANEKA DIGITAL</h1>
+                            <p style="font-size: 12px; color: #475569;">Pusat Cetak Undangan, ID Card & Foto Murah</p>
+                            <span class="inv-number">INVOICE #${orderData.kode}</span>
                         </div>
-
+                        
                         <div class="client-info-section">
                             <div class="client-box">
-                                <h3>Detail Pemesan</h3>
-                                <p><strong>Nama:</strong> ${orderData.nama}</p>
-                                <p><strong>WhatsApp:</strong> ${orderData.wa}</p>
-                                <p><strong>Tanggal Pesan:</strong> ${orderData.today}</p>
-                                ${orderData.deadlineVal ? `<p><strong>Deadline:</strong> ${orderData.deadlineVal}</p>` : ''}
+                                <h3>Data Pesanan</h3>
+                                <p>Tanggal Pesan: ${orderData.today}</p>
+                                <p>Deadline: ${orderData.deadlineVal}</p>
                             </div>
-                            <div class="client-box" style="text-align: right;">
-                                <h3>Info Perusahaan</h3>
-                                <p>Aneka Digital</p>
-                                <p>Jl. Pb. Sudirman, Panarukan, Situbondo</p>
-                                <p>0856-4770-9114</p>
+                            <div class="client-box">
+                                <h3>Pelanggan</h3>
+                                <p>Nama: ${orderData.nama}</p>
+                                <p>WhatsApp: ${orderData.wa}</p>
                             </div>
                         </div>
 
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Deskripsi Produk</th>
-                                    <th class="col-qty">Qty</th>
-                                    <th class="col-price">Harga Satuan</th>
-                                    <th class="col-total">Total</th>
+                                    <th>Deskripsi</th>
+                                    <th class="col-qty">Jml</th>
+                                    <th class="col-price">Hrg Satuan</th>
+                                    <th class="col-total">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>
-                                        <strong>${orderData.produk.toUpperCase().replace('-', ' ')}</strong>
+                                        <strong>${orderData.produk}</strong>
                                         <div style="font-size:11px; color:#64748b; margin-top:3px;">${orderData.specs}</div>
                                     </td>
                                     <td class="col-qty">${orderData.qty}</td>
-                                    <td class="col-price">${orderData.priceUnit}</td>
-                                    <td class="col-total">${formatRupiah(orderData.subtotal)}</td>
+                                    <td class="col-price">${formatRupiah(orderData.priceUnit)}</td>
+                                    <td class="col-total">${formatRupiah(orderData.grandTotalRaw + orderData.discountRaw)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1426,46 +1425,33 @@ Terima kasih atas pesanannya!
                             <div class="totals-box">
                                 <div class="total-row">
                                     <span>Subtotal</span>
-                                    <span>${formatRupiah(orderData.subtotal)}</span>
+                                    <span>${formatRupiah(orderData.grandTotalRaw + orderData.discountRaw)}</span>
                                 </div>
-                                ${orderData.discount !== '-Rp 0' ? `
-                                <div class="total-row discount">
-                                    <span>Diskon Promo</span>
+                                <div class="total-row" style="color: var(--i-orange); font-weight: 700;">
+                                    <span>Diskon</span>
                                     <span>${orderData.discount}</span>
                                 </div>
-                                ` : ''}
-                                
-                                <div class="total-row dp-payment">
-                                    <span>UANG MUKA (DP 50%)</span>
-                                    <span>${orderData.dpAmountFormatted}</span>
-                                </div>
-                                <div class="grand-total" style="color: var(--i-red);">
-                                    <span>SISA TAGIHAN</span>
-                                    <span>${formatRupiah(orderData.grandTotalRaw - orderData.dpAmountRaw)}</span>
-                                </div>
-                                <div class="grand-total">
-                                    <span>TOTAL TAGIHAN (Penuh)</span>
+                                <div class="total-row">
+                                    <span>TOTAL AKHIR</span>
                                     <span>${orderData.total}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="print-dp-payment">
-                            <h4>Pembayaran Uang Muka (DP) - ${orderData.dpAmountFormatted}</h4>
-                            <div class="print-qris-info">
-                                Silakan scan QRIS di bawah ini untuk membayar DP sebesar 50% dari total pesanan. Nominal ini sudah tercantum otomatis.
-                                <br>Kode Invoice: <strong>#${orderData.kode}</strong>
-                            </div>
+                            <h4>Pembayaran Uang Muka (DP) - 50%</h4>
+                            <div class="print-nominal">${orderData.dpAmountFormatted}</div>
                             <img src="https://i.imgur.com/YeK2AF2.jpeg" alt="QRIS Pembayaran" class="print-qris-image">
-                            <div class="print-confirmation-note">
-                                ⚠️ **PENTING!** Setelah transfer DP, Wajib Konfirmasi ke admin via WhatsApp dengan mengirimkan bukti pembayaran.
+                            <div class="print-warning">
+                                MOHON SEGERA KONFIRMASI PEMBAYARAN DP INI KE ADMIN VIA WHATSAPP.
                             </div>
                         </div>
-                        <div class="print-footer">
-                            <div class="thank-you">Terima Kasih Telah Berbelanja</div>
-                            <div><a href="https://www.anekamarket.my.id/anekadigital" class="website-link">www.anekamarket.my.id/anekadigital</a></div>
-                            <div class="contact-info">Jl. Pb. Sudirman, Panarukan, Situbondo • 0856-4770-9114</div>
+                        
+                        <div class="print-footer-info">
+                            Terima Kasih Telah Berbelanja.
+                            <br>Jl. Pb. Sudirman, Panarukan, Situbondo • 0856-4770-9114
                         </div>
+
                     </div>
                 </body>
                 </html>
