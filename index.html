@@ -619,10 +619,15 @@
                             </div>
                             
                             <div class="form-group">
-                                <label>Pilih Jenis Domain</label>
+                                <label>Pilih Opsi Domain</label>
                                 <select id="web-domain-type" class="form-control" onchange="updateCalculator()">
                                     <option value="0">Subdomain Gratis (Selamanya) - Rp 0</option>
-                                    <option value="350000">Domain TLD (.com/.net/.id) - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .COM - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .NET - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .ID - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .WEB.ID - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .ONLINE - Rp 350.000/thn</option>
+                                    <option value="350000">Domain .GO.ID (Instansi) - Rp 350.000/thn</option>
                                 </select>
                             </div>
 
@@ -1138,12 +1143,14 @@
             
             } else if (produk === 'website') {
                 const jasaPembuatan = 100000;
-                const domainPrice = parseInt(document.getElementById('web-domain-type').value);
-                const domainTypeTxt = document.getElementById('web-domain-type').options[document.getElementById('web-domain-type').selectedIndex].text.split('(')[0];
+                const domainSelect = document.getElementById('web-domain-type');
+                const domainPrice = parseInt(domainSelect.value);
+                const domainTypeTxt = domainSelect.options[domainSelect.selectedIndex].text.split(' - ')[0];
                 
                 // Show/Hide Domain Input logic
                 const inputSub = document.getElementById('input-subdomain');
                 const inputTLD = document.getElementById('input-tld');
+                
                 if(domainPrice === 0) {
                     inputSub.classList.remove('hidden');
                     inputTLD.classList.add('hidden');
@@ -1279,7 +1286,10 @@
                 const warna = document.getElementById('web-warna').value || "Default";
                 const deskripsi = document.getElementById('web-deskripsi').value || "-";
                 
-                const domainType = document.getElementById('web-domain-type').value;
+                const domainSelect = document.getElementById('web-domain-type');
+                const domainType = domainSelect.value;
+                const domainTypeLabel = domainSelect.options[domainSelect.selectedIndex].text.split(' - ')[0]; // Ambil labelnya saja
+                
                 let domainName = "";
                 if(domainType === "0") {
                     domainName = "www.aplikasiusaha.com/" + (document.getElementById('web-domain-sub').value || "nama-toko");
@@ -1290,7 +1300,8 @@
                 extraDetail = `
                 • Tema: ${tema}
                 • Warna: ${warna}
-                • Domain: ${domainName}
+                • Tipe Domain: ${domainTypeLabel}
+                • Link/Nama: ${domainName}
                 • Konten: ${deskripsi}`;
             }
 
