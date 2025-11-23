@@ -203,9 +203,50 @@
             display: flex; justify-content: space-between; margin-top: 1.5rem; padding-top: 1.5rem; 
             border-top: 2px dashed #cbd5e1; font-weight: 800; font-size: 1.4rem; color: var(--primary); 
         }
+
+        /* --- NEW: PAYMENT SECTION STYLE --- */
+        .payment-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed #e2e8f0;
+        }
+        .payment-img {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .payment-warning {
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-top: 1rem;
+        }
+        .dp-highlight {
+            color: var(--accent);
+            font-weight: 800;
+        }
+        .invoice-code-display {
+            background: #f1f5f9;
+            color: var(--text-dark);
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+        }
         
         .btn-checkout { 
-            width: 100%; margin-top: 2rem; background: var(--accent); border: none; 
+            width: 100%; margin-top: 1.5rem; background: var(--accent); border: none; 
             color: white; padding: 16px; border-radius: 10px; font-weight: 700; font-size: 1.1rem; 
             cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 127, 0, 0.3); 
         }
@@ -738,8 +779,31 @@
                         <span id="total-display">Rp 0</span>
                     </div>
 
-                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 10px; font-style: italic; text-align: center;">
-                        *Harga belum termasuk ongkos kirim jika dikirim.
+                    <!-- BARU: FITUR PEMBAYARAN QRIS & DP -->
+                    <div class="payment-section">
+                        <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-dark);">Scan QRIS untuk DP:</h4>
+                        <img src="https://i.imgur.com/YeK2AF2.jpeg" alt="QRIS Pembayaran" class="payment-img">
+                        
+                        <div class="summary-row dp-highlight">
+                            <span>Uang Muka (DP 50%)</span>
+                            <span id="dp-amount">Rp 0</span>
+                        </div>
+
+                        <div style="margin-top:10px; text-align:center; font-size:0.85rem; color:var(--text-gray);">
+                            Kode Invoice (Wajib Dicantumkan):
+                        </div>
+                        <div class="invoice-code-display" id="preview-invoice-code">INV-LOADING...</div>
+
+                        <div class="payment-warning">
+                            <strong>⚠️ PENTING:</strong><br>
+                            1. Silakan transfer DP sebesar <b id="warning-dp-val">Rp 0</b> ke QRIS di atas.<br>
+                            2. Cantumkan <b>Kode Invoice</b> pada berita transfer.<br>
+                            3. Setelah transfer, klik tombol <b>PROSES PESANAN</b> di bawah ini dan kirim bukti bayar ke Admin.
+                        </div>
+                    </div>
+
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 15px; font-style: italic; text-align: center;">
+                        *Pelunasan dilakukan saat barang diambil/dikirim.
                     </div>
 
                     <button type="button" class="btn-checkout" id="btn-process">PROSES PESANAN ➔</button>
@@ -791,10 +855,19 @@
                 </div>
 
                 <div class="inv-total-area">
-                    <div class="inv-total-label">TOTAL BAYAR</div>
+                    <div class="inv-total-label">TOTAL TAGIHAN</div>
                     <div class="inv-total-value" id="inv-total-final">Rp 0</div>
                 </div>
                 
+                <div class="inv-row" style="margin-top: 10px; border-top: 1px dashed #e2e8f0; padding-top: 10px;">
+                    <div class="inv-label">DP (Sudah Transfer)</div>
+                    <div class="inv-value" id="inv-dp-val" style="color: var(--success);">Rp 0</div>
+                </div>
+                <div class="inv-row">
+                    <div class="inv-label">Sisa Pelunasan</div>
+                    <div class="inv-value" id="inv-sisa-val" style="color: var(--accent); font-weight: 800;">Rp 0</div>
+                </div>
+
                 <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 15px;">
                     <span id="inv-notes-preview" style="font-style: italic;">-</span>
                 </div>
@@ -803,7 +876,7 @@
             <div class="inv-footer">
                 <button class="btn-action-primary" id="btn-send-wa">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326z"/></svg>
-                    Kirim ke WhatsApp Sekarang
+                    Kirim Bukti ke WhatsApp
                 </button>
                 <div class="btn-group-secondary">
                     <button class="btn-action-secondary" id="btn-download-pdf">🖨️ Simpan PDF</button>
@@ -887,6 +960,10 @@
         });
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+
+        // GENERATE INVOICE CODE DIAWAL (Supaya user bisa pakai untuk berita transfer)
+        let currentInvoiceCode = 'INV-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('preview-invoice-code').innerText = currentInvoiceCode;
 
         // --- 2. LOGIKA PRODUK & FORM DINAMIS ---
         const productSelect = document.getElementById('jenis-produk');
@@ -983,6 +1060,8 @@
             }
             
             const grandTotal = subtotal - discountAmount;
+            // Logic DP 50%
+            const dpValue = Math.floor(grandTotal * 0.5);
 
             // Update UI
             document.getElementById('summary-product').textContent = produk ? produk.toUpperCase().replace('-', ' ') : '-';
@@ -999,6 +1078,10 @@
             }
 
             document.getElementById('total-display').textContent = grandTotal > 0 ? formatRupiah(grandTotal) : 'Rp 0';
+            
+            // UPDATE DISPLAY DP
+            document.getElementById('dp-amount').textContent = formatRupiah(dpValue);
+            document.getElementById('warning-dp-val').textContent = formatRupiah(dpValue);
             
             const specRow = document.getElementById('row-detail-specs');
             const specVal = document.getElementById('summary-specs');
@@ -1060,8 +1143,16 @@
             const subtotal = document.getElementById('summary-subtotal').textContent;
             const discount = document.getElementById('summary-discount').textContent;
             const total = document.getElementById('total-display').textContent;
+            const dp = document.getElementById('dp-amount').textContent;
             
-            const kode = 'INV-' + Math.floor(100000 + Math.random() * 900000); // 6 digit random
+            // Hitung Sisa
+            // Convert string formatRupiah back to number logic (simple remove non-digits)
+            const totalNum = parseInt(total.replace(/[^0-9]/g, ''));
+            const dpNum = parseInt(dp.replace(/[^0-9]/g, ''));
+            const sisa = totalNum - dpNum;
+            const sisaFormatted = formatRupiah(sisa);
+
+            const kode = currentInvoiceCode;
             const nama = document.getElementById('nama').value;
             const wa = document.getElementById('wa').value;
             const noteRaw = document.getElementById('catatan').value;
@@ -1085,7 +1176,7 @@
             const fullNote = (eventDetail ? eventDetail + ". " : "") + (noteRaw ? "Catatan: " + noteRaw : "");
             const displayNote = fullNote || "-";
 
-            orderData = { kode, nama, wa, produk, specs, priceUnit, qty, subtotal, discount, total, fullNote, deadlineVal, today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) };
+            orderData = { kode, nama, wa, produk, specs, priceUnit, qty, subtotal, discount, total, dp, sisa: sisaFormatted, fullNote, deadlineVal, today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) };
 
             // Render ke Modal (Isi Data)
             document.getElementById('inv-code').textContent = "#" + kode;
@@ -1105,6 +1196,9 @@
             }
             
             document.getElementById('inv-total-final').textContent = total;
+            document.getElementById('inv-dp-val').textContent = dp;
+            document.getElementById('inv-sisa-val').textContent = sisaFormatted;
+
             document.getElementById('inv-notes-preview').textContent = displayNote.length > 50 ? displayNote.substring(0, 50) + "..." : displayNote;
 
             // Tampilkan Modal
@@ -1117,8 +1211,8 @@
         document.getElementById('btn-send-wa').addEventListener('click', () => {
             const text = `Halo Admin Aneka Digital,
 
-Saya ingin konfirmasi pesanan baru via Website.
-Berikut detailnya:
+Saya sudah melakukan pesanan di Website dan transfer DP.
+Mohon konfirmasinya, berikut bukti transfer (saya lampirkan foto).
 
 🧾 *INVOICE: ${orderData.kode}*
 📅 Tgl: ${orderData.today}
@@ -1134,19 +1228,22 @@ Berikut detailnya:
 • Deadline: ${orderData.deadlineVal}
 • Catatan: ${orderData.fullNote}
 
-💰 *TOTAL: ${orderData.total}*
+💰 *RINCIAN BIAYA*
+• Total: ${orderData.total}
+• DP (Transfer): ${orderData.dp}
+• Sisa Pelunasan: ${orderData.sisa}
 
-Mohon info pembayaran. Terima kasih.`;
+Terima kasih.`;
             
             window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
         });
 
-        // Tombol PDF / Print (REVISI DESAIN: MODERN, 5 WARNA, FONT BARU)
+        // Tombol PDF / Print (REVISI DESAIN: MODERN, 5 WARNA, FONT BARU, + INFO DP)
         document.getElementById('btn-download-pdf').addEventListener('click', () => {
             // Format Tanggal & Waktu Cetak
             const printTime = new Date().toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-            // Layout Invoice Baru (Modern Professional - 5 Warna)
+            // Layout Invoice Baru
             const printContent = `
                 <!DOCTYPE html>
                 <html>
@@ -1157,12 +1254,11 @@ Mohon info pembayaran. Terima kasih.`;
                         @page { margin: 0; size: A4; }
                         
                         :root {
-                            /* 5 Palette Warna Sesuai Permintaan */
-                            --i-blue: #0A4D98;    /* Warna 1: Biru Utama */
-                            --i-red: #EF4444;     /* Warna 2: Merah (Diskon/Alert) */
-                            --i-orange: #F97316;  /* Warna 3: Orange (Aksen) */
-                            --i-green: #10B981;   /* Warna 4: Hijau (Sukses/Total) */
-                            --i-black: #0f172a;   /* Warna 5: Hitam (Teks Utama) */
+                            --i-blue: #0A4D98;
+                            --i-red: #EF4444;
+                            --i-orange: #F97316;
+                            --i-green: #10B981;
+                            --i-black: #0f172a;
                         }
 
                         body {
@@ -1176,7 +1272,6 @@ Mohon info pembayaran. Terima kasih.`;
                             font-size: 14px;
                         }
                         
-                        /* Font Khusus Judul - Menghindari 'Font Jelek' */
                         h1, h2, h3, h4, th { font-family: 'Plus Jakarta Sans', sans-serif; }
 
                         .invoice-box {
@@ -1219,7 +1314,7 @@ Mohon info pembayaran. Terima kasih.`;
                         .inv-title {
                             font-size: 36px;
                             font-weight: 800;
-                            color: #e2e8f0; /* Abu sangat muda agar tidak tabrakan */
+                            color: #e2e8f0; 
                             margin: 0;
                             line-height: 1;
                             letter-spacing: 2px;
@@ -1309,10 +1404,24 @@ Mohon info pembayaran. Terima kasih.`;
                             padding-top: 10px;
                             font-size: 18px;
                             font-weight: 800;
-                            color: var(--i-green);
+                            color: var(--i-blue);
                             display: flex; justify-content: space-between;
                             align-items: center;
                         }
+                        .payment-status {
+                            margin-top: 15px;
+                            background: #ecfdf5;
+                            border: 1px solid #10b981;
+                            padding: 10px;
+                            border-radius: 6px;
+                        }
+                        .status-row {
+                            display: flex; justify-content: space-between;
+                            font-size: 13px;
+                            margin-bottom: 5px;
+                        }
+                        .status-row.paid { color: var(--i-green); font-weight: 700; }
+                        .status-row.due { color: var(--i-red); font-weight: 700; border-top: 1px dashed #10b981; padding-top: 5px; margin-top: 5px; }
 
                         /* FOOTER */
                         .print-footer {
@@ -1333,7 +1442,6 @@ Mohon info pembayaran. Terima kasih.`;
                             text-decoration: none;
                             font-weight: 600;
                             font-size: 11px;
-                            /* PERBAIKAN: URL Lowercase */
                             text-transform: lowercase; 
                         }
                         .contact-info {
@@ -1409,8 +1517,19 @@ Mohon info pembayaran. Terima kasih.`;
                                 </div>
                                 ` : ''}
                                 <div class="grand-total">
-                                    <span>TOTAL BAYAR</span>
+                                    <span>TOTAL TAGIHAN</span>
                                     <span>${orderData.total}</span>
+                                </div>
+                                
+                                <div class="payment-status">
+                                    <div class="status-row paid">
+                                        <span>DP (Transfer QRIS)</span>
+                                        <span>${orderData.dp}</span>
+                                    </div>
+                                    <div class="status-row due">
+                                        <span>Sisa Pelunasan</span>
+                                        <span>${orderData.sisa}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
