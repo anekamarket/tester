@@ -610,7 +610,7 @@
                             <input type="number" id="qty" class="form-control" placeholder="0" min="1" value="1" oninput="updateCalculator()">
                         </div>
                         <div class="form-group">
-                            <label>Deadline (Opsional)</label>
+                            <label>Tgl. Deadline</label>
                             <input type="date" id="deadline" class="form-control">
                         </div>
                     </div>
@@ -1065,6 +1065,9 @@
             const nama = document.getElementById('nama').value;
             const wa = document.getElementById('wa').value;
             const noteRaw = document.getElementById('catatan').value;
+            
+            // Ambil Deadline
+            const deadlineVal = document.getElementById('deadline').value || "Secepatnya";
 
             // Detail Acara logic
             let eventDetail = "";
@@ -1082,7 +1085,7 @@
             const fullNote = (eventDetail ? eventDetail + ". " : "") + (noteRaw ? "Catatan: " + noteRaw : "");
             const displayNote = fullNote || "-";
 
-            orderData = { kode, nama, wa, produk, specs, priceUnit, qty, subtotal, discount, total, fullNote, today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) };
+            orderData = { kode, nama, wa, produk, specs, priceUnit, qty, subtotal, discount, total, fullNote, deadlineVal, today: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) };
 
             // Render ke Modal (Isi Data)
             document.getElementById('inv-code').textContent = "#" + kode;
@@ -1110,9 +1113,31 @@
 
         document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.remove('active'));
 
-        // Tombol WA
+        // PERBAIKAN 2: FORMAT TEXT WHATSAPP YANG LEBIH RAPI & JELAS
         document.getElementById('btn-send-wa').addEventListener('click', () => {
-            const text = `Halo Aneka Digital, saya mau pesan:\n\n*NO. INVOICE: ${orderData.kode}*\n---------------------------\n*Nama:* ${orderData.nama}\n*Produk:* ${orderData.produk}\n*Spesifikasi:* ${orderData.specs}\n*Harga Satuan:* ${orderData.priceUnit}\n*Qty:* ${orderData.qty}\n*Total Bayar:* ${orderData.total}\n---------------------------\n*Catatan:* ${orderData.fullNote}\n\nMohon diproses ya kak. Terima kasih.`;
+            const text = `Halo Admin Aneka Digital,
+
+Saya ingin konfirmasi pesanan baru via Website.
+Berikut detailnya:
+
+🧾 *INVOICE: ${orderData.kode}*
+📅 Tgl: ${orderData.today}
+
+👤 *DATA PEMESAN*
+• Nama: ${orderData.nama}
+• No. WA: ${orderData.wa}
+
+📦 *DETAIL PESANAN*
+• Produk: ${orderData.produk}
+• Detail: ${orderData.specs}
+• Qty: ${orderData.qty}
+• Deadline: ${orderData.deadlineVal}
+• Catatan: ${orderData.fullNote}
+
+💰 *TOTAL: ${orderData.total}*
+
+Mohon info pembayaran. Terima kasih.`;
+            
             window.open(`https://wa.me/6285647709114?text=${encodeURIComponent(text)}`, '_blank');
         });
 
